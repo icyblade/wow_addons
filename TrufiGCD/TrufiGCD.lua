@@ -985,6 +985,8 @@ function TrGCDEventBuffHandler(self,event, ...) --запущена эвенто�
 	end
 end
 local function TrGCDAddGcdSpell(texture, i, spellid) -- добавление нового спелла в очередь
+    -- ICY: blacklist the other corruption
+    if spellid == 146739 then return end
 	if (TrGCDi[i] == 10) then TrGCDi[i] = 1 end
 	TrGCDAddSpQueue(TrGCDi[i], i)
 	TrGCDIcon[i][TrGCDi[i]].x = 0;

@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.2.8] - 2016-01-19
+### 修复 TrufiGCD 会显示两个腐蚀术的问题
+
 ## [1.2.7] - 2016-01-18
 ### 更新 DBM
 ### 修复 Skada 由于 API 被修改导致法术图标显示错误的问题
