@@ -1,0 +1,24 @@
+tag v4.0.10
+8912a26943057e97f00d3e20849962c20007ad3c
+Shadowed <shadowed.wow@gmail.com>
+2015-08-08 10:58:49 -0700
+
+Tagging as release v4.0.10
+
+
+--------------------
+
+Shadowed:
+	- Strip out MoP indicators to make nevcairiel happy
+	- Don't update runes if cooled is nil
+	- Dropped cooldown wheel alpha hack as it was apparently fixed
+	- Updated auras with Hellfire Citadel (Thanks MysticalOS)
+Hendrik Leppkes:
+	- Update TOC for 6.2
+	- Fix first group in split raid frames being hidden after reload in a raid
+Shadowed:
+	- Make sure we register UNIT_COMBO_POINTS for target CPs now
+	- Bypass combo point unit filter for non-events
+	- Combo Points can be shown on the target unit again too
+	- Ensure indicators always have a priority
+	- Make sure we kill combo points on target

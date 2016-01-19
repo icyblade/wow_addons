@@ -1,0 +1,56 @@
+## Interface: 60200
+## Title: ClassTimer
+## Notes: Timers for Buffs, DOTs, CC effects, etc..
+## Notes-zhCN: 职业技能计时计
+## Notes-zhTW: 職業技能計時器
+## Notes-ruRU: Таймеры для  баффов, DOTs, CC эффектов, и т.д.
+## Author: Ominous
+## SavedVariables: ClassTimerDB
+## Version: 2.3.60200.1
+## OptionalDeps: Ace3, Expo, LibSharedMedia-3.0 
+## X-Curse-Packaged-Version: 2.3.60200.1
+## X-Curse-Project-Name: ClassTimer
+## X-Curse-Project-ID: classtimer
+## X-Curse-Repository-ID: wow/classtimer/mainline
+
+## X-Credits: Nymbia
+## X-Category: Combat
+
+#@no-lib-strip@
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+Libs\AceAddon-3.0\AceAddon-3.0.xml
+Libs\AceBucket-3.0\AceBucket-3.0.xml
+Libs\AceGUI-3.0\AceGUI-3.0.xml
+Libs\AceConfig-3.0\AceConfig-3.0.xml
+Libs\AceConsole-3.0\AceConsole-3.0.xml
+Libs\AceDB-3.0\AceDB-3.0.xml
+Libs\AceDBOptions-3.0\AceDBOptions-3.0.xml
+Libs\AceTimer-3.0\AceTimer-3.0.xml
+Libs\AceEvent-3.0\AceEvent-3.0.xml
+Libs\AceLocale-3.0\AceLocale-3.0.xml
+Libs\LibSharedMedia-3.0\lib.xml
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+#@end-no-lib-strip@
+
+Locales\enUS.lua
+Locales\koKR.lua
+Locales\zhCN.lua
+Locales\zhTW.lua
+Locales\ruRU.lua
+
+ClassTimer.lua
+options.lua
+
+Bars\Rogue.lua
+Bars\Warlock.lua
+Bars\Druid.lua
+Bars\Paladin.lua
+Bars\Priest.lua
+Bars\Warrior.lua
+Bars\Hunter.lua
+Bars\Shaman.lua
+Bars\Mage.lua
+Bars\General.lua
+Bars\Deathknight.lua
+Bars\Monk.lua

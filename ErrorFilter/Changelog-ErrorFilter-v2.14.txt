@@ -1,0 +1,12 @@
+tag v2.14
+882ed180ad654d2100b7e431951e7c39a95f5454
+Ciprian Mihai Coman <ciprianmihai.coman@gmail.com>
+2015-09-12 11:53:09 +0300
+
+tag v2.14
+
+
+--------------------
+
+Ciprian Mihai Coman:
+	- update toc for patch 6.2

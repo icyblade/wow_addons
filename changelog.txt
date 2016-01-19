@@ -1,0 +1,49 @@
+# Change Log
+All notable changes to this project will be documented in this file.
+
+## [1.2.7] - 2016-01-18
+### 更新 DBM
+### 修复 Skada 由于 API 被修改导致法术图标显示错误的问题
+### 修复大量关于 TellMeWhen 的报错问题
+
+## [1.2.6] - 2016-01-17
+### 修复 MSBT 由于 API 被移除导致的报错问题
+### 修复 Compactraid 由于 API 被移除导致的报错问题
+### 修复 ShadowedUnitFrame 由于第三方字体导致的报错问题
+### 移除了 Adibags 的 BugGrabber 模块，以修复没有 lua 报错的问题
+
+## [1.2.5] - 2016-01-17
+### 修复 ErrorFilter 红字报错不正确的问题
+
+## [1.2.4] - 2016-01-17
+### 修复 20914 Quartz 报错
+### 更新 Titan Panel 的 BR localization
+### 添加 DBM
+
+## [1.2.3] - 2015-12-16
+### 修复了 Bartender4 触发炎爆时不高亮按钮的问题
+
+## [1.2.2] - 2015-12-13
+### 现在 IcyNameplates 不会那么卡了（大概
+
+## [1.2.1] - 2015-12-13
+### 现在 MSBT 启动时不会报一大堆错误了
+### 由于 API 修改，Quartz 的延迟功能显示的延迟不是真实延迟。现在 Quartz 显示的延迟是系统菜单内的延迟，而不是通过计算施法延迟显示的延迟
+
+## [1.2.0] - 2015-12-13
+### 添加 TitanPanel, MSBT, TrufiGCD
+
+## [1.1.1] - 2015-12-12
+### 添加 ClassTimer
+
+## [1.1.0] - 2015-12-12
+### 添加 TMW, SUF, IcyNameplates
+- 由于 TMW 的缘故，从这个版本起，需要加入 WTF 文件
+- SUF 修改配置时可能崩溃，尽量修改一点就小退一下保存设置
+- IcyNameplates 现在使用了一种比较暴力的操作方式，所以在怪比较多的时候可能会很卡
+
+## [1.0.1] - 2015-12-12
+- 现在 Skada 不会统计术士灵魂雕像的伤害
+
+## [1.0.0] - 2015-12-03
+### init

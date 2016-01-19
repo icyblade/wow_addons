@@ -1,0 +1,12 @@
+﻿-- Interface # Output
+-- /run print((select(4, GetBuildInfo())));
+
+-- Minimap Code Reference
+-- http://wowprogramming.com/docs/widgets#minimap
+
+## Interface: 60000
+## Title: SquareMap
+## Author: fa3sr011#1558
+## Addon Inspired By Works From: 10LEEJ, MUNDOCANI, AILAE, VYNTROX, WEASOUG, LOCAN
+
+config_beta.lua

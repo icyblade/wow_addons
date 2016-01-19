@@ -1,0 +1,40 @@
+## Interface: 60200
+## Title: Titan Panel |cff00aa005.6.20.60200|r
+## Author: Titan Development Team
+## Version: 5.6.20.60200
+## SavedVariables: TitanAll, TitanSettings, TitanSkins, ServerTimeOffsets, ServerHourFormat
+## OptionalDeps: Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibQTip-1.0
+## Notes: Adds a display bar on the top and/or bottom of the screen. Allows users to show and control information/launcher plugins.
+## X-Embeds: Ace3, AceGUI-3.0-SharedMediaWidgets, LibSharedMedia-3.0, LibQTip-1.0
+## X-Credits: TitanMod, Dark Imakuni, Adsertor, Titan Dev Team
+## X-Category: Interface Enhancements
+## X-Website: http://www.titanpanel.org
+## X-Email: honorgog@gmail.com
+## X-Localizations: enUS, ptBR, zhCN, deDE, esES, frFR, itIT, koKR, ruRU, zhTW
+## X-License: All rights reserved (See license.txt)
+## X-WoWI-ID: 8092
+
+embeds.xml
+
+LibDataBroker-1.1.lua
+
+locale\Localization.lua
+locale\Localization.BR.lua
+locale\Localization.CN.lua
+locale\Localization.DE.lua
+locale\Localization.ES.lua
+locale\Localization.FR.lua
+locale\Localization.IT.lua
+locale\Localization.KR.lua
+locale\Localization.RU.lua
+locale\Localization.TW.lua
+
+TitanUtils.lua
+TitanVariables.lua
+TitanAutoHide.lua
+TitanPanelTemplate.xml
+TitanMovable.lua
+TitanConfig.lua
+TitanPanel.xml
+TitanPanel.lua
+LDBToTitan.lua

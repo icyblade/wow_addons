@@ -1,0 +1,263 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">	
+  
+	<GameTooltip name="TitanPanelTooltip" inherits="GameTooltipTemplate" parent="UIParent" hidden="true"/>
+	<Button name="TitanPanelBarButtonHiderTemplate" frameStrata="BACKGROUND" toplevel="true" movable="true" parent="UIParent" virtual="true">
+		<Scripts>
+			<OnLoad>
+				self:RegisterForClicks("LeftButtonUp", "RightButtonDown")
+			</OnLoad>
+		</Scripts>
+		<Size>
+			<AbsDimension x="2560" y="24"/>
+		</Size>		
+	</Button>
+
+	<!--
+	This is a control frame used to capture events Titan is interested in. 
+	Other buttons will be used for display.
+	-->
+	<Button name="TitanPanelBarButton" frameStrata="BACKGROUND" parent="UIParent">	
+		<Size>
+			<AbsDimension x="0" y="0"/>
+		</Size>		
+	</Button>
+
+	<Button name="Titan_Bar__Display_Template" frameStrata="DIALOG" toplevel="true" movable="true" parent="UIParent" virtual="true">
+		<!-- Used for debug - may delete at some point
+		<ButtonText name="$parent_Text" inherits="GameFontNormalSmall" justifyH="LEFT">
+			<Anchors>
+				<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+					<Offset>
+						<AbsDimension x="1" y="-5" />
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</ButtonText>
+		-->
+		<Frames>
+			<Frame name="$parentRightClickMenu" inherits="UIDropDownMenuTemplate" hidden="true">
+			</Frame>
+		</Frames>
+	</Button>
+
+	<!--
+	Each Titan bar has 3 components:
+		- Display
+		- Hider
+		- Auto hide plugin
+	-->
+	<Button name="Titan_Bar__Display_Bar" frameStrata="DIALOG" parent="UIParent" inherits="Titan_Bar__Display_Template">	
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="UIParent" relativePoint="TOPLEFT">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+			<Anchor point="BOTTOMRIGHT" relativeTo="UIParent" relativePoint="TOPRIGHT">
+				<Offset>
+					<AbsDimension x="0" y="-24"/>
+				</Offset>
+			</Anchor>
+		</Anchors>		
+	</Button>
+	<Button name="Titan_Bar__Hider_Bar" inherits="TitanPanelBarButtonHiderTemplate" hidden="false">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="UIParent" relativePoint="TOPLEFT">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+			<Anchor point="BOTTOMRIGHT" relativeTo="UIParent" relativePoint="TOPRIGHT">
+				<Offset>
+					<AbsDimension x="0" y="-24"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+	</Button>
+
+	<Button name="Titan_Bar__Display_Bar2" frameStrata="DIALOG" parent="UIParent" inherits="Titan_Bar__Display_Template">	
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="UIParent" relativePoint="TOPLEFT">
+				<Offset>
+					<AbsDimension x="0" y="-24"/>
+				</Offset>
+			</Anchor>
+			<Anchor point="BOTTOMRIGHT" relativeTo="UIParent" relativePoint="TOPRIGHT">
+				<Offset>
+					<AbsDimension x="0" y="-48"/>
+				</Offset>
+			</Anchor>
+		</Anchors>		
+	</Button>
+	<Button name="Titan_Bar__Hider_Bar2" inherits="TitanPanelBarButtonHiderTemplate" hidden="false">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="UIParent" relativePoint="TOPLEFT">
+				<Offset>
+					<AbsDimension x="0" y="-24"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+	</Button>
+
+	<Button name="Titan_Bar__Display_AuxBar2" frameStrata="DIALOG" parent="UIParent" inherits="Titan_Bar__Display_Template">	
+		<Anchors>
+			<Anchor point="BOTTOMLEFT" relativeTo="UIParent" relativePoint="BOTTOMLEFT">
+				<Offset>
+					<AbsDimension x="0" y="24"/>
+				</Offset>
+			</Anchor>
+			<Anchor point="TOPRIGHT" relativeTo="UIParent" relativePoint="BOTTOMRIGHT">
+				<Offset>
+					<AbsDimension x="0" y="48"/>
+				</Offset>
+			</Anchor>
+		</Anchors>		
+	</Button>
+	<Button name="Titan_Bar__Hider_AuxBar2" inherits="TitanPanelBarButtonHiderTemplate" hidden="false">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="UIParent" relativePoint="TOPLEFT">
+				<Offset>
+					<AbsDimension x="0" y="-24"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+	</Button>
+
+	<Button name="Titan_Bar__Display_AuxBar" frameStrata="DIALOG" parent="UIParent" inherits="Titan_Bar__Display_Template">	
+		<Anchors>
+			<Anchor point="BOTTOMLEFT" relativeTo="UIParent" relativePoint="BOTTOMLEFT">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+			<Anchor point="TOPRIGHT" relativeTo="UIParent" relativePoint="BOTTOMRIGHT">
+				<Offset>
+					<AbsDimension x="0" y="24"/>
+				</Offset>
+			</Anchor>
+		</Anchors>		
+	</Button>
+	<Button name="Titan_Bar__Hider_AuxBar" inherits="TitanPanelBarButtonHiderTemplate" hidden="false">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="UIParent" relativePoint="TOPLEFT">
+				<Offset>
+					<AbsDimension x="0" y="-24"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+	</Button>
+
+	<!--
+	The Auto hide plugin must be wrapped in a frame for the code to work correctly.
+	-->
+	<Frame parent="UIParent">
+		<Frames>
+			<Button name="TitanPanelAutoHide_BarButton" inherits="TitanPanelIconTemplate" frameStrata="FULLSCREEN" toplevel="true">
+				<Scripts>
+					<OnLoad>
+						Titan_AutoHide_OnLoad(self);
+						TitanPanelButton_OnLoad(self);
+					</OnLoad>
+					<OnShow>
+						Titan_AutoHide_OnShow(self);
+					</OnShow>
+					<OnClick>
+						Titan_AutoHide_OnClick(self, button);
+						TitanPanelButton_OnClick(self, button);
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="TitanPanelAutoHide_Bar2Button" inherits="TitanPanelIconTemplate" frameStrata="FULLSCREEN" toplevel="true">
+				<Scripts>
+					<OnLoad>
+						Titan_AutoHide_OnLoad(self);
+						TitanPanelButton_OnLoad(self);
+					</OnLoad>
+					<OnShow>
+						Titan_AutoHide_OnShow(self);
+					</OnShow>
+					<OnClick>
+						Titan_AutoHide_OnClick(self, button);
+						TitanPanelButton_OnClick(self, button);
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="TitanPanelAutoHide_AuxBar2Button" inherits="TitanPanelIconTemplate" frameStrata="FULLSCREEN" toplevel="true">
+				<Scripts>
+					<OnLoad>
+						Titan_AutoHide_OnLoad(self);
+						TitanPanelButton_OnLoad(self);
+					</OnLoad>
+					<OnShow>
+						Titan_AutoHide_OnShow(self);
+					</OnShow>
+					<OnClick>
+						Titan_AutoHide_OnClick(self, button);
+						TitanPanelButton_OnClick(self, button);
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="TitanPanelAutoHide_AuxBarButton" inherits="TitanPanelIconTemplate" frameStrata="FULLSCREEN" toplevel="true">
+		<Scripts>
+			<OnLoad>
+				Titan_AutoHide_OnLoad(self);
+				TitanPanelButton_OnLoad(self);
+			</OnLoad>
+			<OnShow>
+				Titan_AutoHide_OnShow(self);
+			</OnShow>
+			<OnClick>
+				Titan_AutoHide_OnClick(self, button);
+				TitanPanelButton_OnClick(self, button);
+			</OnClick>
+		</Scripts>
+	</Button>
+		</Frames>
+	</Frame>			
+	<!--
+	These two frames are placed at the bottom of the top
+	and top of the bottom to give addons a notion of what 
+	space Titan is using.
+	A non zero size is needed for the anchors to respond properly.
+	-->
+	<Button name="TitanPanelTopAnchor" frameStrata="DIALOG" parent="UIParent" >	
+		<Size>
+			<AbsDimension x="1" y="1" />
+		</Size>
+	</Button>
+	<Button name="TitanPanelBottomAnchor" frameStrata="DIALOG" parent="UIParent" >	
+		<Size>
+			<AbsDimension x="1" y="1" />
+		</Size>
+	</Button>
+
+	<!--
+	<Button name="TitanPanelTopTest" frameStrata="DIALOG" parent="UIParent">	
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="TitanPanelTopAnchor" relativePoint="BOTTOMLEFT" />
+		</Anchors>
+		<Size>
+			<AbsDimension x="10" y="1" />
+		</Size>
+		<ButtonText name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT" >
+			<Anchors>
+				<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" />
+			</Anchors>
+		</ButtonText>
+	</Button>
+	<Button name="TitanPanelBottomTest" frameStrata="DIALOG" parent="UIParent">	
+		<Anchors>
+			<Anchor point="BOTTOMLEFT" relativeTo="TitanPanelBottomAnchor" relativePoint="TOPLEFT" />
+		</Anchors>
+		<Size>
+			<AbsDimension x="10" y="10" />
+		</Size>
+		<ButtonText name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT" >
+			<Anchors>
+				<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" />
+			</Anchors>
+		</ButtonText>
+	</Button>
+	-->
+</Ui>

@@ -1,0 +1,5 @@
+<Bindings>
+	<Binding name="DEATH_NOTE_SHOW_TARGET_DEATH" header="DEATH_NOTE">
+		DeathNote:ShowUnit(UnitName("target"))
+	</Binding>
+</Bindings>

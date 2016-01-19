@@ -1,0 +1,38 @@
+﻿-- Korean localization
+
+local L = LibStub("AceLocale-3.0"):NewLocale("ErrorFilter", "koKR")
+if not L then return end
+
+L["Add a new string."] = "새로운 구문열을 추가합니다."
+L["Allowed errors"] = "허용된 오류"
+L["Allow only ..."] = "단지 허용..."
+L["Choose how do you want ErrorFilter to work."] = "원하는 ErrorFilter 작동 방식을 선택합니다."
+L["Choose the errors you do not want to see:"] = "보고 싶지 않은 오류를 선택:"
+L["Choose the errors you want to see:"] = "보고 싶지 않은 오류를 선택:"
+L["Delete"] = "삭제"
+L["Delete a string from the list"] = "목록에서 구문열을 삭제합니다."
+L["Do nothing"] = "아무 것도 하지 않음"
+L["Filter all errors"] = "모든 오류를 선별"
+L["Filtered errors"] = "선별된 오류"
+L["Filter only ..."] = "단지 선별..."
+-- L["Filter only in combat."] = ""
+L["Filters"] = "필터"
+L["General Settings"] = "공통 설정"
+L["Manage custom allows:"] = "사용자 허용 관리:"
+L["Manage custom filters:"] = "사용자 필터 관리:"
+L["New"] = "새로"
+L["Open the menu to set custom filters."] = "사용자 필터를 설정하기 위해 메뉴를 엽니다."
+L["Operation mode:"] = "구동 모드:"
+-- L["Output"] = ""
+L["Profiles"] = "프로필"
+L["Remove UIErrorFrame"] = "UIErrorFrame 제거"
+L["Set filters"] = "필터 설정"
+-- L["Throttle"] = ""
+-- L["Throttle messages."] = ""
+-- L["Toggle to allow each message only once every 5 seconds."] = ""
+L["Toggle to allow this error."] = "이 오류를 허용하는 것을 전환합니다."
+L["Toggle to filter this error."] = "이 오류를 선별하는 것을 전환합니다."
+-- L["Toggle to stop filtering while out of combat."] = ""
+L["Warning! This will prevent all error messages from appearing in the UI Error Frame."] = "경고! 이것은 모든 오류 메세지가 UI Error Frame에 나타나는 것을 방지합니다."
+L["Warning! This will prevent any message from appearing in the UI Error Frame, including quest updates text."] = "경고! 이것은 특정 메세지가 UI Error Frame에 나타나는 것을 방지합니다(퀘스트 갱신 문장을 포함해) ."
+

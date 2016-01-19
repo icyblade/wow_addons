@@ -1,0 +1,12 @@
+tag 3.2.5
+e6e37c74c2fce64adc073d2a50bf07125726d4c0
+Hendrik Leppkes <h.leppkes@gmail.com>
+2015-09-16 10:26:03 +0200
+
+Tag as 3.2.5
+
+
+--------------------
+
+Hendrik Leppkes:
+	- Update TOC

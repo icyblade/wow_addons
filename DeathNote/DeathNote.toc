@@ -1,0 +1,45 @@
+﻿## Interface: 60000
+## Title: DeathNote
+## Notes: Death analysis tool
+## Author: Slaren
+## Version: v1.8c
+## OptionalDeps: LibStub, CallbackHandler-1.0, Ace3
+## SavedVariables: DeathNoteDB
+## SavedVariablesPerCharacter: DeathNoteData
+## LoadManagers: AddonLoader
+## X-LoadOn-Always: delayed
+## X-Curse-Packaged-Version: v1.8c
+## X-Curse-Project-Name: Death Note
+## X-Curse-Project-ID: deathnote
+## X-Curse-Repository-ID: wow/deathnote/mainline
+
+#@no-lib-strip@
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+#@end-no-lib-strip@
+
+libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+
+#@no-lib-strip@
+libs\AceAddon-3.0\AceAddon-3.0.xml
+libs\AceComm-3.0\AceComm-3.0.xml
+libs\AceGUI-3.0\AceGUI-3.0.xml
+libs\AceConfig-3.0\AceConfig-3.0.xml
+libs\AceConsole-3.0\AceConsole-3.0.xml
+libs\AceDB-3.0\AceDB-3.0.xml
+libs\AceEvent-3.0\AceEvent-3.0.xml
+libs\AceHook-3.0\AceHook-3.0.xml
+libs\AceLocale-3.0\AceLocale-3.0.xml
+libs\AceTimer-3.0\AceTimer-3.0.xml
+#@end-no-lib-strip@
+
+Locales.lua
+DeathNote.lua
+DataCapture.lua
+UI.lua
+Format.lua
+Options.lua
+SurvivalIDs.lua
+Data.lua
+Announce.lua
+Output.lua

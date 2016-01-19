@@ -1,0 +1,17 @@
+tag v1.8.4
+d5fa33f3e2e90dbeacfebf7e94cc24d28d2493c6
+Adirelle <adirelle@gmail.com>
+2015-01-06 17:43:11 +0100
+
+The reagent bank now have a separate color. Minor bugfixes.
+
+
+--------------------
+
+Adirelle:
+	- Systemically move updated items to the "Recent items" section.
+	- Register LibSharedMedia callbacks to update the fonts, borders and backgrounds.
+	- Hook BankFrame:GetRight() to prevent an error in UpdateContainerFrameAnchors.
+	Fixes GH-27.
+	- Show the reagent bank with a different color.
+	Fixes GH-20.

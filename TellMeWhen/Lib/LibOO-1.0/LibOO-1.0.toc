@@ -1,0 +1,14 @@
+## Interface: 60000
+## Title: Lib: OO-1.0
+## Notes: LibOO-1.0 provides an object-oriented framework to World of Warcraft addons
+## Author: Cybeloras of Aerie Peak
+## X-Category: Library
+## X-Curse-Packaged-Version: 1.0.20
+## X-Curse-Project-Name: LibOO-1.0
+## X-Curse-Project-ID: liboo-1-0
+## X-Curse-Repository-ID: wow/liboo-1-0/mainline
+
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+
+lib.xml

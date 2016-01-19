@@ -1,0 +1,10 @@
+﻿<Ui>
+
+<Script file="Spells.lua"/>
+
+
+<Script file="AuraCache.lua"/>
+
+<Script file="ClassSpellCache.lua"/>
+
+</Ui>

@@ -1,0 +1,38 @@
+﻿-- Latin American Spanish localization
+
+local L = LibStub("AceLocale-3.0"):NewLocale("ErrorFilter", "esMX")
+if not L then return end
+
+-- L["Add a new string."] = ""
+-- L["Allowed errors"] = ""
+-- L["Allow only ..."] = ""
+-- L["Choose how do you want ErrorFilter to work."] = ""
+-- L["Choose the errors you do not want to see:"] = ""
+-- L["Choose the errors you want to see:"] = ""
+-- L["Delete"] = ""
+-- L["Delete a string from the list"] = ""
+-- L["Do nothing"] = ""
+-- L["Filter all errors"] = ""
+-- L["Filtered errors"] = ""
+-- L["Filter only ..."] = ""
+-- L["Filter only in combat."] = ""
+-- L["Filters"] = ""
+-- L["General Settings"] = ""
+-- L["Manage custom allows:"] = ""
+-- L["Manage custom filters:"] = ""
+-- L["New"] = ""
+-- L["Open the menu to set custom filters."] = ""
+-- L["Operation mode:"] = ""
+-- L["Output"] = ""
+-- L["Profiles"] = ""
+-- L["Remove UIErrorFrame"] = ""
+-- L["Set filters"] = ""
+-- L["Throttle"] = ""
+-- L["Throttle messages."] = ""
+-- L["Toggle to allow each message only once every 5 seconds."] = ""
+-- L["Toggle to allow this error."] = ""
+-- L["Toggle to filter this error."] = ""
+-- L["Toggle to stop filtering while out of combat."] = ""
+-- L["Warning! This will prevent all error messages from appearing in the UI Error Frame."] = ""
+-- L["Warning! This will prevent any message from appearing in the UI Error Frame, including quest updates text."] = ""
+

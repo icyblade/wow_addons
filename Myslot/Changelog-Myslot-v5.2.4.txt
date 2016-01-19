@@ -1,0 +1,15 @@
+tag v5.2.4
+d5d827f39cbe584bb2990790bd1cbfc505ebdcb6
+tgic <farmer1992@gmail.com>
+2015-06-27 18:08:12 +0800
+
+bump ver for 6.2
+
+
+--------------------
+
+tgic:
+	- bump ver for 6.2
+	- bump ver for 6.1
+	- bump ver
+	- Update README.markdown
