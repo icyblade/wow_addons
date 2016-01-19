@@ -1,9 +1,10 @@
-local mod	= DBM:NewMod(1703, "DBM-EmeraldNightmare", nil, 768)
+if DBM:GetTOC() < 70000 then return end
+local mod	= DBM:NewMod(1713, "DBM-Suramar", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14741 $"):sub(12, -3))
-mod:SetCreatureID(102672, 103160)--TODO, figure out which one
-mod:SetEncounterID(1853)
+mod:SetRevision(("$Revision: 14743 $"):sub(12, -3))
+mod:SetCreatureID(103769)----TODO, verify
+--mod:SetEncounterID(1864)--unknown, too many generic names for encounter Ids in this raid
 mod:SetZone()
 --mod:SetUsedIcons(8, 7, 6, 3, 2, 1)
 --mod:SetHotfixNoticeRev(12324)

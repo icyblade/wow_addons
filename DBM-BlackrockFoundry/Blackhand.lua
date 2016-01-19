@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(959, "DBM-BlackrockFoundry", nil, 457)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14569 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14741 $"):sub(12, -3))
 mod:SetCreatureID(77325)--68168
 mod:SetEncounterID(1704)
 mod:SetZone()
@@ -38,8 +38,8 @@ local warnAttachSlagBombs			= mod:NewTargetCountAnnounce(157000, 4)
 local specWarnDemolition			= mod:NewSpecialWarningCount(156425, nil, nil, nil, 2, 2)
 local specWarnMassiveDemolition		= mod:NewSpecialWarningCount(156479, false, nil, nil, 2)
 local specWarnMarkedforDeath		= mod:NewSpecialWarningYou(156096, nil, nil, nil, 3, 2)
-local specWarnMFDPosition			= mod:NewSpecialWarning("specWarnMFDPosition", nil, false, nil, 1, 4)--Mythic Position Assignment. No option, connected to specWarnMarkedforDeath
-local specWarnMarkedforDeathOther	= mod:NewSpecialWarningTargetCount(156096, false, nil, nil, nil, 2)
+local specWarnMFDPosition			= mod:NewSpecialWarning("specWarnMFDPosition", nil, false, nil, 1)--Mythic Position Assignment. No option, connected to specWarnMarkedforDeath
+local specWarnMarkedforDeathOther	= mod:NewSpecialWarningTargetCount(156096, false, nil, nil, 1, 2)
 local yellMarkedforDeath			= mod:NewYell(156096)
 local specWarnThrowSlagBombs		= mod:NewSpecialWarningCount(156030, nil, nil, nil, 2, 2)--This spell is not gtfo.
 local specWarnShatteringSmash		= mod:NewSpecialWarningCount(155992, "Melee", nil, nil, nil, 2)
