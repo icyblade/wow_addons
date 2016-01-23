@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1438, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14731 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14749 $"):sub(12, -3))
 mod:SetCreatureID(91331)--Doomfire Spirit (92208), Hellfire Deathcaller (92740), Felborne Overfiend (93615), Dreadstalker (93616), Infernal doombringer (94412)
 mod:SetEncounterID(1799)
 mod:SetMinSyncRevision(13964)
@@ -1084,8 +1084,6 @@ function mod:SPELL_AURA_APPLIED(args)
 				yellMarkOfLegion:Schedule(remaining-1, 1)
 				yellMarkOfLegion:Schedule(remaining-2, 2)
 				yellMarkOfLegion:Schedule(remaining-3, 3)
-				yellMarkOfLegion:Schedule(remaining-4, 4)
-				yellMarkOfLegion:Schedule(remaining-5, 5)
 			end
 		end
 		updateRangeFrame(self)

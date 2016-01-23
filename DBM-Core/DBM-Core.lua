@@ -40,7 +40,7 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 14743 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 14752 $"):sub(12, -3)),
 	DisplayVersion = "6.2.18 alpha", -- the string that is shown as version
 	ReleaseRevision = 14720 -- the revision of the latest stable version that is available
 }
@@ -1085,10 +1085,6 @@ do
 			else--It must have ended while we were offline, kill variable.
 				self.Options.tempBreak2 = nil
 			end
-		--Try asking top two DBM version in group
-		elseif IsInGroup() and not timerRequestInProgress then
-			self:Schedule(2.5, self.RequestTimers, self, 1)--Break timer recovery doesn't work if outside the zone when reloadui or relogging (no loadmod). Need request timer here.
-			self:Schedule(5, self.RequestTimers, self, 2)--Break timer recovery doesn't work if outside the zone when reloadui or relogging (no loadmod). Need request timer here.
 		end
 	end
 
@@ -2035,6 +2031,11 @@ do
 			local mapID = GetCurrentMapAreaID()
 			local mapx, mapy = GetPlayerMapPosition("player")
 			DBM:AddMsg(("Location Information\nYou are at zone %u (%s): x=%f, y=%f.\nLocal Map ID %u (%s): x=%f, y=%f"):format(map, GetRealZoneText(map), x, y, mapID, GetZoneText(), mapx, mapy))
+		elseif cmd:sub(1, 7) == "request" then
+			DBM:Unschedule(DBM.RequestTimers)
+			DBM:RequestTimers(1)
+			DBM:RequestTimers(2)
+			DBM:RequestTimers(3)
 		else
 			DBM:LoadGUI()
 		end
@@ -3589,7 +3590,6 @@ do
 			self:Debug("No action taken because mapID hasn't changed since last check")
 			return
 		end--ID hasn't changed, don't waste cpu doing anything else (example situation, porting into garrosh phase 4 is a loading screen)
-		timerRequestInProgress = false
 		LastInstanceMapID = mapID
 		LastGroupSize = instanceGroupSize
 		difficultyIndex = difficulty
@@ -3617,6 +3617,7 @@ do
 	end
 	--Faster and more accurate loading for instances, but useless outside of them
 	function DBM:LOADING_SCREEN_DISABLED()
+		timerRequestInProgress = false
 		self:Debug("LOADING_SCREEN_DISABLED fired")
 		SecondaryLoadCheck(self)
 		self:Unschedule(SecondaryLoadCheck)
@@ -6169,7 +6170,7 @@ DBM.UNIT_DESTROYED = DBM.UNIT_DIED
 --  Timer recovery  --
 ----------------------
 do
-	local requestedFrom = nil
+	local requestedFrom = {}
 	local requestTime = 0
 	local clientUsed = {}
 	local sortMe = {}
@@ -6209,21 +6210,22 @@ do
 		end
 		if not selectedClient then return end
 		self:Debug("Requesting timer recovery to "..selectedClient.name)
-		requestedFrom = selectedClient.name
+		requestedFrom[selectedClient.name] = true
 		requestTime = GetTime()
 		SendAddonMessage("D4", "RT", "WHISPER", selectedClient.name)
 	end
 
 	function DBM:ReceiveCombatInfo(sender, mod, time)
-		if dbmIsEnabled and sender == requestedFrom and (GetTime() - requestTime) < 5 and #inCombat == 0 then
+		if dbmIsEnabled and requestedFrom[sender] and (GetTime() - requestTime) < 5 and #inCombat == 0 then
 			self:StartCombat(mod, time, "TIMER_RECOVERY")
 			--Recovery successful, someone sent info, abort other recovery requests
 			self:Unschedule(self.RequestTimers)
+			twipe(requestedFrom)
 		end
 	end
 
 	function DBM:ReceiveTimerInfo(sender, mod, timeLeft, totalTime, id, ...)
-		if sender == requestedFrom and (GetTime() - requestTime) < 5 then
+		if requestedFrom[sender] and (GetTime() - requestTime) < 5 then
 			local lag = select(4, GetNetStats()) / 1000
 			for i, v in ipairs(mod.timers) do
 				if v.id == id then
@@ -6235,7 +6237,7 @@ do
 	end
 
 	function DBM:ReceiveVariableInfo(sender, mod, name, value)
-		if sender == requestedFrom and (GetTime() - requestTime) < 5 then
+		if requestedFrom[sender] and (GetTime() - requestTime) < 5 then
 			if value == "true" then
 				mod.vb[name] = true
 			elseif value == "false" then
