@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2016-01-23
+### 更新 DBM
+
 ## [1.2.9] - 2016-01-19
 ### 更新 DBM
 
