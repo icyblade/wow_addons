@@ -1024,6 +1024,8 @@ function TrGCDEventHandler(self, event, ...)
 					--print("succeeded then " .. spellname)
 					if (IsChannel == nil) then TrGCDCastSp[i] = 1 end
 				else
+                    -- print(arg5)
+                    if (arg5 == 81297 or arg5 == 198137) then return end -- ICY: blacklist consecration & divine hammer
 					local b = false --висит ли багнутый бафф инстант каста
 					if ((TrGCDInsSp["spell"][i] == 48108) and (arg5 == 11366)) then b = true
 					elseif ((TrGCDInsSp["spell"][i] == 34936) and (arg5 == 29722)) then b = true
@@ -1033,6 +1035,7 @@ function TrGCDEventHandler(self, event, ...)
 					elseif ((TrGCDInsSp["spell"][i] == 87160) and (arg5 == 73510)) then b = true
 					elseif ((TrGCDInsSp["spell"][i] == 114255) and (arg5 == 2061)) then b = true
 					elseif ((TrGCDInsSp["spell"][i] == 124430) and (arg5 == 8092)) then b = true end
+                    
 					TrGCDCastSpBanTime[i] = GetTime()
 					if (IsChannel ~= nil) then TrGCDCastSp[i] = 0 end
 					if (((GetTime()-TrGCDSpStopTime[i]) < 1) and (TrGCDSpStopName[i] == spellname) and (b == false)) then
