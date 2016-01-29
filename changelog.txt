@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.0.3] - 2016-01-29
+### 修复盗贼由于影舞修改导致无法使用 Bartender4 的问题
+### 更新 DBM
+
 ## [2.0.2] - 2016-01-24
 ### 修复 TrufiGCD 会显示多个奉献和 Divine Hammer 的问题
 
