@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.0.4] - 2016-01-29
+### 修复 CompactRaid 无法正确显示治疗武僧法力值的问题
+
 ## [2.0.3] - 2016-01-29
 ### 修复盗贼由于影舞修改导致无法使用 Bartender4 的问题
 ### 更新 DBM

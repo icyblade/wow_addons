@@ -436,7 +436,8 @@ end
 local function UnitFrame_UpdatePowerMax(self)
 	local unit = self.displayedUnit
 	if not unit then return end
-	local value = UnitPowerMax(unit)
+	-- local value = UnitPowerMax(unit)
+    local value = UnitPowerMax(unit, UnitPowerType(unit)) -- ICY: API change, should specify power type
 	if value > 0 then
 		self.powerBar:SetMinMaxValues(0, value)
 		self.powerBar:Show()
@@ -450,7 +451,8 @@ end
 local function UnitFrame_UpdatePower(self)
 	local unit = self.displayedUnit
 	if not unit then return end
-	self.powerBar:SetValue(UnitPower(unit))
+	-- self.powerBar:SetValue(UnitPower(unit))
+    self.powerBar:SetValue(UnitPower(unit, UnitPowerType(unit))) -- ICY: API change, should specify power type
 end
 
 local function UnitFrame_UpdateNameColor(self)
