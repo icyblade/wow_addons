@@ -1,0 +1,7 @@
+## Interface: 60200
+## Title: EasyLogger
+## Notes: Automatically enables/disables the combat log text file in raid instances.
+## Author: Sildor
+## Version: 1.1b
+
+EasyLogger.lua
