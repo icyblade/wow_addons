@@ -54,3 +54,4 @@ Bars\Mage.lua
 Bars\General.lua
 Bars\Deathknight.lua
 Bars\Monk.lua
+Bars\Demonhunter.lua

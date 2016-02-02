@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.1.2] - 2016-02-02
+### 修复恶魔猎手不能使用 ClassTimer 的问题
+
 ## [2.1.1] - 2016-02-02
 ### Quartz 的延迟功能显示的延迟现在是真实延迟了
 ### 更新 DBM
