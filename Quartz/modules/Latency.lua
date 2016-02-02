@@ -68,6 +68,7 @@ function Latency:OnEnable()
 	self:RawHook(Player, "UNIT_SPELLCAST_DELAYED")
 	
 	self:RegisterEvent("UNIT_SPELLCAST_SENT")
+    self:RegisterEvent("CURRENT_SPELL_CAST_CHANGED") -- ICY: latency fix
 	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
 	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	media.RegisterCallback(self, "LibSharedMedia_SetGlobal", function(mtype, override)
@@ -94,6 +95,10 @@ function Latency:UNIT_SPELLCAST_SENT(event, unit)
 	if unit ~= "player" and unit ~= "vehicle" then
 		return
 	end
+	-- sendTime = GetTime() -- ICY: latency fix
+end
+
+function Latency:CURRENT_SPELL_CAST_CHANGED(event, unit)
 	sendTime = GetTime()
 end
 
@@ -110,11 +115,9 @@ function Latency:UNIT_SPELLCAST_START(object, bar, unit)
 	local startTime, endTime = bar.startTime, bar.endTime
 	if not sendTime or not endTime then return end
 	
-	-- timeDiff = GetTime() - sendTime -- ICY: two event will occur at the same time in LEG
-    _, _, timeDiff = GetNetStats()
-    timeDiff = timeDiff/1000
+	timeDiff = GetTime() - sendTime
 	local castlength = endTime - startTime
-	-- timeDiff = timeDiff > castlength and castlength or timeDiff -- ICY: fix
+	timeDiff = timeDiff > castlength and castlength or timeDiff
 	local perc = timeDiff / castlength
 	
 	lagbox:ClearAllPoints()
