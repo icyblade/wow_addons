@@ -1177,8 +1177,10 @@ end
 function EndChargeCooldown(self)
 	self:Hide()
 	self:SetParent(UIParent)
-	self.parent.chargeCooldown = nil
-	self.parent = nil
+	if self.parent ~= nil then -- ICY: fix fire mage inferno blast
+        self.parent.chargeCooldown = nil
+        self.parent = nil
+    end
 	tinsert(lib.ChargeCooldowns, self)
 end
 
