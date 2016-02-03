@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.2.1] - 2016-02-03
+### 修复 CompactRaid, TellMeWhen 对恶魔猎手的兼容性问题
+
 ## [2.2.0] - 2016-02-03
 ### 新增 Handynotes
 ### Handynotes 可以通过 "/icynew 标题" 命令实现快速标记

@@ -204,6 +204,10 @@ local CLASS_DEFAULTS = {
 		["alt-2"]	= 115460, -- Healing Sphere
 		["alt-ctrl-1"]	= 116849, -- Life Cocoon
 	},
+    
+    -- ICY: demonhunter
+    DEMONHUNTER = {
+    },
 }
 
 function module:GetSpecialMacro()

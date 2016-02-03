@@ -478,6 +478,7 @@ TMW.GCDSpells = {
 	HUNTER		= 3044,		-- arcane shot
 	DEATHKNIGHT = 47541,	-- death coil
 	MONK		= 100780,	-- jab
+    DEMONHUNTER = 162243,   -- Demon's Bite -- ICY: demonhunter
 }
 
 local GCDSpell = TMW.GCDSpells[pclass]
