@@ -407,6 +407,37 @@ function HN:CreateNoteHere(arg1)
 	end
 end
 
+-- ICY: Function to note treasures and rares in LEG
+function HN:CreateLegionNoteHere(title)
+	local mapID, level, x, y
+    x, y, mapID, level = HBD:GetPlayerZonePosition()
+
+	if mapID and level and x and y then
+		local coord = HandyNotes:getCoord(x, y)
+		x, y = HandyNotes:getXY(coord)
+        
+        if title == nil then
+            title = ''
+        end
+        if description == nil then
+            description = ''
+        end
+		-- Pass the data to the edit note frame
+		local HNEditFrame = self.HNEditFrame
+        HNEditFrame.icy_title = title
+		HNEditFrame.x = x
+		HNEditFrame.y = y
+		HNEditFrame.coord = coord
+		HNEditFrame.mapFile = HandyNotes:WhereAmI()
+		HNEditFrame.level = GetCurrentMapDungeonLevel()
+		self:FillDungeonLevelData()
+		HNEditFrame:Hide() -- Hide first to trigger the OnShow handler
+		HNEditFrame:Show()
+	else
+		self:Print(L["ERROR_CREATE_NOTE1"])
+	end
+end
+
 function HN:FillDungeonLevelData()
 	local HNEditFrame = self.HNEditFrame
 	wipe(HNEditFrame.leveldata)
@@ -502,6 +533,7 @@ function HN:OnInitialize()
 
 	-- Slash command
 	self:RegisterChatCommand("hnnew", "CreateNoteHere")
+    self:RegisterChatCommand('icynew', 'CreateLegionNoteHere') -- ICY: legion note
 end
 
 function HN:OnEnable()

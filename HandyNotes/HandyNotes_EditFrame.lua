@@ -278,7 +278,8 @@ HNEditFrame:SetScript("OnShow", function(self)
 		end
 	else
 		HNEditFrame.title:SetText(L["Add Handy Note"])
-		HNEditFrame.titleinputbox:SetText("")
+		-- HNEditFrame.titleinputbox:SetText("") -- ICY: legion note
+        HNEditFrame.titleinputbox:SetText(HNEditFrame.icy_title)
 		HNEditFrame.descinputbox:SetText("")
 		HNEditFrame.icondropdown.OnClick(nil, 1)
 		HNEditFrame.continentcheckbox:SetChecked(nil)

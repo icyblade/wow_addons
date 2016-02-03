@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2.2.0] - 2016-02-03
 ### 新增 Handynotes
+### Handynotes 可以通过 "/icynew 标题" 命令实现快速标记
 
 ## [2.1.3] - 2016-02-02
 ### 修复 Bartender4 充能法术报错的问题
