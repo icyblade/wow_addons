@@ -419,12 +419,14 @@ function HN:CreateLegionNoteHere(title)
         if title == nil then
             title = ''
         end
-        if description == nil then
-            description = ''
-        end
 		-- Pass the data to the edit note frame
 		local HNEditFrame = self.HNEditFrame
         HNEditFrame.icy_title = title
+        if UnitName('target') ~= nil then
+            HNEditFrame.icy_desc = UnitName('target')
+        else
+            HNEditFrame.icy_desc = ''
+        end
 		HNEditFrame.x = x
 		HNEditFrame.y = y
 		HNEditFrame.coord = coord
