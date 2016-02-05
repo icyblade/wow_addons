@@ -1,0 +1,14 @@
+## Interface: 60200
+## Title: OmniBar Options
+## Notes: Options Panel for OmniBar (LoadOnDemand)
+## Version: v5.11
+## Author: Jordon
+## Dependencies: OmniBar
+## LoadOnDemand: 1
+## X-Curse-Packaged-Version: v5.11
+## X-Curse-Project-Name: OmniBar (InterruptBar for WoD)
+## X-Curse-Project-ID: omnibar
+## X-Curse-Repository-ID: wow/omnibar/mainline
+
+localization.lua
+OmniBar_Options.xml

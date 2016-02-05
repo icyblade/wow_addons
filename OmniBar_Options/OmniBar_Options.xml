@@ -1,0 +1,424 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="OmniBar_Options.lua"/>
+	<Button name="OmniBarOptionsPanelButton" virtual="true" inherits="OptionsButtonTemplate">
+		<Size>
+			<AbsDimension x="100" y="30"/>
+		</Size>
+		<Scripts>
+			<OnEnter>
+				if ( self:IsEnabled() ) then
+					if ( self.tooltipText ) then
+						GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT");
+						GameTooltip:SetText(self.tooltipText, nil, nil, nil, nil, 1);
+					end
+					if ( self.tooltipRequirement ) then
+						GameTooltip:AddLine(self.tooltipRequirement, 1.0, 1.0, 1.0, 1.0);
+						GameTooltip:Show();
+					end
+				end
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+		</Scripts>
+	</Button>
+	<Frame name="OmniBarOptionsPanelSlider" virtual="true">
+		<Size>
+			<AbsDimension x="1" y="1"/>
+		</Size>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentTitle" parentKey="title" inherits="GameFontNormal">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="0" y="-16"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentDescription" parentKey="description" inherits="GameFontHighlightSmall">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT">
+							<Offset>
+								<AbsDimension x="0" y="-8"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Slider name="$parentSlider" parentKey="slider" inherits="OptionsSliderTemplate" valueStep="1" minvalue="0" maxvalue="100">
+				<Size>
+					<AbsDimension x="275" y="17"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentDescription" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-8"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:SetObeyStepOnDrag(true)
+						local name = self:GetName()
+						_G[name .. "Low"]:SetText()
+						local high = _G[name .. "High"]
+						high:ClearAllPoints()
+						high:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 8)
+					</OnLoad>
+				</Scripts>
+			</Slider>
+		</Frames>
+	</Frame>
+	<Frame name="OmniBarOptionsPanel" parent="OmniBarOptions" setAllPoints="true">
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentTitle" inherits="GameFontNormalLarge" text="OmniBar">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="16" y="-16"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentVersionLabel" inherits="GameFontNormalSmall">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT">
+							<Offset>
+								<AbsDimension x="0" y="-8"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentVersion" inherits="GameFontHighlightSmall" text="v5.11">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentVersionLabel" relativePoint="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="3" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentAuthorLabel" inherits="GameFontNormalSmall">
+					<Anchors>
+						<Anchor point="TOPRIGHT" relativeTo="$parentVersionLabel" relativePoint="BOTTOMRIGHT">
+							<Offset>
+								<AbsDimension x="0" y="-8"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentAuthor" inherits="GameFontHighlightSmall" text="Jordon">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentVersion" relativePoint="BOTTOMLEFT">
+							<Offset>
+								<AbsDimension x="0" y="-8"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parentTest" inherits="OmniBarOptionsPanelButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-16" y="-16"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn")
+						OmniBar_Test(OmniBar)
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentReset" inherits="OmniBarOptionsPanelButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parentTest" relativePoint="TOPLEFT">
+						<Offset> = 
+							<AbsDimension x="-5" y="0"/> = 
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						StaticPopup_Show("OMNIBAR_CONFIRM_RESET")
+					</OnClick>
+				</Scripts>
+			</Button>
+			<!-- Left column -->
+			<CheckButton name="$parentLock" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentVersionLabel" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-32"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelLock_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentCenterLock" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentLock" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelCenterLock_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentShowUnused" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentCenterLock" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelShowUnused_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentAsEnemiesAppear" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentShowUnused" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="18" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelAsEnemiesAppear_Update
+						self:SetScale(0.8)
+					</OnLoad>
+					<OnEnable>
+						_G[self:GetName().."Text"]:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+					</OnEnable>
+					<OnDisable>
+						_G[self:GetName().."Text"]:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b)
+					</OnDisable>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentGrowUpward" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentAsEnemiesAppear" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="-18" y="-2"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelGrowUpward_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentCountdownCount" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentGrowUpward" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelCountdownCount_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentShowBorder" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentCountdownCount" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelShowBorder_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentHighlightTarget" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentShowBorder" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelHighlightTarget_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentHighlightFocus" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentHighlightTarget" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelHighlightFocus_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<Frame name="$parentSize" inherits="OmniBarOptionsPanelSlider">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="OmniBarOptionsPanelHighlightFocus" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad function="OmniBarOptionsPanelSize_OnLoad"/>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentColumns" inherits="OmniBarOptionsPanelSlider">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentSizeSlider" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.slider:SetScript("OnValueChanged", OmniBarOptionsPanelColumnsSlider_OnValueChanged)
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentPadding" inherits="OmniBarOptionsPanelSlider">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentColumnsSlider" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.slider:SetScript("OnValueChanged", OmniBarOptionsPanelPaddingSlider_OnValueChanged)
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<!-- Right column -->
+			<CheckButton name="$parentUseGlobal" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentLock" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="300" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelUseGlobal_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentShowArena" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentUseGlobal" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelShowArena_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentShowRatedBattleground" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentShowArena" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelShowRatedBattleground_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentShowBattleground" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentShowRatedBattleground" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelShowBattleground_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentShowAshran" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentShowBattleground" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelShowAshran_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentShowWorld" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentShowAshran" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelShowWorld_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentTrackMultiple" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentShowWorld" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelTrackMultiple_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentGlow" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentTrackMultiple" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelGlow_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parentTooltips" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentGlow" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.setFunc = OmniBarOptionsPanelTooltips_Update
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			<Frame name="$parentUnusedAlpha" inherits="OmniBarOptionsPanelSlider">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="OmniBarOptionsPanelSize">
+						<Offset>
+							<AbsDimension x="300" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.slider:SetScript("OnValueChanged", OmniBarOptionsPanelUnusedAlphaSlider_OnValueChanged)
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentSwipeAlpha" inherits="OmniBarOptionsPanelSlider">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentUnusedAlphaSlider" relativePoint="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.slider:SetScript("OnValueChanged", OmniBarOptionsPanelSwipeAlphaSlider_OnValueChanged)
+					</OnLoad>
+				</Scripts>
+			</Frame>			
+		</Frames>
+		<Scripts>
+			<OnLoad function="OmniBarOptionsPanel_OnLoad"/>
+		</Scripts>
+	</Frame>
+</Ui>

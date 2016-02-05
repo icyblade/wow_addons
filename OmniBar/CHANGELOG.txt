@@ -1,0 +1,72 @@
+**v5.11**
+* Reset Spell Lock on Summon Felhunter
+
+**v5.10**
+* Add Combustion
+* Grimoire of Sacrifice now properly resets Spell Lock
+
+**v5.9**
+* Only show tooltips when OmniBar is unlocked
+* Don't show tooltips when an icon is transparent
+* Minor bug fix
+
+**v5.8**
+* Update for 6.2
+* Add tooltips for the icons
+* Add Blinding Light
+* Add Axe Toss
+
+**v5.7**
+* Add Execution Sentence
+
+**v5.6**
+* Add Pillar of Frost
+* Combine Dark Soul spells
+
+**v5.5**
+* Add Frozen Orb
+* Add Ice Nova
+* Add Heart of the Wild
+* Add Celestial Alignment
+* Add Nature's Vigil
+* Add Shadow Magic
+* Add Frozen Orb
+* Fix Spell Lock resets
+
+**v5.4**
+* Minor bug fix
+
+**v5.1**
+* Fix Dark Soul spec detection
+
+**v5.0**
+* Support spell charges
+* Fix icons disappearing when interface toggled
+* Truncate long spell names in options
+* Add Dark Soul: Instability
+* Add Dark Soul: Misery
+* Add Dark Soul: Knowledge
+* Add Survival Instincts
+* Add Breath of Sindragosa
+* Add Avatar
+
+**v4.5**
+* Add Incarnation: Tree of Life
+* Add Incarnation: King of the Jungle
+* Add Incarnation: Chosen of Elune
+* Add Killing Spree
+
+**v4.4**
+* Add Desecrated Ground
+* Add Nature's Swiftness
+* Add Unbound Will
+* Add Roar of Sacrifice
+
+**v4.3**
+* Add "Show in Ashran" option
+* Set Freezing Trap cooldown to 20s
+* Set Explosive Trap cooldown to 20s
+* Hide anchor in disabled zones
+
+**v4.2**
+* Set Psychic Scream cooldown to 30s

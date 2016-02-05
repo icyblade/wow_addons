@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.3.0] - 2016-02-05
+### 新增 OmniBar
+
 ## [2.2.2] - 2016-02-03
 ### Handynotes 的 description 现在默认是目标的名字
 
