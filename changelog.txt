@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.3.1] - 2016-02-10
+### 更新 DBM
+
 ## [2.3.0] - 2016-02-05
 ### 新增 OmniBar
 

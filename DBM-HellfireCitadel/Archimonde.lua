@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1438, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14749 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14777 $"):sub(12, -3))
 mod:SetCreatureID(91331)--Doomfire Spirit (92208), Hellfire Deathcaller (92740), Felborne Overfiend (93615), Dreadstalker (93616), Infernal doombringer (94412)
 mod:SetEncounterID(1799)
 mod:SetMinSyncRevision(13964)
@@ -90,6 +90,7 @@ local specWarnRainofChaos			= mod:NewSpecialWarningCount(189953, nil, nil, nil, 
 local specWarnDarkConduitSoon		= mod:NewSpecialWarningSoon(190394, "Ranged", nil, nil, 1, 2)
 local specWarnSeethingCorruption	= mod:NewSpecialWarningCount(190506, nil, nil, nil, 2, 2)
 local specWarnMarkOfLegion			= mod:NewSpecialWarningYouPos(187050, nil, nil, 2, 3, 5)
+local specWarnMarkOfLegionSoak		= mod:NewSpecialWarningSoakPos(187050, nil, nil, 2, 1, 6)
 local yellDoomFireFades				= mod:NewFadesYell(183586, nil, false)
 local yellMarkOfLegion				= mod:NewFadesYell(187050, 28836)
 local yellMarkOfLegionPoS			= mod:NewPosYell(187050, 28836)
@@ -462,8 +463,36 @@ local function showMarkOfLegion(self, spellName)
 			end
 		end
 	end
-	if self.Options.HudMapMarkofLegion2 and not playerHasMark then
-		DBMHudMap:RegisterRangeMarkerOnPartyMember(1870502, "party", playerName, 0.9, 12, nil, nil, nil, 1, nil, false):Appear()
+	if not playerHasMark then
+		if UnitIsDeadOrGhost("player") then return end
+		for i = 1, DBM:GetNumRealGroupMembers() do
+			local unitID = 'raid'..i
+			local isPlayer = false
+			local soakers = 0
+			soakers = soakers + 1
+			if UnitIsUnit("player", unitID) then
+				local soak = math.ceil(soakers/4)
+				if (soak == 1) then
+					specWarnMarkOfLegionSoak:Show(MELEE.." "..DBM_CORE_LEFT)
+					voiceMarkOfLegion:Play("frontleft")
+				end
+				if (soak == 2) then
+					specWarnMarkOfLegionSoak:Show(MELEE.." "..DBM_CORE_RIGHT)
+					voiceMarkOfLegion:Play("frontright")
+				end
+				if (soak == 3) then
+					specWarnMarkOfLegionSoak:Show(RANGED.." "..DBM_CORE_LEFT)
+					voiceMarkOfLegion:Play("backleft")
+				end
+				if (soak == 4) then
+					specWarnMarkOfLegionSoak:Show(RANGED.." "..DBM_CORE_RIGHT)
+					voiceMarkOfLegion:Play("backright")                 
+				end
+            end
+		end
+		if self.Options.HudMapMarkofLegion2 then
+			DBMHudMap:RegisterRangeMarkerOnPartyMember(1870502, "party", playerName, 0.9, 12, nil, nil, nil, 1, nil, false):Appear()
+		end
 	end
 end
 
