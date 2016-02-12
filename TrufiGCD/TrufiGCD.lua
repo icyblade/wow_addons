@@ -1,5 +1,14 @@
 -- TrufiGCD stevemyz@gmail.com
 
+local icy_blacklist = {
+    210372, -- aura of sacrifice
+    211727, -- demonology artifact
+    146739, -- some weird corruption
+    81297,  -- consecration
+    204242, -- consecration
+    198137, -- divine hammer
+}
+
 --sizeicon = 30 
 --speed = sizeicon /1.6 --скорость перемотка
 local TimeGcd = 1.6
@@ -985,8 +994,12 @@ function TrGCDEventBuffHandler(self,event, ...) --запущена эвенто�
 	end
 end
 local function TrGCDAddGcdSpell(texture, i, spellid) -- добавление нового спелла в очередь
-    -- ICY: blacklist the other corruption
-    if spellid == 146739 then return end
+    -- ICY: blacklist
+    for _, icy_black in pairs(icy_blacklist) do
+        if spellid == icy_black then
+            return
+        end
+    end
 	if (TrGCDi[i] == 10) then TrGCDi[i] = 1 end
 	TrGCDAddSpQueue(TrGCDi[i], i)
 	TrGCDIcon[i][TrGCDi[i]].x = 0;
@@ -1025,7 +1038,7 @@ function TrGCDEventHandler(self, event, ...)
 					if (IsChannel == nil) then TrGCDCastSp[i] = 1 end
 				else
                     -- print(arg5)
-                    if (arg5 == 81297 or arg5 == 198137) then return end -- ICY: blacklist consecration & divine hammer
+                    -- if (arg5 == 81297 or arg5 == 198137) then return end -- ICY: blacklist consecration & divine hammer
 					local b = false --висит ли багнутый бафф инстант каста
 					if ((TrGCDInsSp["spell"][i] == 48108) and (arg5 == 11366)) then b = true
 					elseif ((TrGCDInsSp["spell"][i] == 34936) and (arg5 == 29722)) then b = true

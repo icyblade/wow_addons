@@ -40,7 +40,7 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 14778 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 14786 $"):sub(12, -3)),
 	DisplayVersion = "6.2.19 alpha", -- the string that is shown as version
 	ReleaseRevision = 14770 -- the revision of the latest stable version that is available
 }
@@ -1116,6 +1116,12 @@ do
 				C_TimerAfter(10, function() self:AddMsg(DBM_CORE_3RDPROFILES) end)
 				return
 			end
+			if GetAddOnEnableState(playerName, "DPMCore") >= 1 then
+				self:Disable(true)
+				C_TimerAfter(10, function() self:AddMsg(DBM_CORE_DPMCORE) end)
+				return
+			end
+			--http://wow.curseforge.com/addons/deadly-pvp-mods/
 			--DBM is disabled and DBM is not forced disabled
 			if not dbmIsEnabled and not blockEnable then
 				C_TimerAfter(10, function() self:AddMsg(DBM_CORE_DISABLED_REMINDER) end)
@@ -2409,6 +2415,10 @@ do
 		end
 		if GetAddOnEnableState(playerName, "DBM-Profiles") >= 1 then
 			self:AddMsg(DBM_CORE_3RDPROFILES)
+			return
+		end
+		if GetAddOnEnableState(playerName, "DPMCore") >= 1 then
+			self:AddMsg(DBM_CORE_DPMCORE)
 			return
 		end
 		if blockEnable then
@@ -9126,7 +9136,7 @@ do
 				end)
 			end
 			if anchorFrame:IsShown() then
-				moveEnd()
+				moveEnd(self)
 			else
 				moving = true
 				anchorFrame:Show()

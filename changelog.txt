@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.4.0] - 2016-02-12
+### 修复 21093 Quartz 报错的问题
+### 修复 21093 Bartender4 会导致客户端崩溃的问题，但是 Bartender4 的法术触发高亮无法使用了
+### 修复 TrufiGCD 部分法术刷屏的问题
+### 暂时移除会导致客户端崩溃的 Adibags
+### 更新 DBM
+
 ## [2.3.1] - 2016-02-10
 ### 更新 DBM
 
