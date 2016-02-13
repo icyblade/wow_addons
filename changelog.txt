@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.4.1] - 2016-02-12
+### 修复 Skada 因治疗量除以 0 而报错的问题
+### 修复上次 commit 没有 add DBM 新文件的问题
+
 ## [2.4.0] - 2016-02-12
 ### 修复 21093 Quartz 报错的问题
 ### 修复 21093 Bartender4 会导致客户端崩溃的问题，但是 Bartender4 的法术触发高亮无法使用了

@@ -407,10 +407,18 @@ Skada:AddLoadableModule("Healing", function(Skada, L)
 				d.id = spell.name -- ticket 362: this needs to be spellname because spellid is not unique with pets that mirror abilities (DK DRW)
 				d.label = spell.name
 				d.value = spell.healing
-				d.valuetext = Skada:FormatValueText(
+                -- ICY: division by zero
+                if player.healing ~= 0 then
+                    d.valuetext = Skada:FormatValueText(
 												Skada:FormatNumber(spell.healing), self.metadata.columns.Healing,
 												string.format("%02.1f%%", spell.healing / player.healing * 100), self.metadata.columns.Percent
 											)
+                else
+                    d.valuetext = Skada:FormatValueText(
+												Skada:FormatNumber(spell.healing), self.metadata.columns.Healing,
+												string.format("%02.1f%%", 0 * 100), self.metadata.columns.Percent
+											)
+                end
 				-- local _, _, icon = GetSpellInfo(spell.id) -- ICY: API change
                 local icon = spell.id
 				d.icon = icon
