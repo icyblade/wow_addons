@@ -208,6 +208,11 @@ local AURA_GROUPS = {
 		17,		-- ’Ê—‘ ı£∫∂‹
 		6788,		-- –È»ı¡ÈªÍ
 	},
+    
+    ["BEACON"] = { -- ICY: beacon of light/faith
+        156910, -- beacon of faith
+        53563,  -- beacon of light
+    },
 }
 
 local type = type

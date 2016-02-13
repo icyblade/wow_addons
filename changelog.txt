@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.4.2] - 2016-02-12
+### 现在 CompactRaid 会把圣骑士的双道标识别为同类 aura
+
 ## [2.4.1] - 2016-02-12
 ### 修复 Skada 因治疗量除以 0 而报错的问题
 ### 修复上次 commit 没有 add DBM 新文件的问题
