@@ -2,7 +2,7 @@ local f = CreateFrame("Frame")
 
 f:SetScript("OnEvent", function ()
 	local _, instanceType = IsInInstance()
-	if instanceType == "raid" then
+	if instanceType == "raid" or instanceType == 'party' then -- ICY: 5-man dungeon
 		if not LoggingCombat() then
 			LoggingCombat(true)
 			print("EasyLogger: |cff00FF00ON|r")

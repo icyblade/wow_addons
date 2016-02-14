@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.5.0] - 2016-02-14
+### 新增 IcyBetaToolbox，包含了一些 Beta 里有用的功能
+### EasyLogger 会自动记录 5 人本战斗记录了
+
 ## [2.4.2] - 2016-02-12
 ### 现在 CompactRaid 会把圣骑士的双道标识别为同类 aura
 
