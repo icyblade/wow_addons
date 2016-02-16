@@ -906,15 +906,12 @@ do
 	local values = {}
 
 	local function sortFunc(a, b)
+        local apct, bpct = 0, 0
         if a.maxValue ~= 0 then
-            local apct = a.value / a.maxValue
-        else
-            local apct = 0
+            apct = a.value / a.maxValue
         end
         if b.maxValue ~= 0 then
-            local bpct = b.value / b.maxValue
-        else
-            local bpct = 0
+            bpct = b.value / b.maxValue
         end
 		-- local apct, bpct = a.value / a.maxValue, b.value / b.maxValue -- ICY: division by 0
 		if apct == bpct then
