@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.6] - 2016-02-19
+### Bartender4 的法术触发高亮重新启用
+### Adibags 重新添加回来
+### 更新 DBM
+
 ## [2.5.2] - 2016-02-16
 ### 更新 DBM
 ### 修复 2.5.1 的一个 Skada 不排序的 BUG

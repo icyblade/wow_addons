@@ -121,14 +121,14 @@ local function CreateOverlayGlow()
 	overlay.spark = overlay:CreateTexture(name .. "Spark", "BACKGROUND")
 	overlay.spark:SetPoint("CENTER")
 	overlay.spark:SetAlpha(0)
-	overlay.spark:SetTexture("Interface\SpellActivationOverlay\IconAlert")
+	overlay.spark:SetTexture([[Interface\SpellActivationOverlay\IconAlert]])
 	overlay.spark:SetTexCoord(0.00781250, 0.61718750, 0.00390625, 0.26953125)
 
 	-- inner glow
 	overlay.innerGlow = overlay:CreateTexture(name .. "InnerGlow", "ARTWORK")
 	overlay.innerGlow:SetPoint("CENTER")
 	overlay.innerGlow:SetAlpha(0)
-	overlay.innerGlow:SetTexture("Interface\SpellActivationOverlay\IconAlert")
+	overlay.innerGlow:SetTexture([[Interface\SpellActivationOverlay\IconAlert]])
 	overlay.innerGlow:SetTexCoord(0.00781250, 0.50781250, 0.27734375, 0.52734375)
 
 	-- inner glow over
@@ -136,14 +136,14 @@ local function CreateOverlayGlow()
 	overlay.innerGlowOver:SetPoint("TOPLEFT", overlay.innerGlow, "TOPLEFT")
 	overlay.innerGlowOver:SetPoint("BOTTOMRIGHT", overlay.innerGlow, "BOTTOMRIGHT")
 	overlay.innerGlowOver:SetAlpha(0)
-	overlay.innerGlowOver:SetTexture("Interface\SpellActivationOverlay\IconAlert")
+	overlay.innerGlowOver:SetTexture([[Interface\SpellActivationOverlay\IconAlert]])
 	overlay.innerGlowOver:SetTexCoord(0.00781250, 0.50781250, 0.53515625, 0.78515625)
 
 	-- outer glow
 	overlay.outerGlow = overlay:CreateTexture(name .. "OuterGlow", "ARTWORK")
 	overlay.outerGlow:SetPoint("CENTER")
 	overlay.outerGlow:SetAlpha(0)
-	overlay.outerGlow:SetTexture("Interface\SpellActivationOverlay\IconAlert")
+	overlay.outerGlow:SetTexture([[Interface\SpellActivationOverlay\IconAlert]])
 	overlay.outerGlow:SetTexCoord(0.00781250, 0.50781250, 0.27734375, 0.52734375)
     
 	-- outer glow over
@@ -151,17 +151,17 @@ local function CreateOverlayGlow()
 	overlay.outerGlowOver:SetPoint("TOPLEFT", overlay.outerGlow, "TOPLEFT")
 	overlay.outerGlowOver:SetPoint("BOTTOMRIGHT", overlay.outerGlow, "BOTTOMRIGHT")
 	overlay.outerGlowOver:SetAlpha(0)
-	overlay.outerGlowOver:SetTexture("Interface\SpellActivationOverlay\IconAlert")
+	overlay.outerGlowOver:SetTexture([[Interface\SpellActivationOverlay\IconAlert]])
 	overlay.outerGlowOver:SetTexCoord(0.00781250, 0.50781250, 0.53515625, 0.78515625)
 
 	-- ants
 	overlay.ants = overlay:CreateTexture(name .. "Ants", "OVERLAY")
 	overlay.ants:SetPoint("CENTER")
 	overlay.ants:SetAlpha(0)
-	overlay.ants:SetTexture("Interface\SpellActivationOverlay\IconAlertAnts")
+	overlay.ants:SetTexture([[Interface\SpellActivationOverlay\IconAlertAnts]])
 
 	-- setup antimations
-	-- overlay.animIn = overlay:CreateAnimationGroup() -- ICY: 21093 crash source
+	overlay.animIn = overlay:CreateAnimationGroup() -- ICY: 21093 crash source
 	CreateScaleAnim(overlay.animIn, overlay.spark,          1, 0.2, 1.5, 1.5)
 	CreateAlphaAnim(overlay.animIn, overlay.spark,          1, 0.2, 1)
 	CreateScaleAnim(overlay.animIn, overlay.innerGlow,      1, 0.3, 2, 2)
@@ -196,9 +196,9 @@ end
 local function GetOverlayGlow()
 	local overlay = tremove(lib.unusedOverlays)
 	if not overlay then
-		-- overlay = CreateOverlayGlow() -- ICY: fix for 21093 client crash
-        lib.numOverlays = lib.numOverlays + 1;
-		overlay = CreateFrame("Frame", "ActionButtonOverlay"..lib.numOverlays, UIParent, "ActionBarButtonSpellActivationAlert");
+		overlay = CreateOverlayGlow()
+        --lib.numOverlays = lib.numOverlays + 1;  -- ICY: fix for 21093 client crash
+		--overlay = CreateFrame("Frame", "ActionButtonOverlay"..lib.numOverlays, UIParent, "ActionBarButtonSpellActivationAlert");
 	end
 	return overlay
 end
