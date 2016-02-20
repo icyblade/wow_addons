@@ -1,0 +1,1 @@
+## Interface: 60200## Title: Poncho-1.0## Notes: Warm, comfy, light and protects from the Blizzard. Great for making classes in the rain.## Author: Jaliborc (João Cardoso)## X-Category: Library## X-Licence: GNU General Public License - Version 3## OptionalDeps: LibStubPoncho-1.0.xml

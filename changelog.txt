@@ -1,7 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [2.6] - 2016-02-19
+## [2.7.0] - 2016-02-20
+### 新增 Bagnon
+
+## [2.6.0] - 2016-02-19
 ### Bartender4 的法术触发高亮重新启用
 ### Adibags 重新添加回来
 ### 更新 DBM
