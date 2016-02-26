@@ -13,7 +13,7 @@ local ItemSearch = LibStub('LibItemSearch-1.2')
 local Unfit = LibStub('Unfit-1.0')
 
 -- local QUEST = select(10, GetAuctionItemClasses()) -- ICY: api removal
-local QUEST = select(6, GetItemInfo(115479))
+local QUEST = QUESTS_LABEL
 local QUEST_LOWER = QUEST:lower()
 
 
