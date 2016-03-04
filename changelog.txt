@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.7.2] - 2016-03-04
+### 修改 ShadowedUnitFrame 字体使其兼容中文
+### 更新 DBM
+
 ## [2.7.1] - 2016-02-26
 ### 修复 Bagnon 由于 GetAuctionItemClasses API 被移除导致的报错问题
 

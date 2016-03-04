@@ -126,7 +126,7 @@ L= DBM:GetModLocalization(1673)
 L= DBM:GetModLocalization(1687)
 
 -----------------------
--- <<<Suramar Catacombs>>> --
+-- <<<The Arcway>>> --
 -----------------------
 -----------------------
 -- Ivanyr --
@@ -142,6 +142,10 @@ L= DBM:GetModLocalization(1498)
 -- General Xakal --
 -----------------------
 L= DBM:GetModLocalization(1499)
+
+L:SetMiscLocalization({
+	batSpawn		=	"Reinforcements to me! NOW!"
+})
 
 -----------------------
 -- Nal'tira --

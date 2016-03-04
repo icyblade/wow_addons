@@ -43,7 +43,7 @@
 --
 
 
-local revision =("$Revision: 14754 $"):sub(12, -3)
+local revision =("$Revision: 14825 $"):sub(12, -3)
 local FrameTitle = "DBM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 
 local PanelPrototype = {}
@@ -56,7 +56,6 @@ local modelFrameCreated = false
 local soundsRegistered = false
 
 --Hard code STANDARD_TEXT_FONT since skinning mods like to taint it (or worse, set it to nil, wtf?)
---http://forums.elitistjerks.com/topic/133901-bug-report-hudmap/#entry2282069
 local standardFont = STANDARD_TEXT_FONT
 if (LOCALE_koKR) then
 	standardFont = "Fonts\\2002.TTF"

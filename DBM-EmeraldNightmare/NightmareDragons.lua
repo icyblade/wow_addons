@@ -1,8 +1,7 @@
-if DBM:GetTOC() < 70000 then return end
 local mod	= DBM:NewMod(1704, "DBM-EmeraldNightmare", nil, 768)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14741 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14825 $"):sub(12, -3))
 --mod:SetCreatureID(79015)--TODO, find
 mod:SetEncounterID(1854)
 mod:SetZone()

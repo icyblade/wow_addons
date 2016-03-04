@@ -105,7 +105,7 @@ function ShadowUF:LoadDefaultLayout(useMerge)
 		cast = false, buffs = false, party = true, player = true, pet = true, target = true, focus = true, boss = true, arena = true, playerAltPower = false, playerPower = true
 	}
 	config.font = {
-		-- name = "Myriad Condensed Web", -- ICY: 3rd party
+		name = "Myriad Condensed Web", -- ICY: 3rd party
         name = "2002",
 		size = 11,
 		extra = "",

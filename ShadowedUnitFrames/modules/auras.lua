@@ -270,7 +270,7 @@ local function updateButton(id, group, config)
 	button.border:SetHeight(config.size + 1)
 	button.border:SetWidth(config.size + 1)
 	-- button.stack:SetFont("Interface\\AddOns\\ShadowedUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf", math.floor((config.size * 0.60) + 0.5), "OUTLINE") -- ICY: 3rd
-    button.stack:SetFont("Fonts\2002.ttf", math.floor((config.size * 0.60) + 0.5), "OUTLINE")
+    button.stack:SetFont("Fonts\\2002.ttf", math.floor((config.size * 0.60) + 0.5), "OUTLINE")
 
 	button:SetScript("OnClick", cancelAura)
 	button.parent = group.parent

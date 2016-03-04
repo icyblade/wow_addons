@@ -210,7 +210,7 @@ local function createTagFunction(tags, resetCache)
 		for id, func in pairs(args) do
 			temp[id] = func(fontString.parent.unit, fontString.parent.unitOwner, fontString) or ""
 		end
-        fontString:SetFont('Fonts\\2002.ttf', 10) -- ICY: need specify font
+        fontString:SetFont('Interface\\AddOns\\ShadowedUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf', 10) -- ICY: need specify font
 		fontString:SetFormattedText(formattedText, unpack(temp))
 	end
 

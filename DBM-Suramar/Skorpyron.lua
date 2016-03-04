@@ -1,8 +1,7 @@
-if DBM:GetTOC() < 70000 then return end
 local mod	= DBM:NewMod(1706, "DBM-Suramar", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14765 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14825 $"):sub(12, -3))
 mod:SetCreatureID(102263)
 mod:SetEncounterID(1849)
 mod:DisableESCombatDetection()--Remove if blizz fixes trash firing ENCOUNTER_START
