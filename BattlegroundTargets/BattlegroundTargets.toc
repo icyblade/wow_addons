@@ -1,0 +1,33 @@
+## Interface: 60200
+## Title: BattlegroundTargets
+## Notes: A Friend-Enemy-Unit-Frame for battlegrounds.
+## Notes-deDE: Eine Freund-Feind-Anzeige für Schlachtfelder.
+## Author: kunda
+## Version: 60200-1
+## SavedVariables: BattlegroundTargets_Options
+## X-Curse-Packaged-Version: 60200-1
+## X-Curse-Project-Name: BattlegroundTargets
+## X-Curse-Project-ID: battlegroundtargets
+## X-Curse-Repository-ID: wow/battlegroundtargets/mainline
+
+BattlegroundTargets-localized-carrier.lua
+BattlegroundTargets-localized-racenames.lua
+BattlegroundTargets-localized-talents.lua
+BattlegroundTargets-localized-transliteration.lua
+
+BattlegroundTargets-localization-enUS.lua
+BattlegroundTargets-localization-deDE.lua
+BattlegroundTargets-localization-esES.lua
+BattlegroundTargets-localization-esMX.lua
+BattlegroundTargets-localization-itIT.lua
+BattlegroundTargets-localization-frFR.lua
+BattlegroundTargets-localization-koKR.lua
+BattlegroundTargets-localization-ptBR.lua
+BattlegroundTargets-localization-ruRU.lua
+BattlegroundTargets-localization-zhCN.lua
+BattlegroundTargets-localization-zhTW.lua
+
+utf8.lua
+
+BattlegroundTargets_templates.lua
+BattlegroundTargets.lua

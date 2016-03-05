@@ -1,0 +1,15 @@
+## Interface: 70000
+## Title: HandyNotes_LegionRaresTreasures
+## Version: 1.16
+## Notes: Shows location of treasures and rares in Legion
+## Author: Icyblade Dai
+## OptionalDeps: Ace3
+## RequiredDeps: HandyNotes
+## X-Embeds: Ace3
+## SavedVariables: DraenorTreasuresDB
+
+#@no-lib-strip@
+embeds.xml
+#@end-no-lib-strip@
+
+HandyNotes_LegionRaresTreasures.lua

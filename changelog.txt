@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.8.0] - 2016-03-05
+### 新增 Battleground Target
+### 新增 Handynotes LegionRaresTreasures。现在 Legion 的财宝和稀有会在大地图上显示了（Special thanks to 你才圆滚滚）
+### 修复由于 SetTexture(r, g, b, a) 更名为 SetColorTexture(r, g, b, a) 导致的丢失材质问题
+### 更新 DBM
+
 ## [2.7.2] - 2016-03-04
 ### 修改 ShadowedUnitFrame 字体使其兼容中文
 ### 更新 DBM

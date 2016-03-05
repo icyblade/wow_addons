@@ -1,13 +1,13 @@
 local mod	= DBM:NewMod(1438, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14824 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14831 $"):sub(12, -3))
 mod:SetCreatureID(91331)--Doomfire Spirit (92208), Hellfire Deathcaller (92740), Felborne Overfiend (93615), Dreadstalker (93616), Infernal doombringer (94412)
 mod:SetEncounterID(1799)
 mod:SetMinSyncRevision(13964)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)
-mod:SetHotfixNoticeRev(14808)
+mod:SetHotfixNoticeRev(14830)
 mod.respawnTime = 29--roughly
 
 mod:RegisterCombat("combat")
@@ -469,7 +469,9 @@ local function showMarkOfLegion(self, spellName)
 		local marks = #legionTargets or 4
 		for i = 1, DBM:GetNumRealGroupMembers() do
 			local unitID = 'raid'..i
-			soakers = soakers + 1
+			if not UnitDebuff(unitID, spellName) then
+				soakers = soakers + 1
+			end
 			if UnitIsUnit("player", unitID) then
 				DBM:Debug(soakers..", "..marks, 2)
 				local soak = math.ceil(soakers/marks)

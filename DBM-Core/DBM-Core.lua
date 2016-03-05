@@ -40,7 +40,7 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 14829 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 14833 $"):sub(12, -3)),
 	DisplayVersion = "6.2.19 alpha", -- the string that is shown as version
 	ReleaseRevision = 14770 -- the revision of the latest stable version that is available
 }
@@ -9788,7 +9788,7 @@ do
 			end
 			local id = self.id..pformat((("\t%s"):rep(select("#", ...))), ...)
 			if DBM.Options.AutoCorrectTimer or (DBM.Options.DebugMode and DBM.Options.DebugLevel > 1) then
-				if not self.type or (self.type ~= "target" and self.type ~= "active" and self.type ~= "fades") then
+				if not self.type or (self.type ~= "target" and self.type ~= "active" and self.type ~= "fades" and self.type ~= "ai") then
 					local bar = DBM.Bars:GetBar(id)
 					if bar then
 						local remaining = ("%.1f"):format(bar.timer)
