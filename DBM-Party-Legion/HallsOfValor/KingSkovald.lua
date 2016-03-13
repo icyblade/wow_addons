@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1488, "DBM-Party-Legion", 4, 721)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14790 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14844 $"):sub(12, -3))
 mod:SetCreatureID(95675)
 mod:SetEncounterID(1808)
 mod:SetZone()
@@ -28,8 +28,8 @@ local specWarnRagnarok				= mod:NewSpecialWarningMoveTo(193826, nil, DBM_CORE_AU
 local specWarnFlames				= mod:NewSpecialWarningMove(193702, nil, nil, nil, 1, 2)
 
 local timerRushCD					= mod:NewCDTimer(11, 193659, nil, nil, nil, 3)--11-13 unless delayed by claim aegis or ragnarok
-local timerSavageBladeCD			= mod:NewCDTimer(25, 193668, nil, nil, nil, 5, nil, DBM_CORE_TANK_ICON)--25 unless delayed by claim aegis or ragnarok
-local timerRagnarokCD				= mod:NewCDTimer(51, 193826, nil, nil, nil, 2, nil, DBM_CORE_DEADLY_ICON)
+local timerSavageBladeCD			= mod:NewCDTimer(23, 193668, nil, nil, nil, 5, nil, DBM_CORE_TANK_ICON)--23 unless delayed by claim aegis or ragnarok
+local timerRagnarokCD				= mod:NewCDTimer(51, 193826, nil, nil, nil, 2, nil, DBM_CORE_DEADLY_ICON)--60 now? or maybe health based?
 
 local voiceSavageBlade				= mod:NewVoice(193668, "Tank")--defensive
 local voiceRagnarok					= mod:NewVoice(193826)--findshield

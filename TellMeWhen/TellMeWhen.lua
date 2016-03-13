@@ -3917,9 +3917,10 @@ function TMW.GetCurrentSpecializationRole()
 	end
 
 	local _, _, _, _, _, role = GetSpecializationInfo(currentSpec)
+    --[[
 	if role == "TANK" and UnitAura("player", GLADIATOR_STANCE) then
 		return "DAMAGER"
-	end
+	end]] -- ICY: gladiator stance has been removed
 	return role
 end
 

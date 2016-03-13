@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1433, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14717 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14851 $"):sub(12, -3))
 mod:SetCreatureID(90316)
 mod:SetEncounterID(1788)
 mod:DisableESCombatDetection()--Remove if blizz fixes trash firing ENCOUNTER_START
@@ -78,7 +78,7 @@ local timerShadowRiposteCD				= mod:NewCDTimer(23.5, 185345, nil, nil, nil, 3, n
 --Adds
 local timerFelBombCD					= mod:NewCDTimer(18.5, 181753, nil, nil, nil, 3, nil, DBM_CORE_MAGIC_ICON)
 local timerFelConduitCD					= mod:NewCDTimer(15, 181827, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
-local timerPhantasmalCorruptionCD		= mod:NewCDTimer(14, 181824, nil, "Tank", nil, 3)--14-18
+local timerPhantasmalCorruptionCD		= mod:NewCDTimer(14, 181824, 156842, "Tank", nil, 3)--14-18
 local timerDarkBindingsCD				= mod:NewCDTimer(34, 185456, nil, nil, nil, 3, nil, DBM_CORE_HEROIC_ICON)
 
 local countdownPhantasmalWinds			= mod:NewCountdown(35, 181957)

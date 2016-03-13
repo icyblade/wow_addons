@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("d288", "DBM-WorldEvents", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 13232 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14841 $"):sub(12, -3))
 mod:SetCreatureID(36272, 36296, 36565)
 mod:SetModelID(16176)
 mod:SetZone()
@@ -21,7 +21,7 @@ mod:RegisterEventsInCombat(
 
 mod:SetBossHealthInfo(36296, 36565, 36272)
 
-local warnChainReaction			= mod:NewCastAnnounce(68821, 3)
+local warnChainReaction			= mod:NewCastAnnounce(68821, 3, nil, "Melee")
 
 local specWarnPerfumeSpill		= mod:NewSpecialWarningMove(68927)
 local specWarnCologneSpill		= mod:NewSpecialWarningMove(68934)
@@ -30,7 +30,7 @@ local timerHummel				= mod:NewTimer(10.5, "HummelActive", 2457, nil, false)
 local timerBaxter				= mod:NewTimer(18.5, "BaxterActive", 2457, nil, false)
 local timerFrye					= mod:NewTimer(26.5, "FryeActive", 2457, nil, false)
 mod:AddBoolOption("TrioActiveTimer", true, "timer")
-local timerChainReaction		= mod:NewCastTimer(3, 68821)
+local timerChainReaction		= mod:NewCastTimer(3, 68821, nil, "Melee")
 
 function mod:SPELL_CAST_START(args)
 	if args.spellId == 68821 then

@@ -9,7 +9,7 @@
 --    * Adam Williams (Omegal @ US-Whisperwind) (Primary boss mod author & DBM maintainer) Contact: Twitter @MysticalOS)
 --
 -- The localizations are written by:
---    * enGB/enUS: Omegal				http://www.deadlybossmods.com
+--    * enGB/enUS: Omegal				Twitter @MysticalOS
 --    * deDE: Ebmor						http://forums.elitistjerks.com/user/616736-ebmor/
 --    * ruRU: TOM_RUS					http://www.curseforge.com/profiles/TOM_RUS/
 --    * zhTW: Whyv						ultrashining@gmail.com
@@ -40,9 +40,9 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 14833 $"):sub(12, -3)),
-	DisplayVersion = "6.2.19 alpha", -- the string that is shown as version
-	ReleaseRevision = 14770 -- the revision of the latest stable version that is available
+	Revision = tonumber(("$Revision: 14854 $"):sub(12, -3)),
+	DisplayVersion = "6.2.20 alpha", -- the string that is shown as version
+	ReleaseRevision = 14852 -- the revision of the latest stable version that is available
 }
 DBM.HighestRelease = DBM.ReleaseRevision --Updated if newer version is detected, used by update nags to reflect critical fixes user is missing on boss pulls
 
@@ -286,6 +286,7 @@ DBM.DefaultOptions = {
 	FakeBWVersion = false,
 	AITimer = true,
 	AutoCorrectTimer = false,
+	ShortTimerText = true,
 	ChatFrame = "DEFAULT_CHAT_FRAME",
 }
 
@@ -407,6 +408,7 @@ local bannedMods = { -- a list of "banned" (meaning they are replaced by another
 	"DBM-HighMail",
 	"DBM-ProvingGrounds-MoP",--Renamed to DBM-ProvingGrounds in 6.0 version since blizzard updated content for WoD
 	"DBM-VPKiwiBeta",--Renamed to DBM-VPKiwi in final version.
+	"DBM-Suramar",--Renamed to DBM-Nighthold
 }
 
 
@@ -5641,7 +5643,7 @@ do
 		if UnitHealthMax(uId) ~= 0 then
 			health = UnitHealth(uId) / UnitHealthMax(uId) * 100
 		end
-		if not health or health < 5 then return end -- no worthy of combat start if health is below 5%
+		if not health or health < 2 then return end -- no worthy of combat start if health is below 2%
 		if dbmIsEnabled and InCombatLockdown() then
 			if cId ~= 0 and not bossHealth[cId] and bossIds[cId] and UnitAffectingCombat(uId) and not (UnitPlayerOrPetInRaid(uId) or UnitPlayerOrPetInParty(uId)) and healthCombatInitialized then -- StartCombat by UNIT_HEALTH.
 				if combatInfo[LastInstanceMapID] then
@@ -6091,6 +6093,7 @@ function DBM:GetGroupSize()
 end
 
 function DBM:PlaySoundFile(path, ignoreSFX)
+	if wowTOC == 70000 then return end--Check if this is fixed in newer build
 	local soundSetting = self.Options.UseSoundChannel
 	if soundSetting == "Dialog" then
 		PlaySoundFile(path, "Dialog")
@@ -6102,6 +6105,7 @@ function DBM:PlaySoundFile(path, ignoreSFX)
 end
 
 function DBM:PlaySound(path)
+	if wowTOC == 70000 then return end--Check if this is fixed in newer build
 	local soundSetting = self.Options.UseSoundChannel
 	if soundSetting == "Master" then
 		PlaySound(path, "Master")
@@ -6720,7 +6724,7 @@ function DBM:FindInstanceIDs()
 end
 
 --/run DBM:FindEncounterIDs(768)--Emerald Nightmare
---/run DBM:FindEncounterIDs(786)--Suramar Raid
+--/run DBM:FindEncounterIDs(786)--The Nighthold
 --/run DBM:FindEncounterIDs(822)--Broken Isles
 function DBM:FindEncounterIDs(instanceID, diff)
 	if not instanceID then
@@ -9819,7 +9823,11 @@ do
 			if self.type and not self.text then
 				msg = pformat(self.mod:GetLocalizedTimerText(self.type, self.spellId), ...)
 			else
-				msg = pformat(self.text, ...)
+				if type(self.text) == "number" then
+					msg = pformat(self.mod:GetLocalizedTimerText(self.type, self.text), ...)
+				else
+					msg = pformat(self.text, ...)
+				end
 			end
 			msg = msg:gsub(">.-<", stripServerName)
 			bar:SetText(msg, self.inlineIcon)
@@ -10023,10 +10031,17 @@ do
 			end
 		end
 		spellName = spellName or tostring(spellId)
+		local timerTextValue
+		--If timertext is a number, accept it as a secondary auto translate spellid
+		if timerText and type(timerText) == "number" and DBM.Options.ShortTimerText then
+			timerTextValue = timerText
+		else
+			timerTextValue = self.localization.timers[timerText]
+		end
 		local id = "Timer"..(spellId or 0)..timerType..(optionVersion or "")
 		local obj = setmetatable(
 			{
-				text = self.localization.timers[timerText],
+				text = timerTextValue,
 				type = timerType,
 				spellId = spellId,
 				timer = timer,

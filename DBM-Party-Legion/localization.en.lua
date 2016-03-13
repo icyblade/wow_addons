@@ -158,20 +158,20 @@ L= DBM:GetModLocalization(1500)
 L= DBM:GetModLocalization(1501)
 
 -----------------------
--- <<<Suramar Noble District>>> --
+-- <<<Court of Stars>>> --
 -----------------------
 -----------------------
--- Patrol Captain Volendis --
+-- Patrol Captain Gerdo --
 -----------------------
 L= DBM:GetModLocalization(1718)
 
 -----------------------
--- Talixae --
+-- Talixae Flamewreath --
 -----------------------
 L= DBM:GetModLocalization(1719)
 
 -----------------------
--- High Councillor Gerdo --
+-- Advisor Melandrus --
 -----------------------
 L= DBM:GetModLocalization(1720)
 
