@@ -689,6 +689,9 @@ Tags.defaultTags = {
 		local level = UnitLevel(unit)
 		return level > 0 and level or UnitClassification(unit) ~= "worldboss" and "??" or nil
 	end]],
+    ["prestige"] = [[function(unit, unitOwner)
+		return UnitPrestige(unit)
+	end]],
 	["maxhp"] = [[function(unit, unitOwner) return ShadowUF:FormatLargeNumber(UnitHealthMax(unit)) end]],
 	["maxpp"] = [[function(unit, unitOwner)
 		local power = UnitPowerMax(unit)
@@ -1073,6 +1076,7 @@ Tags.defaultEvents = {
 	["sshards"]					= "SUF_POWERTYPE:SOUL_SHARDS UNIT_POWER_FREQUENT",
 	["hpower"]					= "SUF_POWERTYPE:HOLY_POWER UNIT_POWER_FREQUENT",
 	["level"]               	= "UNIT_LEVEL UNIT_FACTION PLAYER_LEVEL_UP",
+    ["prestige"]                = "HONOR_PRESTIGE_UPDATE",
 	["levelcolor"]				= "UNIT_LEVEL UNIT_FACTION PLAYER_LEVEL_UP",
 	["maxhp"]               	= "UNIT_MAXHEALTH",
 	["def:name"]				= "UNIT_NAME_UPDATE UNIT_MAXHEALTH UNIT_HEALTH UNIT_HEALTH_FREQUENT",
@@ -1157,6 +1161,7 @@ Tags.defaultCategories = {
 	["status"]					= "status",
 	["race"]					= "classification",
 	["level"]					= "classification",
+    ["prestige"]                = "classification",
 	["maxhp"]					= "health",
 	["maxpp"]					= "power",
 	["missinghp"]				= "health",
@@ -1259,6 +1264,7 @@ Tags.defaultHelp = {
 	["status"]					= L["Shows Offline, Dead, Ghost or nothing depending on the units current status."],
 	["race"]					= L["Units race, Blood Elf, Tauren, Troll (unfortunately) and so on."],
 	["level"]					= L["Level without any coloring."],
+    ["prestige"]                = "Prestige Level",
 	["maxhp"]					= L["Max health, uses a short format, 17750 is formatted as 17.7k, values below 10000 are formatted as is."],
 	["maxpp"]					= L["Max power, uses a short format, 16000 is formatted as 16k, values below 10000 are formatted as is."],
 	["missinghp"]				= L["Amount of health missing, if none is missing nothing is shown. Uses a short format, -18500 is shown as -18.5k, values below 10000 are formatted as is."],
@@ -1359,6 +1365,7 @@ Tags.defaultNames = {
 	["status"]					= L["Status"],
 	["race"]					= L["Race"],
 	["level"]					= L["Level"],
+    ["prestige"]	          	= "Unit Prestige Level",
 	["maxhp"]					= L["Max HP (Short)"],
 	["maxpp"]					= L["Max power (Short)"],
 	["missinghp"]				= L["Missing HP (Short)"],
@@ -1412,7 +1419,7 @@ Tags.defaultNames = {
 	["monk:chipoints"]			= L["Chi Points"],
 	["priest:shadoworbs"]		= L["Shadow Orbs"],
 	["monk:stagger"]			= L["Stagger (Monk)"],
-	["monk:abs:stagger"]		= L["Stagger (Monk/Absolute)"]
+	["monk:abs:stagger"]		= L["Stagger (Monk/Absolute)"],
 }
 
 -- List of event types
