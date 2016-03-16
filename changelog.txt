@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.0.1] - 2016-03-16
+### 修复 ExRT 由于 SetTexture(r, g, b, a) 更名为 SetColorTexture(r, g, b, a) 导致的丢失材质问题
+
 ## [3.0.0] - 2016-03-14
 ### ShadowedUnitFrame 新增了 [prestige] 标签，用于标示 PvP 威望等级
 

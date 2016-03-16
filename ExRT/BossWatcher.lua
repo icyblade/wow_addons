@@ -1,3 +1,4 @@
+-- ICY: SetTexture -> SetColorTexture
 local GlobalAddonName, ExRT = ...
 
 local max = max
@@ -3601,7 +3602,7 @@ function BWInterfaceFrameLoad()
 		TLframe.texture = TLframe:CreateTexture(nil, "BACKGROUND",nil,0)
 		--TLframe.texture:SetTexture("Interface\\AddOns\\ExRT\\media\\bar9.tga")
 		--TLframe.texture:SetVertexColor(0.3, 1, 0.3, 1)
-		TLframe.texture:SetTexture(1, 1, 1, 1)
+		TLframe.texture:SetColorTexture(1, 1, 1, 1)
 		TLframe.texture:SetGradientAlpha("VERTICAL",1,0.82,0,.7,0.95,0.65,0,.7)
 		TLframe.texture:SetAllPoints()
 		
@@ -3610,7 +3611,7 @@ function BWInterfaceFrameLoad()
 		TLframe.textRight = ELib:Text(TLframe,"",12):Size(200,16):Point("BOTTOMRIGHT",TLframe,"BOTTOMRIGHT", -2, 2):Top():Right():Color():Shadow()
 		
 		TLframe.lifeUnderLine = TLframe:CreateTexture(nil, "BACKGROUND")
-		TLframe.lifeUnderLine:SetTexture(1,1,1,1)
+		TLframe.lifeUnderLine:SetColorTexture(1,1,1,1)
 		TLframe.lifeUnderLine:SetGradientAlpha("VERTICAL", 1,0.2,0.2, 0, 1,0.2,0.2, 0.7)
 		TLframe.lifeUnderLine._SetPoint = TLframe.lifeUnderLine.SetPoint
 		TLframe.lifeUnderLine.SetPoint = function(self,start,_end)
@@ -3631,14 +3632,14 @@ function BWInterfaceFrameLoad()
 		TLframe.redLine = {}
 		local function CreateRedLine(i)
 			TLframe.redLine[i] = TLframe:CreateTexture(nil, "BACKGROUND",nil,5)
-			TLframe.redLine[i]:SetTexture(0.7, 0.1, 0.1, 0.5)
+			TLframe.redLine[i]:SetColorTexture(0.7, 0.1, 0.1, 0.5)
 			TLframe.redLine[i]:SetSize(2,30)
 		end
 		
 		TLframe.blueLine = {}
 		local function CreateBlueLine(i)
 			TLframe.blueLine[i] = TLframe:CreateTexture(nil, "BACKGROUND",nil,6)
-			TLframe.blueLine[i]:SetTexture(0.1, 0.1, 0.7, 0.5)
+			TLframe.blueLine[i]:SetColorTexture(0.1, 0.1, 0.7, 0.5)
 			TLframe.blueLine[i]:SetSize(3,30)
 		end
 		
@@ -3785,7 +3786,7 @@ function BWInterfaceFrameLoad()
 		TLframe.ImprovedSelectSegment.Texture = TLframe:CreateTexture(nil, "BACKGROUND",nil,2)
 		--TLframe.ImprovedSelectSegment.Texture:SetTexture("Interface\\AddOns\\ExRT\\media\\bar9.tga")
 		--TLframe.ImprovedSelectSegment.Texture:SetVertexColor(0, 0.65, 0.9, .7)
-		TLframe.ImprovedSelectSegment.Texture:SetTexture(1, 1, 1, 1)
+		TLframe.ImprovedSelectSegment.Texture:SetColorTexture(1, 1, 1, 1)
 		TLframe.ImprovedSelectSegment.Texture:SetGradientAlpha("VERTICAL",0.3,0.75,0.90,.7,0,0.62,0.90,.7)
 		TLframe.ImprovedSelectSegment.Texture:SetHeight(30)
 		TLframe.ImprovedSelectSegment.Texture:Hide()
@@ -4918,7 +4919,7 @@ function BWInterfaceFrameLoad()
 			line.back = line:CreateTexture(nil, "BACKGROUND")
 			line.back:SetAllPoints()
 			if i%2 == 0 then
-				line.back:SetTexture(0.3, 0.3, 0.3, 0.1)
+				line.back:SetColorTexture(0.3, 0.3, 0.3, 0.1)
 			end
 			line.name_tooltip:SetScript("OnClick",DamageTab_Line_OnClick)
 			line.name_tooltip:SetScript("OnEnter",DamageTab_Line_OnEnter)
@@ -5032,7 +5033,7 @@ function BWInterfaceFrameLoad()
 		tab.timeLine[i]:SetSize(2,buffsTotalLines * 18 + 14)
 		
 		tab.timeLine[i].texture = tab.timeLine[i]:CreateTexture(nil, "BACKGROUND")
-		tab.timeLine[i].texture:SetTexture(1, 1, 1, 0.3)
+		tab.timeLine[i].texture:SetColorTexture(1, 1, 1, 0.3)
 		tab.timeLine[i].texture:SetAllPoints()		
 		
 		tab.timeLine[i].timeText = ELib:Text(tab.timeLine[i],"",11):Size(200,12):Point("TOPRIGHT",tab.timeLine[i],"TOPLEFT",-1,-1):Right():Top():Color()
@@ -5042,7 +5043,7 @@ function BWInterfaceFrameLoad()
 	local function CreateRedDeathLine(i)
 		if not BWInterfaceFrame.tab.tabs[3].redDeathLine[i] then
 			BWInterfaceFrame.tab.tabs[3].redDeathLine[i] = BWInterfaceFrame.tab.tabs[3]:CreateTexture(nil, "BACKGROUND",0,-4)
-			BWInterfaceFrame.tab.tabs[3].redDeathLine[i]:SetTexture(1, 0.3, 0.3, 1)
+			BWInterfaceFrame.tab.tabs[3].redDeathLine[i]:SetColorTexture(1, 0.3, 0.3, 1)
 			BWInterfaceFrame.tab.tabs[3].redDeathLine[i]:SetSize(2,buffsTotalLines * 18 + 14)
 			BWInterfaceFrame.tab.tabs[3].redDeathLine[i]:Hide()
 		end
@@ -5101,7 +5102,7 @@ function BWInterfaceFrameLoad()
 				line.back = line:CreateTexture(nil, "BACKGROUND")
 				line.back:SetAllPoints()
 				if i%2==0 then
-					line.back:SetTexture(0.3, 0.3, 0.3, 0.1)
+					line.back:SetColorTexture(0.3, 0.3, 0.3, 0.1)
 				end
 				
 				line:SetScript("OnEnter",LineOnEnter)
@@ -5321,7 +5322,7 @@ function BWInterfaceFrameLoad()
 	local function CreateBuffGreen(i,j)
 		BWInterfaceFrame.tab.tabs[3].lines[i].green[j] = BWInterfaceFrame.tab.tabs[3].lines[i]:CreateTexture(nil, "BACKGROUND",nil,5)
 		--BWInterfaceFrame.tab.tabs[3].lines[i].green[j]:SetTexture(0.1, 0.7, 0.1, 0.7)
-		BWInterfaceFrame.tab.tabs[3].lines[i].green[j]:SetTexture(1, 0.82, 0, 0.7)	
+		BWInterfaceFrame.tab.tabs[3].lines[i].green[j]:SetColorTexture(1, 0.82, 0, 0.7)	
 		BWInterfaceFrame.tab.tabs[3].lines[i].greenFrame[j] = CreateFrame("Frame",nil,BWInterfaceFrame.tab.tabs[3].lines[i])
 	end
 	
@@ -6041,7 +6042,7 @@ function BWInterfaceFrameLoad()
 	tab.DecorationLine:SetHeight(37)
 	tab.DecorationLine.texture = tab.DecorationLine:CreateTexture(nil, "BACKGROUND")
 	tab.DecorationLine.texture:SetAllPoints()
-	tab.DecorationLine.texture:SetTexture(1,1,1,1)
+	tab.DecorationLine.texture:SetColorTexture(1,1,1,1)
 	tab.DecorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
 	
 	tab.selectedMob = ELib:Text(tab.DecorationLine,"",11):Size(530,12):Point(5,-5):Color():Top()
@@ -6786,7 +6787,7 @@ function BWInterfaceFrameLoad()
 	tab.DecorationLine:SetHeight(20)
 	tab.DecorationLine.texture = tab.DecorationLine:CreateTexture(nil, "BACKGROUND")
 	tab.DecorationLine.texture:SetAllPoints()
-	tab.DecorationLine.texture:SetTexture(1,1,1,1)
+	tab.DecorationLine.texture:SetColorTexture(1,1,1,1)
 	tab.DecorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
 
 	tab.graphicsTab = ELib:Tabs(tab,0,
@@ -7469,7 +7470,7 @@ function BWInterfaceFrameLoad()
 		if not BWInterfaceFrame.tab.tabs[3].timeSegments[i] then
 		  	BWInterfaceFrame.tab.tabs[3].timeSegments[i] = CreateFrame("Frame",nil,BWInterfaceFrame.tab.tabs[3])
 			BWInterfaceFrame.tab.tabs[3].timeSegments[i].texture = BWInterfaceFrame.tab.tabs[3].timeSegments[i]:CreateTexture(nil, "BACKGROUND",0,-5)
-			BWInterfaceFrame.tab.tabs[3].timeSegments[i].texture:SetTexture(1, 1, 0.5, 0.2)
+			BWInterfaceFrame.tab.tabs[3].timeSegments[i].texture:SetColorTexture(1, 1, 0.5, 0.2)
 			BWInterfaceFrame.tab.tabs[3].timeSegments[i].texture:SetAllPoints()
 		end
 		if not BWInterfaceFrame.timeLineFrame.timeLine.timeSegments[i] then
@@ -7850,7 +7851,7 @@ function BWInterfaceFrameLoad()
 	tab.DecorationLine:SetHeight(20)
 	tab.DecorationLine.texture = tab.DecorationLine:CreateTexture(nil, "BACKGROUND")
 	tab.DecorationLine.texture:SetAllPoints()
-	tab.DecorationLine.texture:SetTexture(1,1,1,1)
+	tab.DecorationLine.texture:SetColorTexture(1,1,1,1)
 	tab.DecorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
 
 	do
@@ -9605,7 +9606,7 @@ function BWInterfaceFrameLoad()
 			line.back = line:CreateTexture(nil, "BACKGROUND")
 			line.back:SetAllPoints()
 			if i%2==0 then
-				line.back:SetTexture(0.3, 0.3, 0.3, 0.1)
+				line.back:SetColorTexture(0.3, 0.3, 0.3, 0.1)
 			end
 			line.name_tooltip:SetScript("OnClick",HealingTab_Line_OnClick)
 			line.name_tooltip:SetScript("OnEnter",HealingTab_Line_OnEnter)
@@ -10060,7 +10061,7 @@ function BWInterfaceFrameLoad()
 			
 			line.back = line:CreateTexture(nil, "BACKGROUND")
 			line.back:SetAllPoints()
-			line.back:SetTexture( 1, 1, 1, 1)
+			line.back:SetColorTexture( 1, 1, 1, 1)
 			line.back:SetGradientAlpha("HORIZONTAL", 0, 0, 0, 0, 0, 0, 0, 0)
 			
 			line:SetScript("OnEnter",DeathTab_LineOnEnter)
@@ -10900,20 +10901,20 @@ function BWInterfaceFrameLoad()
 			frame.borderright:SetPoint("TOPLEFT",frame,"TOPRIGHT",0,0)
 			frame.borderright:SetPoint("BOTTOMRIGHT",frame,"BOTTOMRIGHT",1,0)
 		
-			frame.bordertop:SetTexture(0,0,0,1)
-			frame.borderbottom:SetTexture(0,0,0,1)
-			frame.borderleft:SetTexture(0,0,0,1)
-			frame.borderright:SetTexture(0,0,0,1)
+			frame.bordertop:SetColorTexture(0,0,0,1)
+			frame.borderbottom:SetColorTexture(0,0,0,1)
+			frame.borderleft:SetColorTexture(0,0,0,1)
+			frame.borderright:SetColorTexture(0,0,0,1)
 			
 			frame.back = frame:CreateTexture(nil, "BACKGROUND",nil,-5)
 			frame.back:SetSize(50,16)
 			frame.back:SetPoint("LEFT",0,0)
-			frame.back:SetTexture(.05,.05,.05,1)
+			frame.back:SetColorTexture(.05,.05,.05,1)
 
 			frame.hp = frame:CreateTexture(nil, "BACKGROUND",nil,0)
 			frame.hp:SetSize(50,16)
 			frame.hp:SetPoint("LEFT",0,0)
-			frame.hp:SetTexture(.3,.3,.3,1)
+			frame.hp:SetColorTexture(.3,.3,.3,1)
 			
 			frame.Update = PositionsTab_RaidFrame_UpdateHP
 			
@@ -10956,20 +10957,20 @@ function BWInterfaceFrameLoad()
 		frame.borderright:SetPoint("TOPLEFT",frame,"TOPRIGHT",0,0)
 		frame.borderright:SetPoint("BOTTOMRIGHT",frame,"BOTTOMRIGHT",1,0)
 	
-		frame.bordertop:SetTexture(0,0,0,1)
-		frame.borderbottom:SetTexture(0,0,0,1)
-		frame.borderleft:SetTexture(0,0,0,1)
-		frame.borderright:SetTexture(0,0,0,1)
+		frame.bordertop:SetColorTexture(0,0,0,1)
+		frame.borderbottom:SetColorTexture(0,0,0,1)
+		frame.borderleft:SetColorTexture(0,0,0,1)
+		frame.borderright:SetColorTexture(0,0,0,1)
 		
 		frame.back = frame:CreateTexture(nil, "BACKGROUND",nil,-5)
 		frame.back:SetSize(95,20)
 		frame.back:SetPoint("LEFT",0,0)
-		frame.back:SetTexture(.05,.05,.05,1)
+		frame.back:SetColorTexture(.05,.05,.05,1)
 
 		frame.hp = frame:CreateTexture(nil, "BACKGROUND",nil,0)
 		frame.hp:SetSize(95,20)
 		frame.hp:SetPoint("LEFT",0,0)
-		frame.hp:SetTexture(.3,.3,.3,1)
+		frame.hp:SetColorTexture(.3,.3,.3,1)
 		
 		frame.Update = PositionsTab_UnitFrame_UpdateHP
 		
