@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1154, "DBM-BlackrockFoundry", nil, 457)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14569 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14858 $"):sub(12, -3))
 mod:SetCreatureID(76809, 76806)--76809 foreman feldspar, 76806 heart of the mountain, 76809 Security Guard, 76810 Furnace Engineer, 76811 Bellows Operator, 76815 Primal Elementalist, 78463 Slag Elemental, 76821 Firecaller
 mod:SetEncounterID(1690)
 mod:SetZone()
@@ -580,7 +580,7 @@ function mod:SPELL_AURA_REMOVED(args)
 			DBMHudMap:FreeEncounterMarkerByTarget(155192, args.destName)
 		end
 		if args:IsPlayer() then
-			timerBomb:Cancel()
+			timerBomb:Stop()
 			updateRangeFrame(self)
 		end
 	elseif spellId == 176121 then
@@ -623,10 +623,10 @@ function mod:UNIT_DIED(args)
 		if self.vb.elementalistsRemaining > 0 then
 			warnElementalists:Show(self.vb.elementalistsRemaining)
 		else
-			timerFireCaller:Cancel()
-			timerSecurityGuard:Cancel()
+			timerFireCaller:Stop()
+			timerSecurityGuard:Stop()
 			countdownSecurityGuard:Cancel()
-			timerSlagElemental:Cancel()
+			timerSlagElemental:Stop()
 			self:Unschedule(SecurityGuard)
 			self:Unschedule(FireCaller)
 			self.vb.phase = 3
@@ -654,10 +654,10 @@ function mod:UNIT_DIED(args)
 			prevHealth = 100
 			warnPhase2:Show()
 			self:Unschedule(Engineers)
-			timerEngineer:Cancel()
+			timerEngineer:Stop()
 			countdownEngineer:Cancel()
-			timerBellowsOperator:Cancel()
-			timerSecurityGuard:Cancel()
+			timerBellowsOperator:Stop()
+			timerSecurityGuard:Stop()
 			countdownSecurityGuard:Cancel()
 			self:Unschedule(SecurityGuard)
 			voicePhaseChange:Play("ptwo")
@@ -684,7 +684,7 @@ function mod:UNIT_DIED(args)
 			warnRegulators:Show(2 - self.vb.machinesDead)
 		end
 	elseif cid == 76809 then
-		timerRuptureCD:Cancel()
+		timerRuptureCD:Stop()
 	elseif cid == 76821 then--Firecaller
 		timerVolatileFireCD:Cancel(args.destGUID)
 	end

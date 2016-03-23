@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1372, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14824 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14858 $"):sub(12, -3))
 mod:SetCreatureID(90199)
 mod:SetEncounterID(1783)
 mod:SetZone()
@@ -190,7 +190,7 @@ end
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 181973 then
-		timerTouchofDoomCD:Cancel()
+		timerTouchofDoomCD:Stop()
 		specWarnFeastofSouls:Show()
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Hide()
@@ -379,7 +379,7 @@ function mod:SPELL_AURA_REMOVED(args)
 		end
 	elseif spellId == 181295 then
 		if args:IsPlayer() then
-			timerDigest:Cancel()
+			timerDigest:Stop()
 			countdownDigest:Cancel()
 			playerDown = false
 			if self.Options.RangeFrame and self:IsInCombat() then

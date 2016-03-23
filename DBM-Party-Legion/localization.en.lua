@@ -24,6 +24,15 @@ L= DBM:GetModLocalization(1664)
 L= DBM:GetModLocalization(1672)
 
 -----------------------
+--Black Rook Hold Trash
+-----------------------
+L = DBM:GetModLocalization("BRHTrash")
+
+L:SetGeneralLocalization({
+	name =	"Black Rook Hold Trash"
+})
+
+-----------------------
 -- <<<Darkheart Thicket>>> --
 -----------------------
 -----------------------
@@ -192,6 +201,15 @@ L= DBM:GetModLocalization(1512)
 -- Helya --
 -----------------------
 L= DBM:GetModLocalization(1663)
+
+-----------------------
+--Maw of Souls Trash
+-----------------------
+L = DBM:GetModLocalization("MawTrash")
+
+L:SetGeneralLocalization({
+	name =	"Maw of Souls Trash"
+})
 
 -----------------------
 -- <<<The Violet Hold>>> --

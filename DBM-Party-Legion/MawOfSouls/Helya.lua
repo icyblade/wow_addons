@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1663, "DBM-Party-Legion", 8, 727)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14791 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14857 $"):sub(12, -3))
 mod:SetCreatureID(96759)
 mod:SetEncounterID(1824)
 mod:SetZone()
@@ -22,8 +22,8 @@ local specWarnDestructorTentacle		= mod:NewSpecialWarningSwitch("ej12364", "Tank
 local specWarnSubmergedOver				= mod:NewSpecialWarningEnd(196947)
 
 local timerTaintofSeaCD					= mod:NewNextTimer(13, 197262, nil, false, nil, 3)
-local timerPiercingTentacleCD			= mod:NewNextTimer(10, 197596, nil, nil, nil, 3)
---local timerDestructorTentacleCD		= mod:NewNextTimer(35, "ej12364", nil, nil, nil, 1)
+local timerPiercingTentacleCD			= mod:NewNextTimer(9, 197596, nil, nil, nil, 3)
+--local timerDestructorTentacleCD		= mod:NewCDTimer(26, "ej12364", nil, nil, nil, 1)--More data
 local timerSubmerged					= mod:NewBuffFadesTimer(15, 196947, nil, nil, nil, 6)
 
 --local voiceCurtainOfFlame				= mod:NewVoice(153392)
@@ -32,7 +32,7 @@ mod.vb.phase = 1
 
 function mod:OnCombatStart(delay)
 	self.vb.phase = 1
-	timerPiercingTentacleCD:Start()
+	timerPiercingTentacleCD:Start(8.5)
 --	timerDestructorTentacleCD:Start()--Too variable
 end
 

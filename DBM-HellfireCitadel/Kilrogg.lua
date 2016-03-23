@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1396, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14851 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14858 $"):sub(12, -3))
 mod:SetCreatureID(90378)
 mod:SetEncounterID(1786)
 mod:SetZone()
@@ -185,7 +185,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
 	if spellId == 188929 and args:IsDestTypePlayer() then
 		warnHeartseeker:CombinedShow(0.3, args.destName)--Multiple targets on mythic
-		timerHeartseekerCD:Cancel()
+		timerHeartseekerCD:Stop()
 		timerHeartseekerCD:Start()
 		if args:IsPlayer() then
 			specWarnHeartSeeker:Show()

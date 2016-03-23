@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1195, "DBM-Highmaul", nil, 477)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14083 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14858 $"):sub(12, -3))
 mod:SetCreatureID(78948, 80557, 80551, 99999)--78948 Tectus, 80557 Mote of Tectus, 80551 Shard of Tectus
 mod:SetEncounterID(1722)--Hopefully win will work fine off this because otherwise tracking shard deaths is crappy
 mod:SetZone()
@@ -257,7 +257,7 @@ function mod:SPELL_AURA_REMOVED(args)
 	local spellId = args.spellId
 	if spellId == 162346 then
 		if args:IsPlayer() then
-			timerCrystalBarrage:Cancel()
+			timerCrystalBarrage:Stop()
 		end
 		if self.Options.SetIconOnCrystal then
 			self:SetIcon(args.destName, 0)
@@ -289,9 +289,9 @@ function mod:SPELL_CAST_SUCCESS(args)
 		if cid == 78948 then
 			self.vb.healthPhase = 2
 			if not self:IsMythic() then
-				timerEarthwarperCD:Cancel()
+				timerEarthwarperCD:Stop()
 				countdownEarthwarper:Cancel()
-				timerBerserkerCD:Cancel()
+				timerBerserkerCD:Stop()
 			end
 		elseif cid == 80551 then
 			self.vb.shardDeath = self.vb.shardDeath + 1

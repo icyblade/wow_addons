@@ -40,9 +40,9 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 14854 $"):sub(12, -3)),
-	DisplayVersion = "6.2.20 alpha", -- the string that is shown as version
-	ReleaseRevision = 14852 -- the revision of the latest stable version that is available
+	Revision = tonumber(("$Revision: 14864 $"):sub(12, -3)),
+	DisplayVersion = "6.2.21 alpha", -- the string that is shown as version
+	ReleaseRevision = 14862 -- the revision of the latest stable version that is available
 }
 DBM.HighestRelease = DBM.ReleaseRevision --Updated if newer version is detected, used by update nags to reflect critical fixes user is missing on boss pulls
 
@@ -450,6 +450,7 @@ local LoadAddOn, GetAddOnInfo, GetAddOnEnableState, GetAddOnMetadata, GetNumAddO
 local PlaySoundFile, PlaySound = PlaySoundFile, PlaySound
 local Ambiguate = Ambiguate
 local C_TimerNewTicker, C_TimerAfter = C_Timer.NewTicker, C_Timer.After
+local BNGetGameAccountInfo = BNGetToonInfo or BNGetGameAccountInfo
 
 -- for Phanx' Class Colors
 local RAID_CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
@@ -3416,6 +3417,8 @@ end
 --REMOVE IN LEGION
 
 do
+	--TODO: REMOVE COMPAT CODE IN LEGION/6.2.4
+	local BNGetFriendGameAccountInfo = BNGetFriendToonInfo or BNGetFriendGameAccountInfo
 	local function AcceptPartyInvite()
 		AcceptGroup()
 		for i=1, STATICPOPUP_NUMDIALOGS do
@@ -3443,8 +3446,7 @@ do
 				local presenceID, _, _, _, _, _, _, isOnline = BNGetFriendInfo(i)
 				local friendIndex = BNGetFriendIndex(presenceID)--Check if they are on more than one client at once (very likely with new launcher)
 				for i=1, BNGetNumFriendToons(friendIndex) do
-					--TODO: REMOVE COMPAT CODE IN LEGION/6.2.4
-					local _, toonName, client = BNGetFriendGameAccountInfo and BNGetFriendGameAccountInfo(friendIndex, i) or BNGetFriendToonInfo(friendIndex, i)
+					local _, toonName, client = BNGetFriendGameAccountInfo(friendIndex, i)
 					if toonName and client == BNET_CLIENT_WOW then--Check if toon name exists and if client is wow. If yes to both, we found right client
 						self:Debug("Found a wow tooname: "..toonName, 3)
 						if toonName == sender then--Now simply see if this is sender
@@ -4418,7 +4420,7 @@ do
 			if lastBossEngage[modId..realm] and (GetTime() - lastBossEngage[modId..realm] < 30) then return end
 			lastBossEngage[modId..realm] = GetTime()
 			if realm == playerRealm and DBM.Options.WorldBossAlert and not IsEncounterInProgress() then
-				local _, toonName = BNGetToonInfo(sender)
+				local _, toonName = BNGetGameAccountInfo(sender)
 				modId = tonumber(modId)--If it fails to convert into number, this makes it nil
 				local bossName = modId and EJ_GetEncounterInfo(modId) or name or UNKNOWN
 				DBM:AddMsg(DBM_CORE_WORLDBOSS_ENGAGED:format(bossName, floor(health), toonName))
@@ -4430,7 +4432,7 @@ do
 			if lastBossDefeat[modId..realm] and (GetTime() - lastBossDefeat[modId..realm] < 30) then return end
 			lastBossDefeat[modId..realm] = GetTime()
 			if realm == playerRealm and DBM.Options.WorldBossAlert and not IsEncounterInProgress() then
-				local _, toonName = BNGetToonInfo(sender)
+				local _, toonName = BNGetGameAccountInfo(sender)
 				modId = tonumber(modId)--If it fails to convert into number, this makes it nil
 				local bossName = modId and EJ_GetEncounterInfo(modId) or name or UNKNOWN
 				DBM:AddMsg(DBM_CORE_WORLDBOSS_DEFEATED:format(bossName, toonName))
@@ -5615,7 +5617,7 @@ do
 					local sameRealm = false
 					local presenceID, _, _, _, _, _, client, isOnline = BNGetFriendInfo(i)
 					if isOnline and client == BNET_CLIENT_WOW then
-						local _, _, _, userRealm = BNGetToonInfo(presenceID)
+						local _, _, _, userRealm = BNGetGameAccountInfo(presenceID)
 						if connectedServers then
 							for i = 1, #connectedServers do
 								if userRealm == connectedServers[i] then
@@ -5860,7 +5862,7 @@ do
 						local sameRealm = false
 						local presenceID, _, _, _, _, _, client, isOnline = BNGetFriendInfo(i)
 						if isOnline and client == BNET_CLIENT_WOW then
-							local _, _, _, userRealm = BNGetToonInfo(presenceID)
+							local _, _, _, userRealm = BNGetGameAccountInfo(presenceID)
 							if connectedServers then
 								for i = 1, #connectedServers do
 									if userRealm == connectedServers[i] then
@@ -6093,7 +6095,7 @@ function DBM:GetGroupSize()
 end
 
 function DBM:PlaySoundFile(path, ignoreSFX)
-	if wowTOC == 70000 then return end--Check if this is fixed in newer build
+--	if wowTOC == 70000 then return end--Check if this is fixed in newer build
 	local soundSetting = self.Options.UseSoundChannel
 	if soundSetting == "Dialog" then
 		PlaySoundFile(path, "Dialog")
@@ -6367,7 +6369,7 @@ do
 		if client ~= "WoW" then
 			return false
 		end
-		return GetRealmName() == select(4, BNGetToonInfo(toonID))
+		return GetRealmName() == select(4, BNGetGameAccountInfo(toonID))
 	end
 
 	-- sender is a presenceId for real id messages, a character name otherwise

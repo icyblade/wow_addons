@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1426, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14824 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14858 $"):sub(12, -3))
 mod:SetCreatureID(90019)--Main ID is door, door death= win. 94515 Siegemaster Mar'tak
 mod:SetEncounterID(1778)
 mod:SetZone()
@@ -290,7 +290,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				DBM:AddMsg("No Vehicle timer information beyond this point. If you have log or video of this pull, please share it")
 			end
 		else
-			timerSiegeVehicleCD:Cancel()--Cancel timer to prevent debug error, if all adds killed fast enough, next vehicle spawns early!
+			timerSiegeVehicleCD:Stop()--Cancel timer to prevent debug error, if all adds killed fast enough, next vehicle spawns early!
 			if self:IsHeroic() then
 				if vehicleTimers[Count] then
 					timerSiegeVehicleCD:Start(vehicleTimers[Count], "")
@@ -380,9 +380,9 @@ function mod:OnSync(msg)
 		if DBM.BossHealth:IsShown() then
 			DBM.BossHealth:RemoveBoss(94515)
 		end
-		timerHowlingAxeCD:Cancel()
+		timerHowlingAxeCD:Stop()
 		countdownHowlingAxe:Cancel()
-		timerShockwaveCD:Cancel()
+		timerShockwaveCD:Stop()
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Hide()
 		end

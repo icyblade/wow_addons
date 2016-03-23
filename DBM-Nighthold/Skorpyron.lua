@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1706, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14835 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14858 $"):sub(12, -3))
 mod:SetCreatureID(102263)
 mod:SetEncounterID(1849)
 mod:DisableESCombatDetection()--Remove if blizz fixes trash firing ENCOUNTER_START
@@ -94,7 +94,7 @@ function mod:SPELL_CAST_START(args)
 		local elapsed, total = timerCallofScorpidCD:GetTime()
 		local remaining = total - elapsed
 		if remaining < 11 then--delayed by shockwave
-			timerCallofScorpidCD:Cancel()
+			timerCallofScorpidCD:Stop()
 			if total == 0 then--Just in case timer expired just before cast
 				DBM:Debug("experimental timer extend firing for call of scorpid. Extend amount: "..11)
 				timerCallofScorpidCD:Start(11)

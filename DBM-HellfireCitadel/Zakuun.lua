@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1391, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14851 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14858 $"):sub(12, -3))
 mod:SetCreatureID(89890)
 mod:SetEncounterID(1777)
 mod:SetZone()
@@ -320,13 +320,13 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerSeedsofDestructionCD:Start(8.5, 1)--8.5-10
 		countdownSeedsofDestructionCD:Start(8.5)
 	elseif spellId == 179681 then--Enrage (has both armed and disarmed abilities)
-		timerDisarmCD:Cancel()--Assumed
+		timerDisarmCD:Stop()--Assumed
 		countdownDisarm:Cancel()
-		timerCavitationCD:Cancel()
-		timerSeedsofDestructionCD:Cancel()
+		timerCavitationCD:Stop()
+		timerSeedsofDestructionCD:Stop()
 		countdownSeedsofDestructionCD:Cancel()
-		timerRumblingFissureCD:Cancel()
-		timerSoulCleaveCD:Cancel()
+		timerRumblingFissureCD:Stop()
+		timerSoulCleaveCD:Stop()
 		self.vb.Enraged = true
 		self.vb.CavitationCount = 0
 		self.vb.SeedsCount = 0

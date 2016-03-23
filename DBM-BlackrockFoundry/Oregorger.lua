@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1202, "DBM-BlackrockFoundry", nil, 457)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14508 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14858 $"):sub(12, -3))
 mod:SetCreatureID(77182)
 mod:SetEncounterID(1696)
 mod:SetZone()
@@ -170,11 +170,11 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 165127 then--Hunger Dive Phase
 		self.vb.feedingFrenzy = true
 		self.vb.rollCount = 0
-		timerBlackrockSpinesCD:Cancel()
-		timerRetchedBlackrockCD:Cancel()
-		timerAcidTorrentCD:Cancel()
+		timerBlackrockSpinesCD:Stop()
+		timerRetchedBlackrockCD:Stop()
+		timerAcidTorrentCD:Stop()
 		countdownAcidTorrent:Cancel()
-		timerExplosiveShardCD:Cancel()
+		timerExplosiveShardCD:Stop()
 		specWarnHungerDrive:Show()
 		voicePhaseChange:Play("phasechange")
 		lastOre = 0

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1725, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14835 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14858 $"):sub(12, -3))
 mod:SetCreatureID(104415)--104731 (Depleted Time Particle). 104676 (Waning Time Particle). 104491 (Accelerated Time particle). 104492 (Slow Time Particle)
 mod:SetEncounterID(1865)
 mod:SetZone()
@@ -73,7 +73,7 @@ end
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 211927 then
-		timerChronoPartCD:Cancel()--Will be used immediately when this ends.
+		timerChronoPartCD:Stop()--Will be used immediately when this ends.
 		timerPowerOverwhelmingCD:Start()
 		specWarnPowerOverwhelming:Show()
 		voicePowerOverwhelming:Play("watchstep")
@@ -134,7 +134,7 @@ function mod:SPELL_AURA_REMOVED(args)
 		if args:IsPlayer() then
 			specWarnTimeBomb:Cancel()
 			voiceTimeBomb:Cancel()
-			timerTimeBomb:Cancel()
+			timerTimeBomb:Stop()
 			countdownTimeBomb:Cancel()
 			yellTimeBomb:Cancel()
 			if self.Options.RangeFrame then

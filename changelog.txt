@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.0.3] - 2016-03-20
+### 更新 DBM
+
+## [3.0.2] - 2016-03-16
+### 修复 DeathNote 由于 SetTexture(r, g, b, a) 更名为 SetColorTexture(r, g, b, a) 导致的丢失材质问题
+### 修复 ShadowedUnitFrame 不显示 DH 职业颜色的问题
+
 ## [3.0.1] - 2016-03-16
 ### 修复 ExRT 由于 SetTexture(r, g, b, a) 更名为 SetColorTexture(r, g, b, a) 导致的丢失材质问题
 
@@ -149,12 +156,12 @@ All notable changes to this project will be documented in this file.
 
 ## [1.1.0] - 2015-12-12
 ### 添加 TMW, SUF, IcyNameplates
-- 由于 TMW 的缘故，从这个版本起，需要加入 WTF 文件
-- SUF 修改配置时可能崩溃，尽量修改一点就小退一下保存设置
-- IcyNameplates 现在使用了一种比较暴力的操作方式，所以在怪比较多的时候可能会很卡
+### 由于 TMW 的缘故，从这个版本起，需要加入 WTF 文件
+### SUF 修改配置时可能崩溃，尽量修改一点就小退一下保存设置
+### IcyNameplates 现在使用了一种比较暴力的操作方式，所以在怪比较多的时候可能会很卡
 
 ## [1.0.1] - 2015-12-12
-- 现在 Skada 不会统计术士灵魂雕像的伤害
+### 现在 Skada 不会统计术士灵魂雕像的伤害
 
 ## [1.0.0] - 2015-12-03
 ### init

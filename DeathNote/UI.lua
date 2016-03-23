@@ -1,3 +1,4 @@
+-- ICY: SetTexture -> SetColorTexture
 local L = LibStub("AceLocale-3.0"):GetLocale("DeathNote")
 
 local WindowBackdrop = {
@@ -59,7 +60,7 @@ function DeathNote:Show()
 
 		-- titlebar
 		local titlebar = frame:CreateTexture(nil, "BACKGROUND")
-		titlebar:SetTexture(0.5, 0.5, 0.5)
+		titlebar:SetColorTexture(0.5, 0.5, 0.5)
 		titlebar:SetGradient("HORIZONTAL", 0.6, 0.6, 0.6, 0.3, 0.3, 0.3)
 		titlebar:SetPoint("TOPLEFT", 4, -4)
 		titlebar:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", -4, -28)
@@ -626,7 +627,7 @@ function DeathNote:Show()
 
 		local name_scrollbg = name_scroll:CreateTexture(nil, "BACKGROUND")
 		name_scrollbg:SetAllPoints()
-		name_scrollbg:SetTexture(0, 0, 0, 1)
+		name_scrollbg:SetColorTexture(0, 0, 0, 1)
 
 		local name_content = CreateFrame("Frame", nil, name_list)
 		name_list:SetScrollChild(name_content)
@@ -1762,11 +1763,11 @@ end
 ------------------------------------------------------------------------------
 
 local function ListBox_Column_Dragger_OnLeave(frame)
-	frame.background:SetTexture(0.7, 0.7, 0.7, 0.8)
+	frame.background:SetColorTexture(0.7, 0.7, 0.7, 0.8)
 end
 
 local function ListBox_Column_Dragger_OnEnter(frame)
-	frame.background:SetTexture(1, 1, 1, 1)
+	frame.background:SetColorTexture(1, 1, 1, 1)
 end
 
 local function ListBox_Column_Dragger_OnMouseDown(frame)
@@ -1838,7 +1839,7 @@ local function ListBox_AddColumn(self, label, align, width)
 
 		dragger.background = dragger:CreateTexture(nil, "OVERLAY")
 		dragger.background:SetAllPoints()
-		dragger.background:SetTexture(0.7, 0.7, 0.7, 0.8)
+		dragger.background:SetColorTexture(0.7, 0.7, 0.7, 0.8)
 
 		dragger.obj = self
 		dragger.prev = prev
@@ -1870,7 +1871,7 @@ local function ListBox_Column_OnEnter(frame)
 	if not frame.line.static_hili then
 		frame.line.hili:Show()
 	else
-		frame.line.hili:SetTexture(normal_hilight.r, normal_hilight.g, normal_hilight.b, normal_hilight.a)
+		frame.line.hili:SetColorTexture(normal_hilight.r, normal_hilight.g, normal_hilight.b, normal_hilight.a)
 	end
 
 	if frame.line.obj.column_onenter then
@@ -1882,7 +1883,7 @@ local function ListBox_Column_OnLeave(frame)
 	if not frame.line.static_hili then
 		frame.line.hili:Hide()
 	else
-		frame.line.hili:SetTexture(frame.line.static_hili.r, frame.line.static_hili.g, frame.line.static_hili.b, frame.line.static_hili.a)
+		frame.line.hili:SetColorTexture(frame.line.static_hili.r, frame.line.static_hili.g, frame.line.static_hili.b, frame.line.static_hili.a)
 	end
 
 	if frame.line.obj.column_onleave then
@@ -1914,9 +1915,9 @@ local function ListBox_Line_Column_OnSizeChanged(frame)
 			if width2 > 0 then
 				frame.bartex2:SetWidth(width2)
 				if frame.value[2] > 0 then
-					frame.bartex2:SetTexture(0, 1, 0)
+					frame.bartex2:SetColorTexture(0, 1, 0)
 				else
-					frame.bartex2:SetTexture(1, 0, 0)
+					frame.bartex2:SetColorTexture(1, 0, 0)
 				end
 
 				frame.bartex2:Show()
@@ -1988,7 +1989,7 @@ local function ListBox_CreateLine(self)
 
 		local hili = line:CreateTexture(nil, "OVERLAY")
 		hili:Hide()
-		hili:SetTexture(normal_hilight.r, normal_hilight.g, normal_hilight.b, normal_hilight.a)
+		hili:SetColorTexture(normal_hilight.r, normal_hilight.g, normal_hilight.b, normal_hilight.a)
 		hili:SetAllPoints()
 		hili:SetBlendMode("ADD")
 		line.hili = hili
@@ -2062,7 +2063,7 @@ local function ListBox_UpdateLine(self, nline, values)
 				line.columns[i].bartex = line.columns[i]:CreateTexture(nil, "BACKGROUND")
 				line.columns[i].bartex:SetPoint("TOPLEFT", line.columns[i], "TOPLEFT", 1, -3)
 				line.columns[i].bartex:SetPoint("BOTTOM", line.columns[i], "BOTTOM", 0, 3)
-				line.columns[i].bartex:SetTexture(0, 0.7, 0.9)
+				line.columns[i].bartex:SetColorTexture(0, 0.7, 0.9)
 
 				line.columns[i].bartex2 = line.columns[i]:CreateTexture(nil, "BACKGROUND")
 				line.columns[i].bartex2:SetPoint("TOPLEFT", line.columns[i].bartex, "TOPRIGHT")
@@ -2104,11 +2105,11 @@ local function ListBox_SetLineHighlight(self, nline, color)
 
 	if color then
 		line.static_hili = color
-		line.hili:SetTexture(color.r, color.g, color.b, color.a)
+		line.hili:SetColorTexture(color.r, color.g, color.b, color.a)
 		line.hili:Show()
 	elseif line.static_hili then
 		line.static_hili = nil
-		line.hili:SetTexture(normal_hilight.r, normal_hilight.g, normal_hilight.b, normal_hilight.a)
+		line.hili:SetColorTexture(normal_hilight.r, normal_hilight.g, normal_hilight.b, normal_hilight.a)
 		line.hili:Hide()
 	end
 
@@ -2119,7 +2120,7 @@ local function ListBox_ClearAllLines(self)
 	for i = 1, #self.lines do
 		self.lines[i].userdata = nil
 		self.lines[i].static_hili = nil
-		self.lines[i].hili:SetTexture(normal_hilight.r, normal_hilight.g, normal_hilight.b, normal_hilight.a)
+		self.lines[i].hili:SetColorTexture(normal_hilight.r, normal_hilight.g, normal_hilight.b, normal_hilight.a)
 		self.lines[i].hili:Hide()
 		self.lines[i]:Hide()
 	end
@@ -2186,7 +2187,7 @@ function DeathNote:CreateListBox(parent, scale)
 
 	local scrollbg = scrollbar:CreateTexture(nil, "BACKGROUND")
 	scrollbg:SetAllPoints()
-	scrollbg:SetTexture(0, 0, 0, 1)
+	scrollbg:SetColorTexture(0, 0, 0, 1)
 
 	local content = CreateFrame("Frame", nil, scrollframe)
 	scrollframe:SetScrollChild(content)
