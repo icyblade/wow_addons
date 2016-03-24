@@ -6,7 +6,7 @@
 -- This addon is written and copyrighted by:
 --    * Paul Emmerich (Tandanu @ EU-Aegwynn) (DBM-Core)
 --    * Martin Verges (Nitram @ EU-Azshara) (DBM-GUI)
---    * Adam Williams (Omegal @ US-Whisperwind) (Primary boss mod author & DBM maintainer) Contact: Twitter @MysticalOS)
+--    * Adam Williams (Omegal @ US-Whisperwind) (Primary boss mod author & DBM maintainer)
 --
 -- The localizations are written by:
 --    * enGB/enUS: Omegal				Twitter @MysticalOS
@@ -40,9 +40,9 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 14864 $"):sub(12, -3)),
-	DisplayVersion = "6.2.21 alpha", -- the string that is shown as version
-	ReleaseRevision = 14862 -- the revision of the latest stable version that is available
+	Revision = tonumber(("$Revision: 14868 $"):sub(12, -3)),
+	DisplayVersion = "6.2.22 alpha", -- the string that is shown as version
+	ReleaseRevision = 14865 -- the revision of the latest stable version that is available
 }
 DBM.HighestRelease = DBM.ReleaseRevision --Updated if newer version is detected, used by update nags to reflect critical fixes user is missing on boss pulls
 
@@ -3419,6 +3419,7 @@ end
 do
 	--TODO: REMOVE COMPAT CODE IN LEGION/6.2.4
 	local BNGetFriendGameAccountInfo = BNGetFriendToonInfo or BNGetFriendGameAccountInfo
+	local BNGetNumFriendGameAccounts = BNGetNumFriendToons or BNGetNumFriendGameAccounts
 	local function AcceptPartyInvite()
 		AcceptGroup()
 		for i=1, STATICPOPUP_NUMDIALOGS do
@@ -3445,7 +3446,7 @@ do
 			for i = 1, numBNetOnline do
 				local presenceID, _, _, _, _, _, _, isOnline = BNGetFriendInfo(i)
 				local friendIndex = BNGetFriendIndex(presenceID)--Check if they are on more than one client at once (very likely with new launcher)
-				for i=1, BNGetNumFriendToons(friendIndex) do
+				for i=1, BNGetNumFriendGameAccounts(friendIndex) do
 					local _, toonName, client = BNGetFriendGameAccountInfo(friendIndex, i)
 					if toonName and client == BNET_CLIENT_WOW then--Check if toon name exists and if client is wow. If yes to both, we found right client
 						self:Debug("Found a wow tooname: "..toonName, 3)

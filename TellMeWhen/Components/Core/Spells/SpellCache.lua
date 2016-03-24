@@ -10,6 +10,15 @@
 -- Cybeloras of Aerie Peak/Detheroc/Mal'Ganis
 -- --------------------
 
+local icy_blacklist = {115069, 124255, 124273, 124274, 124275} -- ICY: blacklist some wierd spells
+local function icy_has_value(tbl, value)
+    for k, v in ipairs(tbl) do
+        if v == value then
+            return true
+        end
+    end
+    return false
+end
 
 if not TMW then return end
 
@@ -183,51 +192,55 @@ TMW:RegisterCallback("TMW_OPTIONS_LOADED", function()
 		local isInCombatLockdown = InCombatLockdown()
 		local function SpellCacher()
 
-			while spellsFailed < CONST.MAX_FAILED_SPELLS do
-			
-				local name, rank, icon = GetSpellInfo(index)
-				if name then
-					name = strlower(name)
+			--while spellsFailed < CONST.MAX_FAILED_SPELLS do -- ICY: blacklist some wierd spells
+            while (spellsFailed < CONST.MAX_FAILED_SPELLS) do
+                if not icy_has_value(icy_blacklist, index) then
+                    local name, rank, icon = GetSpellInfo(index)
+                    if name then
+                        name = strlower(name)
 
-					local fail =
-					CONST.INVALID_TEXTURES[icon] or
-					findword(name, "dnd") or
-					findword(name, "test") or
-					findword(name, "debug") or
-					findword(name, "bunny") or
-					findword(name, "visual") or
-					findword(name, "trigger") or
-					strfind(name, "[%]%[%%%+%?]") or -- no brackets, plus signs, percent signs, or question marks
-					findword(name, "vehicle") or
-					findword(name, "event") or
-					findword(name, "quest") or
-					strfind(name, ":%s?%d") or -- interferes with colon duration syntax
-					findword(name, "camera") or
-					findword(name, "dmg")
+                        local fail =
+                        CONST.INVALID_TEXTURES[icon] or
+                        findword(name, "dnd") or
+                        findword(name, "test") or
+                        findword(name, "debug") or
+                        findword(name, "bunny") or
+                        findword(name, "visual") or
+                        findword(name, "trigger") or
+                        strfind(name, "[%]%[%%%+%?]") or -- no brackets, plus signs, percent signs, or question marks
+                        findword(name, "vehicle") or
+                        findword(name, "event") or
+                        findword(name, "quest") or
+                        strfind(name, ":%s?%d") or -- interferes with colon duration syntax
+                        findword(name, "camera") or
+                        findword(name, "dmg")
 
-					if not fail then
-						Parser:SetOwner(UIParent, "ANCHOR_NONE") -- must set the owner before text can be obtained.
-						Parser:SetSpellByID(index)
-						local r, g, b = LT1:GetTextColor()
-						if g > .95 and r > .95 and b > .95 then
-							Cache[index] = name
-						end
-						spellsFailed = 0
-					end
-				else
-					spellsFailed = spellsFailed + 1
-				end
-				index = index + 1
+                        if not fail then
+                            Parser:SetOwner(UIParent, "ANCHOR_NONE") -- must set the owner before text can be obtained.
+                            Parser:SetSpellByID(index)
+                            local r, g, b = LT1:GetTextColor()
+                            if g > .95 and r > .95 and b > .95 then
+                                Cache[index] = name
+                            end
+                            spellsFailed = 0
+                        end
+                    else
+                        spellsFailed = spellsFailed + 1
+                    end
+                    index = index + 1
 
-				if index % (isInCombatLockdown and 1 or NumCachePerFrame) == 0 then
-					TMW:Fire("TMW_SPELLCACHE_NUMCACHED_CHANGED", index)
-					if index > TMW.IE.db.locale.SpellCacheLength then
-						TMW.IE.db.locale.SpellCacheLength = TMW.IE.db.locale.SpellCacheLength + 2000
-						TMW:Fire("TMW_SPELLCACHE_EXPECTEDCACHELENGTH_UPDATED", TMW.IE.db.locale.SpellCacheLength)
-					end
-					yield()
-				end
-			end
+                    if index % (isInCombatLockdown and 1 or NumCachePerFrame) == 0 then
+                        TMW:Fire("TMW_SPELLCACHE_NUMCACHED_CHANGED", index)
+                        if index > TMW.IE.db.locale.SpellCacheLength then
+                            TMW.IE.db.locale.SpellCacheLength = TMW.IE.db.locale.SpellCacheLength + 2000
+                            TMW:Fire("TMW_SPELLCACHE_EXPECTEDCACHELENGTH_UPDATED", TMW.IE.db.locale.SpellCacheLength)
+                        end
+                        yield()
+                    end
+                else
+                    index = index + 1
+                end
+            end
 		end
 		local co = coroutine.create(SpellCacher)
 		
