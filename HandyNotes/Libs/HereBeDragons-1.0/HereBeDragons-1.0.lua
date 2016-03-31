@@ -188,6 +188,9 @@ if not oldversion or oldversion < 15 then
         end
 
         local numFloors = GetNumDungeonMapLevels()
+        if numFloors == nil then -- ICY: fix
+            numFloors = 0
+        end
         if numFloors == 0 and GetCurrentMapDungeonLevel() == 1 then
             numFloors = 1
             mapData[id].fakefloor = true

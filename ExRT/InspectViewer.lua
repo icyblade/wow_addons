@@ -14,27 +14,34 @@ module.db.inspectDBAch = parentModule.db.inspectDBAch
 module.db.inspectQuery = parentModule.db.inspectQuery
 module.db.specIcons = ExRT.A.ExCD2 and ExRT.A.ExCD2.db.specIcons
 module.db.itemsSlotTable = parentModule.db.itemsSlotTable
-module.db.classIDs = {WARRIOR=1,PALADIN=2,HUNTER=3,ROGUE=4,PRIEST=5,DEATHKNIGHT=6,SHAMAN=7,MAGE=8,WARLOCK=9,MONK=10,DRUID=11,DEMONHUNTER=12}
-module.db.glyphsIDs = {9,11,13,10,8,12}
+module.db.classIDs = ExRT.GDB.ClassID
+module.db.glyphsIDs = ExRT.is7 and {8,9,10,11,12,13} or {9,11,13,10,8,12}
 
 module.db.statsList = {'intellect','agility','strength','spirit','haste','mastery','crit','spellpower','multistrike','versatility','armor','leech','avoidance','speed'}
 module.db.statsListName = {L.InspectViewerInt,L.InspectViewerAgi,L.InspectViewerStr,L.InspectViewerSpirit,L.InspectViewerHaste,L.InspectViewerMastery,L.InspectViewerCrit,L.InspectViewerSpd, L.InspectViewerMS, L.InspectViewerVer, L.InspectViewerBonusArmor, L.InspectViewerLeech, L.InspectViewerAvoidance, L.InspectViewerSpeed}
 
-module.db.baseStats = { --By class IDs
-	agility = {889,455,1284,1284,1067,1071,1284,889,985,1284,1284},
-	strength = {1455,1455,886,1206,843,1455,626,647,551,626,626},
-	spirit = {679,782,711,533,782,640,782,1155,1155,782,782},
-	intellect = {711,1042,854,711,1042,569,1042,1042,1042,1042,1042},
+module.db.baseStats = ExRT.isLegionContent and {	--By class IDs
+	strength =  {	10232,	10232,	6231,	8481,	5929,	10232,	4042,	4550,	3875,	4402,	4042,	8481,	},
+	agility =   {	6252,	3200,	9030,	9030,	7504,	7532,	9030,	6252,	6927,	9030,	9030,	9030,	},
+	intellect = {	5000,	7328,	6006,	5000,	7328,	4002,	7328,	7328,	7328,	7328,	7328,	5000,	},
+	spirit =    {	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	},
+		--	WARRIOR,PALADIN,HUNTER,	ROGUE,	PRIEST,	DK,	SHAMAN,	MAGE,	WARLOCK,MONK,	DRUID,	DH,
+} or { --By class IDs
+	agility = {889,455,1284,1284,1067,1071,1284,889,985,1284,1284,0},
+	strength = {1455,1455,886,1206,843,1455,626,647,551,626,626,0},
+	spirit = {679,782,711,533,782,640,782,1155,1155,782,782,0},
+	intellect = {711,1042,854,711,1042,569,1042,1042,1042,1042,1042,0},
 }
 module.db.raceList = {'Human','Dwarf','Night Elf','Orc','Tauren','Undead','Gnome','Troll','Blood Elf','Draenei','Goblin','Worgen','Pandaren'}
 module.db.raceStatsDiffs = {
-	agility={0,-4,4,-3,-4,-2,2,2,2,-3,2,2,-2},
-	strength={0,5,-4,3,5,-1,-5,1,-3,1,-3,3,0},
-	intellect={0,-1,0,-3,-4,-2,3,-4,3,0,3,-4,-1},
-	spirit={0,-1,0,2,2,5,0,1,-2,2,-2,-1,2},
+	strength =  {	0,	5,	-4,	3,	5,	-1,	-5,	1,	-3,	1,	-3,	3,	0,	},
+	agility =   {	0,	-4,	4,	-3,	-4,	-2,	2,	2,	2,	-3,	2,	2,	-2,	},
+	intellect = {	0,	-1,	0,	-3,	-4,	-2,	3,	-4,	3,	0,	3,	-4,	-1,	},
+	spirit =    {	0,	-1,	0,	2,	2,	5,	0,	1,	-2,	2,	-2,	-1,	2,	},
+		--	Human,	Dwarf,	NElf,	Orc,	Tauren,	Undead,	Gnome,	Troll,	BElf,	Draenei,Goblin,	Worgen,	Pandaren
 }
 
-module.db.statsMultiplayBySpec = {
+module.db.statsMultiplayBySpec = ExRT.is7 and {} or {
 	[62] = 'mastery',
 	[63] = 'crit',
 	[64] = 'multistrike',
@@ -71,48 +78,8 @@ module.db.statsMultiplayBySpec = {
 	[270] = 'multistrike',
 }
 
-module.db.armorType = {
-	WARRIOR="PLATE",PALADIN="PLATE",HUNTER="MAIL",ROGUE="LEATHER",PRIEST="CLOTH",DEATHKNIGHT="PLATE",SHAMAN="MAIL",MAGE="CLOTH",WARLOCK="CLOTH",MONK="LEATHER",DRUID="LEATHER",DEMONHUNTER="LEATHER"
-}
-
-module.db.roleBySpec = {
-	[62] = 'RANGE',
-	[63] = 'RANGE',
-	[64] = 'RANGE',
-	[65] = 'HEAL',
-	[66] = 'TANK',
-	[70] = 'MELEE',
-	[71] = 'MELEE',
-	[72] = 'MELEE',
-	[73] = 'TANK',
-	[102] = 'RANGE',
-	[103] = 'MELEE',
-	[104] = 'TANK',
-	[105] = 'HEAL',
-	[250] = 'TANK',
-	[251] = 'MELEE',
-	[252] = 'MELEE',
-	[253] = 'RANGE',
-	[254] = 'RANGE',
-	[255] = 'RANGE',
-	[256] = 'HEAL',
-	[257] = 'HEAL',
-	[258] = 'RANGE',
-	[259] = 'MELEE',
-	[260] = 'MELEE',
-	[261] = 'MELEE',
-	[262] = 'RANGE',
-	[263] = 'MELEE',
-	[264] = 'HEAL',
-	[265] = 'RANGE',
-	[266] = 'RANGE',
-	[267] = 'RANGE',
-	[268] = 'TANK',
-	[269] = 'MELEE',
-	[270] = 'HEAL',
-	[577] = 'MELEE',
-	[581] = 'TANK',
-}
+module.db.armorType = ExRT.GDB.ClassArmorType
+module.db.roleBySpec = ExRT.GDB.ClassSpecializationRole
 
 module.db.specHasOffhand = {
 	[71]=true,
@@ -125,6 +92,8 @@ module.db.specHasOffhand = {
 	[263]=true,
 	[268]=true,
 	[269]=true,
+	[577]=true,
+	[581]=true,
 }
 
 module.db.socketsBonusIDs = {
@@ -271,6 +240,15 @@ function module.main:ADDON_LOADED()
 	VExRT.InspectViewer = VExRT.InspectViewer or {}
 	--if VExRT.InspectViewer.enabled and (not VExRT.ExCD2 or not VExRT.ExCD2.enabled) then module:Enable() end
 	
+	if VExRT.Addon.Version < 3580 then
+		VExRT.InspectViewer.ColorizeNoEnch = true
+		VExRT.InspectViewer.ColorizeLowIlvl = true
+		VExRT.InspectViewer.ColorizeNoGems = true
+		VExRT.InspectViewer.ColorizeNoTopEnchGems = false
+		VExRT.InspectViewer.ColorizeLowIlvl685 = false
+		VExRT.InspectViewer.ColorizeNoValorUpgrade = false
+	end
+	
 	module:RegisterSlash()
 end
 
@@ -343,31 +321,44 @@ function module.options:Load()
 		f(self.checkButton)
 	end
 	
+	module.db.colorizeNoEnch = VExRT.InspectViewer.ColorizeNoEnch
+	module.db.colorizeLowIlvl = VExRT.InspectViewer.ColorizeLowIlvl
+	module.db.colorizeNoGems = VExRT.InspectViewer.ColorizeNoGems
+	module.db.colorizeNoTopEnchGems = VExRT.InspectViewer.ColorizeNoTopEnchGems
+	module.db.colorizeLowIlvl685 = VExRT.InspectViewer.ColorizeLowIlvl685
+	module.db.colorizeNoValorUpgrade = VExRT.InspectViewer.ColorizeNoValorUpgrade
+	
 	self.chkItemsTrackDropDown = ELib:DropDown(self,300,7):Point(50,0):Size(50)
 	self.chkItemsTrackDropDown:Hide()
 	self.chkItemsTrackDropDown.List = {
 		{text = L.InspectViewerColorizeNoEnch,checkable = true,checkState = module.db.colorizeNoEnch, checkFunc = function(self,checked) 
 			module.db.colorizeNoEnch = checked
+			VExRT.InspectViewer.ColorizeNoEnch = checked
 			module.options.ReloadPage()
 		end,func = ItemsTrackDropDownClick},
 		{text = L.InspectViewerColorizeNoGems,checkable = true,checkState = module.db.colorizeNoGems, checkFunc = function(self,checked) 
 			module.db.colorizeNoGems = checked
+			VExRT.InspectViewer.ColorizeNoGems = checked
 			module.options.ReloadPage()
 		end,func = ItemsTrackDropDownClick},
 		{text = format(L.InspectViewerColorizeLowIlvl,630),checkable = true,checkState = module.db.colorizeLowIlvl, checkFunc = function(self,checked) 
 			module.db.colorizeLowIlvl = checked
+			VExRT.InspectViewer.ColorizeLowIlvl = checked
 			module.options.ReloadPage()
 		end,func = ItemsTrackDropDownClick},
 		{text = L.InspectViewerColorizeNoTopEnch,checkable = true,checkState = module.db.colorizeNoTopEnchGems, checkFunc = function(self,checked) 
 			module.db.colorizeNoTopEnchGems = checked
+			VExRT.InspectViewer.ColorizeNoTopEnchGems = checked
 			module.options.ReloadPage()
 		end,func = ItemsTrackDropDownClick},
 		{text = format(L.InspectViewerColorizeLowIlvl,685),checkable = true,checkState = module.db.colorizeLowIlvl685, checkFunc = function(self,checked) 
 			module.db.colorizeLowIlvl685 = checked
+			VExRT.InspectViewer.ColorizeLowIlvl685 = checked
 			module.options.ReloadPage()
 		end,func = ItemsTrackDropDownClick},
 		{text = L.InspectViewerColorizeNoValorUpgrade,checkable = true,checkState = module.db.colorizeNoValorUpgrade, checkFunc = function(self,checked)
 			module.db.colorizeNoValorUpgrade = checked
+			VExRT.InspectViewer.ColorizeNoValorUpgrade = checked
 			module.options.ReloadPage()
 		end,func = ItemsTrackDropDownClick},
 		{text = L.minimapmenuclose,checkable = false, padding = 16, func = function()
@@ -393,7 +384,7 @@ function module.options:Load()
 	
 	local dropDownTable = {
 		[1] = {
-			{"WARRIOR","PALADIN","HUNTER","ROGUE","PRIEST","DEATHKNIGHT","SHAMAN","MAGE","WARLOCK","MONK","DRUID"},
+			ExRT.GDB.ClassList,
 		},
 		[2] = {
 			{"CLOTH","LEATHER","MAIL","PLATE"},
@@ -404,7 +395,7 @@ function module.options:Load()
 			{TANK,HEALER,DAMAGER,MELEE,RANGED},
 		},
 		[4] = {
-			{"PALADIN_PRIEST_WARLOCK","ROGUE_DEATHKNIGHT_MAGE_DRUID","WARRIOR_HUNTER_SHAMAN_MONK"},
+			{"PALADIN_PRIEST_WARLOCK_DEMONHUNTER","ROGUE_DEATHKNIGHT_MAGE_DRUID","WARRIOR_HUNTER_SHAMAN_MONK"},
 		},
 	}
 	
@@ -683,7 +674,7 @@ function module.options:Load()
 							local t = data[j]
 							if t and t ~= 0 then
 								t = (j-1)*3+t
-								local spellTexture = select(3,GetTalentInfoByID( data.talentsIDs[j] ))
+								local _,_,spellTexture = GetTalentInfoByID( data.talentsIDs[j] )
 								line.items[j].texture:SetTexture(spellTexture)
 								line.items[j].link = GetTalentLink( data.talentsIDs[j] )
 								line.items[j].sid = nil
@@ -696,10 +687,17 @@ function module.options:Load()
 						for j=9,14 do
 							local t = data[module.db.glyphsIDs[j-8]]
 							if t then
-								local spellTexture = GetSpellTexture(t)
-								line.items[j].texture:SetTexture(spellTexture)
-								line.items[j].link = "|cffffffff|Hspell:"..t.."|h[name]|h|r"
-								line.items[j].sid = t
+								if ExRT.is7 then
+									local _,_,spellTexture = GetPvpTalentInfoByID( data.talentsIDs[ j - 1 ] )
+									line.items[j].texture:SetTexture(spellTexture)
+									line.items[j].link = GetPvpTalentLink( data.talentsIDs[ j - 1 ] )
+									line.items[j].sid = nil
+								else
+									local spellTexture = GetSpellTexture(t)
+									line.items[j].texture:SetTexture(spellTexture)
+									line.items[j].link = "|cffffffff|Hspell:"..t.."|h[name]|h|r"
+									line.items[j].sid = t
+								end
 								line.items[j]:Show()
 							else
 								line.items[j]:Hide()
@@ -716,35 +714,49 @@ function module.options:Load()
 						local result = ""
 						for k,statName in ipairs(module.db.statsList) do
 							local statValue = data[statName]
-							if statValue and statValue > 50 then
-								if module.db.baseStats[statName] then
-									local classCount = module.db.classIDs[class]
-									if classCount then
-										statValue = statValue + module.db.baseStats[statName][classCount]
-										local raceCount = ExRT.F.table_find(module.db.raceList,data.race)
-										if raceCount then
-											statValue = statValue + module.db.raceStatsDiffs[statName][raceCount]
+							if ExRT.is7 then
+								if statValue and statValue > 200 then
+									if module.db.baseStats[statName] then
+										local classCount = module.db.classIDs[class]
+										if classCount then
+											statValue = statValue + module.db.baseStats[statName][classCount]
+											local raceCount = ExRT.F.table_find(module.db.raceList,data.race)
+											if raceCount then
+												statValue = statValue + module.db.raceStatsDiffs[statName][raceCount]
+											end
 										end
 									end
+									if k <= 3 then
+										statValue = statValue * 1.05
+									end
+									result = result .. module.db.statsListName[k] .. ": " ..floor(statValue)..", "
 								end
-								if spec and module.db.statsMultiplayBySpec[spec] == statName then
-									statValue = statValue * 1.05
+							else
+								if statValue and statValue > 50 then
+									if module.db.baseStats[statName] then
+										local classCount = module.db.classIDs[class]
+										if classCount then
+											statValue = statValue + module.db.baseStats[statName][classCount]
+											local raceCount = ExRT.F.table_find(module.db.raceList,data.race)
+											if raceCount then
+												statValue = statValue + module.db.raceStatsDiffs[statName][raceCount]
+											end
+										end
+									end
+									if spec and module.db.statsMultiplayBySpec[spec] == statName then
+										statValue = statValue * 1.05
+									end
+									if k <= 3 then
+										statValue = statValue * 1.05
+									elseif k <= 7 and data.amplify and data.amplify ~= 0 then
+										statValue = statValue * (1 + data.amplify/100)
+									end
+									result = result .. module.db.statsListName[k] .. ": " ..floor(statValue)..", "
 								end
-								if k <= 3 then
-									statValue = statValue * 1.05
-								elseif k <= 7 and data.amplify and data.amplify ~= 0 then
-									statValue = statValue * (1 + data.amplify/100)
-								end
-								result = result .. module.db.statsListName[k] .. ": " ..floor(statValue)..", "
 							end
 						end
-						if data.radiness and data.radiness ~= 0 then
-							result = result..L.InspectViewerRadiness..": "..format("%.2f%%",(data.radiness or 0) * 100)
-						else
-							if string.len(result) > 0 then
-								result = string.sub(result,1,-3)
-							end
-						end
+						result = result:gsub(", $","")
+						
 						line.otherInfo:SetText(result)
 						line.otherInfo:Show()
 						line.otherInfoTooltipFrame:Show()
@@ -1135,9 +1147,10 @@ function module.options:Load()
 		ExRT.F.ScheduleTimer(module.options.showPage, 4)
 	end
 	
-	self.borderList:SetScript("OnShow",module.options.showPage)
+	self.OnShow_disableNil = true
+	self:SetScript("OnShow",module.options.showPage)
 	module:RegisterEvents("INSPECT_READY")
-	module.options:showPage()
+	self:showPage()
 end
 
 function module:slash(arg)

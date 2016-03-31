@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1501, "DBM-Party-Legion", 6, 726)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14824 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14876 $"):sub(12, -3))
 mod:SetCreatureID(98208)
 mod:SetEncounterID(1829)
 mod:SetZone()
@@ -18,6 +18,7 @@ mod:RegisterEventsInCombat(
 )
 
 --TODO, it might be time to build an interrupt table ("hasInterrupt") for better option defaults for spammy interrupt warnings.
+--Force bomb might not be a CD, it might be 75% 55% 35% and 10%
 local warnTimeLock					= mod:NewTargetAnnounce(203957, 4)
 
 local specWarnTimeSplit				= mod:NewSpecialWarningMove(203833, nil, nil, nil, 1, 2)
@@ -40,7 +41,7 @@ mod.vb.interruptCount = 0
 
 function mod:OnCombatStart(delay)
 	self.vb.interruptCount = 0
-	timerForceBombD:Start(19-delay)
+	timerForceBombD:Start(16.7-delay)
 end
 
 function mod:SPELL_AURA_APPLIED(args)

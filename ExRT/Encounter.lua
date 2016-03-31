@@ -39,6 +39,10 @@ module.db.scrollPos = 1
 module.db.playerName = nil
 module.db.pullTime = 0
 
+if ExRT.is7 then
+	module.db.diffPos = {1,2,8,3,4,5,6,7,14,15,16}
+end
+
 module.db.chachedDB = nil
 
 function module.options:Load()
@@ -67,15 +71,16 @@ function module.options:Load()
 		if not module.db.chachedDB then
 			for playerName,playerData in pairs(VExRT.Encounter.list) do
 				if not module.db.onlyMy or playerName == module.db.playerName then
+					
 					for i=1,#playerData do
 						local data = playerData[i]
 						local diffID = tonumber( string.sub(data,4,4),16 ) + 1
 						if diffID == newDiff then
 							local encounterID = tonumber( string.sub(data,1,3),16 )
-							local pull = tonumber( string.sub(data,5,14) )
+							local pull = tonumber( string.sub(data,5,14),nil )
 							local pullTime = tonumber( string.sub(data,15,17),16 )
 							local isKill = string.sub(data,18,18) == "1"
-							local groupSize = tonumber(string.sub(data,19,20))
+							local groupSize = tonumber(string.sub(data,19,20),nil)
 							local firstBloodName = string.sub(data,21)
 							if firstBloodName == "" then 
 								firstBloodName = nil
@@ -104,7 +109,7 @@ function module.options:Load()
 								encounterLine.pulls = encounterLine.pulls + 1
 							else
 								encounterLine.wipeTime = max( encounterLine.wipeTime or 0, pullTime )
-								if not pullTime or pullTime > 30 then
+								if not pullTime or pullTime > 30 or pullTime == 0 then
 									encounterLine.pulls = encounterLine.pulls + 1
 								end
 							end
@@ -126,6 +131,7 @@ function module.options:Load()
 								d = pullTime,
 								k = isKill,
 								s = groupSize,
+								fb = firstBloodName,
 							}
 						end
 					end			
@@ -137,6 +143,15 @@ function module.options:Load()
 			for _,encounterData in pairs(encounters) do
 				sort(encounterData.firstBlood,function(a,b) return a.c > b.c end)
 				sort(encounterData.pullTable,function(a,b) return a.t < b.t end)
+				
+				
+				-- redo firstkill counter, cuz exist error if you kill boss on another char
+				for i=1,#encounterData.pullTable do
+					if encounterData.pullTable[i].k then
+						encounterData.firstKill = i
+						break
+					end
+				end
 				
 				if not encounterData.killTime or encounterData.killTime == 4095 then
 					encounterData.killTime = 0
@@ -449,6 +464,28 @@ function module.options:Load()
 		}
 		StaticPopup_Show("EXRT_ENCOUNTER_CLEAR")
 	end) 
+	
+	self.clearButton = ELib:Button(self,L.Export):Size(100,20):Point("RIGHT",self.clearButton,"LEFT",-5,0):OnClick(function() 
+		local allData = {}
+		for _,encounterData in pairs(module.db.chachedDB) do
+			for i=1,#encounterData.pullTable do
+				local pull = encounterData.pullTable[i]
+				
+				local resultString = date("%d.%m.%Y %H:%M:%S",pull.t).."\t"..encounterData.name.."\t"..(pull.d > 0 and date("%M:%S",pull.d) or "").."\t"..(pull.k and "Kill" or "").."\t"..(pull.fb or "")
+				
+				allData[#allData + 1] = {
+					t = pull.t,
+					s = resultString,
+				}
+			end
+		end
+		sort(allData,function(a,b) return a.t<b.t end)
+		local text = ""
+		for i=1,#allData do
+			text = text .. allData[i].s .. "\n"
+		end
+		ExRT.F:Export(text)
+	end)
 
 	self.dropDown:SetValue(#module.db.diffPos)
 	
@@ -515,6 +552,9 @@ function module.main:ADDON_LOADED()
 	VExRT.Encounter.list[module.db.playerName] = VExRT.Encounter.list[module.db.playerName] or {}
 	
 	module:RegisterEvents('ENCOUNTER_START','ENCOUNTER_END')
+	if ExRT.is7 then
+		module:RegisterEvents('BOSS_KILL')
+	end
 end
 
 --AAABCCCCCCCCCCDDDEFF
@@ -552,13 +592,17 @@ do
 	local function ScheduledAfterCombatFix()
 		module.db.afterCombatFix = nil
 	end
-	function module.main:ENCOUNTER_END(encounterID,_,_,_,success)
+	function module.main:ENCOUNTER_END(encounterID,_,_,_,success,isBossKillEvent)
 		if not module.db.isEncounter then
 			return
 		end
 		if encounterID == module.db.isEncounter then
 			local str = VExRT.Encounter.list[module.db.playerName][module.db.nowInTable]
-			local time_ = min(time() - module.db.pullTime,4095)
+			local currTime = time()
+			if isBossKillEvent then
+				currTime = currTime - 3
+			end
+			local time_ = min(currTime - module.db.pullTime,4095)
 			VExRT.Encounter.list[module.db.playerName][module.db.nowInTable] = string.sub(str,1,14) .. ExRT.F.tohex(time_,3) .. (success == 1 and "1" or "0") .. string.sub(str,19)
 		end
 		module.db.isEncounter = nil
@@ -569,6 +613,12 @@ do
 		module:UnregisterEvents('COMBAT_LOG_EVENT_UNFILTERED')
 		
 		module.db.chachedDB = nil
+	end
+	function module.main:BOSS_KILL(encounterID)		--08.03.2016: ENCOUNTER_END not fired in 5ppl, but boss_kill only for kills
+		if select(2,GetInstanceInfo()) == 'raid' then	--Not needed in raids
+			return
+		end
+		ExRT.F.Timer(module.main.ENCOUNTER_END, 3, module.main, encounterID, 0, 0, 0, 1, true)
 	end
 end
 

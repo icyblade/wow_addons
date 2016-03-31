@@ -106,7 +106,7 @@ module.db.spellsCoins = {
 module.db.endCoinTimer = nil
 module.db.bonusLootChat = nil
 module.db.bonusLootChatSelf = nil
-module.db.classNames = {"WARRIOR","PALADIN","HUNTER","ROGUE","PRIEST","DEATHKNIGHT","SHAMAN","MAGE","WARLOCK","MONK","DRUID"}
+module.db.classNames = ExRT.GDB.ClassList
 
 local function deformat(str)
 	str = str:gsub("%.","%%.")
@@ -255,7 +255,7 @@ function module.options:Load()
 				itemID = tonumber(itemID)
 				local itemName,_,itemQuality,_,itemReqLevel,_,_,_,_,itemTexture = GetItemInfo(itemID)
 				local itemColor = select(4,GetItemQualityColor(itemQuality or 4))
-				local link = format("|c%s|Hitem:%d:0:0:0:0:0:0:0:%d:%d:0:%d%s|h[%s]|h|r",itemColor,itemID,itemReqLevel or UnitLevel("player"),0,0,affixes or ":0",itemName or "ItemID: "..itemID)
+				local link = format("|c%s|Hitem:%d:0:0:0:0:0:0:0:%d:0:0:0%s|h[%s]|h|r",itemColor,itemID,itemReqLevel or UnitLevel("player"),affixes or ":0",itemName or "ItemID: "..itemID)
 				local classColor = ExRT.F.classColor( module.db.classNames[ tonumber(unitClass,16) ] or "?")
 				return date("%d/%m/%y %H:%M:%S ",timestamp),classColor,unitName,link,itemID,true
 			end
@@ -296,7 +296,7 @@ function module.options:Load()
 				
 				if isMatchFilter then
 					count = count + 1
-					if count >= val then
+					if count >= val and timestamp then
 						historyBoxUpdateTable [#historyBoxUpdateTable + 1] = timestamp.."|c"..classColor..unitName.."|r: "..(spellOrLink or "???")
 					end
 				end
@@ -316,7 +316,7 @@ function module.options:Load()
 					end
 				end
 				
-				if isMatchFilter then
+				if isMatchFilter and timestamp then
 					historyBoxUpdateTable [#historyBoxUpdateTable + 1] = timestamp.."|c"..classColor..unitName.."|r: "..(spellOrLink or "???")
 				end
 			
@@ -408,6 +408,70 @@ function module.options:Load()
 		else
 			VExRT.Coins.ShowMessage = nil
 		end
+	end)
+	
+	self.buttonExport = ELib:Button(self,L.Export):Point("TOPRIGHT",self.textList,"BOTTOMRIGHT",3,-7):Size(100,20):OnClick(function()
+		local text = ""
+		local pos = 1
+		for i=1,#VExRT.Coins.list do
+			local timestamp,classColor,unitName,spellOrLink,itemIDorSpellID,isItem = HandleString(VExRT.Coins.list[pos])
+			if not isItem and timestamp then
+				local isMatchFilter = not currFilter or IsMatchFilter(unitName,spellOrLink,itemIDorSpellID,timestamp)
+				
+				local itemStr = nil
+				if VExRT.Coins.list[pos+1] then
+					local timestamp2,classColor2,unitName2,spellOrLink2,itemIDorSpellID2,isItem2 = HandleString(VExRT.Coins.list[pos+1])
+					if isItem2 and unitName2 == unitName then
+						local bonus,itemName = spellOrLink2:match(UnitLevel('player')..":0:0:0:(.-)|h%[(.-)%]")
+						if not bonus then
+							itemStr = '=hyperlink("http://wowhead.com/item='..itemIDorSpellID2..'";"'..itemIDorSpellID2..'")'
+						else
+							if bonus == '0' then
+								bonus = ''
+							else
+								local newbonus = '&bonus='
+								local bonusNum,bonusRest = bonus:match("^([0-9]+):(.+)$")
+								bonus = bonusRest
+								bonusNum = tonumber(bonusNum)
+								for i=1,bonusNum do
+									local bonusNow = bonus:match("^([0-9]+)")
+									if bonusNow then
+										newbonus = newbonus .. bonusNow .. ":"
+									end
+									bonus = bonus:match("^[0-9]+:(.+)$")
+									if not bonus then
+										break
+									end
+								end
+								bonus = newbonus:sub(1,-2)
+							end
+							itemStr = '=hyperlink("http://wowhead.com/item='..itemIDorSpellID2..bonus..'";"'..itemName..'")'
+						end
+						
+						pos = pos + 1
+					end
+				end
+				
+				if isMatchFilter then
+					local className = nil
+					for classN,data in pairs(RAID_CLASS_COLORS) do
+						if classColor == data.colorStr then
+							className = classN
+							break
+						end
+					end
+					text = text .. timestamp.."\t"..unitName.."\t"..(className or "unk").."\t"..spellOrLink.."\t"..(itemStr or "").."\n"
+				end
+			end
+			pos = pos + 1
+			if not VExRT.Coins.list[pos] then
+				break
+			end
+		end
+		if text ~= "" then
+			text = text:sub(1,-2)
+		end
+		ExRT.F:Export(text)
 	end)
 	
 	historyBoxShow()

@@ -54,13 +54,8 @@ module.db.wm_color_hover ={
 	{ r = 1.0, g = 1.0, b = 1.0 },
 }
 
-module.db.WMcount = 9
-module.db.WMwidthWODfix = 28
-
 module.frame = CreateFrame("Frame",nil,UIParent)
-module.frame:SetSize(370,34)
 module.frame:SetPoint("CENTER",UIParent, "CENTER", 0, 0)
-module.frame:SetFrameStrata("HIGH")
 module.frame:EnableMouse(true)
 module.frame:SetMovable(true)
 module.frame:SetClampedToScreen(true)
@@ -81,7 +76,6 @@ module.frame:Hide()
 module:RegisterHideOnPetBattle(module.frame)
 
 module.frame.edge = CreateFrame("Frame",nil,module.frame)
---module.frame.edge:SetSize(368,32)
 module.frame.edge:SetPoint("TOPLEFT", 1, -1)
 module.frame.edge:SetPoint("BOTTOMRIGHT", -1, 1)
 module.frame.edge:SetBackdrop({bgFile = ExRT.F.barImg,edgeFile = ExRT.F.defBorder,tile = false,edgeSize = 6})
@@ -165,8 +159,6 @@ end
 module.frame.edges[2] = CreateEdge(2,228)
 
 module.frame.start = CreateFrame("Button",nil,module.frame)
-module.frame.start:SetSize(50,12)
-module.frame.start:SetPoint("TOPLEFT", module.frame.edges[2], 0, -4)
 module.frame.start:SetBackdrop({bgFile = ExRT.F.barImg,edgeFile = ExRT.F.defBorder,tile = false,edgeSize = 6})
 module.frame.start:SetBackdropColor(0,0,0,0)
 module.frame.start:SetBackdropBorderColor(0.4,0.4,0.4,1)
@@ -191,8 +183,6 @@ module.frame.start.html:SetText(L.marksbarstart)
 module.frame.start.html:SetShadowOffset(1,-1)
 
 module.frame.del = CreateFrame("Button",nil,module.frame)
-module.frame.del:SetSize(50,12)
-module.frame.del:SetPoint("TOPLEFT", module.frame.edges[2], 0, -18)
 module.frame.del:SetBackdrop({bgFile = ExRT.F.barImg,edgeFile = ExRT.F.defBorder,tile = false,edgeSize = 6})
 module.frame.del:SetBackdropColor(0,0,0,0)
 module.frame.del:SetBackdropBorderColor(0.4,0.4,0.4,1)
@@ -225,7 +215,6 @@ module.frame.edges[3] = CreateEdge(3,383)
 
 module.frame.wmarksbuts = CreateFrame("Frame",nil,module.frame)
 module.frame.wmarksbuts:SetSize(70,26)
-module.frame.wmarksbuts:SetPoint("TOPLEFT", module.frame.edges[3], 0, -4)
 local function MainFrameWMOnEnter(self)
 	self:SetBackdropBorderColor(0.7,0.7,0.7,1)
 end
@@ -238,18 +227,17 @@ end
 
 do
 	local wmarksbuts_backdrop = {bgFile = "",edgeFile = ExRT.F.defBorder,tile = false,edgeSize = 6}
-	for i=1,module.db.WMcount do
+	for i=1,9 do
 		local frame = CreateFrame("Button","ExRT_MarksBar_WorldMarkers_Kind1_"..i,module.frame.wmarksbuts,"SecureActionButtonTemplate")	--FrameStack Fix
 		module.frame.wmarksbuts[i] = frame
 		frame:SetSize(14,13)
-		frame:SetPoint("TOPLEFT", floor((i-1)/2)*14, -((i-1)%2)*13)
 		frame:SetBackdrop(wmarksbuts_backdrop)
 		frame:SetBackdropColor(0,0,0,0)
 		frame:SetBackdropBorderColor(0.4,0.4,0.4,0)
 		frame:SetScript("OnEnter",MainFrameWMOnEnter)	
 		frame:SetScript("OnLeave",MainFrameWMOnLeave)
 		
-		if i < module.db.WMcount then
+		if i < 9 then
 			frame:RegisterForClicks("AnyDown")
 			frame:SetAttribute("type", "macro")
 			frame:SetAttribute("macrotext1", format("/wm %d", i))
@@ -267,8 +255,6 @@ do
 end
 
 module.frame.wmarksbuts.b = CreateFrame("Frame",nil,module.frame)
-module.frame.wmarksbuts.b:SetSize(123+19*(module.db.WMcount == 9 and 3 or 0),26)
-module.frame.wmarksbuts.b:SetPoint("TOPLEFT", module.frame,"BOTTOMLEFT",20, 3)
 module.frame.wmarksbuts.b:SetFrameLevel(0)
 module.frame.wmarksbuts.b:SetBackdrop({bgFile = ExRT.F.barImg})
 module.frame.wmarksbuts.b:SetBackdropColor(0,0,0,0.8)
@@ -285,13 +271,12 @@ local function MainFrameWMKind2OnLeave(self)
 	self.t:SetVertexColor(module.db.wm_color[self._i].r,module.db.wm_color[self._i].g,module.db.wm_color[self._i].b,1)
 end
 
-for i=1,module.db.WMcount do
+for i=1,9 do
 	local frame = CreateFrame("Button","ExRT_MarksBar_WorldMarkers_Kind2_"..i,module.frame.wmarksbuts.b,"SecureActionButtonTemplate")	--FrameStack Fix
 	module.frame.wmarksbuts.b[i] = frame
 	frame:SetSize(18,18)
-	frame:SetPoint("TOPLEFT", 19*(i-1)+6, -4)
 	frame.t = frame:CreateTexture(nil, "BACKGROUND")
-	if i == module.db.WMcount then
+	if i == 9 then
 		frame.t:SetTexture(module.db.worldMarksList[i])
 	else
 		frame.t:SetTexture("Interface\\AddOns\\ExRT\\media\\blip")
@@ -304,7 +289,7 @@ for i=1,module.db.WMcount do
 	frame:SetScript("OnEnter",MainFrameWMKind2OnEnter)	
 	frame:SetScript("OnLeave", MainFrameWMKind2OnLeave)
 
-	if i < module.db.WMcount then
+	if i < 9 then
 		frame:RegisterForClicks("AnyDown")
 		frame:SetAttribute("type", "macro")
 		frame:SetAttribute("macrotext1", format("/wm %d", i))
@@ -377,14 +362,27 @@ local function modifymarkbars()
 		mainFrame.del:SetPoint("TOPLEFT", mainFrame.edges[2], 0, -18)
 		
 		mainFrame.wmarksbuts:SetPoint("TOPLEFT", mainFrame.edges[3], 0, -4)
-		for i=1,module.db.WMcount do
-			mainFrame.wmarksbuts[i]:SetPoint("TOPLEFT", floor((i-1)/2)*14, -((i-1)%2)*13)
+		for i=1,9 do
+			if VExRT.MarksBar.WMarksReverse then
+				if i < 9 then
+					local t_pos = 9-i
+					mainFrame.wmarksbuts[i]:SetPoint("TOPLEFT", floor((t_pos-1)/2)*14, -((t_pos-1)%2)*13)
+				else
+					mainFrame.wmarksbuts[i]:SetPoint("TOPLEFT", floor((i-1)/2)*14, -((i-1)%2)*13)
+				end
+			else
+				mainFrame.wmarksbuts[i]:SetPoint("TOPLEFT", floor((i-1)/2)*14, -((i-1)%2)*13)
+			end
 		end
 		
-		mainFrame.wmarksbuts.b:SetSize(123+19*(module.db.WMcount == 9 and 3 or 0),26)
+		mainFrame.wmarksbuts.b:SetSize(123+19*3,26)
 		mainFrame.wmarksbuts.b:SetPoint("TOPLEFT", mainFrame,"BOTTOMLEFT",20, 3)
-		for i=1,module.db.WMcount do
-			mainFrame.wmarksbuts.b[i]:SetPoint("TOPLEFT", 19*(i-1)+6, -4)
+		for i=1,9 do
+			if VExRT.MarksBar.WMarksReverse then
+				mainFrame.wmarksbuts.b[i]:SetPoint("TOPLEFT", 19*(9-i)+6, -4)
+			else
+				mainFrame.wmarksbuts.b[i]:SetPoint("TOPLEFT", 19*(i-1)+6, -4)
+			end
 		end
 		
 		mainFrame.readyCheck:SetSize(40,12)
@@ -416,8 +414,8 @@ local function modifymarkbars()
 		elseif VExRT.MarksBar.Show[3] and VExRT.MarksBar.wmKind then
 			mainFrame.wmarksbuts:Show()
 			
-			posX = posX + 14*ceil(module.db.WMcount / 2)
-			totalWidth = totalWidth + 14*ceil(module.db.WMcount / 2)
+			posX = posX + 14*ceil(9 / 2)
+			totalWidth = totalWidth + 14*ceil(9 / 2)
 		end
 	
 		mainFrame.edge:Show()
@@ -474,14 +472,27 @@ local function modifymarkbars()
 		mainFrame.del:SetPoint("TOPLEFT", mainFrame.edges[2], 4, -14)
 		
 		mainFrame.wmarksbuts:SetPoint("TOPLEFT", mainFrame.edges[3], 4, 0)
-		for i=1,module.db.WMcount do
-			mainFrame.wmarksbuts[i]:SetPoint("TOPLEFT", ((i-1)%2)*13, -floor((i-1)/2)*14)
+		for i=1,9 do
+			if VExRT.MarksBar.WMarksReverse then
+				if i < 9 then
+					local t_pos = 9-i
+					mainFrame.wmarksbuts[i]:SetPoint("TOPLEFT", ((t_pos-1)%2)*13, -floor((t_pos-1)/2)*14)
+				else
+					mainFrame.wmarksbuts[i]:SetPoint("TOPLEFT", ((i-1)%2)*13, -floor((i-1)/2)*14)
+				end
+			else
+				mainFrame.wmarksbuts[i]:SetPoint("TOPLEFT", ((i-1)%2)*13, -floor((i-1)/2)*14)
+			end
 		end
 		
-		mainFrame.wmarksbuts.b:SetSize(26,123+19*(module.db.WMcount == 9 and 3 or 0))
+		mainFrame.wmarksbuts.b:SetSize(26,123+19*3)
 		mainFrame.wmarksbuts.b:SetPoint("TOPLEFT", mainFrame,"TOPRIGHT",-3,-20)
-		for i=1,module.db.WMcount do
-			mainFrame.wmarksbuts.b[i]:SetPoint("TOPLEFT", 4, -19*(i-1)-6)
+		for i=1,9 do
+			if VExRT.MarksBar.WMarksReverse then
+				mainFrame.wmarksbuts.b[i]:SetPoint("TOPLEFT", 4, -19*(9-i)-6)
+			else
+				mainFrame.wmarksbuts.b[i]:SetPoint("TOPLEFT", 4, -19*(i-1)-6)
+			end
 		end
 		
 		mainFrame.readyCheck:SetSize(26,12)
@@ -513,8 +524,8 @@ local function modifymarkbars()
 		elseif VExRT.MarksBar.Show[3] and VExRT.MarksBar.wmKind then
 			mainFrame.wmarksbuts:Show()
 			
-			posX = posX + 14*ceil(module.db.WMcount / 2)
-			totalWidth = totalWidth + 14*ceil(module.db.WMcount / 2)
+			posX = posX + 14*ceil(9 / 2)
+			totalWidth = totalWidth + 14*ceil(9 / 2)
 		end
 	
 		mainFrame.edge:Show()
@@ -679,6 +690,15 @@ function module.options:Load()
 		modifymarkbars()
 	end)
 	
+	self.reverseWMMarksOrderChk = ELib:Check(self.TabViewOptions,L.MarksBarReverse,VExRT.MarksBar.MarksReverse):Point(480,-60):OnClick(function(self)
+		if self:GetChecked() then
+			VExRT.MarksBar.WMarksReverse = true
+		else
+			VExRT.MarksBar.WMarksReverse = nil
+		end
+		modifymarkbars()
+	end)
+	
 	self.chkEnable4 = ELib:Check(self.TabViewOptions,L.marksbarshowrcpull,VExRT.MarksBar.Show[4]):Point(10,-85):OnClick(function(self)
 		if self:GetChecked() then
 			VExRT.MarksBar.Show[4]=true
@@ -711,7 +731,26 @@ function module.options:Load()
 		VExRT.MarksBar.pulltimer = tonumber(self:GetText()) or 10
 	end)  
 	
-	self.ButtonToCenter = ELib:Button(self,L.MarksBarResetPos):Size(261,22):Point(5,-350):Tooltip(L.MarksBarResetPosTooltip):OnClick(function()
+	self.frameStrataDropDown = ELib:DropDown(self,275,8):Point(5,-350):Size(260):SetText(L.S_Strata)
+	local function FrameStrataDropDown_SetVaule(_,arg)
+		VExRT.MarksBar.Strata = arg
+		ELib:DropDownClose()
+		for i=1,#self.frameStrataDropDown.List do
+			self.frameStrataDropDown.List[i].checkState = arg == self.frameStrataDropDown.List[i].arg1
+		end
+		module.frame:SetFrameStrata(arg)
+	end
+	for i,strataString in ipairs({"BACKGROUND","LOW","MEDIUM","HIGH","DIALOG","FULLSCREEN","FULLSCREEN_DIALOG","TOOLTIP"}) do
+		self.frameStrataDropDown.List[i] = {
+			text = strataString,
+			checkState = VExRT.MarksBar.Strata == strataString,
+			radio = true,
+			arg1 = strataString,
+			func = FrameStrataDropDown_SetVaule,
+		}
+	end
+	
+	self.ButtonToCenter = ELib:Button(self,L.MarksBarResetPos):Size(260,22):Point(5,-375):Tooltip(L.MarksBarResetPosTooltip):OnClick(function()
 		VExRT.MarksBar.Left = nil
 		VExRT.MarksBar.Top = nil
 
@@ -719,7 +758,7 @@ function module.options:Load()
 		module.frame:SetPoint("CENTER",UIParent, "CENTER", 0, 0)
 	end) 
 	
-	self.shtml1 = ELib:Text(self,L.MarksBarHelp,12):Size(650,200):Point(5,-380):Top()
+	self.shtml1 = ELib:Text(self,L.MarksBarHelp,12):Size(650,200):Point(5,-405):Top()
 end
 
 function module.main:ADDON_LOADED()
@@ -745,6 +784,9 @@ function module.main:ADDON_LOADED()
 
 	if VExRT.MarksBar.Alpha then module.frame:SetAlpha(VExRT.MarksBar.Alpha/100) end
 	if VExRT.MarksBar.Scale then module.frame:SetScale(VExRT.MarksBar.Scale/100) end
+	
+	VExRT.MarksBar.Strata = VExRT.MarksBar.Strata or "HIGH"
+	module.frame:SetFrameStrata(VExRT.MarksBar.Strata)
 	
 	module:RegisterSlash()
 end

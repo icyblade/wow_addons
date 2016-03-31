@@ -149,74 +149,18 @@ module.db.findspecspells = {
 	[117418] = 269,[152174] = 269,[116740] = 269,
 	[115151] = 270,[115175] = 270,[116670] = 270,
 }
-module.db.classNames = is6 and {"WARRIOR","PALADIN","HUNTER","ROGUE","PRIEST","DEATHKNIGHT","SHAMAN","MAGE","WARLOCK","MONK","DRUID"} or
-	{"WARRIOR","PALADIN","HUNTER","ROGUE","PRIEST","DEATHKNIGHT","SHAMAN","MAGE","WARLOCK","MONK","DRUID","DEMONHUNTER"}
+module.db.classNames = ExRT.GDB.ClassList
 
-module.db.specByClass = is6 and {
-	["HUNTER"] = {0,253,254,255,},
-	["WARRIOR"] = {0,71,72,73,},
-	["PALADIN"] = {0,65,66,70,},
-	["MAGE"] = {0,62,63,64,},
-	["PRIEST"] = {0,256,257,258,},
-	["MONK"] = {0,268,269,270,},
-	["WARLOCK"] = {0,265,266,267,},
-	["SHAMAN"] = {0,262,263,264,},
-	["ROGUE"] = {0,259,260,261,},
-	["DRUID"] = {0,102,103,104,105,},
-	["DEATHKNIGHT"] = {0,250,251,252,},
-} or {
-	["WARRIOR"] = {0,71,72,73,},
-	["PALADIN"] = {0,65,66,70,},
-	["HUNTER"] = {0,253,254,255,},
-	["ROGUE"] = {0,259,260,261,},
-	["PRIEST"] = {0,256,257,258,},
-	["DEATHKNIGHT"] = {0,250,251,252,},
-	["SHAMAN"] = {0,262,263,264,},
-	["MAGE"] = {0,62,63,64,},
-	["WARLOCK"] = {0,265,266,267,},
-	["MONK"] = {0,268,269,270,},
-	["DRUID"] = {0,102,103,104,105,},
-	["DEMONHUNTER"] = {0,577,581},
-}
+module.db.specByClass = {}
+for class,classData in pairs(ExRT.GDB.ClassSpecializationList) do
+	local newData = {0}
+	for i=1,#classData do
+		newData[#newData + 1] = classData[i]
+	end
+	module.db.specByClass[class] = newData
+end
 
-module.db.specIcons = {
-	[62] = "Interface\\Icons\\Spell_Holy_MagicalSentry",
-	[63] = "Interface\\Icons\\Spell_Fire_FireBolt02",
-	[64] = "Interface\\Icons\\Spell_Frost_FrostBolt02",
-	[65] = "Interface\\Icons\\Spell_Holy_HolyBolt",
-	[66] = "Interface\\Icons\\Ability_Paladin_ShieldoftheTemplar",
-	[70] = "Interface\\Icons\\Spell_Holy_AuraOfLight",
-	[71] = "Interface\\Icons\\Ability_Warrior_SavageBlow",
-	[72] = "Interface\\Icons\\Ability_Warrior_InnerRage",
-	[73] = "Interface\\Icons\\Ability_Warrior_DefensiveStance",
-	[102] = "Interface\\Icons\\Spell_Nature_StarFall",
-	[103] = "Interface\\Icons\\Ability_Druid_CatForm",
-	[104] = "Interface\\Icons\\Ability_Racial_BearForm",
-	[105] = "Interface\\Icons\\Spell_Nature_HealingTouch",
-	[250] = "Interface\\Icons\\Spell_Deathknight_BloodPresence",
-	[251] = "Interface\\Icons\\Spell_Deathknight_FrostPresence",
-	[252] = "Interface\\Icons\\Spell_Deathknight_UnholyPresence",
-	[253] = "INTERFACE\\ICONS\\ability_hunter_bestialdiscipline",
-	[254] = "Interface\\Icons\\Ability_Hunter_FocusedAim",
-	[255] = "INTERFACE\\ICONS\\ability_hunter_camouflage",
-	[256] = "Interface\\Icons\\Spell_Holy_PowerWordShield",
-	[257] = "Interface\\Icons\\Spell_Holy_GuardianSpirit",
-	[258] = "Interface\\Icons\\Spell_Shadow_ShadowWordPain",
-	[259] = "Interface\\Icons\\Ability_Rogue_Eviscerate",
-	[260] = "Interface\\Icons\\Ability_BackStab",
-	[261] = "Interface\\Icons\\Ability_Stealth",
-	[262] = "Interface\\Icons\\Spell_Nature_Lightning",
-	[263] = "Interface\\Icons\\Spell_Shaman_ImprovedStormstrike",
-	[264] = "Interface\\Icons\\Spell_Nature_MagicImmunity",
-	[265] = "Interface\\Icons\\Spell_Shadow_DeathCoil",
-	[266] = "Interface\\Icons\\Spell_Shadow_Metamorphosis",
-	[267] = "Interface\\Icons\\Spell_Shadow_RainOfFire",
-	[268] = "Interface\\Icons\\spell_monk_brewmaster_spec",
-	[269] = "Interface\\Icons\\spell_monk_windwalker_spec",
-	[270] = "Interface\\Icons\\spell_monk_mistweaver_spec",
-	[577] = GetSpellTexture(185164),	--NYI
-	[581] = GetSpellTexture(203747),	--NYI	
-}
+module.db.specIcons = ExRT.GDB.ClassSpecializationIcons
 module.db.specInDBase = {
 	[253] = 4,	[254] = 5,	[255] = 6,
 	[71] = 4,	[72] = 5,	[73] = 6,
@@ -1200,8 +1144,6 @@ local L_Offline,L_Dead = L.cd2StatusOffline, L.cd2StatusDead
 local _C, _db, _mainFrame = module._C, module.db
 
 local status_UnitsToCheck,status_UnitIsDead,status_UnitIsDisconnected,status_UnitIsOutOfRange = module.db.status_UnitsToCheck,module.db.status_UnitIsDead,module.db.status_UnitIsDisconnected,module.db.status_UnitIsOutOfRange
-
-local module_legendary_ring = nil
 
 do
 	local frame = CreateFrame("Frame",nil,UIParent)
@@ -2374,18 +2316,23 @@ do
 				end
 			end
 		end
+		
 		for i=1,maxColumns do
 			local col = columnsTable[i]
-			local y = col.optionLinesMax
-			if inColsCount[i] > y then
-				inColsCount[i] = y
-			end
-			for j=(inColsCount[i]+1),maxLinesInCol do
-				local bar = col.lines[j]
-				if bar then
-					bar.data = nil
-					bar:Update()
+			if col.IsColumnEnabled then
+				local y = col.optionLinesMax
+				if inColsCount[i] > y then
+					inColsCount[i] = y
 				end
+				local start = inColsCount[i]
+				for j=start+1,col.NumberLastLinesActive do
+					local bar = col.lines[j]
+					if bar and bar.data then
+						bar.data = nil
+						bar:Update()
+					end
+				end
+				col.NumberLastLinesActive = start
 			end
 		end
 		
@@ -2431,9 +2378,11 @@ local function GetRaidRosterInfoFix(j)
 		for unitName, specID in pairs(VExRT.ExCD2.gnGUIDs) do
 			namesList[#namesList+1] = {unitName}
 			for className, classSpecs in pairs(module.db.specByClass) do
-				for spec_i=1,#classSpecs do
-					if classSpecs[spec_i] == specID then
-						namesList[#namesList][2] = className
+				if ExRT.F.table_find(module.db.classNames,className) then	--prevent error at version without DH class
+					for spec_i=1,#classSpecs do
+						if classSpecs[spec_i] == specID then
+							namesList[#namesList][2] = className
+						end
 					end
 				end
 			end
@@ -3036,7 +2985,7 @@ function module:Enable()
 
 	module:RegisterSlash()
 	module:RegisterTimer()
-	module:RegisterEvents('SCENARIO_UPDATE','GROUP_ROSTER_UPDATE','COMBAT_LOG_EVENT_UNFILTERED','UNIT_PET','UNIT_SPELLCAST_SUCCEEDED','PLAYER_LOGOUT','ZONE_CHANGED_NEW_AREA')
+	module:RegisterEvents('SCENARIO_UPDATE','GROUP_ROSTER_UPDATE','COMBAT_LOG_EVENT_UNFILTERED','UNIT_PET','UNIT_SPELLCAST_SUCCEEDED','PLAYER_LOGOUT','ZONE_CHANGED_NEW_AREA','CHALLENGE_MODE_RESET')
 end
 
 function module:Disable()
@@ -3051,7 +3000,7 @@ function module:Disable()
 	
 	module:UnregisterSlash()
 	module:UnregisterTimer()
-	module:UnregisterEvents('SCENARIO_UPDATE','GROUP_ROSTER_UPDATE','COMBAT_LOG_EVENT_UNFILTERED','UNIT_PET','UNIT_SPELLCAST_SUCCEEDED','PLAYER_LOGOUT','ZONE_CHANGED_NEW_AREA')
+	module:UnregisterEvents('SCENARIO_UPDATE','GROUP_ROSTER_UPDATE','COMBAT_LOG_EVENT_UNFILTERED','UNIT_PET','UNIT_SPELLCAST_SUCCEEDED','PLAYER_LOGOUT','ZONE_CHANGED_NEW_AREA','CHALLENGE_MODE_RESET')
 end
 
 
@@ -3218,6 +3167,7 @@ function module.main:SCENARIO_UPDATE()
 	UpdateAllData()
 	SortAllData()
 end
+module.main.CHALLENGE_MODE_RESET = module.main.SCENARIO_UPDATE
 
 do
 	local scheduledUpdateRoster = nil
@@ -3562,20 +3512,18 @@ do
 	
 	local warriorT18durationChange = ExRT.clientVersion < 60202 and 25 or 30
 	function module.main:SPELL_DAMAGE(sourceGUID,sourceName,sourceFlags,destGUID,destName,destFlags,spellID,critical,multistrike)
-		if spellID == 100130 and critical and not multistrike and sourceName then
-			if session_gGUIDs[sourceName][185799] then
-				local line = CDList[sourceName][1719]
-				if line then
-					line.cd = line.cd - warriorT18durationChange
-					if line.cd < 0 then 
-						line.cd = 0 
-					end
-					if line.bar and line.bar.data == line then
-						line.bar:UpdateStatus()
-					end
-					UpdateAllData()
-					SortAllData()
+		if spellID == 100130 and critical and not multistrike and sourceName and session_gGUIDs[sourceName][185799] then
+			local line = CDList[sourceName][1719]
+			if line then
+				line.cd = line.cd - warriorT18durationChange
+				if line.cd < 0 then 
+					line.cd = 0 
 				end
+				if line.bar and line.bar.data == line then
+					line.bar:UpdateStatus()
+				end
+				UpdateAllData()
+				SortAllData()
 			end
 		end
 	end
@@ -3595,9 +3543,7 @@ do
 	end
 end
 
---dtime()
 function module.options:Load()
-	dtime()
 	self:CreateTilte()
 
 	loadstring(module.db.AllClassSpellsInText)()
@@ -6663,9 +6609,7 @@ function module.options:Load()
 		local min,max=module.options.ScrollBar:GetMinMaxValues()
 		module.options.ScrollBar:SetValue(max)
 	end
-	dtime(ExRT.Debug,'ExCD2','OPTIONS LOADED')
 end
---dtime(ExRT.Debug,'ExCD2','OPTIONS CREATED')
 
 function module.options:CleanUPVariables()
 	local cleanUP = {}
@@ -6803,6 +6747,7 @@ function module:ReloadAllSplits(argScaleFix)
 				end
 			end
 		end
+		columnFrame.NumberLastLinesActive = module.db.maxLinesInCol
 		
 		if VExRT_ColumnOptions[i].enabled then
 			for j=1,linesTotal do
@@ -6812,6 +6757,9 @@ function module:ReloadAllSplits(argScaleFix)
 					columnFrame.LOADEDs[j] = true
 				end
 			end
+			columnFrame.IsColumnEnabled = true
+		else
+			columnFrame.IsColumnEnabled = false
 		end
 
 		local frameAlpha = (not VExRT_ColumnOptions[i].frameGeneral and VExRT_ColumnOptions[i].frameAlpha) or (VExRT_ColumnOptions[i].frameGeneral and VExRT_ColumnOptions[module.db.maxColumns+1].frameAlpha) or module.db.colsDefaults.frameAlpha
@@ -7541,7 +7489,7 @@ local function InspectNext()
 			if (VExRT and VExRT.InspectViewer and VExRT.InspectViewer.EnableA4ivs) and not moduleInspect.db.inspectDBAch[name] then
 				if AchievementFrameComparison then
 					AchievementFrameComparison:UnregisterEvent("INSPECT_ACHIEVEMENT_READY")
-					ExRT.F.Timer(AchievementFrameComparison.RegisterEvent, 1, AchievementFrameComparison, "INSPECT_ACHIEVEMENT_READY")
+					ExRT.F.Timer(AchievementFrameComparison.RegisterEvent, inspectForce and 1 or 2.5, AchievementFrameComparison, "INSPECT_ACHIEVEMENT_READY")
 				end
 				ClearAchievementComparisonUnit()
 				SetAchievementComparisonUnit(name)
@@ -7883,6 +7831,7 @@ do
 					data[i] = 0
 				end
 				data.talentsIDs = {}
+				
 				for i=0,20 do
 					local t_id,_,_,t = GetTalentInfo((i-i%3)/3+1,i%3+1,nil,true,inspectedName)
 					if t then
@@ -7916,7 +7865,7 @@ do
 					data[i+7] = t
 					
 					--------> ExCD2
-					if t and module.db.spell_glyphsList[class][t] then
+					if t and module.db.spell_glyphsList[class or "?"] and module.db.spell_glyphsList[class][t] then
 						module.db.session_gGUIDs[name] = t
 					end
 					--------> /ExCD2
@@ -7993,10 +7942,12 @@ do
 					end
 					data.talentsIDs = {}
 					for i=0,20 do
-						local t_id,_,_,t = GetTalentInfo((i-i%3)/3+1,i%3+1,specIndex,true,inspectedName)
+						local row,col = (i-i%3)/3+1,i%3+1
+					
+						local t_id,_,_,t = GetTalentInfo(row,col,specIndex,true,inspectedName)
 						if t then
-							data[(i-i%3)/3+1] = i%3+1
-							data.talentsIDs[(i-i%3)/3+1] = t_id
+							data[row] = col
+							data.talentsIDs[row] = t_id
 						end
 						
 						--------> ExCD2
@@ -8020,33 +7971,14 @@ do
 						end
 						--------> /ExCD2
 					end
-					for i=1,7 do
-						local t_id,_,_,t = GetInspectPvpTalent(i)
+					for i=0,17 do
+						local row,col = (i-i%3)/3+1,i%3+1
+					
+						local t_id,_,_,t = GetPvpTalentInfo(row,col,specIndex,true,inspectedName)
 						if t then
-							data[7+i] = 0
-							data.talentsIDs[7+i] = t_id
+							data[row+7] = col
+							data.talentsIDs[row+7] = t_id
 						end
-						
-						--------> ExCD2
-						local talentID = module.db.spell_talentsList[class] and module.db.spell_talentsList[class][i+1]
-						if talentID then
-							if type(talentID) == "table" then
-								for j,sID in ipairs(talentID) do
-									if t then
-										module.db.session_gGUIDs[name] = sID
-									else
-										module.db.session_gGUIDs[name] = -sID
-									end
-								end
-							else
-								if t then
-									module.db.session_gGUIDs[name] = talentID
-								else
-									module.db.session_gGUIDs[name] = -talentID
-								end
-							end
-						end
-						--------> /ExCD2
 					end
 					InspectItems(name, inspectedName, moduleInspect.db.inspectID)
 					
@@ -8131,6 +8063,8 @@ if not ExRT.isLegionContent then
 
 local module_legendary = ExRT.mod:New("LegendaryRing",ExRT.L.LegendaryRing,nil,true)
 
+local module_legendary_ring = nil
+
 function module_legendary.options:Load()
 	self:CreateTilte()
 
@@ -8197,7 +8131,8 @@ do
 		end
 		isSendByMe = true
 		ExRT.F.ScheduleTimer(ExRT.F.SendExMsg, 0.15, "legendary","RING")
-		ExRT.F.ScheduleTimer(SendToChat, 1.3, name, ringtype)
+		local dealy = ExRT.F.IsPlayerRLorOfficer(ExRT.SDB.charName) == 2 and 0.01 or 1.3
+		ExRT.F.ScheduleTimer(SendToChat, dealy, name, ringtype)
 	end
 	
 	function module_legendary:addonMessage(sender, prefix, sub_type)

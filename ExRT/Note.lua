@@ -46,7 +46,10 @@ if ExRT.is7 then
 end
 
 module.db.iconsLocalizatedNames = {
-	L.raidtargeticon1,L.raidtargeticon2,L.raidtargeticon3,L.raidtargeticon4,L.raidtargeticon5,L.raidtargeticon6,L.raidtargeticon7,L.raidtargeticon8
+	L.raidtargeticon1,L.raidtargeticon2,L.raidtargeticon3,L.raidtargeticon4,L.raidtargeticon5,L.raidtargeticon6,L.raidtargeticon7,L.raidtargeticon8,
+}
+module.db.iconsEngNames = {
+	L.raidtargeticon1_eng,L.raidtargeticon2_eng,L.raidtargeticon3_eng,L.raidtargeticon4_eng,L.raidtargeticon5_eng,L.raidtargeticon6_eng,L.raidtargeticon7_eng,L.raidtargeticon8_eng,
 }
 local frameStrataList = {"BACKGROUND","LOW","MEDIUM","HIGH","DIALOG","FULLSCREEN","FULLSCREEN_DIALOG","TOOLTIP"}
 
@@ -59,6 +62,7 @@ local function txtWithIcons(t)
 	t = string.gsub(t,"||t","|t")
 	for i=1,8 do
 		t = string.gsub(t,module.db.iconsLocalizatedNames[i],module.db.iconsList[i])
+		t = string.gsub(t,module.db.iconsEngNames[i],module.db.iconsList[i])
 		t = string.gsub(t,"{rt"..i.."}",module.db.iconsList[i])
 	end
 	t = string.gsub(t,"||c","|c")
@@ -419,7 +423,7 @@ function module.options:Load()
 		{L.NoteColorGreenSoft,"|cff55ee55"},
 		{L.NoteColorBlueSoft,"|cff5555ee"},
 	}
-	local classNames = {"WARRIOR","PALADIN","HUNTER","ROGUE","PRIEST","DEATHKNIGHT","SHAMAN","MAGE","WARLOCK","MONK","DRUID"}
+	local classNames = ExRT.GDB.ClassList
 	for i,class in ipairs(classNames) do
 		local colorTable = RAID_CLASS_COLORS[class]
 		if colorTable then
@@ -722,7 +726,7 @@ function module.frame:UpdateFont()
 	local font = VExRT and VExRT.Note and VExRT.Note.FontName or ExRT.F.defFont
 	local size = VExRT and VExRT.Note and VExRT.Note.FontSize or 12
 	local outline = VExRT and VExRT.Note and VExRT.Note.Outline and "OUTLINE"
-	isValidFont = self.text:SetFont(font,size,outline)
+	local isValidFont = self.text:SetFont(font,size,outline)
 	if not isValidFont then 
 		self.text:SetFont(GameFontNormal:GetFont(),size,outline)
 	end

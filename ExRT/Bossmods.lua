@@ -2312,7 +2312,7 @@ function Iskar:Load()
 	
 	local OnLoadMarkersData = {1,2,3,4,5,6,7,8}
 	
-	local classNames = {"WARRIOR","PALADIN","HUNTER","ROGUE","PRIEST","DEATHKNIGHT","SHAMAN","MAGE","WARLOCK","MONK","DRUID"}
+	local classNames = ExRT.GDB.ClassList
 	frame.units = {}
 	for i=1,6 do
 		for j=1,5 do
@@ -6498,6 +6498,8 @@ function module.options:Load()
 		StaticPopup_Show("EXRT_BOSSMODS_CENTER")
 
 	end) 
+	
+	VExRT.Bossmods.ModuleViewed3580 = true
 end
 
 function ExRT.F:ExBossmodsCloseAll()
@@ -6700,7 +6702,7 @@ function module.main:ADDON_LOADED()
 	VExRT = _G.VExRT
 	VExRT.Bossmods = VExRT.Bossmods or {}
 	
-	module:RegisterEvents('ENCOUNTER_START','ENCOUNTER_END','ZONE_CHANGED')
+	module:RegisterEvents('ENCOUNTER_START','ENCOUNTER_END','ZONE_CHANGED','ZONE_CHANGED_NEW_AREA')
 	module:RegisterAddonMessage()
 	module:RegisterMiniMapMenu()
 	module:RegisterSlash()
@@ -6716,6 +6718,9 @@ function module.main:ADDON_LOADED()
 	--Archimonde
 	VExRT.Bossmods.Archimonde = nil
 	
+	if VExRT.Addon.Version < 3580 and VExRT.Addon.Version ~= 0 then
+		VExRT.Bossmods.ModuleViewed3580 = true
+	end
 	if VExRT.Addon.Version < 3505 then
 		VExRT.Bossmods.MannorothAutoload = nil
 	end
@@ -6725,6 +6730,10 @@ function module.main:ADDON_LOADED()
 			VExRT.Bossmods.IskarScale = VExRT.Bossmods.Scale / 100
 			VExRT.Bossmods.ArchimondeInfernalsScale = VExRT.Bossmods.Scale / 100
 		end
+	end
+	
+	if not VExRT.Bossmods.ModuleViewed3580 then
+		ExRT.Options:AddIcon(L.bossmods,{"Interface\\common\\help-i",28})
 	end
 end
 
@@ -6759,7 +6768,7 @@ function module.main:ENCOUNTER_START(encounterID,encounterName,difficultyID,grou
 	elseif encounterID == 1795 and (not Mannoroth.setupFrame or not Mannoroth.setupFrame.isEnabled) and VExRT.Bossmods.MannorothAutoload then
 		Mannoroth:Load()
 		Mannoroth.setupFrame:Hide()
-	elseif encounterID == 1783 and (not Gorefiend.mainframe or Gorefiend.mainframe.isEnabled) and (not Gorefiend2.mainframe or Gorefiend2.mainframe.isEnabled) and VExRT.Bossmods.GorefiendAutoload and difficultyID == 16 then
+	elseif encounterID == 1783 and (not Gorefiend.mainframe or Gorefiend.mainframe.isEnabled) and (not Gorefiend2.mainframe or not Gorefiend2.mainframe.isEnabled) and VExRT.Bossmods.GorefiendAutoload and difficultyID == 16 then
 		Gorefiend:Load()
 		Gorefiend.mainframe:Engage()
 	elseif encounterID == 1799 then
@@ -6817,6 +6826,10 @@ function module.main:ZONE_CHANGED()
 			module:UnregisterEvents('PLAYER_TARGET_CHANGED')
 		end
 	end
+end
+
+function module.main:ZONE_CHANGED_NEW_AREA()
+	ExRT.F.Timer(module.main.ZONE_CHANGED,2)
 end
 
 function module.main:PLAYER_TARGET_CHANGED()

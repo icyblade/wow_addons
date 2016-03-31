@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1392, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14663 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14869 $"):sub(12, -3))
 mod:SetCreatureID(90435)
 mod:SetEncounterID(1787)
 mod:SetZone()
@@ -16,9 +16,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_SUCCESS 181307 181299 181300",
 	"SPELL_AURA_APPLIED 181306 186882 180115 180116 180117 189197 189198 189199 186879 186880 186881",
 	"SPELL_AURA_REMOVED 181306 180244"
---	"SPELL_PERIODIC_DAMAGE",
---	"SPELL_ABSORBED",
---	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
 mod:RegisterEvents(

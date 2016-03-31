@@ -534,7 +534,7 @@ function module.main:CHAT_MSG_WHISPER(msg, user)
 	end
 end
 
-function module.main:CHAT_MSG_BN_WHISPER(msg,sender,_,_,_,_,_,_,_,_,_,_,userID)
+function module.main:CHAT_MSG_BN_WHISPER(msg,sender,_,_,_,_,_,_,_,_,_,_,senderBnetIDAccount)
 	msg = string.lower(msg)
 	if not (msg and module.db.invWordsArray[msg]) then
 		return
@@ -542,15 +542,19 @@ function module.main:CHAT_MSG_BN_WHISPER(msg,sender,_,_,_,_,_,_,_,_,_,_,userID)
 	if not IsInRaid() and GetNumGroupMembers() == 5 then 
 		ConvertToRaid()
 	end
+
 	local _,BNcount=BNGetNumFriends() 
 	for i=1,BNcount do 
-		local bID,_,_,_,_,bToon = BNGetFriendInfo(i)
-		if bID==userID and bToon then
-			local _,toonName = BNGetToonInfo(bToon)
-			if (not VExRT.InviteTool.OnlyGuild or (toonName and UnitInGuild(toonName))) then
-				BNInviteFriend(bToon)
+		if senderBnetIDAccount == BNGetFriendInfo(i) then
+			local numGameAccounts = BNGetNumFriendGameAccounts(i)
+			for j=1,numGameAccounts do
+				local hasFocus, characterName, client, realmName, realmID, faction, race, class, _, _, level, _, _, _, _, bnetIDGameAccount = BNGetFriendGameAccountInfo(i, j)
+				if client == BNET_CLIENT_WOW and faction == UnitFactionGroup('player') and (not VExRT.InviteTool.OnlyGuild or (characterName and UnitInGuild(characterName))) then
+					BNInviteFriend(bnetIDGameAccount)
+				end
 			end
-		end 
+			break
+		end
 	end
 end
 
@@ -642,9 +646,13 @@ do
 			AcceptGroup()
 			for i = 1, 4 do
 				local frame = _G["StaticPopup"..i]
-				if(frame:IsVisible() and frame.which=="PARTY_INVITE") then
-					frame.inviteAccepted = 1
+				if frame:IsVisible() and frame.which=="PARTY_INVITE" then
+					frame.inviteAccepted = true
 					StaticPopup_Hide("PARTY_INVITE")
+					return
+				elseif frame:IsVisible() and frame.which=="PARTY_INVITE_XREALM" then
+					frame.inviteAccepted = true
+					StaticPopup_Hide("PARTY_INVITE_XREALM")
 					return
 				end
 			end

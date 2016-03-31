@@ -10,7 +10,6 @@ ExRT.lib.ShowOrHide(self,bool)
 ExRT.lib.CreateColorPickButton(parent,width,height,relativePoint,x,y,cR,cG,cB,cA)
 ExRT.lib.CreateGraph(parent,width,height,relativePoint,x,y)
 ExRT.lib.CreateHelpButton(parent,helpPlateArray,isTab)
-ExRT.lib.CreateScrollCheckList(parent,relativePoint,x,y,width,linesNum,isModern)
 
 
 version 2.0
@@ -60,7 +59,7 @@ All functions:
 -> ELib:Icon(parent,textureIcon,size,isButton)
 -> ELib:Check(parent,text,state,template)
 	:Tooltip(str)		-> [add tooltip]
-	:Left()			-> [move text to left side]
+	:Left([relativeX])	-> [move text to left side], relativeX default 2
 -> ELib:Radio(parent,text,checked,template)	
 -> ELib:Popup(title,template)
 -> ELib:OneTab(parent,text,isOld)
@@ -68,6 +67,7 @@ All functions:
 	:SetText(str)		-> [set text]
 	:Tooltip(str)		-> [add tooltip]
 	:Size(width)		-> SetWidth(width)
+	:AddText(text)		-> [add text at left side]
 -> ELib:DropDownButton(parent,defText,dropDownWidth,lines,template)
 	:Tooltip(str)		-> [add tooltip]
 -> ELib:MultiEdit(parent)
@@ -86,11 +86,21 @@ All functions:
 -> ELib:ScrollList(parent,list)
 	:Update()		-> [update list]
 	:FontSize(size)		-> SetFont(font,size)
+-> ELib:ScrollCheckList(parent,list)
+	:Update()		-> [update list]
+	:FontSize(size)		-> SetFont(font,size)
+-> ELib:ScrollTableList(parent,...)
+				   where ... are width of columns, one always must be 0
+	:Update()		-> [update list]
+	:FontSize(size)		-> SetFont(font,size)
 -> ELib:ScrollTabsFrame(parent,...)
 -> ELib:ListButton(parent,text,width,lines,template)
 	:Left()			-> [move text to left side]
 -> ELib:DebugBack(parent)
-	
+-> ELib:Texture(parent,texture,layer) or ELib:Texture(parent,cR,cG,cB,cA,layer)
+	:Color(r,g,b,a)		-> SetVertexColor(r,g,b,a)
+	:TexCoord(...)		-> SetTexCoord(...)
+
 Tooltips:
 -> ELib.Tooltip:Hide()
 -> ELib.Tooltip:Std(anchorUser)			[based on self.tooltipText]
@@ -106,7 +116,7 @@ Tooltips:
 local GlobalAddonName, ExRT = ...
 if GlobalAddonName ~= "ExRT" then ExRT = GExRT or {} end
 
-local libVersion = 20
+local libVersion = 21
 
 if type(ELib)=='table' and type(ELib.V)=='number' and ELib.V > libVersion then return end
 
@@ -245,6 +255,45 @@ function ELib.AddShadowComment(self,hide,moduleName,userComment,userFontSize,use
 end
 
 do
+	local function Widget_TexCoord(self,...)
+		self:SetTexCoord(...)
+		return self
+	end
+	local function Widget_Color(self,...)
+		self:SetVertexColor(...)
+		return self
+	end
+	function ELib:Texture(parent,texture,...)
+		local layer,cR,cG,cB,cA = nil
+		if type(texture) == 'number' then
+			cG,cB,cA,layer = ...
+			cR = texture
+			texture = nil
+		else
+			layer = ...
+		end
+	
+		local self = parent:CreateTexture(nil,layer or "BACKGROUND")
+		Mod(self,
+			'Color',Widget_Color,
+			'TexCoord',Widget_TexCoord
+		)
+		
+		if texture then
+			self:SetTexture(texture)
+		elseif cR then
+			if ExRT.is7 then
+				self:SetColorTexture(cR,cG,cB,cA)
+			else
+				self:SetTexture(cR,cG,cB,cA)
+			end
+		end
+		
+		return self
+	end
+end
+
+do
 	function ELib:Shadow(parent,size,edgeSize)
 		local self = CreateFrame("Frame",nil,parent)
 		self:SetPoint("LEFT",-size,0)
@@ -316,6 +365,10 @@ do
 		self:SetScript("OnValueChanged",func)
 		return self
 	end	
+	local function Widget_SetTooltip(self,tooltipText)
+		self.tooltipText = tooltipText
+		return self
+	end
 	
 	function ELib:Slider(parent,text,isVertical,template)
 		if template == 0 then
@@ -349,6 +402,7 @@ do
 		self.Range = Widget_Range
 		self.SetTo = Widget_SetTo
 		self.OnChange = Widget_OnChange
+		self.Tooltip = Widget_SetTooltip
 		
 		if template and template:find("^ExRTSliderModern") then
 			self._Size = self.Size
@@ -1199,7 +1253,7 @@ do
 	local function Widget_SetSize(self,width,height)
 		self:SetSize(width,height)
 		self.content:SetWidth(width-16-(self.isModern and 4 or 0))
-		self.ScrollBar:Size(16,height)
+		--self.ScrollBar:Size(16,height)
 		
 		if self.isModern and height < 65 then
 			self.ScrollBar.IsThumbSmalled = true
@@ -1212,7 +1266,7 @@ do
 		return self
 	end
 	local function ScrollFrameMouseWheel(self,delta)
-		delta = delta * 20
+		delta = delta * (self.mouseWheelRange or 20)
 		local min,max = self.ScrollBar.slider:GetMinMaxValues()
 		local val = self.ScrollBar:GetValue()
 		if (val - delta) < min then
@@ -1265,7 +1319,7 @@ do
 		self.C = self.content
 		
 		if not isOld then
-			self.ScrollBar = ELib:ScrollBar(self):Size(16,100):Point("TOPRIGHT",0,0):Range(0,1):SetTo(0):ClickRange(20)
+			self.ScrollBar = ELib:ScrollBar(self):Size(16,0):Point("TOPRIGHT",0,0):Point("BOTTOMRIGHT",0,0):Range(0,1):SetTo(0):ClickRange(20)
 		else
 			self.ScrollBar = ELib.CreateScrollBar(self,16,100,0,0,0,1,"TOPRIGHT")
 		end
@@ -1452,20 +1506,13 @@ do
 		end
 		ELib.Tooltip.Show(self,"ANCHOR_TOP",tooltipTitle,{tooltipText,1,1,1,true})
 	end
-	local function CheckBoxClick(self)
-		if self:GetChecked() then
-			self:On()
-		else
-			self:Off()
-		end
-	end
 	local function Widget_Tooltip(self,text)
 		self.tooltipText = text
 		return self
 	end
-	local function Widget_Left(self)
+	local function Widget_Left(self,relativeX)
 		self.text:ClearAllPoints()
-		self.text:SetPoint("RIGHT",self,"LEFT",-2,0)
+		self.text:SetPoint("RIGHT",self,"LEFT",relativeX and relativeX*(-1) or -2,0)
 		return self
 	end
 			
@@ -1480,7 +1527,6 @@ do
 		self:SetChecked(state and true or false)
 		self:SetScript("OnEnter",CheckBoxOnEnter)
 		self:SetScript("OnLeave",ELib.Tooltip.Hide)
-		self:SetScript("OnClick", CheckBoxClick)
 		
 		Mod(self)
 		self.Tooltip = Widget_Tooltip
@@ -1631,32 +1677,65 @@ do
 end
 
 do
+	local function ScrollListListEnter(self)
+		local mainFrame = self.mainFrame
+		if mainFrame.HoverListValue then
+			mainFrame:HoverListValue(true,self.index,self)
+			mainFrame.HoveredLine = self
+		end
+	end
+	local function ScrollListListLeave(self)
+		local mainFrame = self.mainFrame
+		if mainFrame.HoverListValue then
+			mainFrame:HoverListValue(false,self.index,self)
+		end
+		mainFrame.HoveredLine = nil
+	end
 	local function ScrollListMouseWheel(self,delta)
+		-- This function isnt called, cuz wheel cause scrollframe wheel event
 		if delta > 0 then
 			self.Frame.ScrollBar.buttonUP:Click("LeftButton")
 		else
 			self.Frame.ScrollBar.buttonDown:Click("LeftButton")
 		end
 	end
-	local function ScrollListListEnter(self)
-		if self.mainFrame.HoverListValue then
-			self.mainFrame:HoverListValue(true,self.index,self)
-		end
-	end
-	local function ScrollListListLeave(self)
-		if self.mainFrame.HoverListValue then
-			self.mainFrame:HoverListValue(false,self.index,self)
-		end
-	end
 	local ScrollListBackdrop = {bgFile = "", edgeFile = "Interface/Tooltips/UI-Tooltip-Border",tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }}
 	local ScrollListBackdropModern = {edgeFile = "Interface/AddOns/ExRT/media/border.tga", edgeSize = 16}
 	
-	local function ScrollList_Line_Click(self,...)
+	local function ScrollList_Line_Click(self,button,...)
 		local parent = self.mainFrame
-		parent.selected = self.index
+		if not parent.isCheckList then
+			parent.selected = self.index
+		else
+			if button ~= "RightButton" then
+				parent.C[self.index] = not parent.C[self.index]
+			end
+		end
+		parent:Update()
+		if parent.SetListValue then
+			parent:SetListValue(self.index,button,...)
+		end
+		if parent.isCheckList and parent.ValueChanged then
+			parent:ValueChanged()
+		end
+		if parent.AdditionalLineClick then
+			parent.AdditionalLineClick(self,button,...)
+		end
+	end
+	local function ScrollList_Check_Click(self,...)
+		local listParent = self:GetParent()
+		local parent = listParent.mainFrame
+		if self:GetChecked() then
+			parent.C[listParent.index] = true
+		else
+			parent.C[listParent.index] = nil
+		end
 		parent:Update()
 		if parent.SetListValue then
 			parent:SetListValue(self.index,...)
+		end
+		if parent.isCheckList and parent.ValueChanged then
+			parent:ValueChanged()
 		end
 	end
 	local function ScrollList_AddLine(self,i)
@@ -1665,7 +1744,36 @@ do
 		line:SetPoint("TOPLEFT",0,-(i-1)*16)
 		line:SetPoint("BOTTOMRIGHT",self.Frame.C,"TOPRIGHT",0,-i*16)
 		
-		line.text = ELib:Text(line,"List"..tostring(i),self.fontSize or 12):Point("TOPLEFT",3,0):Point("TOPRIGHT",-3,0):Size(0,16):Color():Shadow()
+		if not self.T then
+			line.text = ELib:Text(line,"List"..tostring(i),self.fontSize or 12):Point("TOPLEFT",self.isCheckList and 24 or 3,0):Point("TOPRIGHT",-3,0):Size(0,16):Color():Shadow()
+			line:SetFontString(line.text)
+			line:SetPushedTextOffset(2, -1)
+		else
+			local zeroWidth = nil
+			for j=1,#self.T do
+				local width = self.T[j]
+				line['text'..j] = ELib:Text(line,"List",self.fontSize or 12):Size(width,16):Color():Shadow():Left()
+				if width == 0 then
+					zeroWidth = j
+				end
+			end
+			for j=1,#self.T do
+				local text = line['text'..j]
+				if j == 1 then
+					text:Point("LEFT",3,0)
+				elseif j < zeroWidth then
+					text:Point("LEFT",line['text'..(j-1)],"RIGHT",0,0)
+				elseif j == #self.T and j == zeroWidth then
+					text:Point("LEFT",line['text'..(j-1)],"RIGHT",0,0):Point("RIGHT",-3,0)
+				elseif j == #self.T then
+					text:Point("RIGHT",-3,0)
+				elseif j == zeroWidth then
+					text:Point("LEFT",line['text'..(j-1)],"RIGHT",0,0):Point("RIGHT",line['text'..(j+1)],"LEFT",0,0)
+				else
+					text:Point("RIGHT",line['text'..(j+1)],"LEFT",0,0)
+				end
+			end
+		end
 		
 		line.HighlightTexture = line:CreateTexture()
 		line.HighlightTexture:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight")
@@ -1685,8 +1793,16 @@ do
 		line.PushedTexture:SetVertexColor(1,1,0,1)
 		line:SetDisabledTexture(line.PushedTexture)
 		
-		line:SetFontString(line.text)
-		line:SetPushedTextOffset(2, -1)
+		line.iconRight = line:CreateTexture()
+		line.iconRight:SetPoint("RIGHT",-3,0)
+		line.iconRight:SetSize(16,16)
+		
+		if self.isCheckList then
+			line.chk = CreateFrame("CheckButton",nil,line,"ExRTCheckButtonModernTemplate")  
+			line.chk:SetSize(14,14)
+			line.chk:SetPoint("LEFT",4,0)
+			line.chk:SetScript("OnClick", ScrollList_Check_Click)
+		end
 		
 		line.mainFrame = self
 		line.id = i
@@ -1694,6 +1810,8 @@ do
 		line:SetScript("OnEnter",ScrollListListEnter)
 		line:SetScript("OnLeave",ScrollListListLeave)
 		line:RegisterForClicks("LeftButtonUp","RightButtonUp")
+		
+		return line
 	end
 	local function ScrollList_ScrollBar_OnValueChanged(self,value)
 		local parent = self:GetParent():GetParent()
@@ -1707,17 +1825,42 @@ do
 		local j = 0
 		for i=val,#self.L do
 			j = j + 1
-			if not self.List[j] then ScrollList_AddLine(self,j) end
-			self.List[j]:SetText(self.L[i])
-			if not self.dontDisable then
-				if i ~= self.selected then
-					self.List[j]:SetEnabled(true)
-				else
-					self.List[j]:SetEnabled(nil)
+			local line = self.List[j]
+			if not line then 
+				line = ScrollList_AddLine(self,j)
+			end
+			if not self.T then
+				line:SetText(self.L[i])
+			else
+				for k=1,#self.T do
+					line['text'..k]:SetText(self.L[i][k] or "")
 				end
 			end
-			self.List[j]:Show()
-			self.List[j].index = i
+			if self.isCheckList then
+				line.chk:SetChecked(self.C[i])
+			elseif not self.T then
+				if not self.dontDisable then
+					if i ~= self.selected then
+						line:SetEnabled(true)
+					else
+						line:SetEnabled(nil)
+					end
+				end
+			end
+			if self.IconsRight then
+				local icon = self.IconsRight[j]
+				if type(icon)=='table' then
+					line.iconRight:SetTexture(icon[1])
+					line.iconRight:SetSize(icon[2],icon[2])
+				elseif icon then
+					line.iconRight:SetTexture(icon)
+					line.iconRight:SetSize(16,16)
+				else
+					line.iconRight:SetTexture("")
+				end			
+			end
+			line:Show()
+			line.index = i
 			if (j >= #self.L) or (j >= self.linesPerPage) then
 				break
 			end
@@ -1739,6 +1882,12 @@ do
 			self.UpdateAdditional(self,val)
 		end
 		
+		if self.HoveredLine then
+			local hovered = self.HoveredLine
+			ScrollListListLeave(hovered)
+			ScrollListListEnter(hovered)
+		end
+		
 		return self
 	end
 	local function Widget_SetSize(self,width,height)
@@ -1753,12 +1902,20 @@ do
 	end
 	local function Widget_FontSize(self,size)
 		self.fontSize = size
-		for i=1,#self.List do
-			self.List[i].text:SetFont(self.List[i].text:GetFont(),size)
+		if not self.T then
+			for i=1,#self.List do
+				self.List[i].text:SetFont(self.List[i].text:GetFont(),size)
+			end
+		else
+			for i=1,#self.List do
+				for j=1,#self.T do
+					self.List[i]['text'..j]:SetFont(self.List[i]['text'..j]:GetFont(),size)
+				end
+			end
 		end
 		return self
 	end
-	function ELib:ScrollList(parent,list)
+	local function CreateScrollList(parent,list)
 		local self = CreateFrame("Frame",nil,parent)
 		self.Frame = ELib:ScrollFrame(self):Point(0,0)
 		
@@ -1782,143 +1939,39 @@ do
 		self:SetScript("OnShow",self.Update)
 		self:SetScript("OnMouseWheel",ScrollListMouseWheel)
 
+		return self
+	end
+	function ELib:ScrollList(parent,list)
+		local self = CreateScrollList(parent,list)
 		self:Update()
 		
 		return self
 	end
+	function ELib:ScrollTableList(parent,...)
+		local self = CreateScrollList(parent)
+		self.T = {}
+		for i=1,select("#",...) do
+			self.T[i] = select(i,...)
+		end
+		self:Update()
+		
+		return self
+	end
+	function ELib:ScrollCheckList(parent,list)
+		local self = CreateScrollList(parent,list)
+		self.C = {}
+		self.isCheckList = true
+		
+		self:Update()
+		
+		return self
+	end
+
 	function ELib.CreateScrollList(parent,relativePoint,x,y,width,linesNum,isModern)
 		return ELib:ScrollList(parent,nil,not isModern):Point(relativePoint or "TOPLEFT",x + 5,y - 5):Size(width-10,linesNum * 16 - 2)
 	end
-end
-
-do
-	local function ScrollCheckListUpdate(self)
-		local val = ExRT.F.Round(self.ScrollBar:GetValue())
-		local j = 0
-		for i=val,#self.L do
-			j = j + 1
-			self.List[j]:SetText(self.L[i])
-			self.List[j].chk:SetChecked(self.C[i])
-			self.List[j]:Show()
-			self.List[j].index = i
-			if j >= self.linesNum then
-				break
-			end
-		end
-		for i=(j+1),self.linesNum do
-			self.List[i]:Hide()
-		end
-		self.ScrollBar:SetMinMaxValues(1,max(#self.L-self.linesNum+1,1))
-		self.ScrollBar:UpdateButtons()
-	end
-	local function ScrollCheckListScrollBarOnValueChanged(self)
-		local parent = self:GetParent():GetParent()
-		parent:Update()
-	end
-	local function ScrollCheckListMouseWheel(self, delta)
-		if delta > 0 then
-			self.ScrollBar.buttonUP:Click("LeftButton")
-		else
-			self.ScrollBar.buttonDown:Click("LeftButton")
-		end
-	end
-	local function ScrollCheckListListCheckClick(self)
-		local listParent = self:GetParent()
-		local parent = listParent.mainFrame
-		if self:GetChecked() then
-			parent.C[listParent.index] = true
-		else
-			parent.C[listParent.index] = nil
-		end
-		parent.ValueChanged(parent)
-	end
-	local function ScrollCheckListListClick(self)
-		local parent = self.mainFrame
-		parent.C[self.index] = not parent.C[self.index]
-		parent.List[self.id].chk:SetChecked(parent.C[self.index])
-		
-		parent.ValueChanged(parent)
-	end	
-	local function ScrollCheckListListEnter(self)
-		if self.mainFrame.HoverListValue then
-			self.mainFrame:HoverListValue(true,self.index)
-		end
-	end
-	local function ScrollCheckListListLeave(self)
-		if self.mainFrame.HoverListValue then
-			self.mainFrame:HoverListValue(false,self.index)
-		end
-	end
-	local ScrollCheckListBackdrop = {bgFile = "", edgeFile = "Interface/Tooltips/UI-Tooltip-Border",tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }}
-	local ScrollCheckListBackdropModern = {edgeFile = "Interface/AddOns/ExRT/media/border.tga", edgeSize = 16}
 	function ELib.CreateScrollCheckList(parent,relativePoint,x,y,width,linesNum,isModern)
-		local self = CreateFrame("Frame",nil,parent)
-		local height = linesNum * 16 + 8
-		self:SetSize(width,height)
-		self:SetPoint(relativePoint or "TOPLEFT",x,y)
-		if isModern then
-			self:SetBackdrop(ScrollCheckListBackdropModern)
-			self:SetBackdropBorderColor(.24,.25,.30,1)
-			self.ScrollBar = ELib.CreateScrollBarModern(self,16,height-8,-3,-4,1,10,"TOPRIGHT")
-		else
-			self:SetBackdrop(ScrollCheckListBackdrop)
-			self.ScrollBar = ELib.CreateScrollBar(self,16,height-8,-3,-4,1,10,"TOPRIGHT")
-		end
-		
-		
-		self.linesNum = linesNum
-		
-		self.List = {}
-		for i=1,linesNum do
-			self.List[i] = CreateFrame("Button",nil,self)
-			self.List[i]:SetSize(width - 22,16)
-			self.List[i]:SetPoint("TOPLEFT",3,-(i-1)*16-4)
-			
-			self.List[i]:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight","ADD")
-			
-			self.List[i].text = ELib.CreateText(self.List[i],width - 50,16,nil,24,0,"LEFT","MIDDLE",nil,12,"List"..tostring(i),nil,1,1,1,1)
-			
-			self.List[i].mainFrame = self
-			self.List[i].id = i
-			
-			if isModern then
-				self.List[i].chk = CreateFrame("CheckButton",nil,self.List[i],"ExRTCheckButtonModernTemplate")  
-				self.List[i].chk:SetSize(14,14)
-				self.List[i].chk:SetPoint("LEFT",4,0)
-			else
-				self.List[i].chk = CreateFrame("CheckButton",nil,self.List[i],"UICheckButtonTemplate")  
-				self.List[i].chk:SetScale(0.75)
-				self.List[i].chk:SetPoint("TOPLEFT",0,5)
-			end
-			self.List[i].chk:SetScript("OnClick", ScrollCheckListListCheckClick)
-			
-			self.List[i].PushedTexture = self.List[i]:CreateTexture()
-			self.List[i].PushedTexture:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight")
-			self.List[i].PushedTexture:SetBlendMode("ADD")
-			self.List[i].PushedTexture:SetAllPoints()
-			self.List[i].PushedTexture:SetVertexColor(1,1,0,1)
-			
-			self.List[i]:SetDisabledTexture(self.List[i].PushedTexture)
-			
-			self.List[i]:SetFontString(self.List[i].text)
-			self.List[i]:SetPushedTextOffset(2, -1)
-			
- 			self.List[i]:SetScript("OnClick", ScrollCheckListListClick)
-			
-			self.List[i]:SetScript("OnEnter", ScrollCheckListListEnter)
-			self.List[i]:SetScript("OnLeave", ScrollCheckListListLeave)		
-		end
-		
-		self.L = {}
-		self.C = {}
-		self.Update = ScrollCheckListUpdate
-		
-		self:SetScript("OnMouseWheel", ScrollCheckListMouseWheel)
-		
-		self:SetScript("OnShow",self.Update)
-		self.ScrollBar:SetScript("OnValueChanged",ScrollCheckListScrollBarOnValueChanged)
-		
-		return self
+		return ELib:ScrollCheckList(parent,nil,not isModern):Point(relativePoint or "TOPLEFT",x,y):Size(width,linesNum * 16 + 8)
 	end
 end
 
@@ -2106,6 +2159,11 @@ do
 		self:SetScript("OnLeave",DropDown_OnLeave)
 		
 		return self
+	end
+	local function Widget_AddText(self,text)
+		self.leftText = ELib:Text(self,text,12):Point("RIGHT",self,"LEFT",-5,0):Right():Middle():Color():Shadow()
+		
+		return self
 	end	
 		
 	function ELib:DropDown(parent,width,lines,template)
@@ -2127,7 +2185,8 @@ do
 
 		Mod(self,
 			'SetText',Widget_SetText,
-			'Tooltip',Widget_SetTooltip
+			'Tooltip',Widget_SetTooltip,
+			'AddText',Widget_AddText
 		)
 		
 		self._Size = self.Size
@@ -2653,18 +2712,32 @@ end
 --- Graph
 do
 	local Graph_DefColors = {
-		{r = .6, g = 1, b = .6, a = 1},
-		{r = 1, g = 1, b = 1, a = 1},
+		{r = .65, g = .73, b = 0, a = 1},
+		--{r = .65, g = 0, b = .8, a = 1},
+		{r = .55, g = .55, b = .55, a = 1},
 		{r = .82, g = .2, b = .2, a = 1},
 		{r = .50, g = .20, b = .82, a = 1},
 		{r = .38, g = .39, b = .82, a = 1},
 		{r = .82, g = .60, b = .28, a = 1},
 		{r = .41, g = .82, b = .77, a = 1},
+		{r = .6, g = 1, b = .6, a = 1},
 		{r = 1, g = 1, b = 1, a = 1},
 		{r = .82, g = .25, b = .51, a = 1},
 		{r = .10, g = .58, b = 0, a = 1},
 		{r = .58, g = 0, b = 0, a = 1},
 		{r = 0, g = .22, b = .40, a = 1},
+	}
+	local Graph_LinesTextures = {
+		"Interface\\AddOns\\ExRT\\media\\line2px",
+		"Interface\\AddOns\\ExRT\\media\\line2pxA",
+		"Interface\\AddOns\\ExRT\\media\\line2pxB",
+		"Interface\\AddOns\\ExRT\\media\\line2pxC",
+		"Interface\\AddOns\\ExRT\\media\\line2pxD",
+		"Interface\\AddOns\\ExRT\\media\\line2pxE",
+	}
+	local Graph_LinesTextures_Special = {
+		"Interface\\AddOns\\ExRT\\media\\line2pxF",
+		"Interface\\AddOns\\ExRT\\media\\line2pxG",
 	}
 	local function GraphGetNode(self,i)
 		if not self.graph[i] then
@@ -2700,7 +2773,7 @@ do
 		
 			self:SetTexCoord(g1,g2,g3,g4,g5,g6,g7,g8)
 		end
-		function GraphSetLine(self,i,fX,fY,tX,tY)
+		function GraphSetLine(self,i,fX,fY,tX,tY,texture)
 			if not self.lines[i] then
 				self.lines[i] = self:CreateTexture(nil, "BACKGROUND")
 				self.lines[i]:SetTexture("Interface\\AddOns\\ExRT\\media\\line2px")
@@ -2727,6 +2800,7 @@ do
 			RotateTexture(self.lines[i],(PI/180)*angle,min,min,max,max,.5,.5)
 			
 			self.lines[i]:SetPoint("CENTER",self,"BOTTOMLEFT",fX + (tX - fX)/2, fY + (tY - fY)/2)
+			self.lines[i]:SetTexture(texture or "Interface\\AddOns\\ExRT\\media\\line2px")
 			self.lines[i]:Show()
 		end
 	end
@@ -2762,107 +2836,140 @@ do
 		for i=1,#self.lines do
 			self.lines[i]:Hide()
 		end
+		local graphs_count = 0
 		for k=1,#self.data do
-			Xnow,Ynow = minX,minY
-			local colorR,colorG,colorB,colorA = self.data[k].r,self.data[k].g,self.data[k].b,self.data[k].a or 1
-			if not colorR or not colorG or not colorB then
-				local def = Graph_DefColors[k]
-				if def then
-					colorR,colorG,colorB,colorA = def.r,def.g,def.b,def.a
-				else
-					colorR,colorG,colorB,colorA = 1,1,1,.3
-				end
-			end
-			self.tooltipsData[k] = {}
-			for i=1,#self.data[k],self.step do
-				local x = self.data[k][i][1]
-				local steps = 1
-				for j=1,(self.step-1) do
-					if self.data[k][i+j] then
-						x=x+self.data[k][i+j][1]
-						steps = steps + 1
+			if not self.data[k].hide then
+				graphs_count = graphs_count + 1
+				Xnow,Ynow = minX,minY
+				self.tooltipsData[graphs_count] = {
+					main = self.data[k],
+				}
+				
+				local colorR,colorG,colorB,colorA = self.data[k].r,self.data[k].g,self.data[k].b,self.data[k].a or 1
+				local lineTypeNum = 1
+				for i=k-1,1,-1 do
+					if self.data[k].r and self.data[k].r == self.data[i].r and self.data[k].g == self.data[i].g and self.data[k].b == self.data[i].b then
+						lineTypeNum = lineTypeNum + 1
 					end
 				end
-				x = x / steps
-				if x >= minX and x <= maxX then
-					if (not self.isDots and not self.isLines) or enableNodes then
-						if x ~= Xnow then
-							nodeNow = nodeNow + 1
-							local node = GraphGetNode(self,nodeNow)
-							node:SetPoint("BOTTOMLEFT",self,"BOTTOMLEFT",(Xnow - minX)/(maxX - minX)*self.width,(Ynow - minY)/(maxY - minY)*self.height)
-							node:SetSize( (x - Xnow)/(maxX - minX)*self.width , 2 )
-							node:Show()
-							
-							Xnow = x
-						end
+				local lineType = Graph_LinesTextures[lineTypeNum % #Graph_LinesTextures] or Graph_LinesTextures[#Graph_LinesTextures]
+				if colorR then
+					local lineAlpha = 1 - floor((lineTypeNum-1) / 6) * 0.3
+					if lineAlpha < 0.4 then
+						lineAlpha = 1
 					end
+					colorA = not self.data[k].a and lineAlpha or colorA or 1
+				end
+				if not colorR or not colorG or not colorB then
+					local defCount = k % #Graph_DefColors == 0 and #Graph_DefColors or k % #Graph_DefColors
+					local defLine = floor((k-1) / #Graph_DefColors) + 1
+					defLine = defLine > #Graph_LinesTextures and 1 or defLine
 					
-					local y = self.data[k][i][2]
-					steps = 1
+					local def = Graph_DefColors[defCount]
+					if def then
+						colorR,colorG,colorB,colorA = def.r,def.g,def.b,def.a
+					else
+						colorR,colorG,colorB,colorA = 1,1,1,.3
+					end
+					lineType = Graph_LinesTextures[defLine]
+					
+					self.data[k].color_count = defCount
+				end
+				local specialLine = self.data[k].specialLine
+				if specialLine then
+					lineType = Graph_LinesTextures_Special[type(specialLine)=='number' and specialLine or 1]
+				end
+				
+				for i=1,#self.data[k],self.step do
+					local x = self.data[k][i][1]
+					local steps = 1
 					for j=1,(self.step-1) do
 						if self.data[k][i+j] then
-							y=y+self.data[k][i+j][2]
+							x=x+self.data[k][i+j][1]
 							steps = steps + 1
 						end
 					end
-					y = y / steps
-					if (not self.isDots and not self.isLines) or enableNodes then
-						if y ~= Ynow then
-							nodeNow = nodeNow + 1
-							local node = GraphGetNode(self,nodeNow)
-							local relativePoint = (Ynow > y) and "TOPLEFT" or "BOTTOMLEFT"
-							local heightFix = (Ynow > y) and 2 or 0
-							node:SetPoint(relativePoint,self,"BOTTOMLEFT",(Xnow - minX)/(maxX - minX)*self.width,(Ynow - minY)/(maxY - minY)*self.height + heightFix)
-							node:SetSize( 2, abs(y - Ynow)/(maxY - minY)*self.height )
-							node:Show()
-							
-							Ynow = y
-						end
-					end
-					if self.isDots and not enableNodes then
-						local fX,fY = (Xnow - minX)/(maxX - minX)*self.width,(Ynow - minY)/(maxY - minY)*self.height
-						local tX,tY = (x - minX)/(maxX - minX)*self.width,(y - minY)/(maxY - minY)*self.height
-						local a = (tY - fY) / (tX - fX)
-						nodeNow = nodeNow + 1
-						GraphSetDot(self,nodeNow,fX,fY > self.height and self.height or fY)
-						local lastX,lastY = fX,fY
-						for X=fX,tX,axixXstep do
-							local Y = (X-fX)*a + fY
-							if Y > self.height then	Y = self.height	end
-							if abs(X-lastX) > 1.5 or abs(Y-lastY) > 1.5 then
+					x = x / steps
+					if x >= minX and x <= maxX then
+						if (not self.isDots and not self.isLines) or enableNodes then
+							if x ~= Xnow then
 								nodeNow = nodeNow + 1
-								GraphSetDot(self,nodeNow,X,Y)
-								lastX = X
-								lastY = Y
+								local node = GraphGetNode(self,nodeNow)
+								node:SetPoint("BOTTOMLEFT",self,"BOTTOMLEFT",(Xnow - minX)/(maxX - minX)*self.width,(Ynow - minY)/(maxY - minY)*self.height)
+								node:SetSize( (x - Xnow)/(maxX - minX)*self.width , 2 )
+								node:Show()
 								
-								if nodeNow > 10000 then
-									ExRT.F.dprint("Graph: Error: Too much nodes")
-									return
-								end
+								Xnow = x
 							end
 						end
-						nodeNow = nodeNow + 1
-						GraphSetDot(self,nodeNow,tX,tY > self.height and self.height or tY)
 						
-						Xnow = x
-						Ynow = y
-					end
-					if self.isLines and not enableNodes then
-						if x ~= Xnow or y ~= Ynow then
+						local y = self.data[k][i][2]
+						steps = 1
+						for j=1,(self.step-1) do
+							if self.data[k][i+j] then
+								y=y+self.data[k][i+j][2]
+								steps = steps + 1
+							end
+						end
+						y = y / steps
+						if (not self.isDots and not self.isLines) or enableNodes then
+							if y ~= Ynow then
+								nodeNow = nodeNow + 1
+								local node = GraphGetNode(self,nodeNow)
+								local relativePoint = (Ynow > y) and "TOPLEFT" or "BOTTOMLEFT"
+								local heightFix = (Ynow > y) and 2 or 0
+								node:SetPoint(relativePoint,self,"BOTTOMLEFT",(Xnow - minX)/(maxX - minX)*self.width,(Ynow - minY)/(maxY - minY)*self.height + heightFix)
+								node:SetSize( 2, abs(y - Ynow)/(maxY - minY)*self.height )
+								node:Show()
+								
+								Ynow = y
+							end
+						end
+						if self.isDots and not enableNodes then
 							local fX,fY = (Xnow - minX)/(maxX - minX)*self.width,(Ynow - minY)/(maxY - minY)*self.height
 							local tX,tY = (x - minX)/(maxX - minX)*self.width,(y - minY)/(maxY - minY)*self.height
-							
-							tY = tY > self.height and self.height or tY
-							fY = fY > self.height and self.height or fY
-							
+							local a = (tY - fY) / (tX - fX)
 							nodeNow = nodeNow + 1
-							GraphSetLine(self,nodeNow,fX,fY,tX,tY)
-							GraphSetColor(self,nodeNow,colorR,colorG,colorB,colorA)
+							GraphSetDot(self,nodeNow,fX,fY > self.height and self.height or fY)
+							local lastX,lastY = fX,fY
+							for X=fX,tX,axixXstep do
+								local Y = (X-fX)*a + fY
+								if Y > self.height then	Y = self.height	end
+								if abs(X-lastX) > 1.5 or abs(Y-lastY) > 1.5 then
+									nodeNow = nodeNow + 1
+									GraphSetDot(self,nodeNow,X,Y)
+									lastX = X
+									lastY = Y
+									
+									if nodeNow > 10000 then
+										ExRT.F.dprint("Graph: Error: Too much nodes")
+										return
+									end
+								end
+							end
+							nodeNow = nodeNow + 1
+							GraphSetDot(self,nodeNow,tX,tY > self.height and self.height or tY)
+							
 							Xnow = x
 							Ynow = y
 						end
+						if self.isLines and not enableNodes then
+							if x ~= Xnow or y ~= Ynow then
+								local fX,fY = (Xnow - minX)/(maxX - minX)*self.width,(Ynow - minY)/(maxY - minY)*self.height
+								local tX,tY = (x - minX)/(maxX - minX)*self.width,(y - minY)/(maxY - minY)*self.height
+								
+								tY = tY > self.height and self.height or tY
+								fY = fY > self.height and self.height or fY
+								
+								nodeNow = nodeNow + 1
+								GraphSetLine(self,nodeNow,fX,fY,tX,tY,lineType)
+								GraphSetColor(self,nodeNow,colorR,colorG,colorB,colorA)
+								Xnow = x
+								Ynow = y
+							end
+						end
+						self.tooltipsData[graphs_count][#self.tooltipsData[graphs_count] + 1] = {(Xnow - minX)/(maxX - minX)*self.width,Ynow,i,(maxY - Ynow)/(maxY - minY)*self.height,self.data[k][i][3],self.data[k][i][4],self.data[k][i][5]}
 					end
-					self.tooltipsData[k][#self.tooltipsData[k] + 1] = {(Xnow - minX)/(maxX - minX)*self.width,Ynow,i,(maxY - Ynow)/(maxY - minY)*self.height,self.data[k][i][3],self.data[k][i][4],self.data[k][i][5]}
 				end
 			end
 		end
@@ -2885,42 +2992,48 @@ do
 		return true
 	end
 	local function GraphReload(self)
+		if self.OnBeforeReload then
+			self:OnBeforeReload()
+		end
+	
 		local minX,maxX,minY,maxY = nil
 		local isZoom = self.ZoomMinX and self.ZoomMaxX
 		for k=1,#self.data do
-			for i=1,#self.data[k],self.step do
-				local x = self.data[k][i][1]
-				local steps = 1
-				for j=1,(self.step-1) do
-					if self.data[k][i+j] then
-						x=x+self.data[k][i+j][1]
-						steps = steps + 1
+			if not self.data[k].hide then
+				for i=1,#self.data[k],self.step do
+					local x = self.data[k][i][1]
+					local steps = 1
+					for j=1,(self.step-1) do
+						if self.data[k][i+j] then
+							x=x+self.data[k][i+j][1]
+							steps = steps + 1
+						end
 					end
-				end
-				x = x / steps
-				if not minX then
-					minX = x
-					maxX = x
-				else
-					minX = min(minX,x)
-					maxX = max(maxX,x)
-				end
-				local y = self.data[k][i][2]
-				steps = 1
-				for j=1,(self.step-1) do
-					if self.data[k][i+j] then
-						y=y+self.data[k][i+j][2]
-						steps = steps + 1
-					end
-				end
-				y = y / steps
-				if not isZoom or (x >= self.ZoomMinX and x <= self.ZoomMaxX) then
-					if not minY then
-						minY = y
-						maxY = y
+					x = x / steps
+					if not minX then
+						minX = x
+						maxX = x
 					else
-						minY = min(minY,y)
-						maxY = max(maxY,y)
+						minX = min(minX,x)
+						maxX = max(maxX,x)
+					end
+					local y = self.data[k][i][2]
+					steps = 1
+					for j=1,(self.step-1) do
+						if self.data[k][i+j] then
+							y=y+self.data[k][i+j][2]
+							steps = steps + 1
+						end
+					end
+					y = y / steps
+					if not isZoom or (x >= self.ZoomMinX and x <= self.ZoomMaxX) then
+						if not minY then
+							minY = y
+							maxY = y
+						else
+							minY = min(minY,y)
+							maxY = max(maxY,y)
+						end
 					end
 				end
 			end
@@ -2990,6 +3103,10 @@ do
 		if self.AddedOordLines then
 			self:AddOordLines(self.AddedOordLines)
 		end
+		
+		if self.OnAfterReload then
+			self:OnAfterReload()
+		end
 	end
 	local function GraphOnUpdate(self,elapsed)
 		local x,y = ExRT.F.GetCursorPos(self)
@@ -2998,11 +3115,12 @@ do
 				local Y,X,_posY,xText,yText,comment = nil
 				for k=1,#self.tooltipsData do
 					for i=#self.tooltipsData[k],1,-1 do
-						if self.tooltipsData[k][i][1] < x then
+						if (self.tooltipsData[k][i][1] - (self.tooltipsData[k][i-1] and (self.tooltipsData[k][i][1]-self.tooltipsData[k][i-1][1])/2 or 0)) < x or
+							(i == 1 and x <= self.tooltipsData[k][i][1]) then
 							Y = self.tooltipsData[k][i][2]
 							X = self.tooltipsData[k][i][3]
 							_posY = self.tooltipsData[k][i][4]
-							xText = self.tooltipsData[k][i][5]
+							xText = self.data.tooltipX and self.data.tooltipX[X] or self.tooltipsData[k][i][5]
 							yText = self.tooltipsData[k][i][6]
 							comment = self.tooltipsData[k][i][7]
 							break
@@ -3036,18 +3154,20 @@ do
 				local isXadded = false
 				for k=1,#self.tooltipsData do
 					for i=#self.tooltipsData[k],1,-1 do
-						if self.tooltipsData[k][i][1] < x then
+						if (self.tooltipsData[k][i][1] - (self.tooltipsData[k][i-1] and (self.tooltipsData[k][i][1]-self.tooltipsData[k][i-1][1])/2 or 0)) < x or
+							(i == 1 and x <= self.tooltipsData[k][i][1]) then
 							local y = self.tooltipsData[k][i][2]
 							local x = self.tooltipsData[k][i][3]
-							local xText = self.tooltipsData[k][i][5]
+							local xText = self.data.tooltipX and self.data.tooltipX[x] or self.tooltipsData[k][i][5]
 							local yText = self.tooltipsData[k][i][6]
 							local comment = self.tooltipsData[k][i][7]
+							local main = self.tooltipsData[k].main
 							if not isXadded then
 								GameTooltip:AddLine(xText or ExRT.F.Round(x))
 								isXadded = true
 							end
 							
-							GameTooltip:AddLine((self.data[k].name and self.data[k].name..": " or "")..(yText or ExRT.F.Round(y))..(comment and " ("..comment..")" or ""),self.data[k].r or Graph_DefColors[k] and Graph_DefColors[k].r,self.data[k].g or Graph_DefColors[k] and Graph_DefColors[k].g,self.data[k].b or Graph_DefColors[k] and Graph_DefColors[k].b)
+							GameTooltip:AddLine((main.name and main.name..": " or "")..(yText or ExRT.F.Round(y))..(comment and " ("..comment..")" or ""),main.r or Graph_DefColors[main.color_count] and Graph_DefColors[main.color_count].r,main.g or Graph_DefColors[main.color_count] and Graph_DefColors[main.color_count].g,main.b or Graph_DefColors[main.color_count] and Graph_DefColors[main.color_count].b)
 							
 							lines = true
 							break
@@ -3102,6 +3222,7 @@ do
 		if x < self.mouseDowned then
 			x , self.mouseDowned = self.mouseDowned , x
 		end
+		local diff = abs(x - self.mouseDowned)
 		
 		local xLen = self.range.maxX - self.range.minX
 		local width = self:GetWidth()
@@ -3113,7 +3234,7 @@ do
 		end
 		self.mouseDowned = nil
 		
-		if self.Zoom then
+		if self.Zoom and (not self.fixMissclickZoom or diff > 5) then
 			self:Zoom(start,ending)
 		end
 	end
@@ -3121,6 +3242,9 @@ do
 		local parent = self:GetParent()
 		parent.ZoomMinX = nil
 		parent.ZoomMaxX = nil
+		if parent.OnResetZoom then
+			parent:OnResetZoom()
+		end
 		parent:Reload()
 	end
 	local function GraphZoom(self,start,ending)
@@ -3132,7 +3256,7 @@ do
 			self.ZoomMaxX = ending
 		end
 		self:Reload()
-	end	
+	end
 	local function GraphCreateZoom(self)
 		self.selectingTexture = self:CreateTexture(nil, "BACKGROUND",nil,2)
 		self.selectingTexture:SetTexture(0, 0.65, 0.9, .7)
@@ -3159,6 +3283,15 @@ do
 	local function GraphSetMaxY(self,y)
 		self.ZoomMaxY = nil
 		if y then
+			if y:find("k") then
+				local n = y:match("^([0-9%.]+)k")
+				n = tonumber(n or "0") or 0
+				y:gsub("k",function()
+					n = n * 1000
+					return ""
+				end)
+				y = n
+			end
 			self.ZoomMaxY = tonumber(y)
 			if self.ZoomMaxY == 0 then
 				self.ZoomMaxY = nil
@@ -3168,7 +3301,7 @@ do
 	end
 	local function GraphTextYButtonOnClick(self)
 		local parent = self:GetParent()
-		ExRT.F.ShowInput("Set Max Y",GraphSetMaxY,parent,true)
+		ExRT.F.ShowInput("Set Max Y",GraphSetMaxY,parent)
 	end
 	local function GraphTextYButtonOnEnter(self)
 		local parent = self:GetParent()
@@ -3357,6 +3490,9 @@ do
 			parent.ScrollBar:SetValue(min(ceil( y + height - heightNow ),scrollMax))
 		end
 	end
+	local function Widget_GetText(self)
+		return self.EditBox:GetText()
+	end
 	
 	function ELib:MultiEdit(parent)
 		local self = ELib:ScrollFrame(parent)
@@ -3382,6 +3518,7 @@ do
 		self.ToTop = Widget_ToTop
 		self.SetText = Widget_SetText
 		self.GetTextHighlight = Widget_GetTextHighlight
+		self.GetText = Widget_GetText
 		
 		return self
 	end

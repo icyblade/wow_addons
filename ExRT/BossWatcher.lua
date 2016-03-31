@@ -1,4 +1,3 @@
--- ICY: SetTexture -> SetColorTexture
 local GlobalAddonName, ExRT = ...
 
 local max = max
@@ -11,6 +10,7 @@ local UnitPower = UnitPower
 local UnitPowerMax = UnitPowerMax
 local UnitGUID = UnitGUID
 local UnitName = UnitName
+local UnitAura = UnitAura
 local AntiSpam = ExRT.F.AntiSpam
 local GetUnitInfoByUnitFlag = ExRT.F.GetUnitInfoByUnitFlag
 local UnitInRaid = UnitInRaid
@@ -67,6 +67,8 @@ local raidGUIDs = {}
 
 local damageTakenLog = {}
 module.db.damageTakenLog = damageTakenLog
+
+local spellFix_LotM = {}
 
 module.db.buffsFilters = {
 [1] = {[-1]=L.BossWatcherFilterOnlyBuffs,}, --> Only buffs
@@ -134,50 +136,6 @@ module.db.buffsFilters = {
 }
 module.db.buffsFilterStatus = {}
 
-module.db.raidIDs = {
-	[543]=true, 	--wotlk
-	[535]=true, 	--wotlk
-	[529]=true, 	--wotlk
-	[527]=true, 	--wotlk
-	[532]=true, 	--wotlk
-	[531]=true, 	--wotlk
-	[604]=true, 	--wotlk
-	[609]=true, 	--wotlk
-	[718]=true,	--wotlk
-
-	[752]=true,	--BH
-	[754]=true,	--BD
-	[758]=true,	--BoT
-	[774]=true,	--TotFW
-	[800]=true,	--FL
-	[824]=true,	--DS
-	
-	[896]=true,	--MV
-	[897]=true,	--HoF
-	[886]=true,	--ToES
-	[930]=true,	--ToT
-	[953]=true,	--SoO
-	
-	[988]=true,	--BF
-	[994]=true,	--H
-	[1026]=true,	--HC
-	
-	[-999]=true,	--All new raids
-}
-module.db.battlegroundsIDs = {
-	[401]=true,	--	Alterac Valley
-	[461]=true,	--	Arathi Basin
-	[935]=true,	--	Deepwind Gorge
-	[482]=true,	--	Eye of the Storm
-	[540]=true,	--	Isle of Conquest
-	[860]=true,	--	Silvershard Mines
-	[512]=true,	--	Strand of the Ancients
-	[856]=true,	--	Temple of Kotmogu
-	[736]=true,	--	The Battle for Gilneas
-	[626]=true,	--	Twin Peaks
-	[443]=true,	--	Warsong Gulch
-}
-
 module.db.autoSegmentEvents = {"UNIT_SPELLCAST_SUCCEEDED","SPELL_AURA_REMOVED","SPELL_AURA_APPLIED","UNIT_DIED","CHAT_MSG_RAID_BOSS_EMOTE"}
 module.db.autoSegmentEventsL = {
 	["UNIT_SPELLCAST_SUCCEEDED"] = L.BossWatcherSegmentEventsUSS,
@@ -212,7 +170,7 @@ module.db.energyLocale = is6 and {
 	[1] = "|cffedc294"..L.BossWatcherEnergyType1,
 	[2] = "|cffd1fa99"..L.BossWatcherEnergyType2,
 	[3] = "|cffffff8f"..L.BossWatcherEnergyType3,
-	[4] = "|cfffff569"..(COMBO_POINTS or "Combo Points"),
+	[4] = "|cfffff569"..L.BossWatcherEnergyType4,
 	[5] = "|cffeb4561"..L.BossWatcherEnergyType5,
 	[6] = "|cffeb4561"..L.BossWatcherEnergyType6,
 	[7] = "|cff9482c9"..L.BossWatcherEnergyType7,
@@ -228,19 +186,36 @@ module.db.energyLocale = is6 and {
 	[1] = "|cffedc294"..L.BossWatcherEnergyType1,
 	[2] = "|cffd1fa99"..L.BossWatcherEnergyType2,
 	[3] = "|cffffff8f"..L.BossWatcherEnergyType3,
-	[4] = "|cfffff569"..(COMBO_POINTS or "Combo Points"),
+	[4] = "|cfffff569"..L.BossWatcherEnergyType4,
 	[5] = "|cffeb4561"..L.BossWatcherEnergyType5,
 	[6] = "|cffeb4561"..L.BossWatcherEnergyType6,
 	[7] = "|cff9482c9"..L.BossWatcherEnergyType7,
-	[8] = "|cff"..format("%02x%02x%02x",113,0,197)..POWER_TYPE_LUNAR_POWER,
+	[8] = "|cff"..format("%02x%02x%02x",113,0,197)..L.BossWatcherEnergyType8,
 	[9] = "|cffffb3e0"..L.BossWatcherEnergyType9,
 	[10] = "|cffffffff"..L.BossWatcherEnergyType10,
-	[11] = "|cff"..format("%02x%02x%02x",0,143,255)..POWER_TYPE_MAELSTROM,
+	[11] = "|cff"..format("%02x%02x%02x",0,143,255)..L.BossWatcherEnergyType11,
 	[12] = "|cff4DbB98"..L.BossWatcherEnergyType12,
-	[13] = "|cff"..format("%02x%02x%02x",51,0,102)..POWER_TYPE_INSANITY,
-	[16] = "|cff"..format("%02x%02x%02x",0,255,255)..POWER_TYPE_ARCANE_CHARGES,
-	[17] = "|cff"..format("%02x%02x%02x",209,76,223)..POWER_TYPE_FURY_DEMONHUNTER,
-	[18] = "Pain",
+	[13] = "|cff"..format("%02x%02x%02x",51,0,102)..L.BossWatcherEnergyType13,
+	[16] = "|cff"..format("%02x%02x%02x",0,255,255)..L.BossWatcherEnergyType16,
+	[17] = "|cff"..format("%02x%02x%02x",209,76,223)..L.BossWatcherEnergyType17,
+	[18] = "|cff"..format("%02x%02x%02x",255,147,0)..L.BossWatcherEnergyType18,
+}
+
+module.db.energyPerClass = {
+	--class		--for all	--for player
+	["WARRIOR"] = 	{{1,10},	{1,10}},
+	["PALADIN"] = 	{{0,10},	{0,9,10}},
+	["HUNTER"] = 	{{2,10},	{2,10}},
+	["ROGUE"] = 	{{3,10},	{2,4,10}},
+	["PRIEST"] = 	{{0,10},	{0,10,13}},
+	["DEATHKNIGHT"]={{6,10},	{5,6,10}},
+	["SHAMAN"] = 	{{0,10},	{0,10,11}},
+	["MAGE"] = 	{{0,10},	{0,10,16}},
+	["WARLOCK"] = 	{{0,10},	{0,10,7,14,15}},
+	["MONK"] = 	{{0,3,10},	{0,3,10,12}},
+	["DRUID"] = 	{{0,1,3,10},	{0,3,4,8,10}},
+	["DEMONHUNTER"]={{0,17,18,10},	{0,17,18,10}},
+	["NO"] = 	{{0,1,2,3,6,10},{0,1,2,3,6,10,5,7,8,9,11,12,13,14,15,16,17,18}},
 }
 
 module.db.schoolsDefault = {0x1,0x2,0x4,0x8,0x10,0x20,0x40}
@@ -389,7 +364,52 @@ module.db.reductionIsNotAoe = {	--Spells list from BRF,HC that isnot aoe (Rouge 
 	[190049]=true,	[187047]=true,	[189891]=true,	[187255]=true,	[183864]=true,	[188796]=true,
 }
 
+module.db.def_trackingDamageSpells = {
+	[181913]=1788,	--Shadow-Lord Iskar: Focused Blast
+	[190194]=1800,	--Xhul'horac: Empowered Chains of Fel
+	[186549]=1800,	--Xhul'horac: Singularity
+	[189781]=1800,	--Xhul'horac: Empowered Singularity
+	[185656]=1800,	--Xhul'horac: Shadowfel Annihilation
+	[180161]=1784,	--Tyrant Velhari: Edict of Condemnation
+	[181617]=1795,	--Mannoroth: Mannoroth's Gaze
+	[182011]=1795,	--Mannoroth: Empowered Mannoroth's Gaze
+	[185008]=1799,	--Archimonde: Unleashed Torment
+	[190399]=1799,	--Archimonde: Mark of the Legion
+	--[2812]=true,	--Test
+	[198099]=1841,	--Ursoc: Barreling Momentum
+	[199237]=1841,	--Ursoc: Barreling Momentum > Crushing Impact
+	[210074]=1849,	--Crystal Scorpion: Shockwave
+	[204733]=1849,	--Crystal Scorpion: Volatile Chitin
+}
+
 local var_reductionAuras,var_reductionCurrent = module.db.reductionAuras,module.db.reductionCurrent
+local var_trackingDamageSpells = nil
+
+-- SetTexture doesnt work for numbers vaules, use SetColorTexture instead. Check builds when it will be fixed or rewrite addon
+---- Quick alpha build fix
+local CreateFrame = CreateFrame
+if ExRT.is7 then
+	local _CreateFrame = CreateFrame
+	local function SetTexture(self,arg1,arg2,...)
+		if arg2 and type(arg2)=='number' and arg2 <= 1 then	--GetSpellTexture now return spellid (number) with more than 1 arg
+			return self:SetColorTexture(arg1,arg2,...)
+		else
+			return self:_SetTexture(arg1,arg2,...)
+		end
+	end
+	local function CreateTexture(self,...)
+		local ret1,ret2,ret3,ret4,ret5 = self:_CreateTexture(...)
+		ret1._SetTexture = ret1.SetTexture
+		ret1.SetTexture = SetTexture
+		return ret1,ret2,ret3,ret4,ret5
+	end
+	function CreateFrame(...)
+		local ret1,ret2,ret3,ret4,ret5 = _CreateFrame(...)
+		ret1._CreateTexture = ret1.CreateTexture
+		ret1.CreateTexture = CreateTexture 
+		return ret1,ret2,ret3,ret4,ret5
+	end
+end
 
 local encounterSpecial = {}
 
@@ -398,8 +418,11 @@ local StartSegment = nil
 local UpdateCLEUfunctionsByEncounter = nil
 local _graphSectionTimer,_graphSectionTimerRounded,_graphRaidSnapshot = 0,0,{}
 local _positionsTimer,_positionsTimerRounded,_positionsRaidSnapshot = 0,0,{}
+local _graphRaidEnergy = {}
 
 local _BW_Start,_BW_End = nil
+
+local fightData_damage,fightData_damage_seen,fightData_heal,fightData_healFrom,fightData_switch,fightData_cast,fightData_auras,fightData_power,fightData_deathLog,fightData_maxHP,fightData_reduction
 
 local function UpdateNewSegmentEvents(clear)
 	wipe(module.db.autoSegments.UNIT_DIED)
@@ -434,7 +457,7 @@ do
 	function module:Enable()
 		VExRT.BossWatcher.enabled = true
 		
-		module:RegisterEvents('ZONE_CHANGED_NEW_AREA','PLAYER_REGEN_DISABLED','PLAYER_REGEN_ENABLED','ENCOUNTER_START','ENCOUNTER_END')
+		module:RegisterEvents('ZONE_CHANGED_NEW_AREA','PLAYER_REGEN_DISABLED','PLAYER_REGEN_ENABLED','ENCOUNTER_START','ENCOUNTER_END','CHALLENGE_MODE_START','CHALLENGE_MODE_COMPLETED','CHALLENGE_MODE_RESET')
 		module.main:ZONE_CHANGED_NEW_AREA()
 		module:RegisterSlash()
 		
@@ -486,7 +509,7 @@ do
 			{text = L.BossWatcherTabPlayersSpells, func = ExRT.F.FightLog_OpenTab, arg1 = 5, notCheckable = true},
 			{text = L.BossWatcherTabEnergy, func = ExRT.F.FightLog_OpenTab, arg1 = 6, notCheckable = true},
 			{text = L.BossWatcherTabInterruptAndDispel, func = ExRT.F.FightLog_OpenTab, arg1 = 7, notCheckable = true},
-			{text = L.BossWatcherTabGraphics, func = ExRT.F.FightLog_OpenTab, arg1 = 8, notCheckable = true},
+			{text = TRACKING, func = ExRT.F.FightLog_OpenTab, arg1 = 8, notCheckable = true},
 			{text = L.BossWatcherDeath, func = ExRT.F.FightLog_OpenTab, arg1 = 9, notCheckable = true},
 			{text = L.BossWatcherPositions, func = ExRT.F.FightLog_OpenTab, arg1 = 10, notCheckable = true},
 		}
@@ -532,35 +555,23 @@ function module.options:Load()
 		end
 	end)
 	
-	self.checkShowGUIDs = ELib:Check(self,L.BossWatcherOptionSpellID,VExRT.BossWatcher.timeLineSpellID):Point(15,-110):OnClick(function(self) 
-		if self:GetChecked() then
-			VExRT.BossWatcher.timeLineSpellID = true
-		else
-			VExRT.BossWatcher.timeLineSpellID = nil
-		end
-	end)
-	
-	self.sliderNum = ELib:Slider(self,L.BossWatcherOptionsFightsSave):Size(300):Point(20,-150):Range(1,15):SetTo(VExRT.BossWatcher.fightsNum or 1):OnChange(function(self,event) 
+	self.sliderNum = ELib:Slider(self,L.BossWatcherOptionsFightsSave):Size(300):Point(20,-125):Range(1,15):SetTo(VExRT.BossWatcher.fightsNum or 1):OnChange(function(self,event) 
 		event = ExRT.F.Round(event)
 		VExRT.BossWatcher.fightsNum = event
 		self.tooltipText = event
 		self:tooltipReload(self)
 	end)
-	self.warningText = ELib:Text(self,L.BossWatcherOptionsFightsWarning,12):Size(570,25):Point(15,-175):Top():Color():Shadow()
+	self.warningText = ELib:Text(self,L.BossWatcherOptionsFightsWarning,12):Size(570,25):Point(15,-150):Top():Color():Shadow()
 	
-	--[[
-	self.saveVariables = ELib:Check(self,L.BossWatcherSaveVariables,VExRT.BossWatcher.saveVariables):Point(15,-235):Tooltip(L.BossWatcherSaveVariablesWarring):OnClick(function(self) 
-		if self:GetChecked() then
+	if ExRT.T == "Dev" then
+		self.saveVariables = ELib:Check(self,L.BossWatcherSaveVariables):Point(260,-35):Tooltip(L.BossWatcherSaveVariablesWarring):OnClick(function(self) 
 			VExRT.BossWatcher.saveVariables = true
 			VExRT.BossWatcher.SAVED_DATA = module.db.data
-		else
-			VExRT.BossWatcher.saveVariables = nil
-			VExRT.BossWatcher.SAVED_DATA = nil
-		end
-	end)
-	]]
+			print('Saved')
+		end)
+	end
 	
-	self.showButton = ELib:Button(self,L.BossWatcherGoToBossWatcher):Size(550,20):Point("TOP",0,-225):OnClick(function ()
+	self.showButton = ELib:Button(self,L.BossWatcherGoToBossWatcher):Size(550,20):Point("TOP",0,-200):OnClick(function ()
 		InterfaceOptionsFrame:Hide()
 		ExRT.Options.Frame:Hide()
 		BWInterfaceFrameLoadFunc()
@@ -574,9 +585,9 @@ function module.options:Load()
 		end
 	end)
 	
-	self.chatText = ELib:Text(self,L.BossWatcherOptionsHelp,12):Size(600,250):Point(15,-260):Top():Color():Shadow()
+	self.chatText = ELib:Text(self,L.BossWatcherOptionsHelp,12):Size(600,250):Point(15,-235):Top():Color():Shadow()
 	
-	self.checkHideMageT100 = ELib:Check(self,L.BossWatcherHidePrismatic,not VExRT.BossWatcher.showPrismatic):Point(15,-375):Tooltip(L.BossWatcherHidePrismaticTooltip):OnClick(function(self) 
+	self.checkHideMageT100 = ELib:Check(self,L.BossWatcherHidePrismatic,not VExRT.BossWatcher.showPrismatic):Point(15,-350):Tooltip(L.BossWatcherHidePrismaticTooltip):OnClick(function(self) 
 		if self:GetChecked() then
 			VExRT.BossWatcher.showPrismatic = nil
 		else
@@ -588,7 +599,7 @@ function module.options:Load()
 			BWInterfaceFrame.nowFightID = module.db.lastFightID
 		end
 	end)
-	self.checkDivisionByZeroMageT100 = ELib:Check(self,L.BossWatcherDisablePrismatic,VExRT.BossWatcher.divisionPrismatic):Point(15,-400):Tooltip(L.BossWatcherDisablePrismaticTooltip):OnClick(function(self) 
+	self.checkDivisionByZeroMageT100 = ELib:Check(self,L.BossWatcherDisablePrismatic,VExRT.BossWatcher.divisionPrismatic):Point(15,-375):Tooltip(L.BossWatcherDisablePrismaticTooltip):OnClick(function(self) 
 		if self:GetChecked() then
 			VExRT.BossWatcher.divisionPrismatic = true
 		else
@@ -610,15 +621,30 @@ function module.options:Load()
 	end
 end
 
+local function UpdateTrackingDamageSpellsTable()
+	var_trackingDamageSpells = ExRT.F.table_copy2(module.db.def_trackingDamageSpells)
+	for spellID,_ in pairs(VExRT.BossWatcher.trackingDamageSpells) do
+		var_trackingDamageSpells[spellID] = true
+	end
+end
+
 function module.main:ADDON_LOADED()
 	VExRT = _G.VExRT
-	VExRT.BossWatcher = VExRT.BossWatcher or {}
+	VExRT.BossWatcher = VExRT.BossWatcher or {
+		optionsDamageGraph = true,
+		optionsHealingGraph = true,
+		optionsPositionsDist = true,
+		fightsNum = 2,
+	}
 	VExRT.BossWatcher.autoSegments = VExRT.BossWatcher.autoSegments or {}
 	
 	if VExRT.BossWatcher.enabled then
 		module:Enable(true)
 	end
 	VExRT.BossWatcher.fightsNum = VExRT.BossWatcher.fightsNum or 2
+	
+	VExRT.BossWatcher.trackingDamageSpells = VExRT.BossWatcher.trackingDamageSpells or {}
+	UpdateTrackingDamageSpellsTable()
 	
 	if VExRT.BossWatcher.saveVariables and VExRT.BossWatcher.SAVED_DATA then
 		module.db.data = VExRT.BossWatcher.SAVED_DATA
@@ -631,9 +657,13 @@ function module.main:ADDON_LOADED()
 		VExRT.BossWatcher.SAVED_DATA = nil
 	end
 	
-	VExRT.BossWatcher.saveVariables = nil	
+	VExRT.BossWatcher.saveVariables = nil
 	
-	--module.options:GetScript("OnShow")(module.options)
+	if VExRT.Addon.Version < 3596 then
+		VExRT.BossWatcher.optionsDamageGraph = true
+		VExRT.BossWatcher.optionsHealingGraph = true
+		VExRT.BossWatcher.optionsPositionsDist = true
+	end
 end
 
 
@@ -645,7 +675,7 @@ Death type:
 ]]
 local deathMaxEvents = 50
 
-local function addDeathFix(destGUID,timestamp)
+local function addDeath(destGUID,timestamp)
 	local destData = deathLog[destGUID]
 	if not destData then
 		destData = {}
@@ -659,7 +689,7 @@ local function addDeathFix(destGUID,timestamp)
 		{3,destGUID,timestamp},
 	}
 	local destTableLen = 1
-	fightData.deathLog[#fightData.deathLog + 1] = destTable
+	fightData_deathLog[#fightData_deathLog + 1] = destTable
 	for i=destData.c,1,-1 do
 		destTableLen = destTableLen + 1
 		local copyTable = destData[i]
@@ -679,7 +709,20 @@ local function addDeathFix(destGUID,timestamp)
 			copyTable.hm,
 			copyTable.ia,
 		}
-		wipe(destData[i])
+		copyTable.t = nil
+		copyTable.s = nil
+		copyTable.ti = nil
+		copyTable.sp = nil
+		copyTable.a = nil
+		copyTable.o = nil
+		copyTable.sc = nil
+		copyTable.b = nil
+		copyTable.ab = nil
+		copyTable.c = nil
+		copyTable.m = nil
+		copyTable.h = nil
+		copyTable.hm = nil
+		copyTable.ia = nil
 	end
 	for i=deathMaxEvents,destData.c+1,-1 do
 		destTableLen = destTableLen + 1
@@ -700,19 +743,33 @@ local function addDeathFix(destGUID,timestamp)
 			copyTable.hm,
 			copyTable.ia,
 		}
-		wipe(destData[i])
+		copyTable.t = nil
+		copyTable.s = nil
+		copyTable.ti = nil
+		copyTable.sp = nil
+		copyTable.a = nil
+		copyTable.o = nil
+		copyTable.sc = nil
+		copyTable.b = nil
+		copyTable.ab = nil
+		copyTable.c = nil
+		copyTable.m = nil
+		copyTable.h = nil
+		copyTable.hm = nil
+		copyTable.ia = nil
 	end
 	destData.c = 0
 end
 
-local function addDamage(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,destName,destFlags,_,spellID,_,_,amount,overkill,school,resisted,blocked,absorbed,critical,glancing,crushing,isOffHand,multistrike)
+local function addDamage(_,timestamp,sourceGUID,sourceName,sourceFlags,sourceFlags2,destGUID,destName,destFlags,destFlags2,spellID,_,_,amount,overkill,school,resisted,blocked,absorbed,critical,glancing,crushing,isOffHand,multistrike,missType)
+	--Note, missType param added by myself for tracking function
 	
 	--------------> Add damage
-	local destTable = fightData.damage[destGUID]
+	local destTable = fightData_damage[destGUID]
 	if not destTable then
-		fightData.damage_seen[destGUID] = timestamp
+		fightData_damage_seen[destGUID] = timestamp
 		destTable = {}
-		fightData.damage[destGUID] = destTable
+		fightData_damage[destGUID] = destTable
 	end
 	local sourceTable = destTable[sourceGUID]
 	if not sourceTable then
@@ -812,10 +869,10 @@ local function addDamage(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUI
 	--------------> Add reduction
 	local reductuionTable = var_reductionCurrent[destGUID]
 	if reductuionTable then
-		local reduction = fightData.reduction[destGUID]
+		local reduction = fightData_reduction[destGUID]
 		if not reduction then
 			reduction = {}
-			fightData.reduction[destGUID] = reduction
+			fightData_reduction[destGUID] = reduction
 		end
 		local reduction2 = reduction[sourceGUID]
 		if not reduction2 then
@@ -866,13 +923,13 @@ local function addDamage(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUI
 
 
 	--------------> Add switch
-	local targetTable = fightData.switch[destGUID]
+	local targetTable = fightData_switch[destGUID]
 	if not targetTable then
 		targetTable = {
 			[1]={},	--cast
 			[2]={},	--target
 		}
-		fightData.switch[destGUID] = targetTable
+		fightData_switch[destGUID] = targetTable
 	end
 	local targetCastTable = targetTable[1]
 	if not targetCastTable[sourceGUID] then
@@ -897,6 +954,41 @@ local function addDamage(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUI
 			healingFromData[healingFromDataSize + 2] = amount
 		end
 	end
+	
+	
+	
+	--------------> Add special spells [tracking]
+	if var_trackingDamageSpells[spellID] then
+		if not fightData.tracking then
+			fightData.tracking = {}
+		end
+		fightData.tracking[#fightData.tracking + 1] = {timestamp,sourceGUID,sourceFlags2,destGUID,destFlags2,spellID,amount,overkill,school,blocked,absorbed,critical,multistrike,missType}
+	end
+	
+	
+	
+	
+	--------------> Other
+	if spellID == 196917 then	-- Light of the Martyr: effective healing fix
+		local lotmData = spellFix_LotM[sourceGUID]
+		if lotmData then
+			local damageTaken = amount + overkill + (absorbed or 0)
+			if damageTaken < (lotmData[1] + lotmData[2]) and (timestamp - lotmData[5]) < 0.2 then
+				local spellTable = lotmData[3]
+				if lotmData[2] == 0 then
+					spellTable.amount = spellTable.amount - damageTaken
+				elseif lotmData[2] >= damageTaken then
+					spellTable.absorbed = spellTable.absorbed - damageTaken
+				else
+					spellTable.absorbed = spellTable.absorbed - lotmData[2]
+					spellTable.amount = spellTable.amount - damageTaken + lotmData[2]
+				end
+				if lotmData[4] then
+					spellTable.crit = spellTable.crit - damageTaken
+				end
+			end
+		end
+	end
 end
 
 local function AddMiss(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,destName,destFlags,_,spellID,_,school,missType,isOffHand,multistrike,amountMissed)
@@ -905,16 +997,16 @@ local function AddMiss(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,
 	elseif missType == "BLOCK" then
 		addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,0,0,school,nil,amountMissed,nil,nil,nil,nil,isOffHand,multistrike)
 	elseif missType == "PARRY" then
-		addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,0,0,school,nil,nil,nil,nil,nil,nil,isOffHand,multistrike)
-		local spellTable = fightData.damage[destGUID][sourceGUID][spellID]
+		addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,0,0,school,nil,nil,nil,nil,nil,nil,isOffHand,multistrike,missType)
+		local spellTable = fightData_damage[destGUID][sourceGUID][spellID]
 		spellTable.parry = spellTable.parry + 1
 	elseif missType == "DODGE" then
-		addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,0,0,school,nil,nil,nil,nil,nil,nil,isOffHand,multistrike)
-		local spellTable = fightData.damage[destGUID][sourceGUID][spellID]
+		addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,0,0,school,nil,nil,nil,nil,nil,nil,isOffHand,multistrike,missType)
+		local spellTable = fightData_damage[destGUID][sourceGUID][spellID]
 		spellTable.dodge = spellTable.dodge + 1
 	else
-		addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,0,0,school,nil,nil,nil,nil,nil,nil,isOffHand,multistrike)
-		local spellTable = fightData.damage[destGUID][sourceGUID][spellID]
+		addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,0,0,school,nil,nil,nil,nil,nil,nil,isOffHand,multistrike,missType)
+		local spellTable = fightData_damage[destGUID][sourceGUID][spellID]
 		spellTable.miss = spellTable.miss + 1	
 	end
 end
@@ -925,16 +1017,16 @@ if ExRT.is7 then
 		elseif missType == "BLOCK" then
 			addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,0,0,school,nil,amountMissed,nil,nil,nil,nil,isOffHand)
 		elseif missType == "PARRY" then
-			addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,0,0,school,nil,nil,nil,nil,nil,nil,isOffHand)
-			local spellTable = fightData.damage[destGUID][sourceGUID][spellID]
+			addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,0,0,school,nil,nil,nil,nil,nil,nil,isOffHand,nil,missType)
+			local spellTable = fightData_damage[destGUID][sourceGUID][spellID]
 			spellTable.parry = spellTable.parry + 1
 		elseif missType == "DODGE" then
-			addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,0,0,school,nil,nil,nil,nil,nil,nil,isOffHand)
-			local spellTable = fightData.damage[destGUID][sourceGUID][spellID]
+			addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,0,0,school,nil,nil,nil,nil,nil,nil,isOffHand,nil,missType)
+			local spellTable = fightData_damage[destGUID][sourceGUID][spellID]
 			spellTable.dodge = spellTable.dodge + 1
 		else
-			addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,0,0,school,nil,nil,nil,nil,nil,nil,isOffHand)
-			local spellTable = fightData.damage[destGUID][sourceGUID][spellID]
+			addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,0,0,school,nil,nil,nil,nil,nil,nil,isOffHand,nil,missType)
+			local spellTable = fightData_damage[destGUID][sourceGUID][spellID]
 			spellTable.miss = spellTable.miss + 1	
 		end
 	end
@@ -965,12 +1057,11 @@ absorbs = if spell is absorb (ex. PW:S, HPally mastery, BloodDK mastery)
 ]]
 
 local function addHeal(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,destName,destFlags,_,spellID,_,school,amount,overhealing,absorbed,critical,multistrike)
-
 	--------------> Add heal
-	local sourceTable = fightData.heal[sourceGUID]
+	local sourceTable = fightData_heal[sourceGUID]
 	if not sourceTable then
 		sourceTable = {}
-		fightData.heal[sourceGUID] = sourceTable
+		fightData_heal[sourceGUID] = sourceTable
 	end
 	local destTable = sourceTable[destGUID]
 	if not destTable then
@@ -1067,10 +1158,10 @@ local function addHeal(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,
 		if healingFromData then
 			local healingFromDataSize = #healingFromData
 			if healingFromDataSize > 0 then
-				local healingFromTable = fightData.healFrom[sourceGUID]
+				local healingFromTable = fightData_healFrom[sourceGUID]
 				if not healingFromTable then
 					healingFromTable = {}
-					fightData.healFrom[sourceGUID] = healingFromTable
+					fightData_healFrom[sourceGUID] = healingFromTable
 				end
 				local healingFromDestTable = healingFromTable[destGUID]
 				if not healingFromDestTable then
@@ -1114,169 +1205,32 @@ local function addHeal(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,
 			end
 		end
 	end
+	
+	
+	
+	--------------> Other
+	if spellID == 183998 then	--Light of the Martyr: effective healing fix
+		local lotmData = spellFix_LotM[sourceGUID]
+		if not lotmData then
+			lotmData = {}
+			spellFix_LotM[sourceGUID] = lotmData
+		end
+		lotmData[1] = amount - overhealing
+		lotmData[2] = absorbed
+		lotmData[3] = spellTable
+		lotmData[4] = critical
+		lotmData[5] = timestamp
+	end
 end
 
-local function addHeal_TyrantVelhari(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,destName,destFlags,_,spellID,_,school,amount,overhealing,absorbed,critical,multistrike)
-
-	--------------> Add heal
-	local sourceTable = fightData.heal[sourceGUID]
-	if not sourceTable then
-		sourceTable = {}
-		fightData.heal[sourceGUID] = sourceTable
-	end
-	local destTable = sourceTable[destGUID]
-	if not destTable then
-		destTable = {}
-		sourceTable[destGUID] = destTable
-	end
-	local spellTable = destTable[spellID]
-	if not spellTable then
-		spellTable = {
-			amount = 0,
-			over = 0,
-			absorbed = 0,
-			count = 0,
-			crit = 0,
-			critcount = 0,
-			critmax = 0,
-			critover = 0,
-			ms = 0,
-			mscount = 0,
-			msmax = 0,
-			msover = 0,
-			hitmax = 0,
-			absorbs = 0,
-		}
-		destTable[spellID] = spellTable
-		spellsSchool[spellID] = school
-	end
+local function addHeal_TyrantVelhari(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,destName,destFlags,_,spellID,_,school,amount,overhealing,absorbed,critical)
 	if absorbed > 0 and destGUID and (not encounterSpecial[destGUID] or (type(encounterSpecial[destGUID])=='number' and absorbed ~= encounterSpecial[destGUID])) then
 		amount = amount + absorbed
 		overhealing = overhealing + absorbed
 		absorbed = 0
 	end
-	spellTable.amount = spellTable.amount + amount
-	spellTable.over = spellTable.over + overhealing
-	spellTable.absorbed = spellTable.absorbed + absorbed
-	spellTable.count = spellTable.count + 1
-	if critical and not multistrike then
-		spellTable.crit = spellTable.crit + amount + absorbed
-		spellTable.critcount = spellTable.critcount + 1
-		if spellTable.critmax < amount then
-			spellTable.critmax = amount
-		end
-		spellTable.critover = spellTable.critover + overhealing
-	end
-	if multistrike then
-		spellTable.ms = spellTable.ms + amount + absorbed
-		spellTable.mscount = spellTable.mscount + 1
-		if spellTable.msmax < amount then
-			spellTable.msmax = amount
-		end
-		spellTable.msover = spellTable.msover + overhealing		
-	end
-	if not critical and not multistrike then
-		if spellTable.hitmax < amount then
-			spellTable.hitmax = amount
-		end
-	end
-	
-
-
-	--------------> Add death
-	local destData = deathLog[destGUID]
-	if not destData then
-		destData = {}
-		for i=1,deathMaxEvents do
-			destData[i] = {}
-		end
-		destData.c = 0
-		deathLog[destGUID] = destData
-	end
-	local pos = destData.c
-	pos = pos + 1
-	if pos > deathMaxEvents then
-		pos = 1
-	end
-	local deathLine = destData[pos]
-	deathLine.t = 2
-	deathLine.s = sourceGUID
-	deathLine.ti = timestamp
-	deathLine.sp = spellID
-	deathLine.a = amount
-	deathLine.o = overhealing
-	deathLine.sc = school
-	deathLine.b = nil
-	deathLine.ab = absorbed
-	deathLine.c = critical
-	deathLine.m = multistrike
-	deathLine.ia = nil
-	local player = raidGUIDs[ destGUID ]
-	if player then
-		deathLine.h = UnitHealth( player )
-		deathLine.hm = UnitHealthMax( player )
-	end
-	destData.c = pos
-	
-	
-	
-	
-	--------------> Add healing from
-	local healingFromAmount = amount - overhealing
-	if healingFromAmount > 0 then
-		local healingFromData = damageTakenLog[destGUID]
-		if healingFromData then
-			local healingFromDataSize = #healingFromData
-			if healingFromDataSize > 0 then
-				local healingFromTable = fightData.healFrom[sourceGUID]
-				if not healingFromTable then
-					healingFromTable = {}
-					fightData.healFrom[sourceGUID] = healingFromTable
-				end
-				local healingFromDestTable = healingFromTable[destGUID]
-				if not healingFromDestTable then
-					healingFromDestTable = {}
-					healingFromTable[destGUID] = healingFromDestTable
-				end
-				local healingFromSpellTable = healingFromDestTable[spellID]
-				if not healingFromSpellTable then
-					healingFromSpellTable = {}
-					healingFromDestTable[spellID] = healingFromSpellTable
-				end
-				for i=(healingFromDataSize - 1),1,-2 do
-					local damageTaken = healingFromData[i+1]
-					if healingFromAmount > damageTaken then
-						healingFromAmount = healingFromAmount - damageTaken
-						
-						local fromSpellID = healingFromData[i]
-						if not healingFromSpellTable[fromSpellID] then
-							healingFromSpellTable[fromSpellID] = 0
-						end
-						healingFromSpellTable[fromSpellID] = healingFromSpellTable[fromSpellID]+damageTaken
-						
-						healingFromData[i+1] = nil
-						healingFromData[i] = nil
-					else
-						local fromSpellID = healingFromData[i]
-						if not healingFromSpellTable[fromSpellID] then
-							healingFromSpellTable[fromSpellID] = 0
-						end
-						healingFromSpellTable[fromSpellID] = healingFromSpellTable[fromSpellID]+healingFromAmount
-						
-						healingFromData[i+1] = healingFromData[i+1] - healingFromAmount
-						if healingFromData[i+1] == 0 then
-							healingFromData[i+1] = nil
-							healingFromData[i] = nil
-						end
-						
-						break
-					end
-				end
-			end
-		end
-	end
+	addHeal(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,school,amount,overhealing,absorbed,critical)
 end
-
 
 --[[
 SPELL_ABSORBED event info:
@@ -1298,10 +1252,10 @@ local function addAbsorbs(_,timestamp,attackerGUID,attackerName,attackerFlags,at
 	
 	
 	--------------> Add heal
-	local sourceTable = fightData.heal[sourceGUID]
+	local sourceTable = fightData_heal[sourceGUID]
 	if not sourceTable then
 		sourceTable = {}
-		fightData.heal[sourceGUID] = sourceTable
+		fightData_heal[sourceGUID] = sourceTable
 	end
 	local destTable = sourceTable[destGUID]
 	if not destTable then
@@ -1377,10 +1331,10 @@ local function addAbsorbs(_,timestamp,attackerGUID,attackerName,attackerFlags,at
 	
 	
 	--------------> Add healing from
-	local healingFromTable = fightData.healFrom[sourceGUID]
+	local healingFromTable = fightData_healFrom[sourceGUID]
 	if not healingFromTable then
 		healingFromTable = {}
-		fightData.healFrom[sourceGUID] = healingFromTable
+		fightData_healFrom[sourceGUID] = healingFromTable
 	end
 	local healingFromDestTable = healingFromTable[destGUID]
 	if not healingFromDestTable then
@@ -1412,7 +1366,7 @@ local function addAura(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,
 		StartSegment("SPELL_AURA_APPLIED",spellID)
 	end
 	
-	fightData.auras[ #fightData.auras + 1 ] = {timestamp,sourceGUID,destGUID,UnitIsFriendlyByUnitFlag(sourceFlags),UnitIsFriendlyByUnitFlag(destFlags),spellID,auraType,1,1}
+	fightData_auras[ #fightData_auras + 1 ] = {timestamp,sourceGUID,destGUID,UnitIsFriendlyByUnitFlag(sourceFlags),UnitIsFriendlyByUnitFlag(destFlags),spellID,auraType,1,1}
 	
 	
 	--------------> Add reduction
@@ -1601,199 +1555,11 @@ local function addAura(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,
 end
 
 local function addAura_TyrantVelhari(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,destName,destFlags,_,spellID,spellName,school,auraType,amount)
-	if autoSegmentsUPValue.SPELL_AURA_APPLIED[spellID] then
-		StartSegment("SPELL_AURA_APPLIED",spellID)
-	end
-	
-	fightData.auras[ #fightData.auras + 1 ] = {timestamp,sourceGUID,destGUID,UnitIsFriendlyByUnitFlag(sourceFlags),UnitIsFriendlyByUnitFlag(destFlags),spellID,auraType,1,1}
-	
-	
 	if spellID == 185237 or spellID == 185238 or spellID == 180164 or spellID == 180166 then
 		encounterSpecial[destGUID or "nil"] = true
 	end
 	
-	
-	--------------> Add reduction
-	local reduction = var_reductionAuras[spellID]
-	if reduction then
-		if spellID == 81782 then
-			sourceGUID = module.db.reductionPowerWordBarrierCaster or sourceGUID
-		end
-		if spellID == 114030 and sourceGUID == destGUID then return end	--Vigilance fix
-	
-		local destData = var_reductionCurrent[ destGUID ]
-		if not destData then
-			destData = {}
-			var_reductionCurrent[ destGUID ] = destData
-		end
-		local destCount = #destData
-		
-		local func,funcAura,reductionTable = nil
-		if type(reduction)=="table" then
-			reductionTable = reduction
-			funcAura = reduction[3]
-			func = reduction[2]
-			reduction = reduction[1]
-		end
-		
-		if spellID == 1966 then		--Feint additional talent 30%
-			local _,_,_,_,_,_,_,_,_,_,_,_,_,_,val1,val2,val3,val4,val5 = UnitAura(destName or "?",spellName or "?")
-			if val2 == -30 then
-				local from = 1
-				for i=1,destCount do
-					from = from * destData[i].r
-				end
-				local feintAdditionalReduction = 1 / (1 - (from - from * 0.7))
-				destData[destCount + 1] = {
-					s = spellID,
-					r = 0.7,
-					c = (feintAdditionalReduction - 1),
-					g = sourceGUID,
-				}
-				destCount = destCount + 1
-			end
-		end
-
-		if funcAura then
-			local _,_,_,_,_,_,_,_,_,_,_,_,_,_,val1,val2,val3,val4,val5 = UnitAura(destName or "?",spellName or "?")
-			if val1 then
-				reduction, func = funcAura(val1,val2,val3,val4,val5)
-				if not reduction then
-					reduction = reductionTable[1]
-					func = reductionTable[2]
-					funcAura = nil
-				end
-				--ExRT.F.dprint(format("%s > %s: %s [%d%%]",sourceName,destName,spellName,(reduction or 0)*100))
-			else
-				funcAura = nil
-			end
-		end
-		
-		--Second check: some spells doesn't return number of reduction in aura (ex. Shamanistic Rage,Rune Tap)
-		
-		if not funcAura and (spellID == 498 or spellID == 48792 or spellID == 171049 or spellID == 51755 or spellID == 104773 or spellID == 120954 or spellID == 586 or spellID == 30823 or spellID == 871 or spellID == 71 or spellID == 768) then
-			local inspectData = ExRT.A.ExCD2 and ExRT.A.ExCD2.db and ExRT.A.ExCD2.db.inspectDB
-			if inspectData then
-				for name,nameData in pairs(inspectData) do
-					if nameData.GUID == sourceGUID then
-						if spellID == 498 then	--Divine Protection
-							for i=8,13 do
-								if nameData[i] == 54924 then
-									func = nil
-									reduction = 0.8
-									break
-								end
-							end
-						elseif spellID == 48792 then	--Icebound Fortitude
-							if nameData.spec == 250 then
-								reduction = 0.5
-							end
-						elseif spellID == 171049 then	--Rune Tap
-							for i=8,13 do
-								if nameData[i] == 159428 then
-									reduction = 0.8
-									break
-								end
-							end
-						elseif spellID == 51755 then	--Camouflage
-							for i=8,13 do
-								if nameData[i] == 148475 then
-									reduction = 0.9
-									break
-								end
-							end
-						elseif spellID == 104773 then	--Unending Resolve
-							for i=8,13 do
-								if nameData[i] == 146964 then
-									reduction = 0.8
-									break
-								end
-							end
-						elseif spellID == 120954 then	--Fortifying Brew
-							for i=8,13 do
-								if nameData[i] == 124997 then
-									reduction = 0.75
-									break
-								end
-							end
-						elseif spellID == 586 then		--Fade
-							for i=8,13 do
-								if nameData[i] == 55684 then
-									reduction = 0.9
-									break
-								end
-							end
-						elseif spellID == 30823 then	--Shamanistic Rage
-							for i=8,13 do
-								if nameData[i] == 159648 then
-									reduction = 0.4
-									break
-								end
-							end
-						elseif spellID == 871 then		--Shield Wall
-							for i=8,13 do
-								if nameData[i] == 63329 then
-									reduction = 0.4
-									break
-								end
-							end
-						elseif spellID == 71 then		--Defensive Stance
-							if nameData.spec == 73 then
-								reduction = reduction - 0.05 --Improved Defensive Stance
-							end
-							if nameData[7] == 3 then
-								reduction = reduction - 0.05 --Gladiator's Resolve
-							end
-						elseif spellID == 768 then		--Cat Form
-							for i=8,13 do
-								if nameData[i] == 159444 then
-									reduction = 0.9
-									break
-								end
-							end
-						end
-						break
-					end
-				end
-			end
-		end
-		
-		if reduction == 1 then
-			return
-		end
-		
-		local from = 1
-		if func == ReductionAurasFunctions.magic then
-			for i=1,destCount do
-				if destData[i].f ~= ReductionAurasFunctions.physical then
-					from = from * destData[i].r
-				end
-			end
-		elseif func == ReductionAurasFunctions.physical then
-			for i=1,destCount do
-				if destData[i].f ~= ReductionAurasFunctions.magic then
-					from = from * destData[i].r
-				end
-			end
-		else
-			for i=1,destCount do
-				from = from * destData[i].r
-			end
-		end
-		
-		local currReduction = 1 / (1 - (from - from * reduction))
-		destData[destCount + 1] = {
-			s = spellID,
-			r = reduction,
-			c = (currReduction - 1),
-			g = sourceGUID,
-			f = func,
-		}
-		
-		if school then
-			spellsSchool[spellID] = school
-		end
-	end
+	addAura(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,spellName,school,auraType,amount)
 end
 
 
@@ -1802,7 +1568,7 @@ local function removeAura(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGU
 		StartSegment("SPELL_AURA_REMOVED",spellID)
 	end
 	
-	fightData.auras[ #fightData.auras + 1 ] = {timestamp,sourceGUID,destGUID,UnitIsFriendlyByUnitFlag(sourceFlags),UnitIsFriendlyByUnitFlag(destFlags),spellID,auraType,2,1}
+	fightData_auras[ #fightData_auras + 1 ] = {timestamp,sourceGUID,destGUID,UnitIsFriendlyByUnitFlag(sourceFlags),UnitIsFriendlyByUnitFlag(destFlags),spellID,auraType,2,1}
 	
 	if amount and amount > 0 then
 		addHeal(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,school,amount,amount,0)
@@ -1847,16 +1613,6 @@ local function removeAura(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGU
 end
 
 local function removeAura_TyrantVelhari(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,destName,destFlags,_,spellID,_,school,auraType,amount)
-	if autoSegmentsUPValue.SPELL_AURA_REMOVED[spellID] then
-		StartSegment("SPELL_AURA_REMOVED",spellID)
-	end
-	
-	fightData.auras[ #fightData.auras + 1 ] = {timestamp,sourceGUID,destGUID,UnitIsFriendlyByUnitFlag(sourceFlags),UnitIsFriendlyByUnitFlag(destFlags),spellID,auraType,2,1}
-	
-	if amount and amount > 0 then
-		addHeal(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,school,amount,amount,0)
-	end
-	
 	if spellID == 185237 or spellID == 185238 or spellID == 180164 or spellID == 180166 then
 		encounterSpecial[destGUID or "nil"] = amount and floor(amount)
 		C_Timer.NewTicker(0.03,function()
@@ -1864,49 +1620,16 @@ local function removeAura_TyrantVelhari(_,timestamp,sourceGUID,sourceName,source
 		end,1)
 	end
 	
-
-
-	--------------> Add reduction
-	local reduction = var_reductionAuras[spellID]
-	if reduction then
-		local destData = var_reductionCurrent[ destGUID ]
-		if not destData then
-			return
-		end
-		for i=1,#destData do
-			if destData[i] and destData[i].s == spellID and (destData[i].g == sourceGUID or spellID == 81782) then
-				tremove(destData,i)
-			end
-		end
-
-		local from,fromPhysical,fromMagic = 1,1,1
-		for i=1,#destData do
-			local spellData = destData[i]
-			local currReduction = nil
-			if spellData.f == ReductionAurasFunctions.magic then
-				currReduction = 1 / (1 - (fromMagic - fromMagic * spellData.r))
-				fromMagic = fromMagic * spellData.r
-			elseif spellData.f == ReductionAurasFunctions.physical then
-				currReduction = 1 / (1 - (fromPhysical - fromPhysical * spellData.r))
-				fromPhysical = fromPhysical * spellData.r
-			else
-				currReduction = 1 / (1 - (from - from * spellData.r))
-				fromPhysical = fromPhysical * spellData.r
-				fromMagic = fromMagic * spellData.r
-			end
-			from = from * spellData.r
-			spellData.c = currReduction - 1
-		end
-	end
+	removeAura(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,school,auraType,amount)
 end
 
 local function addCastStarted(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,destName,destFlags,_,spellID)
 	
 	--------------> Add cast
-	local sourceTable = fightData.cast[sourceGUID]
+	local sourceTable = fightData_cast[sourceGUID]
 	if not sourceTable then
 		sourceTable = {}
-		fightData.cast[sourceGUID] = sourceTable
+		fightData_cast[sourceGUID] = sourceTable
 	end
 	sourceTable[ #sourceTable + 1 ] = {timestamp,spellID,2,destGUID}
 	
@@ -1920,13 +1643,13 @@ local function addCastStarted(_,timestamp,sourceGUID,sourceName,sourceFlags,_,de
 			local targetGUID = UnitGUID(unitID.."target")
 			if targetGUID and not UnitIsPlayerOrPet(targetGUID) then
 				-- Switch code
-				local targetTable = fightData.switch[targetGUID]
+				local targetTable = fightData_switch[targetGUID]
 				if not targetTable then
 					targetTable = {
 						[1]={},	--cast
 						[2]={},	--target
 					}
-					fightData.switch[targetGUID] = targetTable
+					fightData_switch[targetGUID] = targetTable
 				end
 				if not targetTable[1][sourceGUID] then
 					targetTable[1][sourceGUID] = {timestamp,spellID}
@@ -1940,23 +1663,23 @@ end
 local function addCastEnded(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,destName,destFlags,_,spellID)
 
 	--------------> Add cast
-	local sourceTable = fightData.cast[sourceGUID]
+	local sourceTable = fightData_cast[sourceGUID]
 	if not sourceTable then
 		sourceTable = {}
-		fightData.cast[sourceGUID] = sourceTable
+		fightData_cast[sourceGUID] = sourceTable
 	end
 	sourceTable[ #sourceTable + 1 ] = {timestamp,spellID,1,destGUID}
 
 
 
 	--------------> Add switch
-	local targetTable = fightData.switch[destGUID]
+	local targetTable = fightData_switch[destGUID]
 	if not targetTable then
 		targetTable = {
 			[1]={},	--cast
 			[2]={},	--target
 		}
-		fightData.switch[destGUID] = targetTable
+		fightData_switch[destGUID] = targetTable
 	end
 	targetTable = targetTable[1]
 	if not targetTable[sourceGUID] then
@@ -1972,13 +1695,13 @@ end
 
 
 local function addSwitch(sourceGUID,targetGUID,timestamp,_type,spellID)
-	local targetTable = fightData.switch[targetGUID]
+	local targetTable = fightData_switch[targetGUID]
 	if not targetTable then
 		targetTable = {
 			[1]={},	--cast
 			[2]={},	--target
 		}
-		fightData.switch[targetGUID] = targetTable
+		fightData_switch[targetGUID] = targetTable
 	end
 	if not targetTable[_type][sourceGUID] then
 		targetTable[_type][sourceGUID] = {timestamp,spellID}
@@ -1992,10 +1715,10 @@ local function addGUID(GUID,name)
 end
 
 local function addPower(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,destName,destFlags,_,spellID,_,_,amount,powerType)
-	local sourceData = fightData.power[sourceGUID]
+	local sourceData = fightData_power[sourceGUID]
 	if not sourceData then
 		sourceData = {}
-		fightData.power[sourceGUID] = sourceData
+		fightData_power[sourceGUID] = sourceData
 	end
 	local powerData = sourceData[powerType]
 	if not powerData then
@@ -2370,8 +2093,10 @@ function AddSegmentToData(seg)
 	for i=1,#segmentData.auras do
 		module.db.nowData.auras[ #module.db.nowData.auras + 1 ] = segmentData.auras[i]
 	end
-	for i=1,#segmentData.dies do
-		module.db.nowData.dies[ #module.db.nowData.dies + 1 ] = segmentData.dies[i]
+	if segmentData.dies then
+		for i=1,#segmentData.dies do
+			module.db.nowData.dies[ #module.db.nowData.dies + 1 ] = segmentData.dies[i]
+		end
 	end
 	if segmentData.dispels then
 		for i=1,#segmentData.dispels do
@@ -2492,28 +2217,46 @@ function AddSegmentToData(seg)
 			module.db.nowData.resurrests[ #module.db.nowData.resurrests + 1 ] = segmentData.resurrests[i]
 		end
 	end
+	if segmentData.tracking then
+		for i=1,#segmentData.tracking do
+			module.db.nowData.tracking[ #module.db.nowData.tracking + 1 ] = segmentData.tracking[i]
+		end
+	end
 end
 
 function StartSegment(name,subEvent)
+	fightData_damage = {}
+	fightData_damage_seen = {}
+	fightData_heal = {}
+	fightData_healFrom = {}
+	fightData_switch = {}
+	fightData_cast = {}
+	fightData_auras = {}
+	fightData_power = {}
+	fightData_deathLog = {}
+	fightData_maxHP = {}
+	fightData_reduction = {}
+
 	fightData = {
-		damage = {},
-		damage_seen = {},
-		heal = {},
-		healFrom = {},
-		switch = {},
-		cast = {},
+		damage = fightData_damage,
+		damage_seen = fightData_damage_seen,
+		heal = fightData_heal,
+		healFrom = fightData_healFrom,
+		switch = fightData_switch,
+		cast = fightData_cast,
 		--interrupts = {},	--Creating directly in event
 		--dispels = {},		--Creating directly in event
-		auras = {},
-		power = {},
-		dies = {},
+		auras = fightData_auras,
+		power = fightData_power,
+		--dies = {},		--Creating directly in event
 		--chat = {},		--Creating directly in event
 		--resurrests = {},	--Creating directly in event
 		--summons = {},		--Creating directly in event
 		--aurabroken = {},	--Creating directly in event
-		deathLog = {},
-		maxHP = {},
-		reduction = {},
+		deathLog = fightData_deathLog,
+		maxHP = fightData_maxHP,
+		reduction = fightData_reduction,
+		--tracking = {},	--Creating directly in event
 		time = time(),
 		timeEx = GetTime(),
 		name = name,
@@ -2577,7 +2320,6 @@ function _BW_Start(encounterID,encounterName)
 		StartSegment()
 		timers_improved_timer = 0.01
 		timers_improved_segment = 1
-		fightData = module.db.data[1].fight[1]
 	else
 		StartSegment("ENCOUNTER_START")
 	end	
@@ -2590,6 +2332,15 @@ function _BW_Start(encounterID,encounterName)
 	_graphSectionTimer = 0
 	_graphSectionTimerRounded = 0
 	_graphRaidSnapshot = {"boss1","boss2","boss3","boss4","boss5","target","focus"}
+	_graphRaidEnergy = {
+		module.db.energyPerClass["NO"][1],
+		module.db.energyPerClass["NO"][1],
+		module.db.energyPerClass["NO"][1],
+		module.db.energyPerClass["NO"][1],
+		module.db.energyPerClass["NO"][1],
+		module.db.energyPerClass["NO"][1],
+		module.db.energyPerClass["NO"][1],
+	}
 	
 	_positionsTimer = 0.01
 	_positionsTimerRounded = 0
@@ -2601,17 +2352,24 @@ function _BW_Start(encounterID,encounterName)
 	if IsInRaid() then
 		local gMax = ExRT.F.GetRaidDiffMaxGroup()
 		for i=1,40 do
-			local name,_,subgroup = GetRaidRosterInfo(i)
+			local name,_,subgroup,_,_,class = GetRaidRosterInfo(i)
 			if name and subgroup <= gMax then
 				_graphRaidSnapshot[#_graphRaidSnapshot + 1] = name
 				_positionsRaidSnapshot[#_positionsRaidSnapshot + 1] = name
+				local energy = module.db.energyPerClass[class or "NO"]
+				if name == ExRT.SDB.charName then
+					energy = energy and energy[2]
+				else
+					energy = energy and energy[1]
+				end
+				_graphRaidEnergy[#_graphRaidSnapshot] = energy or module.db.energyPerClass["NO"][1]
 				
 				local guid = UnitGUID(name)
 				if guid then
 					raidGUIDs[ guid ] = name
 					
 					addReductionOnPull(name,guid)
-				end
+				end				
 			end
 		end
 	else
@@ -2621,6 +2379,15 @@ function _BW_Start(encounterID,encounterName)
 			if name then
 				_graphRaidSnapshot[#_graphRaidSnapshot + 1] = name
 				_positionsRaidSnapshot[#_positionsRaidSnapshot + 1] = name
+				
+				local _,class = UnitClass(unit)
+				local energy = module.db.energyPerClass[class or "NO"]
+				if i == 5 then
+					energy = energy and energy[2]
+				else
+					energy = energy and energy[1]
+				end
+				_graphRaidEnergy[#_graphRaidSnapshot] = energy or module.db.energyPerClass["NO"][1]
 				
 				local guid = UnitGUID(name)
 				if guid then
@@ -2661,32 +2428,35 @@ function _BW_Start(encounterID,encounterName)
 		}
 	end
 end
-function module.main:ENCOUNTER_START(encounterID,encounterName)
-	SetMapToCurrentZone()
-	local zoneID = GetCurrentMapAreaID()
-	local _, zoneType, _, _, _, _, _, mapID = GetInstanceInfo()
-	if ((zoneID and zoneID > 1026) or (tonumber(mapID) and mapID >= 1520)) and zoneType == 'raid' then
-		zoneID = -999
+
+local function GetCurrentZoneID()
+	local zoneID = 0
+	local zoneName, zoneType, difficulty, _, _, _, _, mapID = GetInstanceInfo()
+	if difficulty == 8 then
+		zoneID = 3
+	elseif zoneType == 'raid' and ((tonumber(mapID) and mapID >= 603) or mapID == 533) then
+		zoneID = 1
+	elseif zoneType == 'arena' or zoneType == 'pvp' then
+		zoneID = 2
 	end
-	if module.db.raidIDs[zoneID] then
+	return zoneID, zoneName
+end
+
+function module.main:ENCOUNTER_START(encounterID,encounterName)
+	local zoneID = GetCurrentZoneID()
+	if zoneID == 1 then
 		_BW_Start(encounterID,encounterName)
 	end
 end
 function module.main:PLAYER_REGEN_DISABLED()
-	SetMapToCurrentZone()
-	local zoneID = GetCurrentMapAreaID()
-	local _, zoneType, _, _, _, _, _, mapID = GetInstanceInfo()
-	if ((zoneID and zoneID > 1026) or (tonumber(mapID) and mapID >= 1520)) and zoneType == 'raid' then
-		zoneID = -999
-	end
-	if not module.db.raidIDs[zoneID] then
+	local zoneID = GetCurrentZoneID()
+	if zoneID == 0 then
 		_BW_Start()
 	end
 end
-function module.main:PLAYER_ENTERING_BATTLEGROUND()
-	if not fightData then
-		_BW_Start()
-	end
+function module.main:CHALLENGE_MODE_START()
+	local _,zoneName = GetCurrentZoneID()
+	_BW_Start(nil,zoneName)
 end
 
 function _BW_End(encounterID)
@@ -2744,29 +2514,43 @@ function _BW_End(encounterID)
 		wipe(freezeFix)
 		freezeFix = nil
 	end
+	
+	fightData_damage = nil
+	fightData_damage_seen = nil
+	fightData_heal = nil
+	fightData_healFrom = nil
+	fightData_switch = nil
+	fightData_cast = nil
+	fightData_auras = nil
+	fightData_power = nil
+	fightData_deathLog = nil
+	fightData_maxHP = nil
+	fightData_reduction = nil
 end
 function module.main:ENCOUNTER_END(encounterID)
-	SetMapToCurrentZone()
-	local zoneID = GetCurrentMapAreaID()
-	if module.db.raidIDs[zoneID] then
+	local zoneID = GetCurrentZoneID()
+	if zoneID == 1 then
 		_BW_End(encounterID)
 	end
 end
 function module.main:PLAYER_REGEN_ENABLED()
-	SetMapToCurrentZone()	
-	local zoneID = GetCurrentMapAreaID()
-	if module.db.battlegroundsIDs[zoneID] then
-		return
-	elseif not module.db.raidIDs[zoneID] then
+	local zoneID = GetCurrentZoneID()
+	if zoneID == 0 then
 		_BW_End()
 	end
 end
+function module.main:CHALLENGE_MODE_RESET()
+	if fightData then
+		_BW_End()
+	end
+end
+module.main.CHALLENGE_MODE_COMPLETED = module.main.CHALLENGE_MODE_RESET
 
 do
 	local function ZoneCheck()
-		local _,zoneType = IsInInstance()
-		if zoneType == "pvp" or zoneType == "arena" then
-			_BW_Start()
+		local zoneID, zoneName = GetCurrentZoneID()
+		if zoneID == 2 then
+			_BW_Start(nil,zoneName)
 		end
 	end
 	function module.main:ZONE_CHANGED_NEW_AREA()
@@ -2779,18 +2563,7 @@ end
 
 
 do
-	local powers = {}
-	for powerID,_ in pairs(module.db.energyLocale) do
-		powers[#powers + 1] = powerID
-	end
-	local powersCount = #powers
-	
-	local powersRaid = {0,1,2,3,6,10}
-	local powersRaidCount = #powersRaid
-	local playerName = ExRT.SDB.charName
-	
 	function module:timer(elapsed)
-		--dtime()
 		--------------> Graphs
 		do
 			_graphSectionTimer = _graphSectionTimer + elapsed
@@ -2801,42 +2574,32 @@ do
 				graphData[_graphSectionTimerRounded] = data
 				for i=1,#_graphRaidSnapshot do
 					local name = _graphRaidSnapshot[i]
-					local _name = UnitCombatlogname(name)
-					if _name then
+					local _name = i <= 7 and UnitCombatlogname(name)
+					if i > 7 or _name then
 						local health = UnitHealth(name)
 						local hpmax = UnitHealthMax(name)
 						local absorbs = UnitGetTotalAbsorbs(name)
 						
 						local currData = {
-							name = _name ~= name and _name or nil,
+							name = _name or nil,
 							health = health ~= 0 and health or nil,
 							hpmax = hpmax ~= 0 and hpmax or nil,
 							absorbs = absorbs ~= 0 and absorbs or nil,
 						}
 						data[name] = currData
 
-						if playerName == _name then
-							for j=1,powersCount do
-								local powerID = powers[j]
-								local power = UnitPower(name,powerID)
-								if power ~= 0 then
-									currData[powerID] = power
-								end
-							end
-						else
-							for j=1,powersRaidCount do
-								local powerID = powersRaid[j]
-								local power = UnitPower(name,powerID)
-								if power ~= 0 then
-									currData[powerID] = power
-								end
+						local energy = _graphRaidEnergy[i]
+						for j=1,#energy do
+							local powerID = energy[j]
+							local power = UnitPower(name,powerID)
+							if power ~= 0 then
+								currData[powerID] = power
 							end
 						end
 					end
 				end
 			end
 		end
-		--dtime(ExRT.Debug,'BW','Timer1')dtime()
 		
 		--------------> Improved mode: starting new segments
 		if timers_improved_enabled then
@@ -2847,7 +2610,6 @@ do
 				StartSegment()
 			end
 		end
-		--dtime(ExRT.Debug,'BW','Timer2')dtime()
 		
 		--------------> Positions
 		do
@@ -2864,7 +2626,6 @@ do
 				end
 			end
 		end
-		--dtime(ExRT.Debug,'BW','Timer3')
 	end
 end
 
@@ -2874,25 +2635,29 @@ function module.main:SWING_DAMAGE(timestamp,sourceGUID,sourceName,sourceFlags,so
 end
 
 function module.main:SPELL_INSTAKILL(timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,destName,destFlags,_,spellID,_,school)
-	addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,1,1,school)
+	addDamage(nil,timestamp,sourceGUID,sourceName,sourceFlags,nil,destGUID,destName,destFlags,nil,spellID,nil,nil,9999999,9999999,school)
 end
 
 function module.main:SPELL_AURA_APPLIED_DOSE(timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,destName,destFlags,_,spellID,_,_,type,stack)
-	fightData.auras[ #fightData.auras + 1 ] = {timestamp,sourceGUID,destGUID,UnitIsFriendlyByUnitFlag(sourceFlags),UnitIsFriendlyByUnitFlag(destFlags),spellID,type,3,stack}
+	fightData_auras[ #fightData_auras + 1 ] = {timestamp,sourceGUID,destGUID,UnitIsFriendlyByUnitFlag(sourceFlags),UnitIsFriendlyByUnitFlag(destFlags),spellID,type,3,stack}
 end
 
 function module.main:SPELL_AURA_REMOVED_DOSE(timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,destName,destFlags,_,spellID,_,_,type,stack)
-	fightData.auras[ #fightData.auras + 1 ] = {timestamp,sourceGUID,destGUID,UnitIsFriendlyByUnitFlag(sourceFlags),UnitIsFriendlyByUnitFlag(destFlags),spellID,type,4,stack}
+	fightData_auras[ #fightData_auras + 1 ] = {timestamp,sourceGUID,destGUID,UnitIsFriendlyByUnitFlag(sourceFlags),UnitIsFriendlyByUnitFlag(destFlags),spellID,type,4,stack}
 end
 
 function module.main:UNIT_DIED(timestamp,sourceGUID,sourceName,sourceFlags,sourceFlags2,destGUID,destName,destFlags,destFlags2,spellID)
 	if destName and UnitIsFeignDeath(destName) then
 		return
 	end
+	
+	if not fightData.dies then
+		fightData.dies = {}
+	end
 
 	fightData.dies[#fightData.dies+1] = {destGUID,destFlags,timestamp,destFlags2}
 	
-	addDeathFix(destGUID,timestamp)
+	addDeath(destGUID,timestamp)
 	
 	
 	--------------> Add healing from
@@ -3008,8 +2773,23 @@ local CLEUEvents = {
 	-- SPELL_BUILDING_HEAL
 }
 
+--[[
+local debugTimeByEvents = {}
+local debugprofilestop = debugprofilestop
+function ExRT_BW_Debug_TimeByEvents()
+	local q={}
+	for w,e in pairs(debugTimeByEvents) do
+		q[#q+1]={w,e[1]/e[2]}
+	end
+	sort(q,function(a,b)return a[2]>b[2] end)
+	for i=1,#q do
+		print(q[i][1],q[i][2])
+	end
+end
+]]
+
 local function CLEUafterTimeFix(self,_,timestamp,event,hideCaster,sourceGUID,sourceName,sourceFlags,sourceFlags2,destGUID,destName,destFlags,destFlags2,...)
-	--dtime()
+	--local t = debugprofilestop()
 	local eventFunc = CLEUEvents[event]
 	if eventFunc then
 		eventFunc(self,timestamp,sourceGUID,sourceName,sourceFlags,sourceFlags2,destGUID,destName,destFlags,destFlags2,...)
@@ -3020,7 +2800,11 @@ local function CLEUafterTimeFix(self,_,timestamp,event,hideCaster,sourceGUID,sou
 	
 	reactionData[sourceGUID] = sourceFlags
 	reactionData[destGUID] = destFlags
-	--dtime(ExRT.Debug,'BW',event)
+	
+	--t = debugprofilestop() - t
+	--debugTimeByEvents[event] = debugTimeByEvents[event] or {0,0}
+	--debugTimeByEvents[event][1] = debugTimeByEvents[event][1] + t
+	--debugTimeByEvents[event][2] = debugTimeByEvents[event][2] + 1
 end
 
 function module.main:COMBAT_LOG_EVENT_UNFILTERED(_,timestamp,...)
@@ -3082,16 +2866,16 @@ function module.main:UNIT_TARGET(unitID)
 		if GetUnitTypeByGUID(sourceGUID) == 0 then
 			addSwitch(sourceGUID,targetGUID,GetTime(),2)
 		end
-		if not fightData.maxHP[targetGUID] then
-			fightData.maxHP[targetGUID] = UnitHealthMax(unitID.."target")
+		if not fightData_maxHP[targetGUID] then
+			fightData_maxHP[targetGUID] = UnitHealthMax(unitID.."target")
 		end
 	end
 end
 
 function module.main:UPDATE_MOUSEOVER_UNIT()
 	local sourceGUID = UnitGUID("mouseover")
-	if sourceGUID and not fightData.maxHP[sourceGUID] then
-		fightData.maxHP[sourceGUID] = UnitHealthMax("mouseover")
+	if sourceGUID and not fightData_maxHP[sourceGUID] then
+		fightData_maxHP[sourceGUID] = UnitHealthMax("mouseover")
 		addGUID(sourceGUID,UnitName("mouseover"))
 	end
 end
@@ -3306,39 +3090,27 @@ function BWInterfaceFrameLoad()
 		end
 	end
 	
-	local function TimeLineShowSpellID(spellid)
-		if VExRT.BossWatcher.timeLineSpellID then
-			return " ["..spellid.."]"
-		else
-			return ""
-		end
-	end
-	
 	local function SetSchoolColorsToLine(self,school)
 		local isNotGradient = ExRT.F.table_find(module.db.schoolsDefault,school) or school == 0
-		if isNotGradient then
+		if isNotGradient and module.db.schoolsColors[school] then
 			self:SetVertexColor(module.db.schoolsColors[school].r,module.db.schoolsColors[school].g,module.db.schoolsColors[school].b, 1)
 		else
-			if module.db.schoolsColors[school] then
-				self:SetVertexColor(module.db.schoolsColors[school].r,module.db.schoolsColors[school].g,module.db.schoolsColors[school].b,1)
+			local school1,school2 = nil
+			for i=1,#module.db.schoolsDefault do
+				local isSchool = bit.band(school,module.db.schoolsDefault[i]) > 0
+				if isSchool and not school1 then
+					school1 = module.db.schoolsDefault[i]
+				elseif isSchool and not school2 then
+					school2 = module.db.schoolsDefault[i]
+				end
+			end
+			if school1 and school2 then
+				self:SetVertexColor(1,1,1,1)
+				self:SetGradientAlpha("HORIZONTAL", module.db.schoolsColors[school1].r,module.db.schoolsColors[school1].g,module.db.schoolsColors[school1].b,1,module.db.schoolsColors[school2].r,module.db.schoolsColors[school2].g,module.db.schoolsColors[school2].b,1)
+			elseif school1 and not school2 then
+				self:SetVertexColor(module.db.schoolsColors[school1].r,module.db.schoolsColors[school1].g,module.db.schoolsColors[school1].b, 1)
 			else
-				local school1,school2 = nil
-				for i=1,#module.db.schoolsDefault do
-					local isSchool = bit.band(school,module.db.schoolsDefault[i]) > 0
-					if isSchool and not school1 then
-						school1 = module.db.schoolsDefault[i]
-					elseif isSchool and not school2 then
-						school2 = module.db.schoolsDefault[i]
-					end
-				end
-				if school1 and school2 then
-					self:SetVertexColor(1,1,1,1)
-					self:SetGradientAlpha("HORIZONTAL", module.db.schoolsColors[school1].r,module.db.schoolsColors[school1].g,module.db.schoolsColors[school1].b,1,module.db.schoolsColors[school2].r,module.db.schoolsColors[school2].g,module.db.schoolsColors[school2].b,1)
-				elseif school1 and not school2 then
-					self:SetVertexColor(module.db.schoolsColors[school1].r,module.db.schoolsColors[school1].g,module.db.schoolsColors[school1].b, 1)
-				else
-					self:SetVertexColor(0.8,0.8,0.8, 1)
-				end
+				self:SetVertexColor(0.8,0.8,0.8, 1)
 			end
 		end
 	end
@@ -3427,6 +3199,7 @@ function BWInterfaceFrameLoad()
 			deathLog = {},
 			maxHP = {},
 			reduction = {},
+			tracking = {},
 		}
 		if not module.db.data[module.db.nowNum] or isSegmentReload then
 			return
@@ -3533,7 +3306,7 @@ function BWInterfaceFrameLoad()
 		L.BossWatcherTabPlayersSpells,
 		L.BossWatcherTabEnergy,
 		L.BossWatcherTabInterruptAndDispelShort,
-		L.BossWatcherTabGraphics,
+		TRACKING,
 		L.BossWatcherDeath,
 		L.BossWatcherPositions,
 		L.BossWatcherSegments,
@@ -3602,7 +3375,7 @@ function BWInterfaceFrameLoad()
 		TLframe.texture = TLframe:CreateTexture(nil, "BACKGROUND",nil,0)
 		--TLframe.texture:SetTexture("Interface\\AddOns\\ExRT\\media\\bar9.tga")
 		--TLframe.texture:SetVertexColor(0.3, 1, 0.3, 1)
-		TLframe.texture:SetColorTexture(1, 1, 1, 1)
+		TLframe.texture:SetTexture(1, 1, 1, 1)
 		TLframe.texture:SetGradientAlpha("VERTICAL",1,0.82,0,.7,0.95,0.65,0,.7)
 		TLframe.texture:SetAllPoints()
 		
@@ -3611,7 +3384,7 @@ function BWInterfaceFrameLoad()
 		TLframe.textRight = ELib:Text(TLframe,"",12):Size(200,16):Point("BOTTOMRIGHT",TLframe,"BOTTOMRIGHT", -2, 2):Top():Right():Color():Shadow()
 		
 		TLframe.lifeUnderLine = TLframe:CreateTexture(nil, "BACKGROUND")
-		TLframe.lifeUnderLine:SetColorTexture(1,1,1,1)
+		TLframe.lifeUnderLine:SetTexture(1,1,1,1)
 		TLframe.lifeUnderLine:SetGradientAlpha("VERTICAL", 1,0.2,0.2, 0, 1,0.2,0.2, 0.7)
 		TLframe.lifeUnderLine._SetPoint = TLframe.lifeUnderLine.SetPoint
 		TLframe.lifeUnderLine.SetPoint = function(self,start,_end)
@@ -3629,23 +3402,198 @@ function BWInterfaceFrameLoad()
 		TLframe.arrowNow:SetTexture("Interface\\CURSOR\\Inspect")	
 		TLframe.arrowNow:Hide()
 		
+		TLframe.labels = {}
+		function TLframe:AddLabel(i,pos,type)
+			local label = TLframe.labels[i]
+			if not label then
+				label = TLframe:CreateTexture(nil, "BACKGROUND")
+				TLframe.labels[i] = label
+				label:SetSize(3,25)
+			end
+			label:SetPoint("TOP",TLframe,"BOTTOMLEFT",BWInterfaceFrame.timeLineFrame.width*pos,0)
+			if not type then
+				label:SetTexture(.35,.38,1,.7)
+			elseif type == 1 then
+				label:SetTexture(.2,1,0,1)
+			elseif type == 2 then
+				label:SetTexture(1,.25,.3,.7)
+			end
+			label:Show()
+		end
+		function TLframe:HideLabels()
+			for i=1,#TLframe.labels do
+				TLframe.labels[i]:Hide()
+			end
+		end
+		
+		local EncountersPhases = {
+			[1785] = {
+				cast = {
+					[182055] = {phase = -11394},
+					[182066] = {phase = -11393},
+				},
+			},	--"Iron Reaver"
+			[1787] = {
+				chat = {
+					[181293] = {phase = -11119},
+					[181297] = {phase = -11120},
+					[181300] = {phase = -11122},
+				},
+			},	--"Kormrok"
+			[1783] = {
+				cast = {
+					[181973] = {phase = -11542},
+				},
+				aura = {
+					[181973] = {phase = 1, isFade = true,},
+				},
+			},	--"Gorefiend"
+			[1788] = {
+				cast = {
+					[181873] = {phase = 2, next = {
+						isCastStart = true,
+						time = 40,
+						phase = 1,
+					}},
+				},
+			},	--"Shadow-Lord Iskar"
+			[1794] = {
+				cast = {
+					[183023] = {phase = -11451},
+				},
+			},	--"Socrethar the Eternal"
+			[1777] = {
+				cast = {
+					[179681] = {phase = -11107},
+					[179668] = {phase = -11840, next = {
+						time = 35,
+						phase = -11095,
+					}},
+				},			
+			},	--"Fel Lord Zakuun"
+			[1784] = {
+				cast = {
+					[181718] = {phase = -11151},
+					[179986] = {phase = -11158},
+					[179991] = {phase = -11166},
+				},
+			},	--"Tyrant Velhari"
+			[1800] = {
+				hp = {
+					{hp = 0.205,phase = -11741,},
+				},
+			},	--"Xhul'horac"
+			[1795] = {
+				hp = {
+					{hp = 0.999,phase = -11207,},
+					{hp = 0.655,phase = -11219,},
+					{hp = 0.355,phase = -11245,},
+				},
+			},	--"Mannoroth"
+			[1799] = {
+				hp = {
+					{hp = 0.705,phase = -11590,},
+					{hp = 0.405,phase = -11599,},
+				},
+			},	--"Archimonde"
+			
+			[1853] = {
+				cast = {
+					[203552] = {phase = -12744, isCastStart = true,},
+				},
+				aura = {
+					[203552] = {phase = 1, isFade = true,},
+				},
+			},	--"Plague Dragon": <Nythendra>
+			[1841] = {
+				aura = {
+					--[0] = {phase = -12740,},	--Enrage 30%hp; remove hp attr when this will be added
+				},
+				hp = {
+					{hp = 0.305,phase = -12740,},
+				},
+			},	--"Ursoc"
+			
+			[1849] = {
+				cast = {
+					[204448] = {phase = -12822, isCastStart = true,},
+				},
+				aura = {
+					[204448] = {phase = 1,},
+				},
+			},	--"Skorpyron"
+			[1865] = nil,	--"Anomaly";	shittesting, no data
+			[1867] = {
+				cast = {
+					[207630] = {phase = -13011, next = {
+						time = 16,
+						phase = 1,
+					}}
+				}
+			},	--"Trilliax"
+		}
+		
 		TLframe.redLine = {}
 		local function CreateRedLine(i)
-			TLframe.redLine[i] = TLframe:CreateTexture(nil, "BACKGROUND",nil,5)
-			TLframe.redLine[i]:SetColorTexture(0.7, 0.1, 0.1, 0.5)
+			TLframe.redLine[i] = TLframe:CreateTexture(nil, "BACKGROUND",nil,3)
+			TLframe.redLine[i]:SetTexture(0.7, 0.1, 0.1, 0.5)
 			TLframe.redLine[i]:SetSize(2,30)
 		end
 		
 		TLframe.blueLine = {}
 		local function CreateBlueLine(i)
-			TLframe.blueLine[i] = TLframe:CreateTexture(nil, "BACKGROUND",nil,6)
-			TLframe.blueLine[i]:SetColorTexture(0.1, 0.1, 0.7, 0.5)
+			TLframe.blueLine[i] = TLframe:CreateTexture(nil, "BACKGROUND",nil,4)
+			TLframe.blueLine[i]:SetTexture(0.1, 0.1, 0.7, 0.5)
 			TLframe.blueLine[i]:SetSize(3,30)
+		end
+		
+		TLframe.phaseMarker = {}
+		TLframe.phaseMarkerNum = 0
+		TLframe.phaseMarkerMax = 0
+		
+		local function AddPhase(pos,phase)
+			local currNum = TLframe.phaseMarkerNum + 1
+			TLframe.phaseMarkerNum = currNum
+			
+			local l,l2,t = TLframe.phaseMarker[currNum],TLframe.phaseMarker[currNum+0.5],TLframe.phaseMarker[-currNum]
+			if not l then
+				l = TLframe:CreateTexture(nil, "BACKGROUND",nil,5)
+				TLframe.phaseMarker[currNum] = l
+				l:SetSize(2,30)
+				l:SetTexture(1, 1, 1, 0.8)
+				
+				l2 = TLframe:CreateTexture(nil, "BACKGROUND",nil,5)
+				TLframe.phaseMarker[currNum+0.5] = l2
+				l2:SetSize(1,30)
+				l2:SetTexture(0, 0, 0, 0.8)
+				l2:SetPoint("TOPLEFT",l,"TOPRIGHT",0,0)
+				
+				t = ELib:Text(TLframe,"",10):Point("TOPLEFT",l,"TOPRIGHT",2,-1):Point("TOPRIGHT",TLframe,"TOPRIGHT",0,-1):Color(1,1,1,1)
+				t:SetHeight(12)
+				TLframe.phaseMarker[-currNum] = t
+				
+				TLframe.phaseMarkerMax = max(currNum,TLframe.phaseMarkerMax)
+			end
+			l:SetPoint("TOPLEFT",BWInterfaceFrame.timeLineFrame.width * pos,0)
+			local phaseText = nil
+			if phase < 0 then
+				local name = EJ_GetSectionInfo(-phase)
+				if name then
+					phaseText = name
+				end
+			end
+			t:SetText(phaseText or (L.BossWatcherPhase.." "..phase))
+			l:Show()
+			l2:Show()
+			t:Show()
 		end
 		
 		function UpdateTimeLine()
 			local currFight = module.db.data[module.db.nowNum]
 			local fight_dur = currFight.encounterEnd - currFight.encounterStart
+			if fightData and fight_dur < 1.5 then
+				local fight_dur = GetTime() - currFight.encounterStart
+			end
 			TLframe.textLeft:SetText( date("%H:%M:%S", currFight.encounterStartGlobal) )
 			TLframe.textRight:SetText( date("%M:%S", fight_dur) )
 			TLframe.textCenter:SetText( date("%M:%S", fight_dur / 2) )
@@ -3661,6 +3609,14 @@ function BWInterfaceFrameLoad()
 					TLframe[i]:Show()
 				end
 			end
+			
+			TLframe.phaseMarkerNum = 0
+			for i=1,TLframe.phaseMarkerMax do
+				TLframe.phaseMarker[i]:Hide()
+				TLframe.phaseMarker[i+0.5]:Hide()
+				TLframe.phaseMarker[-i]:Hide()
+			end
+			local CurrentEncountersPhases = currFight.encounterID and EncountersPhases[currFight.encounterID] or ExRT.NULL
 	
 			local redLineNum = 0
 			for i=1,TimeLine_Pieces do
@@ -3669,14 +3625,71 @@ function BWInterfaceFrameLoad()
 				end
 				wipe(TLframe[i].tooltip)
 			end
+			
+			if CurrentEncountersPhases.aura then
+				local phasesAuras = CurrentEncountersPhases.aura
+				for i,data in ipairs(module.db.nowData.auras) do
+					if phasesAuras[ data[6] ] then
+						local phaseData = phasesAuras[ data[6] ]
+						if (phaseData.isFade and data[8] == 2) or (not phaseData.isFade and data[8] == 1) then
+							local _time = timestampToFightTime(data[1])
+							AddPhase(_time / fight_dur,phaseData.phase)
+						end
+					end
+				end
+			end
+			
 			local addToToolipTable = {}
+			local bossHpPerSegment = {}
+			if module.db.data[module.db.nowNum].graphData then
+				local phaseHpStart = 1
+				for sec,data in ipairs(module.db.data[module.db.nowNum].graphData) do
+					local boss1 = data["boss1"]
+					if boss1 then
+						local hpMax = boss1.hpmax
+						if hpMax ~= 0 and boss1.health then
+							local tooltipIndex = sec / fight_dur
+							tooltipIndex = min( floor( (TimeLine_Pieces - 0.01)*tooltipIndex + 1 ) , TimeLine_Pieces)
+							
+							local hp = boss1.health/hpMax
+							if not bossHpPerSegment[tooltipIndex] then
+								bossHpPerSegment[tooltipIndex] = (boss1.name or "boss1").."'s hp: "..format("%.1f%%",hp*100)
+							end
+							if CurrentEncountersPhases.hp then
+								for i=phaseHpStart,#CurrentEncountersPhases.hp do
+									local data = CurrentEncountersPhases.hp[i]
+									if hp <= data.hp then
+										AddPhase(sec / fight_dur,data.phase)
+										phaseHpStart = i+1
+										break
+									end
+								end
+							end
+						end
+					end
+				end
+			end
 			for mobGUID,mobData in pairs(module.db.nowData.cast) do
 				local unitFlag = currFight.reaction[mobGUID]
 				if unitFlag and ExRT.F.GetUnitInfoByUnitFlag(unitFlag,3) == 64 then
 					for i=1,#mobData do
-						local _time = timestampToFightTime(mobData[i][1])
+						local castData = mobData[i]
+						local _time = timestampToFightTime(castData[1])
 						
 						local tooltipIndex = _time / fight_dur
+						
+						if CurrentEncountersPhases.cast then
+							local phaseData = CurrentEncountersPhases.cast[ castData[2] ]
+							if phaseData and ((phaseData.isCastStart and castData[3] == 2) or (not phaseData.isCastStart and castData[3] == 1)) then
+								AddPhase(tooltipIndex,phaseData.phase)
+							end
+							if phaseData and phaseData.next and ((phaseData.next.isCastStart and castData[3] == 2) or (not phaseData.next.isCastStart and castData[3] == 1)) then
+								local newTime = _time + phaseData.next.time
+								if newTime < fight_dur then
+									AddPhase(newTime / fight_dur,phaseData.next.phase)
+								end
+							end
+						end
 						
 						redLineNum = redLineNum + 1
 						if not TLframe.redLine[redLineNum] then
@@ -3687,14 +3700,14 @@ function BWInterfaceFrameLoad()
 						
 						tooltipIndex = min( floor( (TimeLine_Pieces - 0.01)*tooltipIndex + 1 ) , TimeLine_Pieces)
 						
-						local spellName,_,spellTexture = GetSpellInfo(mobData[i][2])
+						local spellName,_,spellTexture = GetSpellInfo(castData[2])
 						
 						local targetInfo = ""
-						if mobData[i][4] and mobData[i][4] ~= "" then
-							targetInfo = " "..L.BossWatcherTimeLineOnText.." |c"..ExRT.F.classColorByGUID(mobData[i][4])..GetGUID(mobData[i][4]).."|r"
+						if castData[4] and castData[4] ~= "" then
+							targetInfo = " "..L.BossWatcherTimeLineOnText.." |c"..ExRT.F.classColorByGUID(castData[4])..GetGUID(castData[4]).."|r"
 						end
 						
-						addToToolipTable[#addToToolipTable + 1] = {tooltipIndex,_time,"[" .. date("%M:%S", _time )  .. "] |c"..ExRT.F.classColorByGUID(mobGUID) .. GetGUID(mobGUID) .."|r" .. GUIDtoText("(%s)",mobGUID) .. ( mobData[i][3] == 1 and " "..L.BossWatcherTimeLineCast.." " or " "..L.BossWatcherTimeLineCastStart.." " ) .. format("%s%s%s",spellTexture and "|T"..spellTexture..":0|t " or "",spellName or "???",TimeLineShowSpellID(mobData[i][2])) .. targetInfo }
+						addToToolipTable[#addToToolipTable + 1] = {tooltipIndex,_time,"[" .. date("%M:%S", _time )  .. "] |c"..ExRT.F.classColorByGUID(mobGUID) .. GetGUID(mobGUID) .."|r" .. GUIDtoText("(%s)",mobGUID) .. ( castData[3] == 1 and " "..L.BossWatcherTimeLineCast.." " or " "..L.BossWatcherTimeLineCastStart.." " ) .. format("%s%s%s",spellTexture and "|T"..spellTexture..":0|t " or "",spellName or "???"," ["..castData[2].."]") .. targetInfo }
 					end
 				end
 			end
@@ -3702,6 +3715,14 @@ function BWInterfaceFrameLoad()
 				local _time = min( max(chatData[4] - currFight.encounterStart,0) , currFight.encounterEnd)
 				
 				local tooltipIndex = _time / fight_dur
+				
+				if CurrentEncountersPhases.chat then
+					local phaseData = CurrentEncountersPhases.chat[ chatData[3] ]
+					if phaseData then
+						AddPhase(tooltipIndex,phaseData.phase)
+					end
+				end				
+				
 				redLineNum = redLineNum + 1
 				if not TLframe.redLine[redLineNum] then
 					CreateRedLine(redLineNum)
@@ -3713,7 +3734,7 @@ function BWInterfaceFrameLoad()
 				
 				local spellName,_,spellTexture = GetSpellInfo(chatData[3])
 							
-				addToToolipTable[#addToToolipTable + 1] = {tooltipIndex,_time,"[" .. date("%M:%S", _time )  .. "] "..  L.BossWatcherChatSpellMsg .. " " .. format("%s%s%s",spellTexture and "|T"..spellTexture..":0|t " or "",spellName or "???",TimeLineShowSpellID(chatData[3])) }
+				addToToolipTable[#addToToolipTable + 1] = {tooltipIndex,_time,"[" .. date("%M:%S", _time )  .. "] "..  L.BossWatcherChatSpellMsg .. " " .. format("%s%s%s",spellTexture and "|T"..spellTexture..":0|t " or "",spellName or "???"," ["..chatData[3].."]") }
 			end
 			for _,resData in ipairs(module.db.nowData.resurrests) do
 				local _time = timestampToFightTime(resData[4])
@@ -3729,7 +3750,7 @@ function BWInterfaceFrameLoad()
 				tooltipIndex = min( floor( (TimeLine_Pieces - 0.01)*tooltipIndex + 1 ) , TimeLine_Pieces)
 				local spellName,_,spellTexture = GetSpellInfo(resData[3])
 				
-				addToToolipTable[#addToToolipTable + 1] = {tooltipIndex,_time,"[" .. date("%M:%S", _time )  .. "] |c"..ExRT.F.classColorByGUID(resData[1]) .. GetGUID(resData[1]) .."|r" ..  GUIDtoText("(%s)",resData[1]) .. " ".. L.BossWatcherTimeLineCast.. " " .. format("%s%s%s",spellTexture and "|T"..spellTexture..":0|t " or "",spellName or "???",TimeLineShowSpellID(resData[3])) .. " "..L.BossWatcherTimeLineOnText.." |c"..ExRT.F.classColorByGUID(resData[2])..GetGUID(resData[2]).."|r" }
+				addToToolipTable[#addToToolipTable + 1] = {tooltipIndex,_time,"[" .. date("%M:%S", _time )  .. "] |c"..ExRT.F.classColorByGUID(resData[1]) .. GetGUID(resData[1]) .."|r" ..  GUIDtoText("(%s)",resData[1]) .. " ".. L.BossWatcherTimeLineCast.. " " .. format("%s%s%s",spellTexture and "|T"..spellTexture..":0|t " or "",spellName or "???"," ["..resData[3].."]") .. " "..L.BossWatcherTimeLineOnText.." |c"..ExRT.F.classColorByGUID(resData[2])..GetGUID(resData[2]).."|r" }
 			end
 			for i=(redLineNum+1),#TLframe.redLine do
 				TLframe.redLine[i]:Hide()
@@ -3758,6 +3779,11 @@ function BWInterfaceFrameLoad()
 				TLframe.blueLine[i]:Hide()
 			end
 			
+			for i=1,TimeLine_Pieces do
+				if bossHpPerSegment[i] then
+					table.insert(TLframe[i].tooltip,{bossHpPerSegment[i],1,1,1})
+				end
+			end
 			table.sort(addToToolipTable,function (a,b) return a[2] < b[2] end)
 			for i=1,#addToToolipTable do
 				table.insert(TLframe[ addToToolipTable[i][1] ].tooltip,{addToToolipTable[i][3],1,1,1})
@@ -3786,7 +3812,7 @@ function BWInterfaceFrameLoad()
 		TLframe.ImprovedSelectSegment.Texture = TLframe:CreateTexture(nil, "BACKGROUND",nil,2)
 		--TLframe.ImprovedSelectSegment.Texture:SetTexture("Interface\\AddOns\\ExRT\\media\\bar9.tga")
 		--TLframe.ImprovedSelectSegment.Texture:SetVertexColor(0, 0.65, 0.9, .7)
-		TLframe.ImprovedSelectSegment.Texture:SetColorTexture(1, 1, 1, 1)
+		TLframe.ImprovedSelectSegment.Texture:SetTexture(1, 1, 1, 1)
 		TLframe.ImprovedSelectSegment.Texture:SetGradientAlpha("VERTICAL",0.3,0.75,0.90,.7,0,0.62,0.90,.7)
 		TLframe.ImprovedSelectSegment.Texture:SetHeight(30)
 		TLframe.ImprovedSelectSegment.Texture:Hide()
@@ -3901,8 +3927,132 @@ function BWInterfaceFrameLoad()
 			self.lastFightID = BWInterfaceFrame.nowFightID
 		end
 	end)
-
 	
+	---- Graph Frame
+	BWInterfaceFrame.GraphFrame = CreateFrame('Frame',nil,BWInterfaceFrame.tab)
+	BWInterfaceFrame.GraphFrame:SetSize(860,200)
+	BWInterfaceFrame.GraphFrame:SetPoint("TOP",0,-80)
+	BWInterfaceFrame.GraphFrame:Hide()
+	BWInterfaceFrame.GraphFrame.G = ExRT.lib.CreateGraph(BWInterfaceFrame.GraphFrame,790,180,"TOPLEFT",50,-5,true)
+	BWInterfaceFrame.GraphFrame.G.fixMissclickZoom = true
+	BWInterfaceFrame.GraphFrame.G.backgroundHighlight = {}
+	BWInterfaceFrame.GraphFrame.G.ResetZoom:Point("TOPRIGHT",-100,10)
+
+	BWInterfaceFrame.GraphFrame.G.highlightHideButton = ELib:Button(BWInterfaceFrame.GraphFrame.G,"",1)
+	BWInterfaceFrame.GraphFrame.G.highlightHideButton:SetSize(16,16)
+	BWInterfaceFrame.GraphFrame.G.highlightHideButton.background = BWInterfaceFrame.GraphFrame.G.highlightHideButton:CreateTexture(nil, "BACKGROUND")
+	BWInterfaceFrame.GraphFrame.G.highlightHideButton.background:SetAllPoints()
+	BWInterfaceFrame.GraphFrame.G.highlightHideButton.background:SetTexture("Interface\\AddOns\\ExRT\\media\\DiesalGUIcons16x256x128")
+	BWInterfaceFrame.GraphFrame.G.highlightHideButton.background:SetTexCoord(0.5,0.5625,0.5,0.625)
+	BWInterfaceFrame.GraphFrame.G.highlightHideButton:SetScript("OnEnter",function(self)
+		self.background:SetVertexColor(.7,0,0,1)
+	end)
+	BWInterfaceFrame.GraphFrame.G.highlightHideButton:SetScript("OnLeave",function(self)
+		self.background:SetVertexColor(1,1,1,.7)
+	end)
+	BWInterfaceFrame.GraphFrame.G.highlightHideButton:SetScript("OnClick",function(self)
+		local parent = self:GetParent()
+		parent.highlight = nil
+		parent:OnAfterReload()
+	end)
+	BWInterfaceFrame.GraphFrame.G.highlightHideButton:Hide()
+	
+	function BWInterfaceFrame.GraphFrame.G:OnBeforeReload()
+		if not self.data[1] then
+			return
+		end
+		local tooltipX = {}
+		for i=1,#self.data[1] do
+			tooltipX[i] = format("%d:%02d",i / 60,i % 60)
+		end
+		self.data.tooltipX = tooltipX
+	end
+	function BWInterfaceFrame.GraphFrame.G:OnAfterReload()
+		if not self.highlight or not self.range or not self.range.maxX then
+			for i=1,#self.backgroundHighlight do
+				self.backgroundHighlight[i]:Hide()
+			end
+			self.highlightHideButton:Hide()
+			return
+		end
+		local count = 0
+		for i=1,#self.highlight,2 do
+			local posStart,posEnd = self.highlight[i],self.highlight[i+1]
+			if not (posStart > self.range.maxX or posEnd < self.range.minX) then
+				if posStart < self.range.minX then
+					posStart = self.range.minX
+				end
+				if posEnd > self.range.maxX then
+					posEnd = self.range.maxX
+				end
+				count = count + 1
+				local background = self.backgroundHighlight[count]
+				if not background then
+					background = self:CreateTexture(nil, "BACKGROUND",nil,2)
+					self.backgroundHighlight[count] = background
+					background:SetPoint("TOP",0,0)
+					background:SetPoint("BOTTOM",0,0)
+					background:SetTexture(0.7, 0.65, 0.9, .3)
+					if count == 1 then
+						self.highlightHideButton:SetPoint("TOPRIGHT",background,2,-2)
+					end
+				end
+				local posX = (posStart - self.range.minX) / (self.range.maxX - self.range.minX) * self:GetWidth()
+				local width = (posEnd - posStart) / (self.range.maxX - self.range.minX) * self:GetWidth()
+				background:SetPoint("LEFT",posX,0)
+				background:SetWidth(width)
+				background:Show()
+				if count == 1 then
+					self.highlightHideButton:Show()
+				end
+			end
+		end
+		for i=count+1,#self.backgroundHighlight do
+			self.backgroundHighlight[i]:Hide()
+		end
+		if count == 0 then
+			self.highlightHideButton:Hide()
+		end
+	end
+	function BWInterfaceFrame.GraphFrame.G:Zoom(start,ending)
+		if ending == start then
+			self.ZoomMinX = nil
+			self.ZoomMaxX = nil
+		else
+			self.ZoomMinX = start
+			self.ZoomMaxX = ending
+		end
+		if module.db.data[module.db.nowNum].improved then
+			if self.ZoomSecondUpdate_1 then
+				self:ZoomSecondUpdate_1()
+				BWInterfaceFrame.tab.tabs[ BWInterfaceFrame.tab.selected ].lastFightID = module.db.lastFightID + 1
+			end
+			SegmentsPage_ImprovedSelect(start,ending)
+			if self.ZoomSecondUpdate_2 then
+				self:ZoomSecondUpdate_2()
+			end
+		end
+		self:Reload()
+	end
+	function BWInterfaceFrame.GraphFrame.G:OnResetZoom()
+		if self.ZoomSecondUpdate_1 then
+			self:ZoomSecondUpdate_1()
+			BWInterfaceFrame.tab.tabs[ BWInterfaceFrame.tab.selected ].lastFightID = module.db.lastFightID + 1
+		end
+		SegmentsPage_ImprovedSelect()
+		if self.ZoomSecondUpdate_2 then
+			self:ZoomSecondUpdate_2()
+		end
+	end
+	BWInterfaceFrame.GraphFrame.stepSlider = ELib:Slider(BWInterfaceFrame.GraphFrame,"",true):Point("BOTTOMRIGHT",BWInterfaceFrame.GraphFrame.G,"BOTTOMLEFT",-10,20):Size(100):Range(1,10):SetTo(1):OnChange(function(self)
+		local graph = self:GetParent().G
+		self:Tooltip(L.BossWatcherGraphicsStep.."\n"..floor(self:GetValue() + 0.5))
+		self:tooltipReload()
+		self:GetParent().G.step = floor(self:GetValue() + 0.5)
+		self:GetParent().G:Reload()
+	end):Tooltip(L.BossWatcherGraphicsStep.."\n1")
+	
+		
 	
 	local tab,tabName = nil
 	---- Damage Tab
@@ -3911,10 +4061,15 @@ function BWInterfaceFrameLoad()
 	
 	local sourceVar,destVar = {},{}
 	local DamageTab_SetLine = nil
-	local DamageShowAll = false
-	local Damage_Last_Func = nil
-	local Damage_Last_doEnemy = nil
-	local Damage_Back_Func = nil
+	
+	local DamageTab_Variables = {
+		Last_Func = nil,
+		Last_doEnemy = nil,
+		ShowAll = false,
+		Back_Func = nil,
+		Back_destVar = nil,
+		Back_sourceVar = nil,
+	}
 	
 	local function DamageTab_GetGUIDsReport(list,isDest)
 		local result = ""
@@ -3977,14 +4132,94 @@ function BWInterfaceFrameLoad()
 	local function DamageTab_Temp_SortingBy2Param(a,b)
 		return a[2] > b[2]
 	end
+	
+	local function DamageTab_ReloadGraph(data,fightLength,linesData,isSpell)
+		local graphData = {}
+		for key,spellData in pairs(data) do
+			local newData
+			if isSpell then
+				local spellID = key
+				local isPet = 1
+				if spellID < -1 then
+					isPet = -1
+					spellID = -spellID
+				end
+				local spellName,_,spellIcon = GetSpellInfo(spellID)
+				if spellID == -1 then
+					spellName = L.BossWatcherReportTotal
+				elseif spellName then
+					spellName = "|T"..spellIcon..":0|t "..spellName
+				else
+					spellName = spellID
+				end
+				newData = {
+					info_spellID = spellID*isPet,
+					name = spellName,
+					total_damage = 0,
+					hide = true,
+				}
+			else
+				local sourceGUID = key
+				local name,r,g,b = nil
+				if sourceGUID == -1 then
+					name = L.BossWatcherReportTotal
+				else
+					local class
+					name = GetGUID(sourceGUID)
+					if sourceGUID ~= "" then
+						class = select(2,GetPlayerInfoByGUID(sourceGUID))
+					end
+					name = "|c".. ExRT.F.classColor(class) .. name .. "|r"
+					if class then
+						local classColorArray = type(CUSTOM_CLASS_COLORS)=="table" and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
+						r,g,b = classColorArray.r,classColorArray.g,classColorArray.b
+					end
+				end
+				newData = {
+					info_spellID = sourceGUID,
+					name = name,
+					total_damage = 0,
+					hide = true,
+					r = r,
+					g = g,
+					b = b,
+				}
+			end
+			graphData[#graphData+1] = newData
+			local total_damage = 0
+			for i=1,fightLength do
+				newData[i] = {i,spellData[i] or 0}
+				total_damage = total_damage + (spellData[i] or 0)
+			end
+			newData.total_damage = total_damage
+		end
+		sort(graphData,function(a,b) return a.total_damage>b.total_damage end)
+		local findPos = ExRT.F.table_find(graphData,-1,'info_spellID')
+		if findPos then
+			graphData[ findPos ].hide = nil
+			graphData[ findPos ].specialLine = true
+		end
+		for i=1,3 do
+			if linesData[i] then
+				findPos = ExRT.F.table_find(graphData,linesData[i][1],'info_spellID')
+				if findPos then
+					graphData[ findPos ].hide = nil
+				end
+			end
+		end
+		BWInterfaceFrame.GraphFrame.G.data = graphData
+		BWInterfaceFrame.GraphFrame.G:Reload()
+	end
 			
 	local function DamageTab_UpdateLinesPlayers(doEnemy)
 		DamageTab_UpdateDropDownSource()
 		DamageTab_UpdateDropDownDest()
 		DamageTab_UpdateDropDownType(1,doEnemy)
-		Damage_Last_Func = DamageTab_UpdateLinesPlayers
-		Damage_Back_Func = Damage_Last_Func
-		Damage_Last_doEnemy = doEnemy
+		DamageTab_Variables.Last_Func = DamageTab_UpdateLinesPlayers
+		DamageTab_Variables.Last_doEnemy = doEnemy
+		DamageTab_Variables.Back_Func = DamageTab_UpdateLinesPlayers
+		DamageTab_Variables.Back_sourceVar = nil
+		DamageTab_Variables.Back_destVar = nil
 		local damage = {}
 		local total = 0
 		local totalOver = 0
@@ -4023,7 +4258,7 @@ function BWInterfaceFrameLoad()
 								total = total + spellAmount.amount - spellAmount.overkill
 								totalOver = totalOver + spellAmount.overkill + spellAmount.blocked + spellAmount.absorbed
 								
-								destPos[2] = destPos[2] + spellAmount.amount + (DamageShowAll and (spellAmount.blocked+spellAmount.absorbed) or -spellAmount.overkill)
+								destPos[2] = destPos[2] + spellAmount.amount + (DamageTab_Variables.ShowAll and (spellAmount.blocked+spellAmount.absorbed) or -spellAmount.overkill)
 								
 								if mobID == 76933 then	--Mage T100 fix
 									local multiplier = VExRT.BossWatcher.divisionPrismatic and 0 or 1
@@ -4050,19 +4285,28 @@ function BWInterfaceFrameLoad()
 		wipe(reportData[1])
 		reportData[1][1] = (DamageTab_GetGUIDsReport(sourceVar) or L.BossWatcherAllSources).." > "..(DamageTab_GetGUIDsReport(destVar,true) or L.BossWatcherAllTargets)
 		local activeFightLength = GetFightLength()
-		if not DamageShowAll then
-			local dps = total / activeFightLength
-			reportData[1][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(dps)..")@1#"
-			sort(damage,function(a,b) return a[2]>b[2] end)
-			_max = damage[1] and damage[1][2] or 0
-			DamageTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total,dps)
-		else
-			local dps = (total + totalOver) / activeFightLength
-			reportData[1][2] = "Всего - "..ExRT.F.shortNumber(total + totalOver).."@1@ ("..floor(dps)..")@1#"
+		
+		if DamageTab_Variables.ShowAll then
+			total = total + totalOver
 			sort(damage,function(a,b) return (a[2]+a[3]+a[4]+a[5])>(b[2]+b[3]+b[4]+b[5]) end)
 			_max = damage[1] and (damage[1][2]+damage[1][3]+damage[1][4]+damage[1][5]) or 0
-			DamageTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total + totalOver,dps,nil,nil,nil,nil,nil,nil,totalOver / max(total + totalOver,1))		
+		else
+			sort(damage,function(a,b) return a[2]>b[2] end)
+			_max = damage[1] and damage[1][2] or 0
 		end
+		reportData[1][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(total / activeFightLength)..")@1#"
+		DamageTab_SetLine({
+			line = 1,
+			name = L.BossWatcherReportTotal,
+			num = total,
+			total = total,
+			max = total,
+			alpha = DamageTab_Variables.ShowAll and totalOver,
+			dps = total / activeFightLength,
+			spellID = -1,
+			check = BWInterfaceFrame.GraphFrame:IsShown(),
+			checkState = true,
+		})
 		for i=1,#damage do
 			local class = nil
 			if damage[i][1] and damage[i][1] ~= "" then
@@ -4087,30 +4331,89 @@ function BWInterfaceFrameLoad()
 				tooltipData[#tooltipData + 1] = {L.BossWatcherDamageTooltipTargets," "}
 			end
 			for j=1,min(5,#damage[i][8]) do
-				tooltipData[#tooltipData + 1] = {SubUTF8String(GetGUID(damage[i][8][j][1]),20)..GUIDtoText(" [%s]",damage[i][8][j][1]),format("%s (%.1f%%)",ExRT.F.shortNumber(damage[i][8][j][2]),min(damage[i][8][j][2] / max(1,damage[i][2]+(DamageShowAll and (damage[i][3]+damage[i][4]+damage[i][5]) or 0))*100,100))}
+				tooltipData[#tooltipData + 1] = {SubUTF8String(GetGUID(damage[i][8][j][1]),20)..GUIDtoText(" [%s]",damage[i][8][j][1]),format("%s (%.1f%%)",ExRT.F.shortNumber(damage[i][8][j][2]),min(damage[i][8][j][2] / max(1,damage[i][2]+(DamageTab_Variables.ShowAll and (damage[i][3]+damage[i][4]+damage[i][5]) or 0))*100,100))}
 			end
-			if not DamageShowAll then
-				local dps = damage[i][2]/activeFightLength
-				DamageTab_SetLine(i+1,icon,GetGUID(damage[i][1])..GUIDtoText(" [%s]",damage[i][1]),damage[i][2]/total,damage[i][2]/max(_max,1),damage[i][2],dps,class,damage[i][1],doEnemy,nil,tooltipData)
-				reportData[1][#reportData[1]+1] = i..". "..GetGUID(damage[i][1]).." - "..ExRT.F.shortNumber(damage[i][2]).."@1@ ("..floor(dps)..")@1#"
-			else
-				local dps = (damage[i][2]+damage[i][3]+damage[i][4]+damage[i][5])/activeFightLength
-				DamageTab_SetLine(i+1,icon,GetGUID(damage[i][1])..GUIDtoText(" [%s]",damage[i][1]),(damage[i][2]+damage[i][3]+damage[i][4]+damage[i][5])/(total + totalOver),(damage[i][2]+damage[i][3]+damage[i][4]+damage[i][5])/max(_max,1),damage[i][2]+damage[i][3]+damage[i][4]+damage[i][5],dps,class,damage[i][1],doEnemy,nil,tooltipData,nil,(damage[i][3]+damage[i][4]+damage[i][5])/max(1,damage[i][2]+damage[i][3]+damage[i][4]+damage[i][5]))
-				reportData[1][#reportData[1]+1] = i..". "..GetGUID(damage[i][1]).." - "..ExRT.F.shortNumber(damage[i][2]+damage[i][3]+damage[i][4]+damage[i][5]).."@1@ ("..floor(dps)..")@1#"			
-			end
+			
+			local currDamage = damage[i][2] + (DamageTab_Variables.ShowAll and (damage[i][3]+damage[i][4]+damage[i][5]) or 0)
+			local dps = currDamage/activeFightLength
+			DamageTab_SetLine({
+				line = i+1,
+				icon = icon,
+				name = GetGUID(damage[i][1])..GUIDtoText(" [%s]",damage[i][1]),
+				num = currDamage,
+				alpha = DamageTab_Variables.ShowAll and (damage[i][3]+damage[i][4]+damage[i][5]),
+				total = total,
+				max = _max,
+				dps = dps,
+				class = class,
+				sourceGUID = damage[i][1],
+				doEnemy = doEnemy,
+				tooltip = tooltipData,
+				check = BWInterfaceFrame.GraphFrame:IsShown(),
+				checkState = i <= 3,
+			})
+			reportData[1][#reportData[1]+1] = i..". "..GetGUID(damage[i][1]).." - "..ExRT.F.shortNumber(currDamage).."@1@ ("..floor(dps)..")@1#"			
 		end
 		for i=#damage+2,#BWInterfaceFrame.tab.tabs[1].lines do
 			BWInterfaceFrame.tab.tabs[1].lines[i]:Hide()
 		end
 		BWInterfaceFrame.tab.tabs[1].scroll:Height((#damage+1) * 20)
+		
+		if not BWInterfaceFrame.GraphFrame:IsShown() then
+			return
+		end
+		local graph = {[-1]={}}
+		local currFight = module.db.data[module.db.nowNum]
+		local maxFight = #module.db.data[module.db.nowNum].fight
+		for seg=1,maxFight do
+			for destGUID,destData in pairs(currFight.fight[seg].damage) do
+				if ExRT.F.table_len(destVar) == 0 or destVar[destGUID] then
+					local isEnemy = false
+					if GetUnitInfoByUnitFlagFix(currFight.reaction[destGUID],2) == 512 then
+						isEnemy = true
+					end
+					local mobID = ExRT.F.GUIDtoID(destGUID)
+					for sourceGUID,sourceData in pairs(destData) do
+						local owner = ExRT.F.Pets:getOwnerGUID(sourceGUID,GetPetsDB())
+						if owner then
+							sourceGUID = owner
+						end
+						if ExRT.F.table_len(sourceVar) == 0 or sourceVar[sourceGUID] then
+							if (isEnemy and doEnemy) or (not isEnemy and not doEnemy) then
+								if not graph[ sourceGUID ] then
+									graph[ sourceGUID ] = {}
+								end
+								if not graph[ sourceGUID ][seg] then
+									graph[ sourceGUID ][seg] = 0
+								end
+								if not graph[ -1 ][seg] then
+									graph[ -1 ][seg] = 0
+								end
+								for spellID,spellAmount in pairs(sourceData) do
+									local damgeCount = spellAmount.amount + (DamageTab_Variables.ShowAll and (spellAmount.blocked+spellAmount.absorbed) or -spellAmount.overkill)
+									if mobID == 76933 then	--Mage T100 fix
+										damgeCount = 0
+									end
+									graph[ sourceGUID ][seg] = graph[ sourceGUID ][seg] + damgeCount
+									graph[ -1 ][seg] = graph[ -1 ][seg] + damgeCount
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+		DamageTab_ReloadGraph(graph,maxFight,damage,false)
 	end
 	local function DamageTab_UpdateLinesSpells(doEnemy)
 		DamageTab_UpdateDropDownSource()
 		DamageTab_UpdateDropDownDest()
 		DamageTab_UpdateDropDownType(3,doEnemy)
-		Damage_Last_Func = DamageTab_UpdateLinesSpells
-		Damage_Back_Func = Damage_Last_Func
-		Damage_Last_doEnemy = doEnemy
+		DamageTab_Variables.Last_Func = DamageTab_UpdateLinesSpells
+		DamageTab_Variables.Last_doEnemy = doEnemy
+		DamageTab_Variables.Back_Func = DamageTab_UpdateLinesSpells
+		DamageTab_Variables.Back_sourceVar = nil
+		DamageTab_Variables.Back_destVar = nil
 		local damage = {}
 		local total = 0
 		local totalOver = 0
@@ -4163,7 +4466,7 @@ function BWInterfaceFrameLoad()
 								total = total + spellAmount.amount - spellAmount.overkill
 								totalOver = totalOver + spellAmount.overkill + spellAmount.blocked + spellAmount.absorbed
 								
-								destPos[2] = destPos[2] + spellAmount.amount + (DamageShowAll and (spellAmount.blocked+spellAmount.absorbed) or -spellAmount.overkill)
+								destPos[2] = destPos[2] + spellAmount.amount + (DamageTab_Variables.ShowAll and (spellAmount.blocked+spellAmount.absorbed) or -spellAmount.overkill)
 								
 								if mobID == 76933 then	--Mage T100 fix
 									local multiplier = VExRT.BossWatcher.divisionPrismatic and 0 or 1
@@ -4189,19 +4492,27 @@ function BWInterfaceFrameLoad()
 		wipe(reportData[1])
 		reportData[1][1] = (DamageTab_GetGUIDsReport(sourceVar) or L.BossWatcherAllSources).." > "..(DamageTab_GetGUIDsReport(destVar,true) or L.BossWatcherAllTargets)
 		local activeFightLength = GetFightLength()
-		if not DamageShowAll then
-			local dps = total / activeFightLength
-			reportData[1][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(dps)..")@1#"
-			sort(damage,function(a,b) return a[2]>b[2] end)
-			_max = damage[1] and damage[1][2] or 0
-			DamageTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total,dps)
-		else
-			local dps = (total + totalOver) / activeFightLength
-			reportData[1][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total + totalOver).."@1@ ("..floor(dps)..")@1#"
+		if DamageTab_Variables.ShowAll then
+			total = total + totalOver
 			sort(damage,function(a,b) return (a[2]+a[4]+a[5]+a[6])>(b[2]+b[4]+b[5]+b[6]) end)
 			_max = damage[1] and (damage[1][2]+damage[1][4]+damage[1][5]+damage[1][6]) or 0
-			DamageTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total + totalOver,dps,nil,nil,nil,nil,nil,nil,totalOver / max(total + totalOver,1))		
+		else
+			sort(damage,function(a,b) return a[2]>b[2] end)
+			_max = damage[1] and damage[1][2] or 0
 		end
+		reportData[1][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(total / activeFightLength)..")@1#"
+		DamageTab_SetLine({
+			line = 1,
+			name = L.BossWatcherReportTotal,
+			num = total,
+			total = total,
+			max = total,
+			alpha = DamageTab_Variables.ShowAll and totalOver,
+			dps = total / activeFightLength,
+			spellID = -1,
+			check = BWInterfaceFrame.GraphFrame:IsShown(),
+			checkState = true,
+		})
 		for i=1,#damage do
 			local isPetAbility = damage[i][1] < 0
 			if isPetAbility then
@@ -4245,31 +4556,99 @@ function BWInterfaceFrameLoad()
 				tooltipData[#tooltipData + 1] = {L.BossWatcherDamageTooltipTargets," "}
 			end
 			for j=1,min(5,#damage[i][17]) do
-				tooltipData[#tooltipData + 1] = {SubUTF8String(GetGUID(damage[i][17][j][1]),20)..GUIDtoText(" [%s]",damage[i][17][j][1]),format("%s (%.1f%%)",ExRT.F.shortNumber(damage[i][17][j][2]),min(damage[i][17][j][2] / max(1,damage[i][2]+(DamageShowAll and (damage[i][4]+damage[i][5]+damage[i][6]) or 0))*100,100))}
+				tooltipData[#tooltipData + 1] = {SubUTF8String(GetGUID(damage[i][17][j][1]),20)..GUIDtoText(" [%s]",damage[i][17][j][1]),format("%s (%.1f%%)",ExRT.F.shortNumber(damage[i][17][j][2]),min(damage[i][17][j][2] / max(1,damage[i][2]+(DamageTab_Variables.ShowAll and (damage[i][4]+damage[i][5]+damage[i][6]) or 0))*100,100))}
 			end
 			
-			if not DamageShowAll then
-				local dps = damage[i][2]/activeFightLength
-				DamageTab_SetLine(i+1,spellIcon,spellName,damage[i][2]/total,damage[i][2]/max(_max,1),damage[i][2],dps,nil,nil,nil,"spell:"..damage[i][1],tooltipData,school)
-				reportData[1][#reportData[1]+1] = i..". "..(isPetAbility and L.BossWatcherPetText..": " or "")..GetSpellLink(damage[i][1]).." - "..ExRT.F.shortNumber(damage[i][2]).."@1@ ("..floor(dps)..")@1#"
-			else
-				local dps = (damage[i][2]+damage[i][4]+damage[i][5]+damage[i][6])/activeFightLength
-				DamageTab_SetLine(i+1,spellIcon,spellName,(damage[i][2]+damage[i][4]+damage[i][5]+damage[i][6])/(total + totalOver),(damage[i][2]+damage[i][4]+damage[i][5]+damage[i][6])/max(_max,1),damage[i][2]+damage[i][4]+damage[i][5]+damage[i][6],dps,nil,nil,nil,"spell:"..damage[i][1],tooltipData,school,(damage[i][4]+damage[i][5]+damage[i][6])/max(1,damage[i][2]+damage[i][4]+damage[i][5]+damage[i][6]))
-				reportData[1][#reportData[1]+1] = i..". "..(isPetAbility and L.BossWatcherPetText..": " or "")..GetSpellLink(damage[i][1]).." - "..ExRT.F.shortNumber(damage[i][2]+damage[i][4]+damage[i][5]+damage[i][6]).."@1@ ("..floor(dps)..")@1#"
+			local currDamage = damage[i][2]+(DamageTab_Variables.ShowAll and (damage[i][4]+damage[i][5]+damage[i][6]) or 0)
+			local dps = currDamage/activeFightLength
+			DamageTab_SetLine({
+				line = i+1,
+				icon = spellIcon,
+				name = spellName,
+				num = currDamage,
+				alpha = DamageTab_Variables.ShowAll and (damage[i][4]+damage[i][5]+damage[i][6]),
+				total = total,
+				max = _max,
+				dps = dps,
+				spellID = damage[i][1],
+				doEnemy = doEnemy,
+				school = school,
+				tooltip = tooltipData,
+				isPet = isPetAbility,
+				check = BWInterfaceFrame.GraphFrame:IsShown(),
+				checkState = i <= 3,
+			})
+			reportData[1][#reportData[1]+1] = i..". "..(isPetAbility and L.BossWatcherPetText..": " or "")..GetSpellLink(damage[i][1]).." - "..ExRT.F.shortNumber(currDamage).."@1@ ("..floor(dps)..")@1#"
+			
+			if isPetAbility then
+				damage[i][1] = -damage[i][1]
 			end
 		end
 		for i=#damage+2,#BWInterfaceFrame.tab.tabs[1].lines do
 			BWInterfaceFrame.tab.tabs[1].lines[i]:Hide()
 		end
 		BWInterfaceFrame.tab.tabs[1].scroll:Height((#damage+1) * 20)
+		
+		
+		if not BWInterfaceFrame.GraphFrame:IsShown() then
+			return
+		end
+		local graph = {[-1]={}}
+		local currFight = module.db.data[module.db.nowNum]
+		local maxFight = #module.db.data[module.db.nowNum].fight
+		for seg=1,maxFight do
+			for destGUID,destData in pairs(currFight.fight[seg].damage) do
+				if ExRT.F.table_len(destVar) == 0 or destVar[destGUID] then
+					local isEnemy = false
+					if GetUnitInfoByUnitFlagFix(currFight.reaction[destGUID],2) == 512 then
+						isEnemy = true
+					end
+					local mobID = ExRT.F.GUIDtoID(destGUID)
+					for sourceGUID,sourceData in pairs(destData) do
+						local owner = ExRT.F.Pets:getOwnerGUID(sourceGUID,GetPetsDB())
+						if owner then
+							sourceGUID = owner
+						end
+						if ExRT.F.table_len(sourceVar) == 0 or sourceVar[sourceGUID] then
+							if (isEnemy and doEnemy) or (not isEnemy and not doEnemy) then
+								for spellID,spellAmount in pairs(sourceData) do
+									if owner then
+										spellID = -spellID
+									end
+									if not graph[ spellID ] then
+										graph[ spellID ] = {}
+									end
+									if not graph[ spellID ][seg] then
+										graph[ spellID ][seg] = 0
+									end
+									if not graph[ -1 ][seg] then
+										graph[ -1 ][seg] = 0
+									end
+								
+									local damgeCount = spellAmount.amount + (DamageTab_Variables.ShowAll and (spellAmount.blocked+spellAmount.absorbed) or -spellAmount.overkill)
+									if mobID == 76933 then	--Mage T100 fix
+										damgeCount = 0
+									end
+									graph[ spellID ][seg] = graph[ spellID ][seg] + damgeCount
+									graph[ -1 ][seg] = graph[ -1 ][seg] + damgeCount
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+		DamageTab_ReloadGraph(graph,maxFight,damage,true)
 	end
 	local function DamageTab_UpdateLinesTargets(doEnemy)
 		DamageTab_UpdateDropDownSource()
 		DamageTab_UpdateDropDownDest()
 		DamageTab_UpdateDropDownType(2,doEnemy)
-		Damage_Last_Func = DamageTab_UpdateLinesTargets
-		Damage_Back_Func = Damage_Last_Func
-		Damage_Last_doEnemy = doEnemy
+		DamageTab_Variables.Last_Func = DamageTab_UpdateLinesTargets
+		DamageTab_Variables.Last_doEnemy = doEnemy
+		DamageTab_Variables.Back_Func = DamageTab_UpdateLinesTargets
+		DamageTab_Variables.Back_sourceVar = nil
+		DamageTab_Variables.Back_destVar = nil
 		local damage = {}
 		local total = 0
 		local totalOver = 0
@@ -4306,7 +4685,7 @@ function BWInterfaceFrameLoad()
 							total = total + spellAmount.amount - spellAmount.overkill
 							totalOver = totalOver + spellAmount.overkill + spellAmount.blocked + spellAmount.absorbed
 							
-							sourcePos[2] = sourcePos[2] + spellAmount.amount + (DamageShowAll and (spellAmount.blocked+spellAmount.absorbed) or -spellAmount.overkill)
+							sourcePos[2] = sourcePos[2] + spellAmount.amount + (DamageTab_Variables.ShowAll and (spellAmount.blocked+spellAmount.absorbed) or -spellAmount.overkill)
 							
 							if mobID == 76933 then	--Mage T100 fix
 								local multiplier = VExRT.BossWatcher.divisionPrismatic and 0 or 1
@@ -4331,19 +4710,28 @@ function BWInterfaceFrameLoad()
 		wipe(reportData[1])
 		reportData[1][1] = (DamageTab_GetGUIDsReport(sourceVar) or L.BossWatcherAllSources).." > "..(DamageTab_GetGUIDsReport(destVar,true) or L.BossWatcherAllTargets)
 		local activeFightLength = GetFightLength()
-		if not DamageShowAll then
-			local dps = total / activeFightLength
-			reportData[1][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(dps)..")@1#"
-			sort(damage,function(a,b) return a[2]>b[2] end)
-			_max = damage[1] and damage[1][2] or 0
-			DamageTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total,dps)
-		else
-			local dps = (total + totalOver) / activeFightLength
-			reportData[1][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total + totalOver).."@1@ ("..floor(dps)..")@1#"
+		
+		if DamageTab_Variables.ShowAll then
+			total = total + totalOver
 			sort(damage,function(a,b) return (a[2]+a[3]+a[4]+a[5])>(b[2]+b[3]+b[4]+b[5]) end)
 			_max = damage[1] and (damage[1][2]+damage[1][3]+damage[1][4]+damage[1][5]) or 0
-			DamageTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total + totalOver,dps,nil,nil,nil,nil,nil,nil,totalOver / max(total + totalOver,1))		
+		else
+			sort(damage,function(a,b) return a[2]>b[2] end)
+			_max = damage[1] and damage[1][2] or 0
 		end
+		reportData[1][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(total / activeFightLength)..")@1#"
+		DamageTab_SetLine({
+			line = 1,
+			name = L.BossWatcherReportTotal,
+			num = total,
+			total = total,
+			max = total,
+			alpha = DamageTab_Variables.ShowAll and totalOver,
+			dps = total / activeFightLength,
+			spellID = -1,
+			check = BWInterfaceFrame.GraphFrame:IsShown(),
+			checkState = true,
+		})
 		for i=1,#damage do
 			local class = nil
 			if damage[i][1] and damage[i][1] ~= "" then
@@ -4368,22 +4756,81 @@ function BWInterfaceFrameLoad()
 				tooltipData[#tooltipData + 1] = {L.BossWatcherDamageTooltipSources," "}
 			end
 			for j=1,min(5,#damage[i][8]) do
-				tooltipData[#tooltipData + 1] = {SubUTF8String(GetGUID(damage[i][8][j][1]),20)..GUIDtoText(" [%s]",damage[i][8][j][1]),format("%s (%.1f%%)",ExRT.F.shortNumber(damage[i][8][j][2]),min(damage[i][8][j][2] / max(1,damage[i][2]+(DamageShowAll and (damage[i][3]+damage[i][4]+damage[i][5]) or 0))*100,100))}
+				tooltipData[#tooltipData + 1] = {SubUTF8String(GetGUID(damage[i][8][j][1]),20)..GUIDtoText(" [%s]",damage[i][8][j][1]),format("%s (%.1f%%)",ExRT.F.shortNumber(damage[i][8][j][2]),min(damage[i][8][j][2] / max(1,damage[i][2]+(DamageTab_Variables.ShowAll and (damage[i][3]+damage[i][4]+damage[i][5]) or 0))*100,100))}
 			end
-			if not DamageShowAll then
-				local dps = damage[i][2]/activeFightLength
-				DamageTab_SetLine(i+1,icon,GetGUID(damage[i][1])..GUIDtoText(" [%s]",damage[i][1]),damage[i][2]/total,damage[i][2]/max(_max,1),damage[i][2],dps,class,damage[i][1],doEnemy,nil,tooltipData,nil,nil,true)
-				reportData[1][#reportData[1]+1] = i..". "..GetGUID(damage[i][1]).." - "..ExRT.F.shortNumber(damage[i][2]).."@1@ ("..floor(dps)..")@1#"
-			else
-				local dps = (damage[i][2]+damage[i][3]+damage[i][4]+damage[i][5])/activeFightLength
-				DamageTab_SetLine(i+1,icon,GetGUID(damage[i][1])..GUIDtoText(" [%s]",damage[i][1]),(damage[i][2]+damage[i][3]+damage[i][4]+damage[i][5])/(total + totalOver),(damage[i][2]+damage[i][3]+damage[i][4]+damage[i][5])/max(_max,1),damage[i][2]+damage[i][3]+damage[i][4]+damage[i][5],dps,class,damage[i][1],doEnemy,nil,tooltipData,nil,(damage[i][3]+damage[i][4]+damage[i][5])/max(1,damage[i][2]+damage[i][3]+damage[i][4]+damage[i][5]),true)
-				reportData[1][#reportData[1]+1] = i..". "..GetGUID(damage[i][1]).." - "..ExRT.F.shortNumber(damage[i][2]+damage[i][3]+damage[i][4]+damage[i][5]).."@1@ ("..floor(dps)..")@1#"			
-			end
+			
+			local currDamage = damage[i][2]+(DamageTab_Variables.ShowAll and (damage[i][3]+damage[i][4]+damage[i][5]) or 0)
+			local dps = currDamage/activeFightLength
+			DamageTab_SetLine({
+				line = i+1,
+				icon = icon,
+				name = GetGUID(damage[i][1])..GUIDtoText(" [%s]",damage[i][1]),
+				num = currDamage,
+				alpha = DamageTab_Variables.ShowAll and (damage[i][3]+damage[i][4]+damage[i][5]),
+				total = total,
+				max = _max,
+				dps = dps,
+				class = class,
+				sourceGUID = damage[i][1],
+				doEnemy = doEnemy,
+				isTargetLine = true,
+				tooltip = tooltipData,
+				check = BWInterfaceFrame.GraphFrame:IsShown(),
+				checkState = i <= 3,
+			})
+			reportData[1][#reportData[1]+1] = i..". "..GetGUID(damage[i][1]).." - "..ExRT.F.shortNumber(currDamage).."@1@ ("..floor(dps)..")@1#"			
 		end
 		for i=#damage+2,#BWInterfaceFrame.tab.tabs[1].lines do
 			BWInterfaceFrame.tab.tabs[1].lines[i]:Hide()
 		end
 		BWInterfaceFrame.tab.tabs[1].scroll:Height((#damage+1) * 20)
+		
+		
+		if not BWInterfaceFrame.GraphFrame:IsShown() then
+			return
+		end
+		local graph = {[-1]={}}
+		local currFight = module.db.data[module.db.nowNum]
+		local maxFight = #module.db.data[module.db.nowNum].fight
+		for seg=1,maxFight do
+			for destGUID,destData in pairs(currFight.fight[seg].damage) do
+				if ExRT.F.table_len(destVar) == 0 or destVar[destGUID] then
+					local isEnemy = false
+					if GetUnitInfoByUnitFlagFix(currFight.reaction[destGUID],2) == 512 then
+						isEnemy = true
+					end
+					local mobID = ExRT.F.GUIDtoID(destGUID)
+					for sourceGUID,sourceData in pairs(destData) do
+						local owner = ExRT.F.Pets:getOwnerGUID(sourceGUID,GetPetsDB())
+						if owner then
+							sourceGUID = owner
+						end
+						if ExRT.F.table_len(sourceVar) == 0 or sourceVar[sourceGUID] then
+							if (isEnemy and doEnemy) or (not isEnemy and not doEnemy) then
+								if not graph[ destGUID ] then
+									graph[ destGUID ] = {}
+								end
+								if not graph[ destGUID ][seg] then
+									graph[ destGUID ][seg] = 0
+								end
+								if not graph[ -1 ][seg] then
+									graph[ -1 ][seg] = 0
+								end
+								for spellID,spellAmount in pairs(sourceData) do
+									local damgeCount = spellAmount.amount + (DamageTab_Variables.ShowAll and (spellAmount.blocked+spellAmount.absorbed) or -spellAmount.overkill)
+									if mobID == 76933 then	--Mage T100 fix
+										damgeCount = 0
+									end
+									graph[ destGUID ][seg] = graph[ destGUID ][seg] + damgeCount
+									graph[ -1 ][seg] = graph[ -1 ][seg] + damgeCount
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+		DamageTab_ReloadGraph(graph,maxFight,damage,false)
 	end
 	
 	local function DamageTab_UpdateLinesSpellToTargets(doEnemy)
@@ -4399,9 +4846,11 @@ function BWInterfaceFrameLoad()
 		end
 		DamageTab_UpdateDropDownDest()
 		DamageTab_UpdateDropDownType(4,doEnemy)
-		Damage_Last_Func = DamageTab_UpdateLinesSpellToTargets
-		Damage_Back_Func = nil
-		Damage_Last_doEnemy = doEnemy
+		DamageTab_Variables.Last_Func = DamageTab_UpdateLinesSpellToTargets
+		DamageTab_Variables.Last_doEnemy = doEnemy
+		DamageTab_Variables.Back_Func = nil
+		DamageTab_Variables.Back_sourceVar = nil
+		DamageTab_Variables.Back_destVar = nil
 		local damage = {}
 		local total = 0
 		local totalOver = 0
@@ -4459,17 +4908,28 @@ function BWInterfaceFrameLoad()
 		reportOptions[1] = L.BossWatcherReportCount
 		wipe(reportData[1])
 		reportData[1][1] = GetSpellLink(spellIDnow).." > "..L.BossWatcherAllTargets
-		if not DamageShowAll then
-			reportData[1][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(totalCount)..")@1#"
-			sort(damage,function(a,b) return a[2]>b[2] end)
-			_max = damage[1] and damage[1][2] or 0
-			DamageTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total,totalCount)
-		else
-			reportData[1][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total + totalOver).."@1@ ("..floor(totalCount)..")@1#"
+		
+		if DamageTab_Variables.ShowAll then
+			total = total + totalOver
 			sort(damage,function(a,b) return (a[2]+a[4]+a[5]+a[6])>(b[2]+b[4]+b[5]+b[6]) end)
 			_max = damage[1] and (damage[1][2]+damage[1][4]+damage[1][5]+damage[1][6]) or 0
-			DamageTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total + totalOver,totalCount,nil,nil,nil,nil,nil,nil,totalOver / max(total + totalOver,1))
+		else
+			sort(damage,function(a,b) return a[2]>b[2] end)
+			_max = damage[1] and damage[1][2] or 0
 		end
+		reportData[1][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(totalCount)..")@1#"
+		DamageTab_SetLine({
+			line = 1,
+			name = L.BossWatcherReportTotal,
+			num = total,
+			total = total,
+			max = total,
+			alpha = DamageTab_Variables.ShowAll and totalOver,
+			dps = totalCount,
+			spellID = -1,
+			check = BWInterfaceFrame.GraphFrame:IsShown(),
+			checkState = true,
+		})
 		for i=1,#damage do
 			local class = nil
 			if damage[i][1] and damage[i][1] ~= "" then
@@ -4499,18 +4959,76 @@ function BWInterfaceFrameLoad()
 				{L.BossWatcherDamageTooltipAbsorbed,ExRT.F.shortNumber(damage[i][6])},
 				{L.BossWatcherDamageTooltipTotal,ExRT.F.shortNumber(damage[i][4]+damage[i][5]+damage[i][6]+damage[i][2])},
 			}
-			if not DamageShowAll then
-				DamageTab_SetLine(i+1,icon,GetGUID(damage[i][1])..GUIDtoText(" [%s]",damage[i][1]),damage[i][2]/total,damage[i][2]/max(_max,1),damage[i][2],damage[i][3]-damage[i][11],class,nil,nil,nil,tooltipData)
-				reportData[1][#reportData[1]+1] = i..". "..GetGUID(damage[i][1]).." - "..ExRT.F.shortNumber(damage[i][2]).."@1@ ("..(damage[i][3]-damage[i][11])..")@1#"
-			else
-				DamageTab_SetLine(i+1,icon,GetGUID(damage[i][1])..GUIDtoText(" [%s]",damage[i][1]),(damage[i][2]+damage[i][4]+damage[i][5]+damage[i][6])/(total + totalOver),(damage[i][2]+damage[i][4]+damage[i][5]+damage[i][6])/max(_max,1),damage[i][2]+damage[i][4]+damage[i][5]+damage[i][6],damage[i][3]-damage[i][11],class,nil,nil,nil,tooltipData,nil,(damage[i][4]+damage[i][5]+damage[i][6])/max(1,damage[i][2]+damage[i][4]+damage[i][5]+damage[i][6]))
-				reportData[1][#reportData[1]+1] = i..". "..GetGUID(damage[i][1]).." - "..ExRT.F.shortNumber(damage[i][2]+damage[i][4]+damage[i][5]+damage[i][6]).."@1@ ("..(damage[i][3]-damage[i][11])..")@1#"
-			end
+			
+			local currDamage = damage[i][2]+(DamageTab_Variables.ShowAll and (damage[i][4]+damage[i][5]+damage[i][6]) or 0)
+			DamageTab_SetLine({
+				line = i+1,
+				icon = icon,
+				name = GetGUID(damage[i][1])..GUIDtoText(" [%s]",damage[i][1]),
+				num = currDamage,
+				alpha = DamageTab_Variables.ShowAll and (damage[i][4]+damage[i][5]+damage[i][6]),
+				total = total,
+				max = _max,
+				dps = damage[i][3]-damage[i][11],
+				class = class,
+				sourceGUID = damage[i][1],
+				doEnemy = doEnemy,
+				tooltip = tooltipData,
+				check = BWInterfaceFrame.GraphFrame:IsShown(),
+				checkState = i <= 3,
+			})
+			reportData[1][#reportData[1]+1] = i..". "..GetGUID(damage[i][1]).." - "..ExRT.F.shortNumber(currDamage).."@1@ ("..(damage[i][3]-damage[i][11])..")@1#"
 		end
 		for i=#damage+2,#BWInterfaceFrame.tab.tabs[1].lines do
 			BWInterfaceFrame.tab.tabs[1].lines[i]:Hide()
 		end
 		BWInterfaceFrame.tab.tabs[1].scroll:Height((#damage+1) * 20)
+		
+		
+		if not BWInterfaceFrame.GraphFrame:IsShown() then
+			return
+		end
+		local graph = {[-1]={}}
+		local currFight = module.db.data[module.db.nowNum]
+		local maxFight = #module.db.data[module.db.nowNum].fight
+		for seg=1,maxFight do
+			for destGUID,destData in pairs(currFight.fight[seg].damage) do
+				local isEnemy = false
+				if GetUnitInfoByUnitFlagFix(currFight.reaction[destGUID],2) == 512 then
+					isEnemy = true
+				end
+				local mobID = ExRT.F.GUIDtoID(destGUID)
+				for sourceGUID,sourceData in pairs(destData) do
+					local owner = ExRT.F.Pets:getOwnerGUID(sourceGUID,GetPetsDB())
+					if owner then
+						sourceGUID = owner
+					end
+					if (isEnemy and doEnemy) or (not isEnemy and not doEnemy) then
+						for spellID,spellAmount in pairs(sourceData) do
+							if sourceVar[spellID] then
+								if not graph[ destGUID ] then
+									graph[ destGUID ] = {}
+								end
+								if not graph[ destGUID ][seg] then
+									graph[ destGUID ][seg] = 0
+								end
+								if not graph[ -1 ][seg] then
+									graph[ -1 ][seg] = 0
+								end
+							
+								local damgeCount = spellAmount.count - spellAmount.mscount
+								if mobID == 76933 then	--Mage T100 fix
+									damgeCount = 0
+								end
+								graph[ destGUID ][seg] = graph[ destGUID ][seg] + damgeCount
+								graph[ -1 ][seg] = graph[ -1 ][seg] + damgeCount
+							end
+						end
+					end
+				end
+			end
+		end
+		DamageTab_ReloadGraph(graph,maxFight,damage,false)
 	end
 	
 	local function DamageTab_ShowDamageToTarget(GUID)
@@ -4524,6 +5042,8 @@ function BWInterfaceFrameLoad()
 	end
 	
 	local function DamageTab_DPS_SelectDropDownSource(self,arg,doEnemy,doSpells)
+		local Back_destVar = ExRT.F.table_copy2(destVar)
+		local Back_sourceVar = ExRT.F.table_copy2(sourceVar)
 		wipe(sourceVar)
 		if arg then
 			sourceVar[arg] = true
@@ -4556,9 +5076,13 @@ function BWInterfaceFrameLoad()
 		else
 			DamageTab_UpdateLinesSpells(doEnemy)
 		end
+		DamageTab_Variables.Back_destVar = Back_destVar
+		DamageTab_Variables.Back_sourceVar = Back_sourceVar
 		ELib:DropDownClose()
 	end
 	local function DamageTab_DPS_SelectDropDownDest(self,arg,doEnemy,doSpells)
+		local Back_destVar = ExRT.F.table_copy2(destVar)
+		local Back_sourceVar = ExRT.F.table_copy2(sourceVar)
 		wipe(destVar)
 		if arg then
 			destVar[arg] = true
@@ -4587,6 +5111,8 @@ function BWInterfaceFrameLoad()
 		else
 			DamageTab_UpdateLinesSpells(doEnemy)
 		end
+		DamageTab_Variables.Back_destVar = Back_destVar
+		DamageTab_Variables.Back_sourceVar = Back_sourceVar
 		ELib:DropDownClose()
 	end
 	
@@ -4603,7 +5129,7 @@ function BWInterfaceFrameLoad()
 		else
 			sourceVar[self.arg1] = nil
 		end
-		Damage_Last_Func(self.arg2)
+		DamageTab_Variables.Last_Func(self.arg2)
 	end
 	local function DamageTab_DPS_CheckDropDownDest(self,checked)
 		if checked then
@@ -4611,7 +5137,7 @@ function BWInterfaceFrameLoad()
 		else
 			destVar[self.arg1] = nil
 		end
-		Damage_Last_Func(self.arg2)
+		DamageTab_Variables.Last_Func(self.arg2)
 	end
 	
 	local function DamageTab_HideArrow()
@@ -4632,9 +5158,9 @@ function BWInterfaceFrameLoad()
 	end
 
 	local function DamageTab_DPS(doEnemy,doSpells,doNotUpdateLines,isBySpellDamage)
-		local reaction = 512
-		if not doEnemy then
-			reaction = 256
+		local reaction = 512 
+		if not doEnemy then 
+			reaction = 256 
 		end
 		
 		if not module.db.nowData.damage then	--First load fix
@@ -4752,7 +5278,7 @@ function BWInterfaceFrameLoad()
 			true,false,false,true		Damage from spell: friendly
 			false,false,false,true		Damage from spell: hostile
 		]]
-		Damage_Back_Func = nil
+		DamageTab_Variables.Back_Func = nil
 		
 		DamageTab_DPS(doEnemy,doSpells,doNotUpdateLines,isBySpellDamage)
 		if doNotUpdateLines then
@@ -4796,31 +5322,76 @@ function BWInterfaceFrameLoad()
 	
 	tab.showOverallChk = ELib:Check(tab):Point(833,-75):Tooltip(L.BossWatcherDamageShowOver):OnClick(function (self)
 		if self:GetChecked() then
-			DamageShowAll = true
+			DamageTab_Variables.ShowAll = true
 		else
-			DamageShowAll = false
+			DamageTab_Variables.ShowAll = false
 		end
-		Damage_Last_Func(Damage_Last_doEnemy)
+		DamageTab_Variables.Last_Func(DamageTab_Variables.Last_doEnemy)
 	end)
 	
-	tab.scroll = ELib:ScrollFrame(tab):Size(835,483):Point("TOP",0,-105):Height(600)
+	tab.showGraphChk = ELib:Check(tab,"|cffffffff"..L.BossWatcherTabGraphics.." ",VExRT.BossWatcher.optionsDamageGraph):Point(833,-100):Left():OnClick(function (self)
+		local tab1 = BWInterfaceFrame.tab.tabs[1]
+		if self:GetChecked() then
+			tab1.scroll:Point("TOP",0,-305)
+			BWInterfaceFrame.GraphFrame:Show()
+		else
+			tab1.scroll:Point("TOP",0,-125)
+			BWInterfaceFrame.GraphFrame:Hide()
+		end
+		VExRT.BossWatcher.optionsDamageGraph = self:GetChecked()
+		DamageTab_Variables.Last_Func(DamageTab_Variables.Last_doEnemy)
+	end)
+	
+	tab.scroll = ELib:ScrollFrame(tab):Point("TOP",0,VExRT.BossWatcher.optionsDamageGraph and -305 or -125):Point("BOTTOM",0,10):Height(600)
+	tab.scroll:SetWidth(835)
+	tab.scroll.C:SetWidth(835)
 	tab.lines = {}
+
+	local function DamageTab_RightClick_BackFunction()
+		if not DamageTab_Variables.Back_Func then
+			return
+		end
+		if DamageTab_Variables.Back_sourceVar then
+			sourceVar = DamageTab_Variables.Back_sourceVar
+		else
+			wipe(sourceVar)
+		end
+		if DamageTab_Variables.Back_destVar then
+			destVar = DamageTab_Variables.Back_destVar
+		else
+			wipe(destVar)
+		end
+		DamageTab_Variables.Back_Func(DamageTab_Variables.Last_doEnemy)
+	end
 	
 	tab.scroll:SetScript("OnMouseUp",function(self,button)
-		if button == "RightButton" and Damage_Back_Func then
-			wipe(sourceVar)
-			wipe(destVar)
-			Damage_Back_Func(Damage_Last_doEnemy)
+		if button == "RightButton" then
+			DamageTab_RightClick_BackFunction()
 		end
 	end)
 	
+	local function DamageTab_Line_Check_OnClick(self)
+		local spellID = self:GetParent().spellID or self:GetParent().sourceGUID
+		if not spellID then
+			return
+		end
+		local graphData = BWInterfaceFrame.GraphFrame.G.data
+		if self:GetParent().isPet and type(spellID) == 'number' then
+			spellID = -spellID
+		end
+		local findPos = ExRT.F.table_find(graphData,spellID,'info_spellID')
+		if findPos then
+			graphData[ findPos ].hide = not self:GetChecked()
+		end
+		BWInterfaceFrame.GraphFrame.G:Reload()
+	end
 	local function DamageTab_Line_OnClick(self,button)
 		if button == "RightButton" then
-			if Damage_Back_Func then
-				wipe(sourceVar)
-				wipe(destVar)
-				Damage_Back_Func(Damage_Last_doEnemy)
-			end
+			DamageTab_RightClick_BackFunction()
+			return
+		end
+		local x,y = ExRT.F.GetCursorPos(self)
+		if (self.check and self.check:IsShown() or (self:GetParent().check and self:GetParent().check:IsShown())) and x <= 30 then
 			return
 		end
 		local GUID = self.sourceGUID
@@ -4843,18 +5414,21 @@ function BWInterfaceFrameLoad()
 			end
 		end
 		if GUID then
-			if not isTargetLine then
+			local Back_destVar = ExRT.F.table_copy2(destVar)
+			local Back_sourceVar = ExRT.F.table_copy2(sourceVar)
+			if isTargetLine then
+				wipe(destVar)
+				destVar[GUID] = true
+				DamageTab_UpdateLinesSpells(doEnemy)
+				DamageTab_Variables.Back_Func = DamageTab_UpdateLinesTargets
+			else
 				wipe(sourceVar)
 				sourceVar[GUID] = true
 				DamageTab_UpdateLinesSpells(doEnemy)
-				Damage_Back_Func = DamageTab_UpdateLinesPlayers
-			else
-				wipe(destVar)
-				wipe(sourceVar)
-				destVar[GUID] = true
-				DamageTab_UpdateLinesPlayers(doEnemy)
-				Damage_Back_Func = DamageTab_UpdateLinesTargets
+				DamageTab_Variables.Back_Func = DamageTab_UpdateLinesPlayers
 			end
+			DamageTab_Variables.Back_destVar = Back_destVar
+			DamageTab_Variables.Back_sourceVar = Back_sourceVar
 		end
 	end
 	local function DamageTab_LineOnEnter(self)
@@ -4889,7 +5463,33 @@ function BWInterfaceFrameLoad()
 			DamageTab_LineOnEnter(parent)
 		end
 	end
-	function DamageTab_SetLine(i,icon,name,overall_num,overall,total,dps,class,sourceGUID,doEnemy,spellLink,tooltip,school,overall_black,isTargetLine)
+	function DamageTab_SetLine(dataTable)
+		local i,icon,name,overall_num,overall,total,dps,class,sourceGUID,doEnemy,spellLink,tooltip,school,overall_black,isTargetLine,showCheck,checkState,spellID,isPet
+		
+		i = dataTable.line
+		icon = dataTable.icon or ""
+		name = dataTable.name
+		total = dataTable.num
+		overall_num = dataTable.num / max(dataTable.total,1)
+		overall = dataTable.num / max(dataTable.max,1)
+		if dataTable.alpha then
+			overall_black = dataTable.alpha / max(dataTable.num,1)
+		end
+		dps = dataTable.dps
+		class = dataTable.class
+		sourceGUID = dataTable.sourceGUID
+		doEnemy = dataTable.doEnemy
+		if dataTable.spellID and dataTable.spellID ~= -1 then
+			spellLink = "spell:"..dataTable.spellID
+		end
+		tooltip = dataTable.tooltip
+		school = dataTable.school
+		isTargetLine = dataTable.isTargetLine
+		showCheck = dataTable.check
+		checkState = dataTable.checkState
+		spellID = dataTable.spellID
+		isPet = dataTable.isPet
+		
 		local line = BWInterfaceFrame.tab.tabs[1].lines[i]
 		if not line then
 			line = CreateFrame("Button",nil,BWInterfaceFrame.tab.tabs[1].scroll.C)
@@ -4897,13 +5497,22 @@ function BWInterfaceFrameLoad()
 			line:SetSize(815,20)
 			line:SetPoint("TOPLEFT",0,-(i-1)*20)
 			
-			line.icon = ELib:Icon(line,nil,18):Point(5,-1)
-			line.name = ELib:Text(line,"name",12):Size(225,20):Point(25,0):Color():Shadow()
+			line.leftSide = CreateFrame("Frame",nil,line)
+			line.leftSide:SetSize(1,20)
+			line.leftSide:SetPoint("LEFT",5,0)
+			
+			line.check = ELib:Check(line,""):Point("TOPLEFT",5,-2)
+			line.check:SetSize(16,16)
+			line.check:SetScript("OnClick",DamageTab_Line_Check_OnClick)
+			
+			line.overall_num = ELib:Text(line,"45.76%",12):Size(70,20):Point(250,0):Right():Color():Shadow()
+
+			line.icon = ELib:Icon(line,nil,18):Point("TOPLEFT",line.leftSide,0,-1)
+			line.name = ELib:Text(line,"name",12):Size(0,20):Point("TOPLEFT",line.leftSide,25,0):Point("TOPRIGHT",line.overall_num,"TOPLEFT",0,0):Color():Shadow()
 			line.name:SetMaxLines(1)
 			
 			line.name_tooltip = CreateFrame('Button',nil,line)
 			line.name_tooltip:SetAllPoints(line.name)
-			line.overall_num = ELib:Text(line,"45.76%",12):Size(70,20):Point(250,0):Right():Color():Shadow()
 			line.overall = line:CreateTexture(nil, "BACKGROUND")
 			line.overall:SetTexture("Interface\\AddOns\\ExRT\\media\\bar24.tga")
 			line.overall:SetSize(300,16)
@@ -4919,7 +5528,7 @@ function BWInterfaceFrameLoad()
 			line.back = line:CreateTexture(nil, "BACKGROUND")
 			line.back:SetAllPoints()
 			if i%2 == 0 then
-				line.back:SetColorTexture(0.3, 0.3, 0.3, 0.1)
+				line.back:SetTexture(0.3, 0.3, 0.3, 0.1)
 			end
 			line.name_tooltip:SetScript("OnClick",DamageTab_Line_OnClick)
 			line.name_tooltip:SetScript("OnEnter",DamageTab_Line_OnEnter)
@@ -4980,20 +5589,50 @@ function BWInterfaceFrameLoad()
 			SetSchoolColorsToLine(line.overall,school)
 			SetSchoolColorsToLine(line.overall_black,school)
 		end
+		if showCheck then
+			line.leftSide:SetPoint("LEFT",25,0)
+			line.check:SetChecked(checkState)
+			line.check:Show()
+		else
+			line.leftSide:SetPoint("LEFT",5,0)
+			line.check:Hide()
+		end
 		line.sourceGUID = sourceGUID
+		line.spellID = spellID
 		line.doEnemy = doEnemy
 		line.spellLink = spellLink
 		line.tooltip = tooltip
 		line.isTargetLine = isTargetLine
+		line.isPet = isPet
 		line:Show()
 	end
 	
+	local function DamageTab_Graph_ZoomSecondUpdate_1(self)
+		self.ZoomSecondUpdate_arg1 = DamageTab_Variables.Last_Func
+		self.ZoomSecondUpdate_arg2 = DamageTab_Variables.Last_doEnemy
+	end
+	local function DamageTab_Graph_ZoomSecondUpdate_2(self)
+		if self.ZoomSecondUpdate_arg1 then
+			self.ZoomSecondUpdate_arg1(self.ZoomSecondUpdate_arg2)
+		end
+	end
+		
 	tab:SetScript("OnShow",function (self)
 		BWInterfaceFrame.timeLineFrame:ClearAllPoints()
 		BWInterfaceFrame.timeLineFrame:SetPoint("TOP",self,"TOP",0,-10)
 		BWInterfaceFrame.timeLineFrame:Show()
 		
 		BWInterfaceFrame.report:Show()
+		
+		BWInterfaceFrame.GraphFrame.G.ZoomSecondUpdate_1 = DamageTab_Graph_ZoomSecondUpdate_1
+		BWInterfaceFrame.GraphFrame.G.ZoomSecondUpdate_2 = DamageTab_Graph_ZoomSecondUpdate_2
+		BWInterfaceFrame.GraphFrame:SetPoint("TOP",0,-105)
+		if BWInterfaceFrame.tab.tabs[1].showGraphChk:GetChecked() then
+			BWInterfaceFrame.GraphFrame:Show()
+			if DamageTab_Variables.Last_Func then
+				DamageTab_Variables.Last_Func(DamageTab_Variables.Last_doEnemy)
+			end
+		end
 		
 		if BWInterfaceFrame.nowFightID ~= self.lastFightID then
 			DamageTab_UpdatePage(nil,true)
@@ -5003,6 +5642,7 @@ function BWInterfaceFrameLoad()
 	tab:SetScript("OnHide",function (self)
 		BWInterfaceFrame.timeLineFrame:Hide()
 		BWInterfaceFrame.report:Hide()
+		BWInterfaceFrame.GraphFrame:Hide()
 	end)
 	
 	
@@ -5014,8 +5654,16 @@ function BWInterfaceFrameLoad()
 	
 	tab.timeLine = {}
 	
-	local buffsFilterSource,buffsFilterSourceGUID = 0x0111,{}
-	local buffsFilterDest,buffsFilterDestGUID = 0x0111,{}
+	local AurasTab_Variables = {
+		FilterSource = 0x0111,
+		FilterSourceGUID = {},
+		FilterDest = 0x0111,
+		FilterDestGUID = {},
+		NameWidth = 188,
+		WorkWidth = 650,
+		TotalLines = 30,
+	}
+	AurasTab_Variables.TotalWidth = AurasTab_Variables.NameWidth + AurasTab_Variables.WorkWidth
 	--[[
 	0x0001 - hostile
 	0x0010 - friendly
@@ -5023,17 +5671,13 @@ function BWInterfaceFrameLoad()
 	0x1000 - by GUID
 	]]
 	
-	local buffsNameWidth = 188
-	local buffsWorkWidth = 650
-	local buffsTotalWidth = buffsNameWidth + buffsWorkWidth
-	local buffsTotalLines = 30
 	for i=1,11 do
 		tab.timeLine[i] = CreateFrame("Frame",nil,tab)
-		tab.timeLine[i]:SetPoint("TOPLEFT",buffsNameWidth+(i-1)*(buffsWorkWidth/10)-1,-42)
-		tab.timeLine[i]:SetSize(2,buffsTotalLines * 18 + 14)
+		tab.timeLine[i]:SetPoint("TOPLEFT",AurasTab_Variables.NameWidth+(i-1)*(AurasTab_Variables.WorkWidth/10)-1,-42)
+		tab.timeLine[i]:SetSize(2,AurasTab_Variables.TotalLines * 18 + 14)
 		
 		tab.timeLine[i].texture = tab.timeLine[i]:CreateTexture(nil, "BACKGROUND")
-		tab.timeLine[i].texture:SetColorTexture(1, 1, 1, 0.3)
+		tab.timeLine[i].texture:SetTexture(1, 1, 1, 0.3)
 		tab.timeLine[i].texture:SetAllPoints()		
 		
 		tab.timeLine[i].timeText = ELib:Text(tab.timeLine[i],"",11):Size(200,12):Point("TOPRIGHT",tab.timeLine[i],"TOPLEFT",-1,-1):Right():Top():Color()
@@ -5043,8 +5687,8 @@ function BWInterfaceFrameLoad()
 	local function CreateRedDeathLine(i)
 		if not BWInterfaceFrame.tab.tabs[3].redDeathLine[i] then
 			BWInterfaceFrame.tab.tabs[3].redDeathLine[i] = BWInterfaceFrame.tab.tabs[3]:CreateTexture(nil, "BACKGROUND",0,-4)
-			BWInterfaceFrame.tab.tabs[3].redDeathLine[i]:SetColorTexture(1, 0.3, 0.3, 1)
-			BWInterfaceFrame.tab.tabs[3].redDeathLine[i]:SetSize(2,buffsTotalLines * 18 + 14)
+			BWInterfaceFrame.tab.tabs[3].redDeathLine[i]:SetTexture(1, 0.3, 0.3, 1)
+			BWInterfaceFrame.tab.tabs[3].redDeathLine[i]:SetSize(2,AurasTab_Variables.TotalLines * 18 + 14)
 			BWInterfaceFrame.tab.tabs[3].redDeathLine[i]:Hide()
 		end
 	end
@@ -5060,6 +5704,51 @@ function BWInterfaceFrameLoad()
 				end
 			end
 			CloseDropDownMenus()
+		end, notCheckable = true },
+		{ text = L.BossWatcherAddToGraph, func = function() 
+			CloseDropDownMenus()
+			local buffData = BWInterfaceFrame.tab.tabs[3].linesRightClickLineData
+			if not buffData then
+				return
+			end
+			local table1 = {}
+			for i=1,#buffData[5] do
+				table1[#table1+1] = buffData[5][i][3]
+				table1[#table1+1] = buffData[5][i][4]
+			end
+			local len = #table1
+			for i=1,len,2 do
+				local time_start,time_end = table1[i],table1[i+1]
+				if time_start then
+					for j=i+2,len,2 do
+						local new_start,new_end = table1[j],table1[j+1]
+						if new_start then
+							if new_start <= time_start and new_end > time_start then
+								time_start = new_start
+								time_end = max(time_end,new_end)
+								
+								table1[j] = nil
+								table1[j+1] = nil
+							elseif new_start > time_start and new_start <= time_end then
+								time_end = max(time_end,new_end)
+								
+								table1[j] = nil
+								table1[j+1] = nil
+							end
+						end
+					end
+					table1[i] = time_start
+					table1[i+1] = time_end
+				end
+			end
+			local table2 = {}
+			for i=1,len,2 do
+				if table1[i] then
+					table2[#table2 + 1] = table1[i]
+					table2[#table2 + 1] = table1[i + 1]
+				end
+			end
+			BWInterfaceFrame.GraphFrame.G.highlight = table2
 		end, notCheckable = true },
 		{ text = L.BossWatcherAurasMoreInfoText, func = function() 
 			if BWInterfaceFrame.tab.tabs[3].linesRightClickMoreInfoData then
@@ -5102,7 +5791,7 @@ function BWInterfaceFrameLoad()
 				line.back = line:CreateTexture(nil, "BACKGROUND")
 				line.back:SetAllPoints()
 				if i%2==0 then
-					line.back:SetColorTexture(0.3, 0.3, 0.3, 0.1)
+					line.back:SetTexture(0.3, 0.3, 0.3, 0.1)
 				end
 				
 				line:SetScript("OnEnter",LineOnEnter)
@@ -5168,20 +5857,20 @@ function BWInterfaceFrameLoad()
 	local function BuffsLinesOnUpdate(self)
 		local x,y = ExRT.F.GetCursorPos(self)
 		if ExRT.F.IsInFocus(self,x,y) then
-			for j=1,buffsTotalLines do
+			for j=1,AurasTab_Variables.TotalLines do
 				if BWInterfaceFrame.tab.tabs[3].lines[j] ~= self then
 					BWInterfaceFrame.tab.tabs[3].lines[j].hl:Hide()
 				end
 			end
 			self.hl:Show()
-			if x <= buffsNameWidth then
+			if x <= AurasTab_Variables.NameWidth then
 				if GameTooltip:IsShown() then
 					local _,_,spellID = GameTooltip:GetSpell()
 					if spellID == self.spellID then
 						return
 					end
 				end
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -buffsWorkWidth, 0)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -AurasTab_Variables.WorkWidth, 0)
 				GameTooltip:SetHyperlink(self.spellLink)
 				
 				local greenCount = #self.greenTooltips
@@ -5218,7 +5907,7 @@ function BWInterfaceFrameLoad()
 						uptime = uptime + (BuffsLineUptimeTempTable[iPos+1] - BuffsLineUptimeTempTable[iPos])
 					end
 				end
-				uptime = uptime / buffsWorkWidth
+				uptime = uptime / AurasTab_Variables.WorkWidth
 				
 				GameTooltip:AddLine(L.BossWatcherBuffsAndDebuffsTooltipUptimeText..": "..format("%.2f%% (%.1f %s)",uptime*100,uptime*(module.db.data[module.db.nowNum].encounterEnd - module.db.data[module.db.nowNum].encounterStart),L.BossWatcherBuffsAndDebuffsSecondsText))
 				GameTooltip:AddLine(L.BossWatcherBuffsAndDebuffsTooltipCountText..": "..(self.greenCount or 0))
@@ -5229,7 +5918,7 @@ function BWInterfaceFrameLoad()
 				end
 				table.wipe(self.tooltip)
 				local owner = nil
-				local _min,_max = buffsNameWidth+buffsWorkWidth,buffsNameWidth
+				local _min,_max = AurasTab_Variables.NameWidth+AurasTab_Variables.WorkWidth,AurasTab_Variables.NameWidth
 				for j = 1,#self.greenTooltips do
 					local rightPos = self.greenTooltips[j][2]
 					local leftPos = self.greenTooltips[j][1]
@@ -5266,8 +5955,8 @@ function BWInterfaceFrameLoad()
 	end
 	local function BuffsLinesOnClick(self,button)
 		local x,y = ExRT.F.GetCursorPos(self)
-		if x > 0 and x < buffsTotalWidth and y > 0 and y < 18 then
-			if x <= buffsNameWidth then
+		if x > 0 and x < AurasTab_Variables.TotalWidth and y > 0 and y < 18 then
+			if x <= AurasTab_Variables.NameWidth then
 				ExRT.F.LinkSpell(nil,self.spellLink)
 			elseif button == "RightButton" then
 				if GameTooltip:IsShown() then
@@ -5285,22 +5974,23 @@ function BWInterfaceFrameLoad()
 					BWInterfaceFrame.tab.tabs[3].linesRightClickMenuData = nil
 				end
 				BWInterfaceFrame.tab.tabs[3].linesRightClickMoreInfoData = self.spellID
+				BWInterfaceFrame.tab.tabs[3].linesRightClickLineData = self.lineData
 				EasyMenu(BWInterfaceFrame.tab.tabs[3].linesRightClickMenu, BWInterfaceFrame.tab.tabs[3].linesRightClickMenuDropDown, "cursor", 10 , -15, "MENU")
 			end
 		end
 	end
 			
 	tab.lines = {}
-	for i=1,buffsTotalLines do
+	for i=1,AurasTab_Variables.TotalLines do
 		tab.lines[i] = CreateFrame("Button",nil,tab)
-		tab.lines[i]:SetSize(buffsTotalWidth,18)
+		tab.lines[i]:SetSize(AurasTab_Variables.TotalWidth,18)
 		tab.lines[i]:SetPoint("TOPLEFT", 0, -18*(i-1)-54)
 		
 		tab.lines[i].spellIcon = tab.lines[i]:CreateTexture(nil, "BACKGROUND")
 		tab.lines[i].spellIcon:SetSize(16,16)
 		tab.lines[i].spellIcon:SetPoint("TOPLEFT", 5, -1)
 		
-		tab.lines[i].spellText = ELib:Text(tab.lines[i],"",11):Size(buffsNameWidth-23,18):Point(23,0):Color()
+		tab.lines[i].spellText = ELib:Text(tab.lines[i],"",11):Size(AurasTab_Variables.NameWidth-23,18):Point(23,0):Color()
 		
 		tab.lines[i].green = {}
 		tab.lines[i].greenFrame = {}
@@ -5317,12 +6007,12 @@ function BWInterfaceFrameLoad()
 		tab.lines[i]:SetScript("OnClick", BuffsLinesOnClick)
 	end
 	
-	tab.scrollBar = ELib:ScrollBar(tab):Size(16,buffsTotalLines*18):Point("TOPRIGHT",-4,-54):Range(1,2)
+	tab.scrollBar = ELib:ScrollBar(tab):Size(16,AurasTab_Variables.TotalLines*18):Point("TOPRIGHT",-4,-54):Range(1,2)
 	
 	local function CreateBuffGreen(i,j)
 		BWInterfaceFrame.tab.tabs[3].lines[i].green[j] = BWInterfaceFrame.tab.tabs[3].lines[i]:CreateTexture(nil, "BACKGROUND",nil,5)
 		--BWInterfaceFrame.tab.tabs[3].lines[i].green[j]:SetTexture(0.1, 0.7, 0.1, 0.7)
-		BWInterfaceFrame.tab.tabs[3].lines[i].green[j]:SetColorTexture(1, 0.82, 0, 0.7)	
+		BWInterfaceFrame.tab.tabs[3].lines[i].green[j]:SetTexture(1, 0.82, 0, 0.7)	
 		BWInterfaceFrame.tab.tabs[3].lines[i].greenFrame[j] = CreateFrame("Frame",nil,BWInterfaceFrame.tab.tabs[3].lines[i])
 	end
 	
@@ -5339,21 +6029,21 @@ function BWInterfaceFrameLoad()
 	
 	local function CreateFilterText()
 		local result = L.BossWatcherBuffsAndDebuffsFilterSource..": "
-		if bit.band(buffsFilterSource,0xF000) > 0 then
-			result = result .. (buffsFunc_GetNamesFromArray(buffsFilterSourceGUID))
-		elseif bit.band(buffsFilterSource,0x0FFF) == 0x111 then
+		if bit.band(AurasTab_Variables.FilterSource,0xF000) > 0 then
+			result = result .. (buffsFunc_GetNamesFromArray(AurasTab_Variables.FilterSourceGUID))
+		elseif bit.band(AurasTab_Variables.FilterSource,0x0FFF) == 0x111 then
 			result = result .. L.BossWatcherBuffsAndDebuffsFilterAll
 		else
 			local petsOff = false
-			if not (bit.band(buffsFilterSource,0x0F00) > 0) then
+			if not (bit.band(AurasTab_Variables.FilterSource,0x0F00) > 0) then
 				result = result .. L.BossWatcherBuffsAndDebuffsFilterPetsFilterText 
 				petsOff = true
 			end
-			if not (bit.band(buffsFilterSource,0x00FF) == 0x0011) then
+			if not (bit.band(AurasTab_Variables.FilterSource,0x00FF) == 0x0011) then
 				result = result .. (petsOff and "," or "")
-				if bit.band(buffsFilterSource,0x00F0) > 0 then
+				if bit.band(AurasTab_Variables.FilterSource,0x00F0) > 0 then
 					result = result .. L.BossWatcherBuffsAndDebuffsFilterFriendly
-				elseif bit.band(buffsFilterSource,0x000F) > 0 then
+				elseif bit.band(AurasTab_Variables.FilterSource,0x000F) > 0 then
 					result = result .. L.BossWatcherBuffsAndDebuffsFilterHostile
 				else
 					result = result .. L.BossWatcherBuffsAndDebuffsFilterNothing
@@ -5362,21 +6052,21 @@ function BWInterfaceFrameLoad()
 		end
 			
 		result = result .. "; "..L.BossWatcherBuffsAndDebuffsFilterTarget..": "
-		if bit.band(buffsFilterDest,0xF000) > 0 then
-			result = result .. (buffsFunc_GetNamesFromArray(buffsFilterDestGUID))
-		elseif bit.band(buffsFilterDest,0x0FFF) == 0x111 then
+		if bit.band(AurasTab_Variables.FilterDest,0xF000) > 0 then
+			result = result .. (buffsFunc_GetNamesFromArray(AurasTab_Variables.FilterDestGUID))
+		elseif bit.band(AurasTab_Variables.FilterDest,0x0FFF) == 0x111 then
 			result = result .. L.BossWatcherBuffsAndDebuffsFilterAll
 		else
 			local petsOff = false
-			if not (bit.band(buffsFilterDest,0x0F00) > 0) then
+			if not (bit.band(AurasTab_Variables.FilterDest,0x0F00) > 0) then
 				result = result .. L.BossWatcherBuffsAndDebuffsFilterPetsFilterText
 				petsOff = true
 			end
-			if not (bit.band(buffsFilterDest,0x00FF) == 0x0011) then
+			if not (bit.band(AurasTab_Variables.FilterDest,0x00FF) == 0x0011) then
 				result = result .. (petsOff and "," or "")
-				if bit.band(buffsFilterDest,0x00F0) > 0 then
+				if bit.band(AurasTab_Variables.FilterDest,0x00F0) > 0 then
 					result = result .. L.BossWatcherBuffsAndDebuffsFilterFriendly
-				elseif bit.band(buffsFilterDest,0x000F) > 0 then
+				elseif bit.band(AurasTab_Variables.FilterDest,0x000F) > 0 then
 					result = result .. L.BossWatcherBuffsAndDebuffsFilterHostile
 				else
 					result = result .. L.BossWatcherBuffsAndDebuffsFilterNothing
@@ -5430,15 +6120,15 @@ function BWInterfaceFrameLoad()
 			BWInterfaceFrame.tab.tabs[3].timeLine[i+1].timeText:SetText( date("%M:%S", fightDuration*(i/10) ) )
 		end
 		
-		local _F_sourceGUID = bit.band(buffsFilterSource,0xF000) > 0
-		local _F_sourceFriendly = bit.band(buffsFilterSource,0x00F0) > 0
-		local _F_sourceHostile = bit.band(buffsFilterSource,0x000F) > 0
-		local _F_sourcePets = bit.band(buffsFilterSource,0x0F00) > 0
+		local _F_sourceGUID = bit.band(AurasTab_Variables.FilterSource,0xF000) > 0
+		local _F_sourceFriendly = bit.band(AurasTab_Variables.FilterSource,0x00F0) > 0
+		local _F_sourceHostile = bit.band(AurasTab_Variables.FilterSource,0x000F) > 0
+		local _F_sourcePets = bit.band(AurasTab_Variables.FilterSource,0x0F00) > 0
 		
-		local _F_destGUID = bit.band(buffsFilterDest,0xF000) > 0
-		local _F_destFriendly = bit.band(buffsFilterDest,0x00F0) > 0
-		local _F_destHostile = bit.band(buffsFilterDest,0x000F) > 0
-		local _F_destPets = bit.band(buffsFilterDest,0x0F00) > 0
+		local _F_destGUID = bit.band(AurasTab_Variables.FilterDest,0xF000) > 0
+		local _F_destFriendly = bit.band(AurasTab_Variables.FilterDest,0x00F0) > 0
+		local _F_destHostile = bit.band(AurasTab_Variables.FilterDest,0x000F) > 0
+		local _F_destPets = bit.band(AurasTab_Variables.FilterDest,0x0F00) > 0
 		
 		local buffTable = {}
 		for i,sourceData in ipairs(module.db.nowData.auras) do 
@@ -5448,8 +6138,8 @@ function BWInterfaceFrameLoad()
 			for j=5,#module.db.buffsFilters do
 				filterStatus = filterStatus and (not buffsFilterStatus[j] or module.db.buffsFilters[j][spellID])
 			end
-			if ((not _F_sourceGUID and ((_F_sourcePets or not buffsFunc_isPetOrGuard(currFight.reaction[ sourceData[2] ])) and ((_F_sourceFriendly and sourceData[4]) or (_F_sourceHostile and not sourceData[4])))) or (sourceData[2] and buffsFilterSourceGUID[ sourceData[2] ])) and
-				((not _F_destGUID and ((_F_destPets or not buffsFunc_isPetOrGuard(currFight.reaction[ sourceData[3] ])) and ((_F_destFriendly and sourceData[5]) or (_F_destHostile and not sourceData[5])))) or (sourceData[3] and buffsFilterDestGUID[ sourceData[3] ])) and
+			if ((not _F_sourceGUID and ((_F_sourcePets or not buffsFunc_isPetOrGuard(currFight.reaction[ sourceData[2] ])) and ((_F_sourceFriendly and sourceData[4]) or (_F_sourceHostile and not sourceData[4])))) or (sourceData[2] and AurasTab_Variables.FilterSourceGUID[ sourceData[2] ])) and
+				((not _F_destGUID and ((_F_destPets or not buffsFunc_isPetOrGuard(currFight.reaction[ sourceData[3] ])) and ((_F_destFriendly and sourceData[5]) or (_F_destHostile and not sourceData[5])))) or (sourceData[3] and AurasTab_Variables.FilterDestGUID[ sourceData[3] ])) and
 				(not buffsFilterStatus[1] or sourceData[7] == 'BUFF') and
 				(not buffsFilterStatus[2] or sourceData[7] == 'DEBUFF') and
 				(not buffsFilterStatus[3] or module.db.buffsFilters[3][spellID]) and
@@ -5510,8 +6200,8 @@ function BWInterfaceFrameLoad()
 				if maxEvents > 0 and buffTableJ[4][1][1] == 0 then
 					local newLine = #buffTableI[5] + 1
 					buffTableI[5][newLine] = {
-						buffsNameWidth,
-						buffsNameWidth+buffsWorkWidth*buffTableJ[4][1][3],
+						AurasTab_Variables.NameWidth,
+						AurasTab_Variables.NameWidth+AurasTab_Variables.WorkWidth*buffTableJ[4][1][3],
 						0,
 						buffTableJ[4][1][2],
 						buffTableJ[2],
@@ -5530,8 +6220,8 @@ function BWInterfaceFrameLoad()
 						end
 						local newLine = #buffTableI[5] + 1
 						buffTableI[5][newLine] = {
-							buffsNameWidth+buffsWorkWidth*buffTableJ[4][k][3],
-							buffsNameWidth+buffsWorkWidth*(endOfTime and buffTableJ[4][endOfTime][3] or 1),
+							AurasTab_Variables.NameWidth+AurasTab_Variables.WorkWidth*buffTableJ[4][k][3],
+							AurasTab_Variables.NameWidth+AurasTab_Variables.WorkWidth*(endOfTime and buffTableJ[4][endOfTime][3] or 1),
 							buffTableJ[4][k][2],
 							endOfTime and buffTableJ[4][endOfTime][2] or fightDuration,
 							buffTableJ[2],
@@ -5548,21 +6238,21 @@ function BWInterfaceFrameLoad()
 		for i=1,#BWInterfaceFrame.tab.tabs[3].redDeathLine do
 			BWInterfaceFrame.tab.tabs[3].redDeathLine[i]:Hide()
 		end
-		if _F_destGUID and ExRT.F.table_len(buffsFilterDestGUID) > 0 then
+		if _F_destGUID and ExRT.F.table_len(AurasTab_Variables.FilterDestGUID) > 0 then
 			local j = 0
 			for i=1,#module.db.nowData.dies do
-				if buffsFilterDestGUID[ module.db.nowData.dies[i][1] ] then
+				if AurasTab_Variables.FilterDestGUID[ module.db.nowData.dies[i][1] ] then
 					j = j + 1
 					CreateRedDeathLine(j)
 					local time_ = timestampToFightTime( module.db.nowData.dies[i][3] )
-					local pos = buffsNameWidth + time_/fightDuration*buffsWorkWidth - 1
+					local pos = AurasTab_Variables.NameWidth + time_/fightDuration*AurasTab_Variables.WorkWidth - 1
 					BWInterfaceFrame.tab.tabs[3].redDeathLine[j]:SetPoint("TOPLEFT",pos,-42)
 					BWInterfaceFrame.tab.tabs[3].redDeathLine[j]:Show()
 				end
 			end
 		end
 		
-		BWInterfaceFrame.tab.tabs[3].scrollBar:Range(1,max(#buffTable-buffsTotalLines+1,1))		
+		BWInterfaceFrame.tab.tabs[3].scrollBar:Range(1,max(#buffTable-AurasTab_Variables.TotalLines+1,1))		
 		BWInterfaceFrame.tab.tabs[3].db = buffTable
 		
 		--ExRT.F.ScheduleTimer(collectgarbage, 1, "collect")
@@ -5579,7 +6269,7 @@ function BWInterfaceFrameLoad()
 		local buffTable2 = currTab.db
 		
 		local linesCount = 0
-		for i=1,buffsTotalLines do
+		for i=1,AurasTab_Variables.TotalLines do
 			for j=1,currTab.lines[i].greenCount do
 				currTab.lines[i].green[j]:Hide()
 			end
@@ -5587,15 +6277,17 @@ function BWInterfaceFrameLoad()
 			table.wipe(currTab.lines[i].greenTooltips)
 		end
 		for i=minVal,#buffTable2 do
+			local data = buffTable2[i]
 			linesCount = linesCount + 1
 			local Line = currTab.lines[linesCount]
-			Line.spellIcon:SetTexture(buffTable2[i][3])
-			Line.spellText:SetText(buffTable2[i][2] or "???")
-			Line.spellLink = GetSpellLink(buffTable2[i][1])
-			Line.spellName = buffTable2[i][2] or "Spell"
-			Line.spellID = buffTable2[i][1]
+			Line.spellIcon:SetTexture(data[3])
+			Line.spellText:SetText(data[2] or "???")
+			Line.spellLink = GetSpellLink(data[1])
+			Line.spellName = data[2] or "Spell"
+			Line.spellID = data[1]
+			Line.lineData = data
 			
-			for j=1,#buffTable2[i][5] do
+			for j=1,#data[5] do
 				Line.greenCount = Line.greenCount + 1
 				local n = Line.greenCount
 
@@ -5603,20 +6295,22 @@ function BWInterfaceFrameLoad()
 					CreateBuffGreen(linesCount,n)
 				end
 				
-				Line.green[n]:SetPoint("TOPLEFT",buffTable2[i][5][j][1],0)
-				Line.green[n]:SetSize(max(buffTable2[i][5][j][2]-buffTable2[i][5][j][1],0.1),18)
+				Line.green[n]:SetPoint("TOPLEFT",data[5][j][1],0)
+				Line.green[n]:SetSize(max(data[5][j][2]-data[5][j][1],0.1),18)
 				Line.green[n]:Show()
 				
-				Line.greenTooltips[#Line.greenTooltips+1] = buffTable2[i][5][j]
+				Line.greenTooltips[#Line.greenTooltips+1] = data[5][j]
 			end
 
 			Line:Show()
-			if linesCount >= buffsTotalLines then
+			if linesCount >= AurasTab_Variables.TotalLines then
 				break
 			end
 		end
-		for i=(linesCount+1),buffsTotalLines do
-			currTab.lines[i]:Hide()
+		for i=(linesCount+1),AurasTab_Variables.TotalLines do
+			local line = currTab.lines[i]
+			line:Hide()
+			line.lineData = nil
 		end
 		currTab.scrollBar:UpdateButtons()
 	end
@@ -5714,8 +6408,8 @@ function BWInterfaceFrameLoad()
 	tab.filterFrame.sourceScroll.dontDisable = true
 	
 	tab.filterFrame.sourceClear = ELib:Button(tab.filterFrame,L.BossWatcherBuffsAndDebuffsFilterClear):Size(190,20):Point(10,-20):OnClick(function ()
-		wipe(buffsFilterSourceGUID)
-		buffsFilterSource = 0x0111
+		wipe(AurasTab_Variables.FilterSourceGUID)
+		AurasTab_Variables.FilterSource = 0x0111
 		BWInterfaceFrame.tab.tabs[3].filterFrame.sourceFriendly:SetChecked(true)
 		BWInterfaceFrame.tab.tabs[3].filterFrame.sourceHostile:SetChecked(true)
 		BWInterfaceFrame.tab.tabs[3].filterFrame.sourcePets:SetChecked(true)
@@ -5732,19 +6426,19 @@ function BWInterfaceFrameLoad()
 	tab.filterFrame.sourceFriendly:SetScript("OnClick",function ()
 		UpdateTargetsList(BWInterfaceFrame.tab.tabs[3].filterFrame.sourceScroll,true,BWInterfaceFrame.tab.tabs[3].filterFrame.sourceFriendly:GetChecked(),BWInterfaceFrame.tab.tabs[3].filterFrame.sourceHostile:GetChecked(),BWInterfaceFrame.tab.tabs[3].filterFrame.sourcePets:GetChecked())
 		if BWInterfaceFrame.tab.tabs[3].filterFrame.sourceFriendly:GetChecked() then
-			buffsFilterSource = bit.bor(buffsFilterSource,0x0010)
+			AurasTab_Variables.FilterSource = bit.bor(AurasTab_Variables.FilterSource,0x0010)
 		else
-			buffsFilterSource = bit.band(buffsFilterSource,0xFF0F)
+			AurasTab_Variables.FilterSource = bit.band(AurasTab_Variables.FilterSource,0xFF0F)
 		end
 		if BWInterfaceFrame.tab.tabs[3].filterFrame.sourceHostile:GetChecked() then
-			buffsFilterSource = bit.bor(buffsFilterSource,0x0001)
+			AurasTab_Variables.FilterSource = bit.bor(AurasTab_Variables.FilterSource,0x0001)
 		else
-			buffsFilterSource = bit.band(buffsFilterSource,0xFFF0)
+			AurasTab_Variables.FilterSource = bit.band(AurasTab_Variables.FilterSource,0xFFF0)
 		end
 		if BWInterfaceFrame.tab.tabs[3].filterFrame.sourcePets:GetChecked() then
-			buffsFilterSource = bit.bor(buffsFilterSource,0x0100)
+			AurasTab_Variables.FilterSource = bit.bor(AurasTab_Variables.FilterSource,0x0100)
 		else
-			buffsFilterSource = bit.band(buffsFilterSource,0xF0FF)
+			AurasTab_Variables.FilterSource = bit.band(AurasTab_Variables.FilterSource,0xF0FF)
 		end
 		UpdateBuffPageDB()
 		UpdateBuffsPage()
@@ -5754,11 +6448,11 @@ function BWInterfaceFrameLoad()
 	
 	function tab.filterFrame.sourceScroll:SetListValue(index)
 		if not IsShiftKeyDown() then
-			buffsFilterSourceGUID = {}
+			AurasTab_Variables.FilterSourceGUID = {}
 		end
-		buffsFilterSourceGUID[ self.LGUID[index] ] = true
-		buffsFilterSource = bit.bor(buffsFilterSource,0x1000)
-		BWInterfaceFrame.tab.tabs[3].filterFrame.sourceText:SetText(buffsFunc_GetNamesFromArray(buffsFilterSourceGUID))
+		AurasTab_Variables.FilterSourceGUID[ self.LGUID[index] ] = true
+		AurasTab_Variables.FilterSource = bit.bor(AurasTab_Variables.FilterSource,0x1000)
+		BWInterfaceFrame.tab.tabs[3].filterFrame.sourceText:SetText(buffsFunc_GetNamesFromArray(AurasTab_Variables.FilterSourceGUID))
 		UpdateBuffPageDB()
 		UpdateBuffsPage()
 	end
@@ -5795,8 +6489,8 @@ function BWInterfaceFrameLoad()
 	tab.filterFrame.targetScroll.dontDisable = true
 	
 	tab.filterFrame.targetClear = ELib:Button(tab.filterFrame,L.BossWatcherBuffsAndDebuffsFilterClear):Size(190,20):Point(210,-20):OnClick(function ()
-		wipe(buffsFilterDestGUID)
-		buffsFilterDest = 0x0111
+		wipe(AurasTab_Variables.FilterDestGUID)
+		AurasTab_Variables.FilterDest = 0x0111
 		BWInterfaceFrame.tab.tabs[3].filterFrame.targetFriendly:SetChecked(true)
 		BWInterfaceFrame.tab.tabs[3].filterFrame.targetHostile:SetChecked(true)
 		BWInterfaceFrame.tab.tabs[3].filterFrame.targetPets:SetChecked(true)
@@ -5813,19 +6507,19 @@ function BWInterfaceFrameLoad()
 	tab.filterFrame.targetFriendly:SetScript("OnClick",function ()
 		UpdateTargetsList(BWInterfaceFrame.tab.tabs[3].filterFrame.targetScroll,nil,BWInterfaceFrame.tab.tabs[3].filterFrame.targetFriendly:GetChecked(),BWInterfaceFrame.tab.tabs[3].filterFrame.targetHostile:GetChecked(),BWInterfaceFrame.tab.tabs[3].filterFrame.targetPets:GetChecked())
 		if BWInterfaceFrame.tab.tabs[3].filterFrame.targetFriendly:GetChecked() then
-			buffsFilterDest = bit.bor(buffsFilterDest,0x0010)
+			AurasTab_Variables.FilterDest = bit.bor(AurasTab_Variables.FilterDest,0x0010)
 		else
-			buffsFilterDest = bit.band(buffsFilterDest,0xFF0F)
+			AurasTab_Variables.FilterDest = bit.band(AurasTab_Variables.FilterDest,0xFF0F)
 		end
 		if BWInterfaceFrame.tab.tabs[3].filterFrame.targetHostile:GetChecked() then
-			buffsFilterDest = bit.bor(buffsFilterDest,0x0001)
+			AurasTab_Variables.FilterDest = bit.bor(AurasTab_Variables.FilterDest,0x0001)
 		else
-			buffsFilterDest = bit.band(buffsFilterDest,0xFFF0)
+			AurasTab_Variables.FilterDest = bit.band(AurasTab_Variables.FilterDest,0xFFF0)
 		end
 		if BWInterfaceFrame.tab.tabs[3].filterFrame.targetPets:GetChecked() then
-			buffsFilterDest = bit.bor(buffsFilterDest,0x0100)
+			AurasTab_Variables.FilterDest = bit.bor(AurasTab_Variables.FilterDest,0x0100)
 		else
-			buffsFilterDest = bit.band(buffsFilterDest,0xF0FF)
+			AurasTab_Variables.FilterDest = bit.band(AurasTab_Variables.FilterDest,0xF0FF)
 		end
 		UpdateBuffPageDB()
 		UpdateBuffsPage()
@@ -5835,11 +6529,11 @@ function BWInterfaceFrameLoad()
 
 	function tab.filterFrame.targetScroll:SetListValue(index)
 		if not IsShiftKeyDown() then
-			buffsFilterDestGUID = {}
+			AurasTab_Variables.FilterDestGUID = {}
 		end
-		buffsFilterDestGUID[ self.LGUID[index] ] = true
-		buffsFilterDest = bit.bor(buffsFilterDest,0x1000)
-		BWInterfaceFrame.tab.tabs[3].filterFrame.targetText:SetText(buffsFunc_GetNamesFromArray(buffsFilterDestGUID))
+		AurasTab_Variables.FilterDestGUID[ self.LGUID[index] ] = true
+		AurasTab_Variables.FilterDest = bit.bor(AurasTab_Variables.FilterDest,0x1000)
+		BWInterfaceFrame.tab.tabs[3].filterFrame.targetText:SetText(buffsFunc_GetNamesFromArray(AurasTab_Variables.FilterDestGUID))
 		UpdateBuffPageDB()
 		UpdateBuffsPage()
 	end
@@ -6042,7 +6736,7 @@ function BWInterfaceFrameLoad()
 	tab.DecorationLine:SetHeight(37)
 	tab.DecorationLine.texture = tab.DecorationLine:CreateTexture(nil, "BACKGROUND")
 	tab.DecorationLine.texture:SetAllPoints()
-	tab.DecorationLine.texture:SetColorTexture(1,1,1,1)
+	tab.DecorationLine.texture:SetTexture(1,1,1,1)
 	tab.DecorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
 	
 	tab.selectedMob = ELib:Text(tab.DecorationLine,"",11):Size(530,12):Point(5,-5):Color():Top()
@@ -6275,29 +6969,21 @@ function BWInterfaceFrameLoad()
 		SpellsTab_UpdateFilterHeader = nil
 		wipe(SpellsTab_Variables.Filter)
 		wipe(SpellsTab_Variables.FilterByTarget)
-		if text:find("^target=") or text:find("^=") then
-			local targetsStr = text:match("^target=(.+)")
-			if not targetsStr then
-				targetsStr = text:match("^=(.+)")
+		if text:find("^target!?[=~]") or text:find("^!?[=~]") then
+			text = text:gsub("^target","")
+			local filterType = 1
+			if text:find("^!=") then
+				filterType = 3
+			elseif text:find("^!~") then
+				filterType = 4
+			elseif text:find("^~") then
+				filterType = 2
 			end
+			local targetsStr = text:match("^!?[=~](.+)")
 			if targetsStr then
 				local targets = {strsplit(";",targetsStr)}
 				for i=1,#targets do
-					SpellsTab_Variables.FilterByTarget[ targets[i] ] = true
-				end
-			end
-			SpellsTab_ReloadSpells()		
-			return
-		end
-		if text:find("^target~") or text:find("^~") then
-			local targetsStr = text:match("^target~(.+)")
-			if not targetsStr then
-				targetsStr = text:match("^~(.+)")
-			end
-			if targetsStr then
-				local targets = {strsplit(";",targetsStr)}
-				for i=1,#targets do
-					SpellsTab_Variables.FilterByTarget[ targets[i] ] = -1
+					SpellsTab_Variables.FilterByTarget[ targets[i] ] = filterType
 				end
 			end
 			SpellsTab_ReloadSpells()		
@@ -6340,6 +7026,7 @@ function BWInterfaceFrameLoad()
 			GameTooltip_Hide()
 			ELib.Tooltip:HideAdd()
 			BWInterfaceFrame.timeLineFrame.timeLine.arrow:Hide()
+			BWInterfaceFrame.timeLineFrame.timeLine:HideLabels()
 		else
 			local data = self.IndexToGUID[index]
 			GameTooltip:SetOwner(hoveredObj or self,"ANCHOR_BOTTOMLEFT")
@@ -6351,8 +7038,23 @@ function BWInterfaceFrameLoad()
 			end
 			
 			if data[2] then
-				BWInterfaceFrame.timeLineFrame.timeLine.arrow:SetPoint("TOPLEFT",BWInterfaceFrame.timeLineFrame.timeLine,"BOTTOMLEFT",BWInterfaceFrame.timeLineFrame.width*data[2],0)
-				BWInterfaceFrame.timeLineFrame.timeLine.arrow:Show()
+				if not data[5] then
+					BWInterfaceFrame.timeLineFrame.timeLine.arrow:SetPoint("TOPLEFT",BWInterfaceFrame.timeLineFrame.timeLine,"BOTTOMLEFT",BWInterfaceFrame.timeLineFrame.width*data[2],0)
+					BWInterfaceFrame.timeLineFrame.timeLine.arrow:Show()
+				else
+					local count = 0
+					for i=1,#data[5] do
+						local pos = data[5][i]
+						if pos < 0 and data[6] then
+							pos = -pos
+							count = count + 1
+							BWInterfaceFrame.timeLineFrame.timeLine:AddLabel(count,pos,data[2] == pos and 1 or 2)
+						elseif pos >= 0 then
+							count = count + 1
+							BWInterfaceFrame.timeLineFrame.timeLine:AddLabel(count,pos,data[2] == pos and 1 or nil)
+						end
+					end
+				end
 			end
 			
 			if self.redTime and data[4] then
@@ -6415,11 +7117,13 @@ function BWInterfaceFrameLoad()
 				end
 				sort(spells,function(a,b) return a[1]<b[1] end)
 			end
+			local spellToTime = {}
 	
 			local isSpellsFilterEnabled = ExRT.F.table_len(SpellsTab_Variables.Filter) > 0
 			local isTargetsFilterEnabled = ExRT.F.table_len(SpellsTab_Variables.FilterByTarget) > 0
 			for i,data in ipairs(spells) do
-				local spellName,_,spellTexture = GetSpellInfo(data[2])
+				local spellID = data[2]
+				local spellName,_,spellTexture = GetSpellInfo(spellID)
 				local time_ = timestampToFightTime(data[1])
 				local isCast = ""
 				if data[3] == 2 then
@@ -6434,7 +7138,7 @@ function BWInterfaceFrameLoad()
 				if isSpellsFilterEnabled then
 					isMustBeAdded = false
 					for filterSource,_ in pairs(SpellsTab_Variables.Filter) do
-						if (type(filterSource) == "number" and filterSource == data[2]) or
+						if (type(filterSource) == "number" and filterSource == spellID) or
 						   (type(filterSource) ~= "number" and spellName and string.find(strlower(spellName),strlower(filterSource))) then
 							isMustBeAdded = true
 							break
@@ -6443,19 +7147,26 @@ function BWInterfaceFrameLoad()
 				elseif isTargetsFilterEnabled then
 					isMustBeAdded = false
 					for filterSource,filterType in pairs(SpellsTab_Variables.FilterByTarget) do
-						if (filterType == -1 and SpellsTab_FindInWord( GetGUID( data[4] ),filterSource )) or (GetGUID( data[4] ) == filterSource) then
+						if (filterType == 2 and SpellsTab_FindInWord( GetGUID( data[4] ),filterSource )) or 
+							(filterType == 3 and not (GetGUID( data[4] ) == filterSource)) or 
+							(filterType == 4 and not SpellsTab_FindInWord( GetGUID( data[4] ),filterSource )) or 
+							(filterType == 1 and (GetGUID( data[4] ) == filterSource)) then
 							isMustBeAdded = true
 							break
 						end
 					end
 				end
 				if isMustBeAdded then
+					spellToTime[spellID] = spellToTime[spellID] or {}
+					spellToTime[spellID][#spellToTime[spellID] + 1] = time_ / fight_dur * (data[3] == 2 and -1 or 1)
+
 					playersCastsList.L[#playersCastsList.L + 1] = format("[%02d:%06.3f] ",time_ / 60,time_ % 60)..sourceName..isCast..format("%s%s",spellTexture and "|T"..spellTexture..":0|t " or "",spellName or "???")
-					playersCastsList.IndexToGUID[#playersCastsList.IndexToGUID + 1] = {"spell:"..data[2],time_ / fight_dur,data[2],time_}
+					playersCastsList.IndexToGUID[#playersCastsList.IndexToGUID + 1] = {"spell:"..spellID,time_ / fight_dur,spellID,time_,spellToTime[spellID],data[3] == 2}
 					
 					if data[4] and data[4] ~= "" then
 						playersCastsList.L[#playersCastsList.L] = playersCastsList.L[#playersCastsList.L] .. " > |c"..ExRT.F.classColorByGUID(data[4])..GetGUID( data[4] )..GUIDtoText(" <%s>",data[4]).."|r"
 					end
+					
 				end
 			end
 		else
@@ -6551,13 +7262,14 @@ function BWInterfaceFrameLoad()
 			tab5.playersList.IndexToGUID[i+1] = playersListTableData[1]
 		end
 		
-		tab5.playersList.selected = nil
+		tab5.playersList.selected = 1
 		
 		tab5.playersCastsList.redTime = nil
 		tab5.playersCastsList.redIndex = nil
 		
 		tab5.playersList:Update()
-		tab5.playersCastsList:Update()
+		tab5.playersList:SetListValue(1)
+		--tab5.playersCastsList:Update()
 	end
 	
 	tab.chkFriendly = ELib:Radio(tab,L.BossWatcherFriendly,true):Point(15,-75):OnClick(function(self) 
@@ -6625,14 +7337,334 @@ function BWInterfaceFrameLoad()
 	
 	
 	
-	---- Power
+	
+	---- Power; HP, Powers Graphs
 	tab = BWInterfaceFrame.tab.tabs[6]
 	tabName = BWInterfaceFrame_Name.."PowerTab"
 	
 	local PowerTab_isFriendly = true
+	local GraphsTab_Variables = {
+		DestTable = {},
+		LastGUID = nil,
+		LastDoEnemy = nil,
+		LastDoSpell = nil,
+		PowerTypeNow = 0,
+		PowerLastName = nil,
+		HealthTypeNow = 1,
+		HealthLastName = nil,
+	}
+	
+	
+	tab.DecorationLine = CreateFrame("Frame",nil,tab)
+	tab.DecorationLine:SetPoint("TOPLEFT",tab,"TOPLEFT",3,-9)
+	tab.DecorationLine:SetPoint("RIGHT",tab,-3,0)
+	tab.DecorationLine:SetHeight(20)
+	tab.DecorationLine.texture = tab.DecorationLine:CreateTexture(nil, "BACKGROUND")
+	tab.DecorationLine.texture:SetAllPoints()
+	tab.DecorationLine.texture:SetTexture(1,1,1,1)
+	tab.DecorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
+	
+	tab.graphicsTab = ELib:Tabs(tab,0,
+		POWER_GAINS,
+		L.BossWatcherTabGraphics..": "..L.BossWatcherGraphicsHealth,
+		L.BossWatcherTabGraphics..": "..L.BossWatcherGraphicsPower
+	):Size(850,555):Point("TOP",0,-29):SetTo(1)
+	tab.graphicsTab:SetBackdropBorderColor(0,0,0,0)
+	tab.graphicsTab:SetBackdropColor(0,0,0,0)
+	
+	function tab.graphicsTab:buttonAdditionalFunc()
+		local tab = BWInterfaceFrame.tab.tabs[6]
+		if self.selected == 1 then
+			tab.graphicsTab.dropDown:Hide()
+			tab.graph:Hide()
+			tab.graphicsTab.powerDropDown:Hide()
+			tab.graphicsTab.healthDropDown:Hide()
+			tab.graphicsTab.bySpellDropDown:Hide()
+			tab.graphicsTab.byTargetDropDown:Hide()
+			tab.graphicsTab.stepSlider:Hide()
+		else
+			tab.graphicsTab.dropDown:Show()
+			tab.graph:Show()
+			tab.graphicsTab.stepSlider:Show()
+		end
+	end
+	
+	tab.graphicsTab.dropDown = ELib:DropDown(tab.graphicsTab,220,10):Size(220):Point(15,-10)
+	tab.graph = ExRT.lib.CreateGraph(tab.graphicsTab,760,485,"TOP",0,-50,true)
+	tab.graph.axisXisTime = true
 
-	tab.sourceList = ELib:ScrollList(tab):Size(190,400):Point(14,-45)
-	tab.powerTypeList = ELib:ScrollList(tab):Size(190,136):Point("TOPLEFT",tab.sourceList,"BOTTOMLEFT",0,-8)
+	tab.graphicsTab.powerDropDown = ELib:DropDown(tab.graphicsTab,200,ExRT.F.table_len(module.db.energyLocale)):Size(220):Point(560,-10):SetText(L.BossWatcherSelectPower..module.db.energyLocale[0])
+	tab.graphicsTab.healthDropDown = ELib:DropDown(tab.graphicsTab,200,2):Size(220):Point(560,-10):SetText(L.BossWatcherSelectPower..(HEALTH or "Health"))
+	tab.graphicsTab.bySpellDropDown = ELib:DropDown(tab.graphicsTab,250,10):Size(145):Point(540,-10):SetText(L.BossWatcherTabPlayersSpells):Tooltip(L.BossWatcherGraphicsHoldShift)
+	tab.graphicsTab.byTargetDropDown = ELib:DropDown(tab.graphicsTab,250,10):Size(145):Point(695,-10):SetText(L.BossWatcherGraphicsTargets)
+
+	tab.graphicsTab.stepSlider = ELib:Slider(tab.graphicsTab,L.BossWatcherGraphicsStep):Size(250):Point(270,-15):Range(1,1):OnChange(function (self,value)
+		value = ExRT.F.Round(value)
+		self.tooltipText = value
+		self:tooltipReload(self)
+		if self.disableUpdateFix then
+			return
+		end
+		BWInterfaceFrame.tab.tabs[6].graph.step = value
+		BWInterfaceFrame.tab.tabs[6].graph:Reload()
+	end)
+	tab.graphicsTab.stepSlider:SetScript("OnMinMaxChanged",function (self)
+		local _min,_max = self:GetMinMaxValues()
+		self.Low:SetText(_min)
+		self.High:SetText(_max)
+	end)
+	
+	tab.graph:SetScript("OnLeave",function ()
+		GameTooltip_Hide()
+	end)
+	
+	tab.graphZoomDropDown = CreateFrame("Frame", BWInterfaceFrame_Name.."GraphZoomDropDown", nil, "UIDropDownMenuTemplate")
+	function tab.graph:Zoom(start,ending)
+		local zoomList = {
+			{
+				text = L.BossWatcherGraphZoom, 
+				isTitle = true, 
+				notCheckable = true, 
+				notClickable = true 
+			},
+			{
+				text = L.BossWatcherGraphZoomOnlyGraph,
+				notCheckable = true,
+				func = function()
+					self.ZoomMinX = start
+					self.ZoomMaxX = ending
+					self:Reload()
+				end,
+			},
+		}
+		if module.db.data[module.db.nowNum].improved then
+			zoomList[#zoomList + 1] = {
+				text = L.BossWatcherGraphZoomGlobal,
+				notCheckable = true,
+				func = function()
+					self.ZoomMinX = start
+					self.ZoomMaxX = ending
+					self:Reload()
+					SegmentsPage_ImprovedSelect(start,ending,true)
+				end,
+			}
+		end
+		zoomList[#zoomList + 1] = {
+			text = L.BossWatcherSelectFightClose,
+			notCheckable = true,
+			func = CloseDropDownMenus_fix,
+		}
+		EasyMenu(zoomList, BWInterfaceFrame.tab.tabs[6].graphZoomDropDown, "cursor", 10 , -15, "MENU")
+	end
+	
+	local function GraphGetFightMax()
+		local i = 0
+		for sec,data in pairs(module.db.data[module.db.nowNum].graphData) do
+			i=max(sec,i)
+		end
+		return i
+	end
+	local function GraphHealthSelect(_,name)
+		GraphsTab_Variables.HealthLastName = name
+		
+		local currTab = BWInterfaceFrame.tab.tabs[6]
+		
+		local graphTypeName = GraphsTab_Variables.HealthTypeNow == 1 and "health" or "absorbs"
+	
+		local myGraphData = {}
+		local maxFight = GraphGetFightMax()
+		for sec,data in pairs(module.db.data[module.db.nowNum].graphData) do
+			local health = data[name] and data[name][graphTypeName] or 0
+			local maxHP = data[name] and data[name].hpmax or 0
+			local maxHPtext = ""
+			if maxHP > 0 then
+				maxHPtext = format(" [%.1f%%]",(health or 0) / maxHP * 100)
+			end
+			local comment = (data[name] and data[name].name or "") .. maxHPtext
+			if comment == "" then
+				comment = nil
+			end
+			health = health or 0
+			myGraphData[#myGraphData + 1] = {sec,health,format("%d:%02d",sec/60,sec%60),nil,comment}
+		end
+		table.sort(myGraphData,function(a,b)return a[1]<b[1] end)
+		myGraphData.name = name
+		if IsShiftKeyDown() and type(currTab.graph.data) == "table" and #currTab.graph.data > 0 then
+			currTab.graph.data[#currTab.graph.data + 1] = myGraphData
+		else
+			currTab.graph.data = {myGraphData}
+		end
+		currTab.graph:Reload()
+		
+		currTab.graphicsTab.stepSlider:SetMinMaxValues(1,max(1,maxFight))
+		currTab.graphicsTab.dropDown:SetText(name)	
+		ELib:DropDownClose()
+	end
+	local function GraphPowerSelect(_,name)
+		GraphsTab_Variables.PowerLastName = name
+		
+		local currTab = BWInterfaceFrame.tab.tabs[6]
+	
+		local myGraphData = {}
+		local maxFight = GraphGetFightMax()
+		for sec,data in pairs(module.db.data[module.db.nowNum].graphData) do
+			local dataPower = data[name]
+			if dataPower and dataPower[GraphsTab_Variables.PowerTypeNow] then
+				myGraphData[#myGraphData + 1] = {sec,dataPower[GraphsTab_Variables.PowerTypeNow],format("%d:%02d",sec/60,sec%60),nil,data[name].name}
+			else
+				myGraphData[#myGraphData + 1] = {sec,0,format("%d:%02d",sec/60,sec%60),nil,dataPower and dataPower.name}
+			end
+		end
+		table.sort(myGraphData,function(a,b)return a[1]<b[1] end)
+		myGraphData.name = name
+		if IsShiftKeyDown() and type(currTab.graph.data) == "table" and #currTab.graph.data > 0 then
+			currTab.graph.data[#currTab.graph.data + 1] = myGraphData
+		else
+			currTab.graph.data = {myGraphData}
+		end
+		currTab.graph:Reload()
+		
+		currTab.graphicsTab.stepSlider:SetMinMaxValues(1,max(1,maxFight))
+		currTab.graphicsTab.dropDown:SetText(name)	
+		ELib:DropDownClose()
+	end
+
+	function tab.graphicsTab.byTargetDropDown.additionalToggle(self)
+		local tabNow = BWInterfaceFrame.tab.tabs[6].graphicsTab.selected
+		for i=2,#self.List do
+			self.List[i].checkState = GraphsTab_Variables.DestTable[self.List[i].arg1]
+			if tabNow == 1 then
+				self.List[i].isHidden = (self.List[i].isEnemy and GraphsTab_Variables.LastDoEnemy) or (not self.List[i].isEnemy and not GraphsTab_Variables.LastDoEnemy)
+			end
+		end
+	end
+
+	local function GraphTabLoad()
+		ELib:DropDownClose()
+		local currTab = BWInterfaceFrame.tab.tabs[6]
+		currTab.graph.data = {}
+		currTab.graph:Reload()
+		currTab.graphicsTab.dropDown:SetText(L.BossWatcherGraphicsSelect)	
+		table.wipe(currTab.graphicsTab.dropDown.List)
+		currTab.graphicsTab.stepSlider:SetMinMaxValues(1,1)
+		currTab.graphicsTab.stepSlider:SetValue(1)
+		currTab.graphicsTab.dropDown.Lines = 10
+		currTab.graphicsTab.dropDown.tooltip = L.BossWatcherGraphicsHoldShift
+		
+		currTab.graphicsTab.powerDropDown:Hide()
+		currTab.graphicsTab.healthDropDown:Hide()
+		currTab.graphicsTab.bySpellDropDown:Hide()
+		currTab.graphicsTab.byTargetDropDown:Hide()
+		
+		GraphsTab_Variables.LastGUID = nil
+		GraphsTab_Variables.LastDoEnemy = nil
+		GraphsTab_Variables.LastDoSpell = nil
+	end
+	local GraphTab_SpecialUnits = {
+		["_total"] = "*1",
+		["boss1"] = "*2",
+		["boss2"] = "*3",
+		["boss3"] = "*4",
+		["boss4"] = "*5",
+		["boss5"] = "*6",
+		["target"] = "*7",
+		["focus"] = "*8",
+	}
+	tab.graphicsTab.tabs[2]:SetScript("OnShow",function (self)
+		GraphTabLoad()
+		BWInterfaceFrame.tab.tabs[6].graphicsTab.healthDropDown:Show()
+		if not module.db.data[module.db.nowNum].graphData then
+			return
+		end
+		local units = {}
+		for i,data in pairs(module.db.data[module.db.nowNum].graphData) do
+			for sourceName,_ in pairs(data) do
+				if not ExRT.F.table_find(units,sourceName) then
+					units[#units+1] = sourceName
+				end
+			end
+		end
+		for i=1,#units do
+			local info = {}
+			BWInterfaceFrame.tab.tabs[6].graphicsTab.dropDown.List[i] = info
+			local unitGUID = ExRT.F.table_find2(module.db.data[module.db.nowNum].raidguids,units[i])
+			info.text = (unitGUID and "|c"..ExRT.F.classColorByGUID(unitGUID) or "")..units[i]
+			info.arg1 = units[i]
+			info.func = GraphHealthSelect
+			info.justifyH = "CENTER" 
+			info._sort = GraphTab_SpecialUnits[ units[i] ] or units[i]
+		end
+		table.sort(BWInterfaceFrame.tab.tabs[6].graphicsTab.dropDown.List,function(a,b)return a._sort < b._sort end)
+	end)
+	tab.graphicsTab.tabs[3]:SetScript("OnShow",function (self)
+		GraphTabLoad()
+		BWInterfaceFrame.tab.tabs[6].graphicsTab.powerDropDown:Show()
+		if not module.db.data[module.db.nowNum].graphData then
+			return
+		end
+		local units = {}
+		for i,data in pairs(module.db.data[module.db.nowNum].graphData) do
+			for sourceName,_ in pairs(data) do
+				if not ExRT.F.table_find(units,sourceName) then
+					units[#units+1] = sourceName
+				end
+			end
+		end
+		for i=1,#units do
+			local info = {}
+			BWInterfaceFrame.tab.tabs[6].graphicsTab.dropDown.List[i] = info
+			local unitGUID = ExRT.F.table_find2(module.db.data[module.db.nowNum].raidguids,units[i])
+			info.text = (unitGUID and "|c"..ExRT.F.classColorByGUID(unitGUID) or "")..units[i]
+			info.arg1 = units[i]
+			info.func = GraphPowerSelect
+			info.justifyH = "CENTER" 
+			info._sort = GraphTab_SpecialUnits[ units[i] ] or units[i]
+		end
+		table.sort(BWInterfaceFrame.tab.tabs[6].graphicsTab.dropDown.List,function(a,b)return a._sort < b._sort end)
+	end)
+	
+	local function GraphPowerSelectPowerType(_,powerID,powerName)
+		GraphsTab_Variables.PowerTypeNow = powerID
+		if GraphsTab_Variables.PowerLastName then
+			GraphPowerSelect(nil,GraphsTab_Variables.PowerLastName)
+		end
+		BWInterfaceFrame.tab.tabs[6].graphicsTab.powerDropDown:SetText(L.BossWatcherSelectPower..module.db.energyLocale[powerID])
+		ELib:DropDownClose()
+	end
+	
+	for powerID,powerName in pairs(module.db.energyLocale) do
+		local info = {}
+		BWInterfaceFrame.tab.tabs[6].graphicsTab.powerDropDown.List[ #BWInterfaceFrame.tab.tabs[6].graphicsTab.powerDropDown.List + 1 ] = info
+		info.text = powerName
+		info.arg1 = powerID
+		info.arg2 = powerName
+		info.func = GraphPowerSelectPowerType
+	end
+	table.sort(BWInterfaceFrame.tab.tabs[6].graphicsTab.powerDropDown.List,function(a,b)return a.arg1 < b.arg1 end)
+	
+	local function GraphPowerSelectHealthType(_,arg)
+		GraphsTab_Variables.HealthTypeNow = arg
+		if GraphsTab_Variables.HealthLastName then
+			GraphHealthSelect(nil,GraphsTab_Variables.HealthLastName)
+		end
+		local text
+		if arg == 1 then
+			text = HEALTH
+		else
+			text = ACTION_SPELL_MISSED_ABSORB
+		end
+		BWInterfaceFrame.tab.tabs[6].graphicsTab.healthDropDown:SetText(L.BossWatcherSelectPower..text)
+		ELib:DropDownClose()
+	end	
+	tab.graphicsTab.healthDropDown.List[1] = {text = HEALTH,arg1 = 1,func = GraphPowerSelectHealthType}
+	tab.graphicsTab.healthDropDown.List[2] = {text = ACTION_SPELL_MISSED_ABSORB,arg1 = 2,func = GraphPowerSelectHealthType}
+	
+	tab.graphicsTab:buttonAdditionalFunc()
+	
+	
+	
+	tab.sourceList = ELib:ScrollList(tab.graphicsTab.tabs[1]):Size(190,365):Point(14,-45)
+	tab.powerTypeList = ELib:ScrollList(tab.graphicsTab.tabs[1]):Size(190,136):Point("TOPLEFT",tab.sourceList,"BOTTOMLEFT",0,-8)
 	tab.sourceList.IndexToGUID = {}
 	tab.powerTypeList.IndexToGUID = {}
 	
@@ -6644,10 +7676,9 @@ function BWInterfaceFrameLoad()
 		end
 	end
 	
-	tab.text = ELib:Text(tab,"",11):Size(420,tab:GetHeight()-10):Point(210,-10):Top():Color():Shadow()
 	tab.spells = {}
 	for i=1,20 do
-		tab.spells[i] = CreateFrame("Frame",nil,tab)
+		tab.spells[i] = CreateFrame("Frame",nil,tab.graphicsTab.tabs[1])
 		tab.spells[i]:SetPoint("TOPLEFT",220,-10-28*(i-1))
 		tab.spells[i]:SetSize(420,28)
 		
@@ -6670,24 +7701,26 @@ function BWInterfaceFrameLoad()
 	end
 	
 	function tab.sourceList:SetListValue(index)
-		table.wipe(BWInterfaceFrame.tab.tabs[6].powerTypeList.L)
-		table.wipe(BWInterfaceFrame.tab.tabs[6].powerTypeList.IndexToGUID)
+		local tab6 = BWInterfaceFrame.tab.tabs[6]
+		table.wipe(tab6.powerTypeList.L)
+		table.wipe(tab6.powerTypeList.IndexToGUID)
 
-		local sourceGUID = BWInterfaceFrame.tab.tabs[6].sourceList.IndexToGUID[index]
-		BWInterfaceFrame.tab.tabs[6].sourceGUID = sourceGUID
+		local sourceGUID = tab6.sourceList.IndexToGUID[index]
+		tab6.sourceGUID = sourceGUID
 		local powerList = {}
 		for powerType,powerData in pairs(module.db.nowData.power[sourceGUID]) do
 			powerList[#powerList + 1] = {powerType,module.db.energyLocale[ powerType ] or L.BossWatcherEnergyTypeUnknown..powerType}
 		end
 		table.sort(powerList,function (a,b) return a[1] < b[1] end)
 		for i,powerData in ipairs(powerList) do
-			BWInterfaceFrame.tab.tabs[6].powerTypeList.L[i] = powerData[2]
-			BWInterfaceFrame.tab.tabs[6].powerTypeList.IndexToGUID[i] = powerData[1]
+			tab6.powerTypeList.L[i] = powerData[2]
+			tab6.powerTypeList.IndexToGUID[i] = powerData[1]
 		end
 		
-		BWInterfaceFrame.tab.tabs[6].powerTypeList.selected = nil
-		BWInterfaceFrame.tab.tabs[6].powerTypeList:Update()
-		EnergyClearLines()
+		--EnergyClearLines()
+		tab6.powerTypeList.selected = 1
+		tab6.powerTypeList:Update()
+		tab6.powerTypeList:SetListValue(1)
 	end
 	function tab.powerTypeList:SetListValue(index)
 		local powerType = BWInterfaceFrame.tab.tabs[6].powerTypeList.IndexToGUID[index]
@@ -6744,13 +7777,13 @@ function BWInterfaceFrameLoad()
 		EnergyClearLines()
 	end
 	
-	tab.chkFriendly = ELib:Radio(tab,L.BossWatcherFriendly,true):Point(15,-10):OnClick(function(self) 
+	tab.chkFriendly = ELib:Radio(tab.graphicsTab.tabs[1],L.BossWatcherFriendly,true):Point(15,-10):OnClick(function(self) 
 		self:SetChecked(true)
 		BWInterfaceFrame.tab.tabs[6].chkEnemy:SetChecked(false)
 		PowerTab_isFriendly = true
 		UpdatePowerPage()
 	end)
-	tab.chkEnemy = ELib:Radio(tab,L.BossWatcherHostile):Point(15,-25):OnClick(function(self) 
+	tab.chkEnemy = ELib:Radio(tab.graphicsTab.tabs[1],L.BossWatcherHostile):Point(15,-25):OnClick(function(self) 
 		self:SetChecked(true)
 		BWInterfaceFrame.tab.tabs[6].chkFriendly:SetChecked(false)
 		PowerTab_isFriendly = nil
@@ -6759,26 +7792,44 @@ function BWInterfaceFrameLoad()
 
 	tab:SetScript("OnShow",function (self)
 		if BWInterfaceFrame.nowFightID ~= self.lastFightID then
-			UpdatePowerPage()
+			GraphsTab_Variables.PowerLastName = nil
+			GraphsTab_Variables.HealthLastName = nil
 			self.lastFightID = BWInterfaceFrame.nowFightID
+			UpdatePowerPage()
 		end
 	end)
 	
 	
 	
-	---- Graphics
-	tab = BWInterfaceFrame.tab.tabs[8]
-	tabName = BWInterfaceFrame_Name.."GraphicsTab"
 	
-	local GraphsTab_Variables = {
-		DestTable = {},
-		LastGUID = nil,
-		LastDoEnemy = nil,
-		LastDoSpell = nil,
-		PowerTypeNow = 0,
-		PowerLastName = nil,
-		HealthTypeNow = 1,
-		HealthLastName = nil,
+	---- Tracking
+	tab = BWInterfaceFrame.tab.tabs[8]
+	tabName = BWInterfaceFrame_Name.."TrackingTab"
+	
+	local TrackingTab_Variables = {
+		EncounterOrder = {
+			1778,1785,1787,1798,1786,1783,1788,1794,1777,1800,1784,1795,1799,
+			1841,
+			1849,
+		},
+		EncounterNames = {
+			[1778] = L.RaidLootT18HCBoss1,	--"Hellfire Assault"
+			[1785] = L.RaidLootT18HCBoss2,	--"Iron Reaver"
+			[1783] = L.RaidLootT18HCBoss6,	--"Gorefiend"
+			[1798] = L.RaidLootT18HCBoss4,	--"Hellfire High Council"
+			[1787] = L.RaidLootT18HCBoss3,	--"Kormrok"
+			[1786] = L.RaidLootT18HCBoss5,	--"Kilrogg Deadeye"
+			[1788] = L.RaidLootT18HCBoss7,	--"Shadow-Lord Iskar"
+			[1777] = L.RaidLootT18HCBoss9,	--"Fel Lord Zakuun"
+			[1800] = L.RaidLootT18HCBoss10,	--"Xhul'horac"
+			[1794] = L.RaidLootT18HCBoss8,	--"Socrethar the Eternal"
+			[1784] = L.RaidLootT18HCBoss11,	--"Tyrant Velhari"
+			[1795] = L.RaidLootT18HCBoss12,	--"Mannoroth"
+			[1799] = L.RaidLootT18HCBoss13,	--"Archimonde"
+			
+			[1841] = L.S_BossT19N2,	--"Ursoc"
+			[1849] = L.S_BossT19S1,	--"Crystal Scorpion"
+		},
 	}
 	
 	tab.DecorationLine = CreateFrame("Frame",nil,tab)
@@ -6787,676 +7838,241 @@ function BWInterfaceFrameLoad()
 	tab.DecorationLine:SetHeight(20)
 	tab.DecorationLine.texture = tab.DecorationLine:CreateTexture(nil, "BACKGROUND")
 	tab.DecorationLine.texture:SetAllPoints()
-	tab.DecorationLine.texture:SetColorTexture(1,1,1,1)
+	tab.DecorationLine.texture:SetTexture(1,1,1,1)
 	tab.DecorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
 
-	tab.graphicsTab = ELib:Tabs(tab,0,
-		L.BossWatcherGraphicsDPS,
-		L.BossWatcherReportHPS,
-		L.BossWatcherGraphicsHealth,
-		L.BossWatcherGraphicsPower
+	tab.headerTab = ELib:Tabs(tab,0,
+		L.BossWatcherTabPlayersSpells,
+		L.BossWatcherTabSettings
 	):Size(850,555):Point("TOP",0,-29):SetTo(1)
-	tab.graphicsTab:SetBackdropBorderColor(0,0,0,0)
-	tab.graphicsTab:SetBackdropColor(0,0,0,0)
+	tab.headerTab:SetBackdropBorderColor(0,0,0,0)
+	tab.headerTab:SetBackdropColor(0,0,0,0)
 	
-	tab.graphicsTab.dropDown = ELib:DropDown(tab.graphicsTab,220,10):Size(220):Point(15,-10)
-	tab.graph = ExRT.lib.CreateGraph(tab.graphicsTab,760,485,"TOP",0,-50,true)
-	tab.graph.axisXisTime = true
-
-	tab.graphicsTab.powerDropDown = ELib:DropDown(tab.graphicsTab,200,ExRT.F.table_len(module.db.energyLocale)):Size(220):Point(560,-10):SetText(L.BossWatcherSelectPower..module.db.energyLocale[0])
-	tab.graphicsTab.healthDropDown = ELib:DropDown(tab.graphicsTab,200,2):Size(220):Point(560,-10):SetText(L.BossWatcherSelectPower..(HEALTH or "Health"))
-	tab.graphicsTab.bySpellDropDown = ELib:DropDown(tab.graphicsTab,250,10):Size(145):Point(540,-10):SetText(L.BossWatcherTabPlayersSpells):Tooltip(L.BossWatcherGraphicsHoldShift)
-	tab.graphicsTab.byTargetDropDown = ELib:DropDown(tab.graphicsTab,250,10):Size(145):Point(695,-10):SetText(L.BossWatcherGraphicsTargets)
-
-	tab.graphicsTab.stepSlider = ELib:Slider(tab.graphicsTab,L.BossWatcherGraphicsStep):Size(250):Point(270,-15):Range(1,1):OnChange(function (self,value)
-		value = ExRT.F.Round(value)
-		self.tooltipText = value
-		self:tooltipReload(self)
-		if self.disableUpdateFix then
-			return
-		end
-		BWInterfaceFrame.tab.tabs[8].graph.step = value
-		BWInterfaceFrame.tab.tabs[8].graph:Reload()
-	end)
-	tab.graphicsTab.stepSlider:SetScript("OnMinMaxChanged",function (self)
-		local _min,_max = self:GetMinMaxValues()
-		self.Low:SetText(_min)
-		self.High:SetText(_max)
-	end)
+	tab.spellsList = ELib:ScrollList(tab.headerTab.tabs[1]):Size(190,540):Point(10,-15)
+	tab.targetsList = ELib:ScrollTableList(tab.headerTab.tabs[1],80,0):Size(625,540):Point("TOPLEFT",tab.spellsList,"TOPRIGHT",10,0)
 	
-	tab.graph:SetScript("OnLeave",function ()
-		GameTooltip_Hide()
-	end)
+	tab.spellsList.D = {}
 	
-	tab.graphZoomDropDown = CreateFrame("Frame", BWInterfaceFrame_Name.."GraphZoomDropDown", nil, "UIDropDownMenuTemplate")
-	function tab.graph:Zoom(start,ending)
-		local zoomList = {
-			{
-				text = L.BossWatcherGraphZoom, 
-				isTitle = true, 
-				notCheckable = true, 
-				notClickable = true 
-			},
-			{
-				text = L.BossWatcherGraphZoomOnlyGraph,
-				notCheckable = true,
-				func = function()
-					self.ZoomMinX = start
-					self.ZoomMaxX = ending
-					self:Reload()
-				end,
-			},
-		}
-		if module.db.data[module.db.nowNum].improved then
-			zoomList[#zoomList + 1] = {
-				text = L.BossWatcherGraphZoomGlobal,
-				notCheckable = true,
-				func = function()
-					self.ZoomMinX = start
-					self.ZoomMaxX = ending
-					self:Reload()
-					SegmentsPage_ImprovedSelect(start,ending,true)
-				end,
-			}
-		end
-		zoomList[#zoomList + 1] = {
-			text = L.BossWatcherSelectFightClose,
-			notCheckable = true,
-			func = CloseDropDownMenus_fix,
-		}
-		EasyMenu(zoomList, BWInterfaceFrame.tab.tabs[8].graphZoomDropDown, "cursor", 10 , -15, "MENU")
-	end
-	
-	local function GraphGetFightMax()
-		local i = 0
-		for sec,data in pairs(module.db.data[module.db.nowNum].graphData) do
-			i=max(sec,i)
-		end
-		return i
-	end
-	local function GraphDPSSelect(self,GUID,doEnemy,doSpell)
-		GUID = GUID or "_total"
+	function tab.spellsList:SetListValue(index)
+		wipe(BWInterfaceFrame.tab.tabs[8].targetsList.L)
 		
-		if doEnemy ~= GraphsTab_Variables.LastDoEnemy then
-			wipe(GraphsTab_Variables.DestTable)
-		end
-	
-		GraphsTab_Variables.LastGUID = GUID
-		GraphsTab_Variables.LastDoEnemy = doEnemy
-		GraphsTab_Variables.LastDoSpell = doSpell
+		local L = BWInterfaceFrame.tab.tabs[8].targetsList.L
 		
-		local currTab = BWInterfaceFrame.tab.tabs[8]
-	
-		local myGraphData = {}
-		local maxFight = nil
-		if module.db.data[module.db.nowNum].improved then
-			maxFight = #module.db.data[module.db.nowNum].fight
-			local spellsData = {}
-			for seg=1,maxFight do
-				local dpsNow = 0
-				for destGUID,destData in pairs(module.db.data[module.db.nowNum].fight[seg].damage) do
-					if ExRT.F.table_len(GraphsTab_Variables.DestTable) == 0 or GraphsTab_Variables.DestTable[destGUID] then
-						local isEnemy = true
-						if GetUnitInfoByUnitFlagFix(module.db.data[module.db.nowNum].reaction[destGUID],2) == 512 then
-							isEnemy = false
-						end
-						local mobID = ExRT.F.GUIDtoID(destGUID)
-						for sourceGUID,sourceData in pairs(destData) do
-							local owner = ExRT.F.Pets:getOwnerGUID(sourceGUID,GetPetsDB())
-							if owner then
-								sourceGUID = owner
-							end
-							if ((isEnemy and doEnemy) or (not isEnemy and not doEnemy)) and (GUID == "_total" or GUID == sourceGUID) and mobID ~= 76933 then
-								for spellID,spellAmount in pairs(sourceData) do
-									if not doSpell or doSpell == spellID then
-										local realDamage = spellAmount.amount - spellAmount.overkill
-										dpsNow = dpsNow + realDamage
-										spellsData[spellID] = spellsData[spellID] and (spellsData[spellID]+realDamage) or realDamage
-									end
-								end
-							end
+		local prevTime,prevTimeRow = nil
+		
+		local spellID = self.D[index]
+		for i,trackingData in ipairs(module.db.nowData.tracking) do
+			if trackingData[6] == spellID then
+				local time = timestampToFightTime(trackingData[1])
+				local sourceGUID,destGUID = trackingData[2],trackingData[4]
+				local sourceRaidTarget,destRaidTarget = nil
+				
+				if spellID == 185008 then	--Archimonde: Unleashed Torment
+					for _,auraData in ipairs(module.db.nowData.auras) do
+						if auraData[2] == sourceGUID and auraData[6] == 184964 then
+							sourceGUID = auraData[3]
+							break
+						end 
+					end
+				elseif spellID == 190399 then	--Archimonde: Mark of the Legion
+					for _,auraData in ipairs(module.db.nowData.auras) do
+						if auraData[6] == 187050 and auraData[8] == 2 and abs(trackingData[1]-auraData[1])<0.4 then
+							sourceGUID = auraData[3]
+							break
+						end 
+					end
+				elseif spellID == 182011 then	--Mannoroth: Empowered Mannoroth's Gaze
+					local newSourceGUID = nil
+					for _,auraData in ipairs(module.db.nowData.auras) do
+						if auraData[6] == 182006 and auraData[8] == 2 and auraData[1]>trackingData[1] then
+							break
+						elseif auraData[6] == 182006 and auraData[8] == 2 and auraData[1]<=trackingData[1] then
+							newSourceGUID = auraData[3]
 						end
 					end
-				end
-				myGraphData[#myGraphData + 1] = {seg,dpsNow,format("%d:%02d",seg/60,seg%60)}
-			end
-			if not doSpell then
-				local list = {}
-				currTab.graphicsTab.bySpellDropDown.List = list
-				for spellID,spellAmount in pairs(spellsData) do
-					local spellName,_,spellTexture = GetSpellInfo(spellID)
-					local spellColorTable = module.db.schoolsColors[ module.db.spellsSchool[ spellID ] or 0 ] or module.db.schoolsColors[0]
-					local spellColor = "|cff"..format("%02x%02x%02x",spellColorTable.r*255,spellColorTable.g*255,spellColorTable.b*255)
-					local info = {
-						text = (spellTexture and "|T"..spellTexture..":0|t " or "")..spellColor..spellName.." ("..ExRT.F.shortNumber(spellAmount)..")",
-						arg1 = GUID,
-						arg2 = doEnemy,
-						arg3 = spellID,
-						func = GraphDPSSelect,
-						_sort = spellAmount,
-					}
-					list[#list+1] = info
-				end
-				table.sort(list,function(a,b)return a._sort > b._sort end)
-				currTab.graphicsTab.bySpellDropDown:Show()
-			end
-		end
-		table.sort(myGraphData,function(a,b)return a[1]<b[1] end)
-		local name = GUID == "_total" and L.BossWatcherGraphicsTotal or GetGUID( GUID )
-		myGraphData.name = name
-		if doSpell then
-			local spellName,_,spellTexture = GetSpellInfo(doSpell)
-			local spellColorTable = module.db.schoolsColors[ module.db.spellsSchool[ doSpell ] or 0 ] or module.db.schoolsColors[0]
-			local spellColor = "|cff"..format("%02x%02x%02x",spellColorTable.r*255,spellColorTable.g*255,spellColorTable.b*255)
-			myGraphData.name = myGraphData.name .." ".. (spellTexture and "|T"..spellTexture..":0|t " or "")..spellColor..spellName.."|r"
-		end
-		if IsShiftKeyDown() and type(currTab.graph.data) == "table" and #currTab.graph.data > 0 then
-			currTab.graph.data[#currTab.graph.data + 1] = myGraphData
-		else
-			currTab.graph.data = {myGraphData}
-		end
-		local step = maxFight > 300 and 4 or maxFight > 120 and 3 or maxFight > 60 and 2 or 1
-		currTab.graph.step = step
-		currTab.graph:Reload()
-		
-		local stepSlider = currTab.graphicsTab.stepSlider
-		stepSlider.disableUpdateFix = true
-		stepSlider:SetMinMaxValues(1,max(1,maxFight))
-		stepSlider:SetValue(step)
-		stepSlider.disableUpdateFix = nil
-		currTab.graphicsTab.dropDown:SetText(name)	
-		if self ~= "DNCDD" then 
-			ELib:DropDownClose()
-		end
-	end
-	local function GraphHPSSelect(self,GUID,doSpell)
-		GUID = GUID or "_total"
-	
-		GraphsTab_Variables.LastGUID = GUID
-		GraphsTab_Variables.LastDoSpell = doSpell
-		
-		local currTab = BWInterfaceFrame.tab.tabs[8]
-	
-		local doOverheal = IsControlKeyDown()
-		local myGraphData = {}
-		local maxFight = nil
-		if module.db.data[module.db.nowNum].improved then
-			maxFight = #module.db.data[module.db.nowNum].fight
-			local spellsData = {}
-			for seg=1,maxFight do
-				local hpsNow = 0
-				for sourceGUID,sourceData in pairs(module.db.data[module.db.nowNum].fight[seg].heal) do
-					local owner = ExRT.F.Pets:getOwnerGUID(sourceGUID,GetPetsDB())
-					if owner then
-						sourceGUID = owner
-					end
-					if GUID == "_total" or GUID == sourceGUID then
-						for destGUID,destData in pairs(sourceData) do
-							if ExRT.F.table_len(GraphsTab_Variables.DestTable) == 0 or GraphsTab_Variables.DestTable[destGUID] then
-								local isFriendly = ExRT.F.UnitIsFriendlyByUnitFlag2(module.db.data[module.db.nowNum].reaction[destGUID])
-								if isFriendly then
-									for spellID,spellAmount in pairs(destData) do
-										if not doSpell or doSpell == spellID then
-											local realHeal = spellAmount.amount - (doOverheal and 0 or spellAmount.over) + spellAmount.absorbed
-											hpsNow = hpsNow + realHeal
-											spellsData[spellID] = spellsData[spellID] and (spellsData[spellID]+realHeal) or realHeal
-										end
-									end
-								end
-							end
+					sourceGUID = newSourceGUID or sourceGUID
+				elseif spellID == 181617 then	--Mannoroth: Mannoroth's Gaze
+					local newSourceGUID = nil
+					for _,auraData in ipairs(module.db.nowData.auras) do
+						if auraData[6] == 181597 and auraData[8] == 2 and auraData[1]>trackingData[1] then
+							break
+						elseif auraData[6] == 181597 and auraData[8] == 2 and auraData[1]<=trackingData[1] then
+							newSourceGUID = auraData[3]
 						end
 					end
-				end
-				myGraphData[#myGraphData + 1] = {seg,hpsNow,format("%d:%02d",seg/60,seg%60)}
-			end
-			if not doSpell then
-				local list = {}
-				currTab.graphicsTab.bySpellDropDown.List = list
-				for spellID,spellAmount in pairs(spellsData) do
-					local spellName,_,spellTexture = GetSpellInfo(spellID)
-					local spellColorTable = module.db.schoolsColors[ module.db.spellsSchool[ spellID ] or 0 ] or module.db.schoolsColors[0]
-					local spellColor = "|cff"..format("%02x%02x%02x",spellColorTable.r*255,spellColorTable.g*255,spellColorTable.b*255)
-					local info = {
-						text = (spellTexture and "|T"..spellTexture..":0|t " or "")..spellColor..spellName.." ("..ExRT.F.shortNumber(spellAmount)..")",
-						arg1 = GUID,
-						arg2 = spellID,
-						func = GraphHPSSelect,
-						_sort = spellAmount,
-					}
-					list[#list+1] = info
-				end
-				table.sort(list,function(a,b)return a._sort > b._sort end)
-				currTab.graphicsTab.bySpellDropDown:Show()
-			end
-		end
-		table.sort(myGraphData,function(a,b)return a[1]<b[1] end)
-		local name = GUID == "_total" and L.BossWatcherGraphicsTotalHPS or GetGUID( GUID )
-		myGraphData.name = name
-		if doSpell then
-			local spellName,_,spellTexture = GetSpellInfo(doSpell)
-			local spellColorTable = module.db.schoolsColors[ module.db.spellsSchool[ doSpell ] or 0 ] or module.db.schoolsColors[0]
-			local spellColor = "|cff"..format("%02x%02x%02x",spellColorTable.r*255,spellColorTable.g*255,spellColorTable.b*255)
-			myGraphData.name = myGraphData.name .." ".. (spellTexture and "|T"..spellTexture..":0|t " or "")..spellColor..spellName.."|r"
-		end
-		if doOverheal then
-			myGraphData.name = myGraphData.name .. " [+"..L.BossWatcherHealTooltipOver.."]"
-		end
-		if IsShiftKeyDown() and type(currTab.graph.data) == "table" and #currTab.graph.data > 0 then
-			currTab.graph.data[#currTab.graph.data + 1] = myGraphData
-		else
-			currTab.graph.data = {myGraphData}
-		end
-		local step = maxFight > 300 and 4 or maxFight > 120 and 3 or maxFight > 60 and 2 or 1
-		currTab.graph.step = step
-		currTab.graph:Reload()
-		
-		local stepSlider = currTab.graphicsTab.stepSlider
-		stepSlider.disableUpdateFix = true
-		stepSlider:SetMinMaxValues(1,max(1,maxFight))
-		stepSlider:SetValue(step)
-		stepSlider.disableUpdateFix = nil
-		currTab.graphicsTab.dropDown:SetText(name)	
-		if self ~= "DNCDD" then 
-			ELib:DropDownClose()
-		end
-	end
-	local function GraphHealthSelect(_,name)
-		GraphsTab_Variables.HealthLastName = name
-		
-		local currTab = BWInterfaceFrame.tab.tabs[8]
-		
-		local graphTypeName = GraphsTab_Variables.HealthTypeNow == 1 and "health" or "absorbs"
-	
-		local myGraphData = {}
-		local maxFight = GraphGetFightMax()
-		for sec,data in pairs(module.db.data[module.db.nowNum].graphData) do
-			local health = data[name] and data[name][graphTypeName] or 0
-			local maxHP = data[name] and data[name].hpmax or 0
-			local maxHPtext = ""
-			if maxHP > 0 then
-				maxHPtext = format(" [%.1f%%]",(health or 0) / maxHP * 100)
-			end
-			local comment = (data[name] and data[name].name or "") .. maxHPtext
-			if comment == "" then
-				comment = nil
-			end
-			health = health or 0
-			myGraphData[#myGraphData + 1] = {sec,health,format("%d:%02d",sec/60,sec%60),nil,comment}
-		end
-		table.sort(myGraphData,function(a,b)return a[1]<b[1] end)
-		myGraphData.name = name
-		if IsShiftKeyDown() and type(currTab.graph.data) == "table" and #currTab.graph.data > 0 then
-			currTab.graph.data[#currTab.graph.data + 1] = myGraphData
-		else
-			currTab.graph.data = {myGraphData}
-		end
-		currTab.graph:Reload()
-		
-		currTab.graphicsTab.stepSlider:SetMinMaxValues(1,max(1,maxFight))
-		currTab.graphicsTab.dropDown:SetText(name)	
-		ELib:DropDownClose()
-	end
-	local function GraphPowerSelect(_,name)
-		GraphsTab_Variables.PowerLastName = name
-		
-		local currTab = BWInterfaceFrame.tab.tabs[8]
-	
-		local myGraphData = {}
-		local maxFight = GraphGetFightMax()
-		for sec,data in pairs(module.db.data[module.db.nowNum].graphData) do
-			local dataPower = data[name]
-			if dataPower and dataPower[GraphsTab_Variables.PowerTypeNow] then
-				myGraphData[#myGraphData + 1] = {sec,dataPower[GraphsTab_Variables.PowerTypeNow],format("%d:%02d",sec/60,sec%60),nil,data[name].name}
-			else
-				myGraphData[#myGraphData + 1] = {sec,0,format("%d:%02d",sec/60,sec%60),nil,dataPower and dataPower.name}
-			end
-		end
-		table.sort(myGraphData,function(a,b)return a[1]<b[1] end)
-		myGraphData.name = name
-		if IsShiftKeyDown() and type(currTab.graph.data) == "table" and #currTab.graph.data > 0 then
-			currTab.graph.data[#currTab.graph.data + 1] = myGraphData
-		else
-			currTab.graph.data = {myGraphData}
-		end
-		currTab.graph:Reload()
-		
-		currTab.graphicsTab.stepSlider:SetMinMaxValues(1,max(1,maxFight))
-		currTab.graphicsTab.dropDown:SetText(name)	
-		ELib:DropDownClose()
-	end
-
-	local function GraphDestDropdownSelect(_,GUID)
-		wipe(GraphsTab_Variables.DestTable)
-		if GUID then
-			GraphsTab_Variables.DestTable[GUID] = true
-		end
-		ELib:DropDownClose()
-		
-		local tabNow = BWInterfaceFrame.tab.tabs[8].graphicsTab.selected
-		if tabNow == 1 then
-			GraphDPSSelect(nil,GraphsTab_Variables.LastGUID,GraphsTab_Variables.LastDoEnemy,GraphsTab_Variables.LastDoSpell)
-		elseif tabNow == 2 then
-			GraphHPSSelect(nil,GraphsTab_Variables.LastGUID,GraphsTab_Variables.LastDoSpell)		
-		end
-	end
-	local function GraphDestDropdownCheck(self,checked)
-		if checked then
-			GraphsTab_Variables.DestTable[self.arg1] = true
-		else
-			GraphsTab_Variables.DestTable[self.arg1] = nil
-		end
-		
-		local tabNow = BWInterfaceFrame.tab.tabs[8].graphicsTab.selected
-		if tabNow == 1 then
-			GraphDPSSelect("DNCDD",GraphsTab_Variables.LastGUID,GraphsTab_Variables.LastDoEnemy,GraphsTab_Variables.LastDoSpell)
-		elseif tabNow == 2 then
-			GraphHPSSelect("DNCDD",GraphsTab_Variables.LastGUID,GraphsTab_Variables.LastDoSpell)
-		end
-	end
-	function tab.graphicsTab.byTargetDropDown.additionalToggle(self)
-		local tabNow = BWInterfaceFrame.tab.tabs[8].graphicsTab.selected
-		for i=2,#self.List do
-			self.List[i].checkState = GraphsTab_Variables.DestTable[self.List[i].arg1]
-			if tabNow == 1 then
-				self.List[i].isHidden = (self.List[i].isEnemy and GraphsTab_Variables.LastDoEnemy) or (not self.List[i].isEnemy and not GraphsTab_Variables.LastDoEnemy)
-			end
-		end
-	end
-
-	local function GraphTabLoad()
-		ELib:DropDownClose()
-		local currTab = BWInterfaceFrame.tab.tabs[8]
-		currTab.graph.data = {}
-		currTab.graph:Reload()
-		currTab.graphicsTab.dropDown:SetText(L.BossWatcherGraphicsSelect)	
-		table.wipe(currTab.graphicsTab.dropDown.List)
-		currTab.graphicsTab.stepSlider:SetMinMaxValues(1,1)
-		currTab.graphicsTab.stepSlider:SetValue(1)
-		currTab.graphicsTab.dropDown.Lines = 10
-		currTab.graphicsTab.dropDown.tooltip = L.BossWatcherGraphicsHoldShift
-		
-		currTab.graphicsTab.powerDropDown:Hide()
-		currTab.graphicsTab.healthDropDown:Hide()
-		currTab.graphicsTab.bySpellDropDown:Hide()
-		currTab.graphicsTab.byTargetDropDown:Hide()
-		
-		GraphsTab_Variables.LastGUID = nil
-		GraphsTab_Variables.LastDoEnemy = nil
-		GraphsTab_Variables.LastDoSpell = nil
-	end
-	local GraphTab_SpecialUnits = {
-		["_total"] = "*1",
-		["boss1"] = "*2",
-		["boss2"] = "*3",
-		["boss3"] = "*4",
-		["boss4"] = "*5",
-		["boss5"] = "*6",
-		["target"] = "*7",
-		["focus"] = "*8",
-	}
-	tab.graphicsTab.tabs[1]:SetScript("OnShow",function (self)
-		GraphTabLoad()
-		if not module.db.data[module.db.nowNum].graphData then
-			return
-		end
-		if module.db.data[module.db.nowNum].improved then
-			local units = {{"_total"},{"_total"}}
-			local targetsData = {}
-			wipe(GraphsTab_Variables.DestTable)
-			for seg=1,#module.db.data[module.db.nowNum].fight do
-				for destGUID,destData in pairs(module.db.data[module.db.nowNum].fight[seg].damage) do
-					local isEnemy = false
-					if GetUnitInfoByUnitFlagFix(module.db.data[module.db.nowNum].reaction[destGUID],2) == 512 then
-						isEnemy = true
-					end
-					local mobID = ExRT.F.GUIDtoID(destGUID)
-					if mobID ~= 76933 then
-						for sourceGUID,sourceData in pairs(destData) do
-							local owner = ExRT.F.Pets:getOwnerGUID(sourceGUID,GetPetsDB())
-							if owner then
-								sourceGUID = owner
-							end
-							local unitsTable = isEnemy and units[1] or units[2]
-							if not ExRT.F.table_find(unitsTable,sourceGUID) then
-								unitsTable[#unitsTable+1] = sourceGUID
-							end
-							if not ExRT.F.table_find(targetsData,destGUID) then
-								targetsData[#targetsData+1] = destGUID
-							end
+					sourceGUID = newSourceGUID or sourceGUID
+				elseif spellID == 180161 then	--Tyrant Velhari: Edict of Condemnation
+					local newSourceGUID = nil
+					for _,auraData in ipairs(module.db.nowData.auras) do
+						if auraData[6] == 185241 and auraData[8] == 1 and auraData[1]<=trackingData[1] then
+							newSourceGUID = auraData[3]
+						elseif auraData[6] == 185241 and auraData[8] == 1 and auraData[1]>trackingData[1] then
+							break
 						end
 					end
+					sourceGUID = newSourceGUID or sourceGUID
+				elseif spellID == 198099 then	--Ursoc: Barreling Momentum
+					local newSourceGUID = nil
+					for _,auraData in ipairs(module.db.nowData.auras) do
+						if auraData[6] == 198006 and auraData[8] == 1 and auraData[1]<=trackingData[1] then
+							newSourceGUID = auraData[3]
+						elseif auraData[1]>trackingData[1] then
+							break
+						end
+					end
+					sourceGUID = newSourceGUID or sourceGUID
 				end
-			end
-			local friendly,hostile = {},{}
-			for i=1,#units[1] do
-				local info = {}
-				friendly[i] = info
-				local name = GetGUID( units[1][i] )
-				local color = ""
-				local GUIDpatt = ""
-				if units[1][i] == "_total" then
-					name = L.BossWatcherGraphicsTotal
+				
+				for j=1,#module.db.raidTargets do
+					if module.db.raidTargets[j] == trackingData[3] then
+						sourceRaidTarget = j
+					end
+					if module.db.raidTargets[j] == trackingData[5] then
+						destRaidTarget = j
+					end
+				end
+			
+				local diff = prevTime and (time-prevTime) or 999
+				if diff <= 0.05 then
+					prevTimeRow = prevTimeRow or prevTime
 				else
-					color = "|c"..ExRT.F.classColorByGUID(units[1][i])
-					GUIDpatt = " <%s>"
-				end
-				info.text = color..name..GUIDtoText(GUIDpatt,units[1][i])
-				info.arg1 = units[1][i]
-				info.arg2 = false
-				info.func = GraphDPSSelect
-				info.justifyH = "CENTER"
-				info._sort = GraphTab_SpecialUnits[ units[1][i] ] or name
-			end
-			table.sort(friendly,function(a,b)return a._sort < b._sort end)
-			for i=1,#units[2] do
-				local info = {}
-				hostile[i] = info
-				local name = GetGUID( units[2][i] )
-				local GUIDpatt = ""
-				if units[2][i] == "_total" then
-					name = L.BossWatcherGraphicsTotal
-				else
-					GUIDpatt = " <%s>"
-				end
-				info.text = name..GUIDtoText(GUIDpatt,units[2][i])
-				info.arg1 = units[2][i]
-				info.arg2 = true
-				info.func = GraphDPSSelect
-				info.justifyH = "CENTER"
-				info._sort = GraphTab_SpecialUnits[ units[2][i] ] or name
-			end
-			table.sort(hostile,function(a,b)return a._sort < b._sort end)
-			BWInterfaceFrame.tab.tabs[8].graphicsTab.dropDown.List[1] = {text = L.BossWatcherFriendly, subMenu = friendly, Lines = 10}
-			BWInterfaceFrame.tab.tabs[8].graphicsTab.dropDown.List[2] = {text = L.BossWatcherHostile, subMenu = hostile, Lines = 10}
-			
-			BWInterfaceFrame.tab.tabs[8].graphicsTab.dropDown.Lines = 2
-			
-			local destDropDown = {
-				{text = L.BossWatcherAll, func = GraphDestDropdownSelect, _sort = "."},
-			}
-			BWInterfaceFrame.tab.tabs[8].graphicsTab.byTargetDropDown.List = destDropDown
-			for i=1,#targetsData do
-				local info = {}
-				destDropDown[i+1] = info
-				local name = GetGUID( targetsData[i] )
-				info.text = name..GUIDtoText(" <%s>",targetsData[i])
-				info.arg1 = targetsData[i]
-				info.func = GraphDestDropdownSelect
-				info.checkFunc = GraphDestDropdownCheck
-				info.checkable = true
-				info.isEnemy = GetUnitInfoByUnitFlagFix(module.db.data[module.db.nowNum].reaction[ targetsData[i] ],2) == 512
-				info._sort = name
-			end
-			table.sort(destDropDown,function(a,b)return a._sort < b._sort end)
-			BWInterfaceFrame.tab.tabs[8].graphicsTab.byTargetDropDown:Show()
-		end
-	end)
-	tab.graphicsTab.tabs[2]:SetScript("OnShow",function (self)
-		GraphTabLoad()
-		if not module.db.data[module.db.nowNum].graphData then
-			return
-		end
-		local units = {"_total"}
-		if module.db.data[module.db.nowNum].improved then
-			local targetsData = {}
-			wipe(GraphsTab_Variables.DestTable)
-			for seg=1,#module.db.data[module.db.nowNum].fight do
-				for sourceGUID,sourceData in pairs(module.db.data[module.db.nowNum].fight[seg].heal) do
-					local owner = ExRT.F.Pets:getOwnerGUID(sourceGUID,GetPetsDB())
-					if owner then
-						sourceGUID = owner
-					end
-					for destGUID,destData in pairs(sourceData) do
-						local isEnemy = not ExRT.F.UnitIsFriendlyByUnitFlag2(module.db.data[module.db.nowNum].reaction[destGUID])
-						if not isEnemy then
-							if not ExRT.F.table_find(units,sourceGUID) then
-								units[#units+1] = sourceGUID
-							end
-							if not ExRT.F.table_find(targetsData,destGUID) then
-								targetsData[#targetsData+1] = destGUID
+					if prevTimeRow then
+						for j=#L,1,-1 do
+							if L[j][3] and L[j][3] < prevTimeRow then
+								tinsert(L,j+1,{" "," "})
+								break
+							elseif L[j][1] == " " then
+								break
 							end
 						end
+						L[#L+1] = {" "," "}
 					end
+					prevTimeRow = nil
 				end
+				prevTime = time
+				
+				--{timestamp,sourceGUID,sourceFlags2,destGUID,destFlags2,spellID,amount,overkill,school,blocked,absorbed,critical,multistrike,missType}
+				local amountString
+				if not trackingData[14] then
+					local overkill = trackingData[8] and trackingData[8] > 0 and " ("..ExRT.L.BossWatcherDeathOverKill..": "..ExRT.F.shortNumber(trackingData[8])..") " or ""
+					local blocked = trackingData[10] and trackingData[10] > 0 and " ("..ExRT.L.BossWatcherDeathBlocked..": "..ExRT.F.shortNumber(trackingData[10])..") " or ""
+					local absorbed = trackingData[11] and trackingData[11] > 0 and " ("..ExRT.L.BossWatcherDeathAbsorbed..": "..ExRT.F.shortNumber(trackingData[11])..") " or ""
+					
+					amountString = (trackingData[12] and "*" or "")..ExRT.F.shortNumber(trackingData[7] - trackingData[8])..(trackingData[12] and "*" or "")..(trackingData[13] and " ("..ExRT.L.BossWatcherDeathMultistrike..")" or "").." "..overkill..blocked..absorbed
+					amountString = strtrim(amountString)
+				else
+					amountString = "~"..trackingData[14].."~"
+				end
+				
+				L[#L+1] = {date("%M:%S.", time)..format("%03d",time%1*1000),(sourceRaidTarget and ("|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_"..sourceRaidTarget..":0|t") or "").."|c".. ExRT.F.classColorByGUID(sourceGUID)..GetGUID(sourceGUID)..GUIDtoText(" [%s]",sourceGUID).."|r > "..(destRaidTarget and ("|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_"..destRaidTarget..":0|t") or "").."|c".. ExRT.F.classColorByGUID(destGUID)..GetGUID(destGUID)..GUIDtoText(" [%s]",destGUID).."|r: "..amountString,time}
 			end
-			
-			BWInterfaceFrame.tab.tabs[8].graphicsTab.dropDown.tooltip = L.BossWatcherGraphicsHoldShift .. "|n" .. L.BossWatcherGraphicsHoldCtrl
-			
-			local destDropDown = {
-				{text = L.BossWatcherAll, func = GraphDestDropdownSelect, _sort = "."},
-			}
-			BWInterfaceFrame.tab.tabs[8].graphicsTab.byTargetDropDown.List = destDropDown
-			for i=1,#targetsData do
-				local info = {}
-				destDropDown[i+1] = info
-				local name = GetGUID( targetsData[i] )
-				info.text = name..GUIDtoText(" <%s>",targetsData[i])
-				info.arg1 = targetsData[i]
-				info.func = GraphDestDropdownSelect
-				info.checkFunc = GraphDestDropdownCheck
-				info.checkable = true
-				info._sort = name
-			end
-			table.sort(destDropDown,function(a,b)return a._sort < b._sort end)
-			BWInterfaceFrame.tab.tabs[8].graphicsTab.byTargetDropDown:Show()
 		end
-		for i=1,#units do
-			local info = {}
-			BWInterfaceFrame.tab.tabs[8].graphicsTab.dropDown.List[i] = info
-			local name = GetGUID( units[i] )
-			local color = ""
-			local GUIDpatt = ""
-			if units[i] == "_total" then
-				name = L.BossWatcherGraphicsTotalHPS
+		local prevTimeText = nil
+		for i=1,#L do
+			if L[i][1] == prevTimeText then
+				prevTimeText = L[i][1]
+				L[i][1] = ""
 			else
-				color = "|c"..ExRT.F.classColorByGUID(units[i])
-				GUIDpatt = " <%s>"
-			end
-			info.text = color..name..GUIDtoText(GUIDpatt,units[i])
-			info.arg1 = units[i]
-			info.func = GraphHPSSelect
-			info.justifyH = "CENTER"
-			info._sort = GraphTab_SpecialUnits[ units[i] ] or name
-		end
-		table.sort(BWInterfaceFrame.tab.tabs[8].graphicsTab.dropDown.List,function(a,b)return a._sort < b._sort end)
-	end)
-	tab.graphicsTab.tabs[3]:SetScript("OnShow",function (self)
-		GraphTabLoad()
-		BWInterfaceFrame.tab.tabs[8].graphicsTab.healthDropDown:Show()
-		if not module.db.data[module.db.nowNum].graphData then
-			return
-		end
-		local units = {}
-		for i,data in pairs(module.db.data[module.db.nowNum].graphData) do
-			for sourceName,_ in pairs(data) do
-				if not ExRT.F.table_find(units,sourceName) then
-					units[#units+1] = sourceName
-				end
+				prevTimeText = L[i][1]
 			end
 		end
-		for i=1,#units do
-			local info = {}
-			BWInterfaceFrame.tab.tabs[8].graphicsTab.dropDown.List[i] = info
-			local unitGUID = ExRT.F.table_find2(module.db.data[module.db.nowNum].raidguids,units[i])
-			info.text = (unitGUID and "|c"..ExRT.F.classColorByGUID(unitGUID) or "")..units[i]
-			info.arg1 = units[i]
-			info.func = GraphHealthSelect
-			info.justifyH = "CENTER" 
-			info._sort = GraphTab_SpecialUnits[ units[i] ] or units[i]
-		end
-		table.sort(BWInterfaceFrame.tab.tabs[8].graphicsTab.dropDown.List,function(a,b)return a._sort < b._sort end)
-	end)
-	tab.graphicsTab.tabs[4]:SetScript("OnShow",function (self)
-		GraphTabLoad()
-		BWInterfaceFrame.tab.tabs[8].graphicsTab.powerDropDown:Show()
-		if not module.db.data[module.db.nowNum].graphData then
-			return
-		end
-		local units = {}
-		for i,data in pairs(module.db.data[module.db.nowNum].graphData) do
-			for sourceName,_ in pairs(data) do
-				if not ExRT.F.table_find(units,sourceName) then
-					units[#units+1] = sourceName
-				end
-			end
-		end
-		for i=1,#units do
-			local info = {}
-			BWInterfaceFrame.tab.tabs[8].graphicsTab.dropDown.List[i] = info
-			local unitGUID = ExRT.F.table_find2(module.db.data[module.db.nowNum].raidguids,units[i])
-			info.text = (unitGUID and "|c"..ExRT.F.classColorByGUID(unitGUID) or "")..units[i]
-			info.arg1 = units[i]
-			info.func = GraphPowerSelect
-			info.justifyH = "CENTER" 
-			info._sort = GraphTab_SpecialUnits[ units[i] ] or units[i]
-		end
-		table.sort(BWInterfaceFrame.tab.tabs[8].graphicsTab.dropDown.List,function(a,b)return a._sort < b._sort end)
-	end)
-	
-	local function GraphPowerSelectPowerType(_,powerID,powerName)
-		GraphsTab_Variables.PowerTypeNow = powerID
-		if GraphsTab_Variables.PowerLastName then
-			GraphPowerSelect(nil,GraphsTab_Variables.PowerLastName)
-		end
-		BWInterfaceFrame.tab.tabs[8].graphicsTab.powerDropDown:SetText(L.BossWatcherSelectPower..module.db.energyLocale[powerID])
-		ELib:DropDownClose()
+		
+		BWInterfaceFrame.tab.tabs[8].targetsList:Update()
 	end
 	
-	for powerID,powerName in pairs(module.db.energyLocale) do
-		local info = {}
-		BWInterfaceFrame.tab.tabs[8].graphicsTab.powerDropDown.List[ #BWInterfaceFrame.tab.tabs[8].graphicsTab.powerDropDown.List + 1 ] = info
-		info.text = powerName
-		info.arg1 = powerID
-		info.arg2 = powerName
-		info.func = GraphPowerSelectPowerType
-	end
-	table.sort(BWInterfaceFrame.tab.tabs[8].graphicsTab.powerDropDown.List,function(a,b)return a.arg1 < b.arg1 end)
-	
-	local function GraphPowerSelectHealthType(_,arg)
-		GraphsTab_Variables.HealthTypeNow = arg
-		if GraphsTab_Variables.HealthLastName then
-			GraphHealthSelect(nil,GraphsTab_Variables.HealthLastName)
-		end
-		local text
-		if arg == 1 then
-			text = HEALTH
+	function tab.targetsList:HoverListValue(isHover,index,hoveredObj)
+		if not isHover then
+			GameTooltip_Hide()
 		else
-			text = ACTION_SPELL_MISSED_ABSORB
+			if hoveredObj.text2:IsTruncated() then
+				GameTooltip:SetOwner(self,"ANCHOR_CURSOR")
+				GameTooltip:AddLine(hoveredObj.text2:GetText() )
+				GameTooltip:Show()
+			end
 		end
-		BWInterfaceFrame.tab.tabs[8].graphicsTab.healthDropDown:SetText(L.BossWatcherSelectPower..text)
-		ELib:DropDownClose()
-	end	
-	tab.graphicsTab.healthDropDown.List[1] = {text = HEALTH,arg1 = 1,func = GraphPowerSelectHealthType}
-	tab.graphicsTab.healthDropDown.List[2] = {text = ACTION_SPELL_MISSED_ABSORB,arg1 = 2,func = GraphPowerSelectHealthType}
+	end
+	
+	local function UpdateTrackingPage()
+		wipe(BWInterfaceFrame.tab.tabs[8].targetsList.L)
+		wipe(BWInterfaceFrame.tab.tabs[8].spellsList.L)
+		wipe(BWInterfaceFrame.tab.tabs[8].spellsList.D)
+		local L,D = BWInterfaceFrame.tab.tabs[8].spellsList.L,BWInterfaceFrame.tab.tabs[8].spellsList.D
+
+		for i,trackingData in ipairs(module.db.nowData.tracking) do
+			if not ExRT.F.table_find(D,trackingData[6]) then
+				D[#D+1] = trackingData[6]
+			end
+		end
+		
+		for i=1,#D do
+			local spellName,_,spellTexture = GetSpellInfo(D[i])
+			L[i] = "|T"..spellTexture..":0|t "..spellName
+		end 
+		
+		BWInterfaceFrame.tab.tabs[8].spellsList:Update()
+		BWInterfaceFrame.tab.tabs[8].targetsList:Update()
+	end
+	
+	tab.optionsSpellsList = ELib:ScrollTableList(tab.headerTab.tabs[2],80,20,0,20):Size(650,400):Point(10,-15)
+	
+	local function UpdateTrackingOptionsPage()
+		wipe(BWInterfaceFrame.tab.tabs[8].optionsSpellsList.L)
+		local L = BWInterfaceFrame.tab.tabs[8].optionsSpellsList.L
+		for spellID,encounterID in pairs(var_trackingDamageSpells) do
+			if ExRT.is7 or spellID <= 191000 then				--Remove spells from Legion content at live version
+				local spellName,_,spellTexture = GetSpellInfo(spellID)
+				spellName = spellName or '???'
+				spellTexture = spellTexture or "Interface\\Icons\\INV_MISC_QUESTIONMARK"
+				local encounterName = nil
+				if type(encounterID)=='number' then
+					encounterName = TrackingTab_Variables.EncounterNames[encounterID]
+				end
+				L[#L+1] = {spellID,"|T"..spellTexture..":0|t",(encounterName and encounterName..": " or "")..spellName,module.db.def_trackingDamageSpells[spellID] and "" or "|TInterface\\AddOns\\ExRT\\media\\DiesalGUIcons16x256x128:16:16:0:0:256:128:128:144:64:80|t",type(encounterID)=='number' and ExRT.F.table_find(TrackingTab_Variables.EncounterOrder,encounterID) or -1}
+			end
+		end
+		sort(L,function(a,b) if a[5]==b[5] then return a[1]<b[1] else return a[5]>b[5] end end)
+		BWInterfaceFrame.tab.tabs[8].optionsSpellsList:Update()
+	end
+	function tab.optionsSpellsList:AdditionalLineClick()
+		local x,y = ExRT.F.GetCursorPos(self)
+		local pos = self:GetWidth()-x
+		if pos <= 25 and pos > 7 then
+			local parent = self.mainFrame
+			local i = parent.selected
+			if parent.L[i][4] ~= "" then
+				local spellID = parent.L[i][1]
+				VExRT.BossWatcher.trackingDamageSpells[ spellID ] = nil
+				UpdateTrackingDamageSpellsTable()
+				UpdateTrackingOptionsPage()
+			end
+		end
+	end
+	UpdateTrackingOptionsPage()
+	
+	tab.optionsEditAddSpell = ELib:Edit(tab.headerTab.tabs[2],6,true):Size(200,20):Point("TOPLEFT",tab.optionsSpellsList,"BOTTOMLEFT",0,-5)
+	tab.optionsButtonAddSpell = ELib:Button(tab.headerTab.tabs[2],L.cd2TextAdd):Size(150,20):Point("LEFT",tab.optionsEditAddSpell,"RIGHT",5,0):OnClick(function()
+		local tab = BWInterfaceFrame.tab.tabs[8]
+		local spellID = tonumber(tab.optionsEditAddSpell:GetText())
+		if not spellID then
+			return
+		end
+		tab.optionsEditAddSpell:SetText("")
+		
+		VExRT.BossWatcher.trackingDamageSpells[ spellID ] = true
+		
+		UpdateTrackingDamageSpellsTable()
+		UpdateTrackingOptionsPage()
+	end)
+	
 	
 	tab:SetScript("OnShow",function (self)
 		if BWInterfaceFrame.nowFightID ~= self.lastFightID then
-			GraphsTab_Variables.PowerLastName = nil
-			GraphsTab_Variables.HealthLastName = nil
 			self.lastFightID = BWInterfaceFrame.nowFightID
+			UpdateTrackingPage()
 		end
 	end)
-
+	
+	
 	
 	
 	
@@ -7470,7 +8086,7 @@ function BWInterfaceFrameLoad()
 		if not BWInterfaceFrame.tab.tabs[3].timeSegments[i] then
 		  	BWInterfaceFrame.tab.tabs[3].timeSegments[i] = CreateFrame("Frame",nil,BWInterfaceFrame.tab.tabs[3])
 			BWInterfaceFrame.tab.tabs[3].timeSegments[i].texture = BWInterfaceFrame.tab.tabs[3].timeSegments[i]:CreateTexture(nil, "BACKGROUND",0,-5)
-			BWInterfaceFrame.tab.tabs[3].timeSegments[i].texture:SetColorTexture(1, 1, 0.5, 0.2)
+			BWInterfaceFrame.tab.tabs[3].timeSegments[i].texture:SetTexture(1, 1, 0.5, 0.2)
 			BWInterfaceFrame.tab.tabs[3].timeSegments[i].texture:SetAllPoints()
 		end
 		if not BWInterfaceFrame.timeLineFrame.timeLine.timeSegments[i] then
@@ -7502,10 +8118,10 @@ function BWInterfaceFrameLoad()
 				if BWInterfaceFrame.tab.tabs[11].segmentsList.C[i] then
 					local timeStart = max(module.db.data[module.db.nowNum].fight[i].timeEx - module.db.data[module.db.nowNum].encounterStart,0)
 					local timeEnd = max(module.db.data[module.db.nowNum].fight[i+1] and (module.db.data[module.db.nowNum].fight[i+1].timeEx - module.db.data[module.db.nowNum].encounterStart) or fightDuration,0)
-					local startPos = buffsNameWidth+timeStart/fightDuration*buffsWorkWidth
-					local endPos = buffsNameWidth+timeEnd/fightDuration*buffsWorkWidth
+					local startPos = AurasTab_Variables.NameWidth+timeStart/fightDuration*AurasTab_Variables.WorkWidth
+					local endPos = AurasTab_Variables.NameWidth+timeEnd/fightDuration*AurasTab_Variables.WorkWidth
 					BWInterfaceFrame.tab.tabs[3].timeSegments[i]:SetPoint("TOPLEFT",startPos,-42)
-					BWInterfaceFrame.tab.tabs[3].timeSegments[i]:SetSize(max(endPos-startPos,0.5),buffsTotalLines * 18 + 14)
+					BWInterfaceFrame.tab.tabs[3].timeSegments[i]:SetSize(max(endPos-startPos,0.5),AurasTab_Variables.TotalLines * 18 + 14)
 					BWInterfaceFrame.tab.tabs[3].timeSegments[i]:Show()
 					
 					BWInterfaceFrame.timeLineFrame.timeLine.timeSegments[i]:Hide()
@@ -7561,12 +8177,11 @@ function BWInterfaceFrameLoad()
 		BWInterfaceFrame.tab.tabs[11].lastFightID = module.db.lastFightID
 		Segments_UpdateBuffAndTimeLine()
 	end
-	function tab.segmentsList:HoverListValue(isHover,index)
+	function tab.segmentsList:HoverListValue(isHover,index,obj)
 		if not isHover then
 			GameTooltip_Hide()
 		else
-			local scrollPos = ExRT.F.Round(BWInterfaceFrame.tab.tabs[11].segmentsList.ScrollBar:GetValue())
-			local textObj = BWInterfaceFrame.tab.tabs[11].segmentsList.List[index - scrollPos + 1].text
+			local textObj = obj.text
 			if textObj:IsTruncated() then
 				GameTooltip:SetOwner(self,"ANCHOR_CURSOR")
 				GameTooltip:AddLine( textObj:GetText() )
@@ -7787,6 +8402,10 @@ function BWInterfaceFrameLoad()
 		if not isAdd then
 			UpdateSegmentsPage()
 		end
+		if not from then
+			BWInterfaceFrame.GraphFrame.G.ZoomMinX = nil
+			BWInterfaceFrame.GraphFrame.G.ZoomMaxX = nil		
+		end
 		if isAdd and from and to then
 			for i=1,#module.db.data[module.db.nowNum].fight do
 				if (i>=from and i<=to) then
@@ -7844,14 +8463,14 @@ function BWInterfaceFrameLoad()
 	---- Interrupt & dispels
 	tab = BWInterfaceFrame.tab.tabs[7]
 	tabName = BWInterfaceFrame_Name.."InterruptTab"
-
+	
 	tab.DecorationLine = CreateFrame("Frame",nil,tab)
 	tab.DecorationLine:SetPoint("TOPLEFT",tab,"TOPLEFT",3,-80)
 	tab.DecorationLine:SetPoint("RIGHT",tab,-3,0)
 	tab.DecorationLine:SetHeight(20)
 	tab.DecorationLine.texture = tab.DecorationLine:CreateTexture(nil, "BACKGROUND")
 	tab.DecorationLine.texture:SetAllPoints()
-	tab.DecorationLine.texture:SetColorTexture(1,1,1,1)
+	tab.DecorationLine.texture:SetTexture(1,1,1,1)
 	tab.DecorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
 
 	do
@@ -7913,30 +8532,63 @@ function BWInterfaceFrameLoad()
 		elseif not isInterrupt then
 			workTable = module.db.nowData.dispels
 		end
-		local data = {}
 		table.wipe(currTab.events.L)
 		table.wipe(currTab.events.DATA)
-		for i,line in ipairs(workTable) do
-			local isOkay = false
-			if (Intterupt_Type == 1 and (not filter or line[1] == filter)) or
-			   (Intterupt_Type == 2 and (not filter or line[2] == filter)) or
-			   (Intterupt_Type == 3 and (not filter or line[4] == filter)) then
-				isOkay = true
-			end
-			if isOkay then
-				local spellSourceName,_,spellSourceTexture = GetSpellInfo(line[3])
-				local spellDestName,_,spellDestTexture = GetSpellInfo(line[4])
-				local dispelOrInterrupt = L.BossWatcherDispelText
-				local brokeType = nil
-				if isInterrupt then
-					dispelOrInterrupt = L.BossWatcherInterruptText
-				elseif isBroke then
-					dispelOrInterrupt = ACTION_SPELL_AURA_BROKEN
-					brokeType = line[6] and " ("..line[6]:lower()..")"
-					spellSourceName,spellSourceTexture,spellDestName,spellDestTexture = spellDestName,spellDestTexture,spellSourceName,spellSourceTexture
+		if index == 2 then
+			local data = {}
+			for i,line in ipairs(workTable) do
+				local toAdd = nil
+				if Intterupt_Type == 1 then
+					toAdd = line[1]
+				elseif Intterupt_Type == 2 then
+					toAdd = line[2]
+				elseif Intterupt_Type == 3 then
+					toAdd = line[4]
 				end
-				currTab.events.L[#currTab.events.L + 1] = "[".. date("%M:%S", timestampToFightTime(line[5])).."] |c".. ExRT.F.classColorByGUID(line[1]) .. GetGUID(line[1]) .. GUIDtoText(" (%s)",line[1]) .. "|r "..dispelOrInterrupt.." |c" ..  ExRT.F.classColorByGUID(line[2]).. GetGUID(line[2]) .. "'s" .. GUIDtoText(" (%s)",line[2]) .. "|r |Hspell:" .. (line[4] or 0) .. "|h" .. format("%s%s",spellDestTexture and "|T"..spellDestTexture..":0|t " or "",spellDestName or "???") .. "|h"..(brokeType or "").." "..L.BossWatcherByText.." |Hspell:" .. (line[3] or 0) .. "|h" .. format("%s%s",spellSourceTexture and "|T"..spellSourceTexture..":0|t " or "",spellSourceName or "???") .. "|h"
-				currTab.events.DATA[#currTab.events.L] = line
+				if toAdd then
+					local pos = ExRT.F.table_find(data,toAdd,1)
+					if pos then
+						data[pos][2] = data[pos][2] + 1
+					else
+						data[#data + 1] = {toAdd,1,line}
+					end
+				end
+			end
+			sort(data,function(a,b) return a[2]>b[2] end)
+			for i=1,#data do
+				local name = data[i][1]
+				if Intterupt_Type == 3 then
+					local spellName,_,spellTexture = GetSpellInfo(name)
+					name = "|T"..spellTexture..":0|t ".. spellName
+				else
+					name = "|c".. ExRT.F.classColorByGUID(name) .. GetGUID(name) .. GUIDtoText(" (%s)",name).."|r"
+				end
+				currTab.events.L[#currTab.events.L + 1] = name .. ": " ..data[i][2]
+				currTab.events.DATA[#currTab.events.L] = data[i][3]
+			end
+		else
+			for i,line in ipairs(workTable) do
+				local isOkay = false
+				if (Intterupt_Type == 1 and (not filter or line[1] == filter)) or
+				   (Intterupt_Type == 2 and (not filter or line[2] == filter)) or
+				   (Intterupt_Type == 3 and (not filter or line[4] == filter)) then
+					isOkay = true
+				end
+				if isOkay then
+					local spellSourceName,_,spellSourceTexture = GetSpellInfo(line[3])
+					local spellDestName,_,spellDestTexture = GetSpellInfo(line[4])
+					local dispelOrInterrupt = L.BossWatcherDispelText
+					local brokeType = nil
+					if isInterrupt then
+						dispelOrInterrupt = L.BossWatcherInterruptText
+					elseif isBroke then
+						dispelOrInterrupt = ACTION_SPELL_AURA_BROKEN
+						brokeType = line[6] and " ("..line[6]:lower()..")"
+						spellSourceName,spellSourceTexture,spellDestName,spellDestTexture = spellDestName,spellDestTexture,spellSourceName,spellSourceTexture
+					end
+					currTab.events.L[#currTab.events.L + 1] = "[".. date("%M:%S", timestampToFightTime(line[5])).."] |c".. ExRT.F.classColorByGUID(line[1]) .. GetGUID(line[1]) .. GUIDtoText(" (%s)",line[1]) .. "|r "..dispelOrInterrupt.." |c" ..  ExRT.F.classColorByGUID(line[2]).. GetGUID(line[2]) .. "'s" .. GUIDtoText(" (%s)",line[2]) .. "|r |Hspell:" .. (line[4] or 0) .. "|h" .. format("%s%s",spellDestTexture and "|T"..spellDestTexture..":0|t " or "",spellDestName or "???") .. "|h"..(brokeType or "").." "..L.BossWatcherByText.." |Hspell:" .. (line[3] or 0) .. "|h" .. format("%s%s",spellSourceTexture and "|T"..spellSourceTexture..":0|t " or "",spellSourceName or "???") .. "|h"
+					currTab.events.DATA[#currTab.events.L] = line
+				end
 			end
 		end
 		currTab.events:Update()
@@ -8010,15 +8662,17 @@ function BWInterfaceFrameLoad()
 		end
 		sort(data2,function(a,b)return a[2]<b[2] end)
 		for i=1,#data2 do
-			currTab.list.L[i+1] = (data2[i][3] or "")..data2[i][2]
-			currTab.list.GUIDs[i+1] = data2[i][1]
+			currTab.list.L[i+2] = (data2[i][3] or "")..data2[i][2]
+			currTab.list.GUIDs[i+2] = data2[i][1]
 		end
 		currTab.list.L[1] = L.BossWatcherAll
+		currTab.list.L[2] = L.BossWatcherSpellsCount
 		
-		currTab.list.selected = nil
+		currTab.list.selected = 1
 		
 		currTab.list:Update()
-		currTab.events:Update()
+		currTab.list:SetListValue(1)
+		--currTab.events:Update()
 	end
 
 	tab:SetScript("OnShow",function (self)
@@ -8043,11 +8697,31 @@ function BWInterfaceFrameLoad()
 	
 	local HsourceVar,HdestVar = {},{}
 	local HealingTab_SetLine = nil
-	local HealingShowOverheal = false
-	local Healing_Last_Func = nil
-	local Healing_Last_doEnemy = nil
-	local Healing_Last_doReduction = nil
-	local Healing_Back_Func = nil
+	local HealingTab_Variables = {
+		Last_Func = nil,
+		Last_doEnemy = nil,
+		Last_doReduction = nil,
+		ShowOverheal = false,
+		Back_Func = nil,
+		Back_destVar = nil,
+		Back_sourceVar = nil,
+		NULLSpellAmount = {
+			amount = 0,
+			over = 0,
+			absorbed = 0,
+			count = 0,
+			crit = 0,
+			critcount = 0,
+			critmax = 0,
+			critover = 0,
+			ms = 0,
+			mscount = 0,
+			msmax = 0,
+			msover = 0,
+			hitmax = 0,
+			absorbs = 0,
+		}
+	}
 	
 	local function HealingTab_UpdateDropDown(arr,dropDown)
 		local count = ExRT.F.table_len(arr)
@@ -8094,14 +8768,94 @@ function BWInterfaceFrameLoad()
 		end
 	end
 	
+	local function HealingTab_ReloadGraph(data,fightLength,linesData,isSpell)
+		local graphData = {}
+		for key,spellData in pairs(data) do
+			local newData
+			if isSpell then
+				local spellID = key
+				local isPet = 1
+				if spellID < -1 then
+					isPet = -1
+					spellID = -spellID
+				end
+				local spellName,_,spellIcon = GetSpellInfo(spellID)
+				if spellID == -1 then
+					spellName = L.BossWatcherReportTotal
+				elseif spellName then
+					spellName = "|T"..spellIcon..":0|t "..spellName
+				else
+					spellName = spellID
+				end
+				newData = {
+					info_spellID = spellID*isPet,
+					name = spellName,
+					total_healing = 0,
+					hide = true,
+				}
+			else
+				local sourceGUID = key
+				local name,r,g,b = nil
+				if sourceGUID == -1 then
+					name = L.BossWatcherReportTotal
+				else
+					local class
+					name = GetGUID(sourceGUID)
+					if sourceGUID ~= "" then
+						class = select(2,GetPlayerInfoByGUID(sourceGUID))
+					end
+					name = "|c".. ExRT.F.classColor(class) .. name .. "|r"
+					if class then
+						local classColorArray = type(CUSTOM_CLASS_COLORS)=="table" and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
+						r,g,b = classColorArray.r,classColorArray.g,classColorArray.b
+					end
+				end
+				newData = {
+					info_spellID = sourceGUID,
+					name = name,
+					total_healing = 0,
+					hide = true,
+					r = r,
+					g = g,
+					b = b,
+				}
+			end
+			graphData[#graphData+1] = newData
+			local totalHealing = 0
+			for i=1,fightLength do
+				newData[i] = {i,spellData[i] or 0}
+				totalHealing = totalHealing + (spellData[i] or 0)
+			end
+			newData.total_healing = totalHealing
+		end
+		sort(graphData,function(a,b) return a.total_healing>b.total_healing end)
+		local findPos = ExRT.F.table_find(graphData,-1,'info_spellID')
+		if findPos then
+			graphData[ findPos ].hide = nil
+			graphData[ findPos ].specialLine = true
+		end
+		for i=1,3 do
+			if linesData[i] then
+				findPos = ExRT.F.table_find(graphData,linesData[i][1],'info_spellID')
+				if findPos then
+					graphData[ findPos ].hide = nil
+				end
+			end
+		end
+		BWInterfaceFrame.GraphFrame.G.data = graphData
+		BWInterfaceFrame.GraphFrame.G:Reload()
+	end
+	
 	local function HealingTab_UpdateLinesPlayers(doEnemy,doReduction)
 		HealingTab_UpdateDropDownSource()
 		HealingTab_UpdateDropDownDest()
 		HealingTab_UpdateDropDownType(1+(doReduction and 4 or 0),doEnemy)
-		Healing_Last_Func = HealingTab_UpdateLinesPlayers
-		Healing_Last_doEnemy = doEnemy
-		Healing_Last_doReduction = doReduction
-		Healing_Back_Func = Healing_Last_Func
+		HealingTab_Variables.Last_Func = HealingTab_UpdateLinesPlayers
+		HealingTab_Variables.Last_doEnemy = doEnemy
+		HealingTab_Variables.Last_doReduction = doReduction
+		HealingTab_Variables.Back_Func = HealingTab_UpdateLinesPlayers
+		HealingTab_Variables.Back_sourceVar = nil
+		HealingTab_Variables.Back_destVar = nil
 		local heal = {}
 		local total = 0
 		local totalOver = 0
@@ -8128,11 +8882,14 @@ function BWInterfaceFrameLoad()
 							destPos = heal[inDamagePos][8][destPos]
 							
 							for spellID,spellAmount in pairs(destData) do
+								if spellID == 98021 then	--Spirit Link
+									spellAmount = HealingTab_Variables.NULLSpellAmount
+								end
 								heal[inDamagePos][2] = heal[inDamagePos][2] + spellAmount.amount - spellAmount.over + spellAmount.absorbed
 								heal[inDamagePos][3] = heal[inDamagePos][3] + spellAmount.amount 						--total
 								heal[inDamagePos][4] = heal[inDamagePos][4] + spellAmount.over 							--overheal
 								heal[inDamagePos][5] = heal[inDamagePos][5] + spellAmount.absorbed 						--absorbed
-								if HealingShowOverheal then
+								if HealingTab_Variables.ShowOverheal then
 									heal[inDamagePos][6] = heal[inDamagePos][6] + spellAmount.crit
 									heal[inDamagePos][7] = heal[inDamagePos][7] + spellAmount.ms
 								else
@@ -8143,7 +8900,7 @@ function BWInterfaceFrameLoad()
 								total = total + spellAmount.amount - spellAmount.over + spellAmount.absorbed
 								totalOver = totalOver + spellAmount.over
 								
-								destPos[2] = destPos[2] + spellAmount.amount + spellAmount.absorbed + (HealingShowOverheal and 0 or -spellAmount.over)
+								destPos[2] = destPos[2] + spellAmount.amount + spellAmount.absorbed + (HealingTab_Variables.ShowOverheal and 0 or -spellAmount.over)
 							end
 						end
 					end
@@ -8230,19 +8987,28 @@ function BWInterfaceFrameLoad()
 		wipe(reportData[2])
 		reportData[2][1] = (DamageTab_GetGUIDsReport(HsourceVar) or L.BossWatcherAllSources).." > "..(DamageTab_GetGUIDsReport(HdestVar) or L.BossWatcherAllTargets)
 		local activeFightLength = GetFightLength()
-		if not HealingShowOverheal then
-			local hps = total / activeFightLength
-			reportData[2][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(hps)..")@1#"
-			sort(heal,function(a,b) return a[2]>b[2] end)
-			_max = heal[1] and heal[1][2] or 0
-			HealingTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total,hps)
-		else
-			local hps = (total + totalOver) / activeFightLength
-			reportData[2][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total + totalOver).."@1@ ("..floor(hps)..")@1#"
+		
+		if HealingTab_Variables.ShowOverheal then
+			total = total + totalOver
 			sort(heal,function(a,b) return (a[2]+a[4])>(b[2]+b[4]) end)
 			_max = heal[1] and (heal[1][2]+heal[1][4]) or 0
-			HealingTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total + totalOver,hps,nil,nil,nil,nil,nil,nil,totalOver / max(total + totalOver,1))
+		else
+			sort(heal,function(a,b) return a[2]>b[2] end)
+			_max = heal[1] and heal[1][2] or 0
 		end
+		reportData[2][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(total / activeFightLength)..")@1#"
+		HealingTab_SetLine({
+			line = 1,
+			name = L.BossWatcherReportTotal,
+			num = total,
+			total = total,
+			max = total,
+			alpha = HealingTab_Variables.ShowOverheal and totalOver,
+			dps = total / activeFightLength,
+			spellID = -1,
+			check = BWInterfaceFrame.GraphFrame:IsShown(),
+			checkState = true,
+		})
 		for i=1,#heal do
 			local class = nil
 			if heal[i][1] and heal[i][1] ~= "" then
@@ -8257,9 +9023,9 @@ function BWInterfaceFrameLoad()
 				{L.BossWatcherHealTooltipAbsorbed,ExRT.F.shortNumber(heal[i][5])},
 				{L.BossWatcherHealTooltipTotal,ExRT.F.shortNumber(heal[i][3])},
 				{" "," "},
-				{L.BossWatcherHealTooltipFromCrit,format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][6]),heal[i][6]/max(1,heal[i][2]+(HealingShowOverheal and heal[i][4] or 0))*100)},
-				{L.BossWatcherHealTooltipFromMs,format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][7]),heal[i][7]/max(1,heal[i][2]+(HealingShowOverheal and heal[i][4] or 0))*100)},
-				{ACTION_SPELL_MISSED_ABSORB,format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][9]),heal[i][9]/max(heal[i][2]+(HealingShowOverheal and heal[i][4] or 0),1)*100)},
+				{L.BossWatcherHealTooltipFromCrit,format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][6]),heal[i][6]/max(1,heal[i][2]+(HealingTab_Variables.ShowOverheal and heal[i][4] or 0))*100)},
+				{L.BossWatcherHealTooltipFromMs,format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][7]),heal[i][7]/max(1,heal[i][2]+(HealingTab_Variables.ShowOverheal and heal[i][4] or 0))*100)},
+				{ACTION_SPELL_MISSED_ABSORB,format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][9]),heal[i][9]/max(heal[i][2]+(HealingTab_Variables.ShowOverheal and heal[i][4] or 0),1)*100)},
 			}
 			sort(heal[i][8],DamageTab_Temp_SortingBy2Param)
 			if #heal[i][8] > 0 then
@@ -8267,7 +9033,7 @@ function BWInterfaceFrameLoad()
 				tooltipData[#tooltipData + 1] = {L.BossWatcherHealTooltipTargets," "}
 			end
 			for j=1,min(5,#heal[i][8]) do
-				tooltipData[#tooltipData + 1] = {SubUTF8String(GetGUID(heal[i][8][j][1]),20)..GUIDtoText(" [%s]",heal[i][8][j][1]),format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][8][j][2]),min(heal[i][8][j][2] / max(1,heal[i][2]+(HealingShowOverheal and (heal[i][4]) or 0))*100,100))}
+				tooltipData[#tooltipData + 1] = {SubUTF8String(GetGUID(heal[i][8][j][1]),20)..GUIDtoText(" [%s]",heal[i][8][j][1]),format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][8][j][2]),min(heal[i][8][j][2] / max(1,heal[i][2]+(HealingTab_Variables.ShowOverheal and (heal[i][4]) or 0))*100,100))}
 			end
 			sort(heal[i][10],DamageTab_Temp_SortingBy2Param)
 			if #heal[i][10] > 0 then
@@ -8278,29 +9044,120 @@ function BWInterfaceFrameLoad()
 				local spellName,_,spellTexture = GetSpellInfo(heal[i][10][j][1])
 				tooltipData[#tooltipData + 1] = {(spellTexture and "|T"..spellTexture..":0|t" or "")..(spellName or "spell:"..spellName),ExRT.F.shortNumber(heal[i][10][j][2])}
 			end
-			if not HealingShowOverheal then
-				local hps = heal[i][2]/activeFightLength
-				HealingTab_SetLine(i+1,icon,GetGUID(heal[i][1])..GUIDtoText(" [%s]",heal[i][1]),heal[i][2]/total,heal[i][2]/max(_max,1),heal[i][2],hps,class,heal[i][1],doEnemy,nil,tooltipData,nil,heal[i][9]/max(1,heal[i][2]),nil,doReduction and 2)
-				reportData[2][#reportData[2]+1] = i..". "..GetGUID(heal[i][1]).." - "..ExRT.F.shortNumber(heal[i][2]).."@1@ ("..floor(hps)..")@1#"
-			else
-				local hps = (heal[i][2]+heal[i][4])/activeFightLength
-				HealingTab_SetLine(i+1,icon,GetGUID(heal[i][1])..GUIDtoText(" [%s]",heal[i][1]),(heal[i][2]+heal[i][4])/(total+totalOver),(heal[i][2]+heal[i][4])/max(_max,1),(heal[i][2]+heal[i][4]),hps,class,heal[i][1],doEnemy,nil,tooltipData,nil,heal[i][4] / max(heal[i][2]+heal[i][4],1),nil,doReduction and 2)			
-				reportData[2][#reportData[2]+1] = i..". "..GetGUID(heal[i][1]).." - "..ExRT.F.shortNumber(heal[i][2]+heal[i][4]).."@1@ ("..floor(hps)..")@1#"
-			end
+			
+			local currHealing = heal[i][2]+(HealingTab_Variables.ShowOverheal and heal[i][4] or 0)
+			local hps = currHealing/activeFightLength
+			HealingTab_SetLine({
+				line = i+1,
+				icon = icon,
+				name = GetGUID(heal[i][1])..GUIDtoText(" [%s]",heal[i][1]),
+				num = currHealing,
+				total = total,
+				max = _max,
+				alpha = HealingTab_Variables.ShowOverheal and heal[i][4] or heal[i][9],
+				dps = hps,
+				class = class,
+				sourceGUID = heal[i][1],
+				doEnemy = doEnemy,
+				tooltip = tooltipData,
+				isReduction = doReduction and 2,
+				check = BWInterfaceFrame.GraphFrame:IsShown(),
+				checkState = i <= 3,
+			})
+			reportData[2][#reportData[2]+1] = i..". "..GetGUID(heal[i][1]).." - "..ExRT.F.shortNumber(currHealing).."@1@ ("..floor(hps)..")@1#"
 		end
 		for i=#heal+2,#BWInterfaceFrame.tab.tabs[2].lines do
 			BWInterfaceFrame.tab.tabs[2].lines[i]:Hide()
 		end
 		BWInterfaceFrame.tab.tabs[2].scroll:Height((#heal+1) * 20)
+		
+		
+		if not BWInterfaceFrame.GraphFrame:IsShown() then
+			return
+		end
+		local graph = {[-1]={}}
+		local currFight = module.db.data[module.db.nowNum]
+		local maxFight = #module.db.data[module.db.nowNum].fight
+		for seg=1,maxFight do
+			for sourceGUID,sourceData in pairs(currFight.fight[seg].heal) do
+				local owner = ExRT.F.Pets:getOwnerGUID(sourceGUID,GetPetsDB())
+				if owner then
+					sourceGUID = owner
+				end
+				if ExRT.F.table_len(HsourceVar) == 0 or HsourceVar[sourceGUID] then
+					for destGUID,destData in pairs(sourceData) do
+						local isEnemy = not ExRT.F.UnitIsFriendlyByUnitFlag2(currFight.reaction[destGUID])
+						if ExRT.F.table_len(HdestVar) == 0 or HdestVar[destGUID] then
+							if (isEnemy and doEnemy) or (not isEnemy and not doEnemy) then
+								if not graph[ sourceGUID ] then
+									graph[ sourceGUID ] = {}
+								end
+								if not graph[ sourceGUID ][seg] then
+									graph[ sourceGUID ][seg] = 0
+								end
+								if not graph[ -1 ][seg] then
+									graph[ -1 ][seg] = 0
+								end
+								for spellID,spellAmount in pairs(destData) do
+									if spellID == 98021 then	--Spirit Link
+										spellAmount = HealingTab_Variables.NULLSpellAmount
+									end
+									local healCount = spellAmount.amount - (HealingTab_Variables.ShowOverheal and 0 or spellAmount.over) + spellAmount.absorbed
+									graph[ sourceGUID ][seg] = graph[ sourceGUID ][seg] + healCount
+									graph[ -1 ][seg] = graph[ -1 ][seg] + healCount
+								end
+							end
+						end
+					end
+				end
+			end
+			if doReduction and not doEnemy then
+				for destGUID,destData in pairs(currFight.fight[seg].reduction) do
+					if ExRT.F.table_len(HdestVar) == 0 or HdestVar[destGUID] then
+						for sourceGUID,sourceData in pairs(destData) do
+							for spellID,spellData in pairs(sourceData) do
+								for reductorGUID,reductorData in pairs(spellData) do
+									local owner = ExRT.F.Pets:getOwnerGUID(reductorGUID,GetPetsDB())
+									if owner then
+										reductorGUID = owner
+									end
+									if ExRT.F.table_len(HsourceVar) == 0 or HsourceVar[reductorGUID] then
+										local isFriendly = ExRT.F.UnitIsFriendlyByUnitFlag2(currFight.reaction[reductorGUID])
+										if isFriendly then
+											if not graph[ reductorGUID ] then
+												graph[ reductorGUID ] = {}
+											end
+											if not graph[ reductorGUID ][seg] then
+												graph[ reductorGUID ][seg] = 0
+											end
+											if not graph[ -1 ][seg] then
+												graph[ -1 ][seg] = 0
+											end
+											for reductionSpellID,reductionSpellAmount in pairs(reductorData) do
+												graph[ reductorGUID ][seg] = graph[ reductorGUID ][seg] + reductionSpellAmount
+												graph[ -1 ][seg] = graph[ -1 ][seg] + reductionSpellAmount
+											end
+										end
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+		HealingTab_ReloadGraph(graph,maxFight,heal,false)
 	end
 	local function HealingTab_UpdateLinesSpell(doEnemy,doReduction)
 		HealingTab_UpdateDropDownSource()
 		HealingTab_UpdateDropDownDest()
 		HealingTab_UpdateDropDownType(3+(doReduction and 2 or 0),doEnemy or doReduction)
-		Healing_Last_Func = HealingTab_UpdateLinesSpell
-		Healing_Last_doEnemy = doEnemy
-		Healing_Last_doReduction = doReduction
-		Healing_Back_Func = Healing_Last_Func
+		HealingTab_Variables.Last_Func = HealingTab_UpdateLinesSpell
+		HealingTab_Variables.Last_doEnemy = doEnemy
+		HealingTab_Variables.Last_doReduction = doReduction
+		HealingTab_Variables.Back_Func = HealingTab_UpdateLinesSpell
+		HealingTab_Variables.Back_sourceVar = nil
+		HealingTab_Variables.Back_destVar = nil
 		local heal = {}
 		local total = 0
 		local totalOver = 0
@@ -8315,6 +9172,9 @@ function BWInterfaceFrameLoad()
 					if ExRT.F.table_len(HdestVar) == 0 or HdestVar[destGUID] then
 						if (isEnemy and doEnemy) or (not isEnemy and not doEnemy) then
 							for spellID,spellAmount in pairs(destData) do
+								if spellID == 98021 then	--Spirit Link
+									spellAmount = HealingTab_Variables.NULLSpellAmount
+								end
 								if owner then
 									spellID = -spellID
 								end							
@@ -8349,7 +9209,7 @@ function BWInterfaceFrameLoad()
 								total = total + spellAmount.amount - spellAmount.over + spellAmount.absorbed
 								totalOver = totalOver + spellAmount.over
 								
-								destPos[2] = destPos[2] + spellAmount.amount + spellAmount.absorbed + (HealingShowOverheal and 0 or -spellAmount.over)
+								destPos[2] = destPos[2] + spellAmount.amount + spellAmount.absorbed + (HealingTab_Variables.ShowOverheal and 0 or -spellAmount.over)
 							end
 						end
 					end
@@ -8410,19 +9270,28 @@ function BWInterfaceFrameLoad()
 		wipe(reportData[2])
 		reportData[2][1] = (DamageTab_GetGUIDsReport(HsourceVar) or L.BossWatcherAllSources).." > "..(DamageTab_GetGUIDsReport(HdestVar) or L.BossWatcherAllTargets)
 		local activeFightLength = GetFightLength()
-		if not HealingShowOverheal then
-			local hps = total / activeFightLength
-			reportData[2][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(hps)..")@1#"
-			sort(heal,function(a,b) return a[2]>b[2] end)
-			_max = heal[1] and heal[1][2] or 0
-			HealingTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total,hps)
-		else
-			local hps = (total + totalOver) / activeFightLength
-			reportData[2][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total + totalOver).."@1@ ("..floor(hps)..")@1#"
+		if HealingTab_Variables.ShowOverheal then
+			total = total + totalOver
 			sort(heal,function(a,b) return (a[2]+a[4])>(b[2]+b[4]) end)
 			_max = heal[1] and (heal[1][2]+heal[1][4]) or 0
-			HealingTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total + totalOver,hps,nil,nil,nil,nil,nil,nil,totalOver / max(total + totalOver,1))		
+		else
+			sort(heal,function(a,b) return a[2]>b[2] end)
+			_max = heal[1] and heal[1][2] or 0
 		end
+		reportData[2][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(total / activeFightLength)..")@1#"
+		HealingTab_SetLine({
+			line = 1,
+			name = L.BossWatcherReportTotal,
+			total = total,
+			num = total,
+			max = total,
+			dps = total / activeFightLength,
+			spellID = -1,
+			alpha = HealingTab_Variables.ShowOverheal and totalOver,
+			check = BWInterfaceFrame.GraphFrame:IsShown(),
+			checkState = true,
+		})
+		_max = max(_max,1)
 		for i=1,#heal do
 			local isPetAbility = heal[i][1] < 0
 			if isPetAbility then
@@ -8436,7 +9305,7 @@ function BWInterfaceFrameLoad()
 			local tooltipData = {
 				{spellName,spellIcon},
 				{L.BossWatcherHealTooltipCount,heal[i][6]-heal[i][11]},
-				{L.BossWatcherHealTooltipHitMax,heal[i][13]},
+				{L.BossWatcherHealTooltipHitMax,floor(heal[i][13])},
 				{L.BossWatcherHealTooltipHitMid,ExRT.F.Round(max(heal[i][3]-heal[i][10]-heal[i][7]-(heal[i][4]-heal[i][14]-heal[i][15]),0)/max(heal[i][6]-heal[i][8]-heal[i][11],1))},
 				{L.BossWatcherHealTooltipCritCount,format("%d (%.1f%%)",heal[i][8],heal[i][8]/heal[i][6]*100)},
 				{L.BossWatcherHealTooltipCritAmount,ExRT.F.shortNumber(heal[i][7]-heal[i][14])},
@@ -8462,30 +9331,135 @@ function BWInterfaceFrameLoad()
 				tooltipData[#tooltipData + 1] = {L.BossWatcherHealTooltipTargets," "}
 			end
 			for j=1,min(5,#heal[i][17]) do
-				tooltipData[#tooltipData + 1] = {SubUTF8String(GetGUID(heal[i][17][j][1]),20)..GUIDtoText(" [%s]",heal[i][17][j][1]),format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][17][j][2]),min(heal[i][17][j][2] / max(1,heal[i][2]+(HealingShowOverheal and (heal[i][4]) or 0))*100,100))}
+				tooltipData[#tooltipData + 1] = {SubUTF8String(GetGUID(heal[i][17][j][1]),20)..GUIDtoText(" [%s]",heal[i][17][j][1]),format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][17][j][2]),min(heal[i][17][j][2] / max(1,heal[i][2]+(HealingTab_Variables.ShowOverheal and (heal[i][4]) or 0))*100,100))}
 			end
-			if not HealingShowOverheal then
-				local hps = heal[i][2]/activeFightLength
-				HealingTab_SetLine(i+1,spellIcon,spellName,heal[i][2]/total,heal[i][2]/max(_max,1),heal[i][2],hps,nil,nil,nil,"spell:"..heal[i][1],tooltipData,school,heal[i][16]/max(1,heal[i][2]))
-				reportData[2][#reportData[2]+1] = i..". "..(isPetAbility and L.BossWatcherPetText..": " or "")..GetSpellLink(heal[i][1]).." - "..ExRT.F.shortNumber(heal[i][2]).."@1@ ("..floor(hps)..")@1#"
-			else
-				local hps = (heal[i][2]+heal[i][4])/activeFightLength
-				HealingTab_SetLine(i+1,spellIcon,spellName,(heal[i][2]+heal[i][4])/(total+totalOver),(heal[i][2]+heal[i][4])/max(_max,1),(heal[i][2]+heal[i][4]),hps,nil,nil,nil,"spell:"..heal[i][1],tooltipData,school,heal[i][4] / max(heal[i][2]+heal[i][4],1))			
-				reportData[2][#reportData[2]+1] = i..". "..(isPetAbility and L.BossWatcherPetText..": " or "")..GetSpellLink(heal[i][1]).." - "..ExRT.F.shortNumber(heal[i][2]+heal[i][4]).."@1@ ("..floor(hps)..")@1#"
+			
+			local currHealing = heal[i][2]+(HealingTab_Variables.ShowOverheal and heal[i][4] or 0)
+			local hps = currHealing/activeFightLength
+			HealingTab_SetLine({
+				line = i+1,
+				icon = spellIcon,
+				name = spellName,
+				total = total,
+				num = currHealing,
+				alpha = HealingTab_Variables.ShowOverheal and heal[i][4] or heal[i][16],
+				max = _max,
+				dps = hps,
+				spellID = heal[i][1],
+				tooltip = tooltipData,
+				school = school,
+				isPet = isPetAbility,
+				check = BWInterfaceFrame.GraphFrame:IsShown(),
+				checkState = i <= 3,
+			})
+			reportData[2][#reportData[2]+1] = i..". "..(isPetAbility and L.BossWatcherPetText..": " or "")..GetSpellLink(heal[i][1]).." - "..ExRT.F.shortNumber(currHealing).."@1@ ("..floor(hps)..")@1#"
+			if isPetAbility then
+				heal[i][1] = -heal[i][1]
 			end
 		end
 		for i=#heal+2,#BWInterfaceFrame.tab.tabs[2].lines do
 			BWInterfaceFrame.tab.tabs[2].lines[i]:Hide()
 		end
 		BWInterfaceFrame.tab.tabs[2].scroll:Height((#heal+1) * 20)
+		
+		
+		if not BWInterfaceFrame.GraphFrame:IsShown() then
+			return
+		end
+
+		local graph = {[-1]={}}
+		local currFight = module.db.data[module.db.nowNum]
+		local maxFight = #module.db.data[module.db.nowNum].fight
+		for seg=1,maxFight do
+			for sourceGUID,sourceData in pairs(currFight.fight[seg].heal) do
+				local owner = ExRT.F.Pets:getOwnerGUID(sourceGUID,GetPetsDB())
+				if owner then
+					sourceGUID = owner
+				end
+				if ExRT.F.table_len(HsourceVar) == 0 or HsourceVar[sourceGUID] then
+					for destGUID,destData in pairs(sourceData) do
+						local isEnemy = not ExRT.F.UnitIsFriendlyByUnitFlag2(currFight.reaction[destGUID])
+						if ExRT.F.table_len(HdestVar) == 0 or HdestVar[destGUID] then
+							if (isEnemy and doEnemy) or (not isEnemy and not doEnemy) then
+								for spellID,spellAmount in pairs(destData) do
+									if spellID == 98021 then	--Spirit Link
+										spellAmount = HealingTab_Variables.NULLSpellAmount
+									end
+									if owner then
+										spellID = -spellID
+									end
+									if not graph[ spellID ] then
+										graph[ spellID ] = {}
+									end
+									if not graph[ spellID ][seg] then
+										graph[ spellID ][seg] = 0
+									end
+									if not graph[ -1 ][seg] then
+										graph[ -1 ][seg] = 0
+									end
+									local healCount = spellAmount.amount - (HealingTab_Variables.ShowOverheal and 0 or spellAmount.over) + spellAmount.absorbed
+									
+									if spellID == 98021 then	--Shaman: SLT
+										healCount = HealingTab_Variables.ShowOverheal and spellAmount.amount or 0
+									end
+									
+									graph[ spellID ][seg] = graph[ spellID ][seg] + healCount
+									graph[ -1 ][seg] = graph[ -1 ][seg] + healCount
+								end
+							end
+						end
+					end
+				end
+			end
+			if doReduction and not doEnemy then
+				for destGUID,destData in pairs(currFight.fight[seg].reduction) do
+					if ExRT.F.table_len(HdestVar) == 0 or HdestVar[destGUID] then
+						for sourceGUID,sourceData in pairs(destData) do
+							for spellID,spellData in pairs(sourceData) do
+								for reductorGUID,reductorData in pairs(spellData) do
+									local owner = ExRT.F.Pets:getOwnerGUID(reductorGUID,GetPetsDB())
+									if owner then
+										reductorGUID = owner
+									end
+									if ExRT.F.table_len(HsourceVar) == 0 or HsourceVar[reductorGUID] then
+										local isFriendly = ExRT.F.UnitIsFriendlyByUnitFlag2(currFight.reaction[reductorGUID])
+										if isFriendly then
+											for reductionSpellID,reductionSpellAmount in pairs(reductorData) do
+												if owner then
+													reductionSpellID = -reductionSpellID
+												end
+												if not graph[ reductionSpellID ] then
+													graph[ reductionSpellID ] = {}
+												end
+												if not graph[ reductionSpellID ][seg] then
+													graph[ reductionSpellID ][seg] = 0
+												end
+												if not graph[ -1 ][seg] then
+													graph[ -1 ][seg] = 0
+												end
+												graph[ reductionSpellID ][seg] = graph[ reductionSpellID ][seg] + reductionSpellAmount
+												graph[ -1 ][seg] = graph[ -1 ][seg] + reductionSpellAmount
+											end
+										end
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+		HealingTab_ReloadGraph(graph,maxFight,heal,true)
 	end
 	local function HealingTab_UpdateLinesTargets(doEnemy)
 		HealingTab_UpdateDropDownSource()
 		HealingTab_UpdateDropDownDest()
 		HealingTab_UpdateDropDownType(2,doEnemy)
-		Healing_Last_Func = HealingTab_UpdateLinesTargets
-		Healing_Last_doEnemy = doEnemy
-		Healing_Back_Func = Healing_Last_Func
+		HealingTab_Variables.Last_Func = HealingTab_UpdateLinesTargets
+		HealingTab_Variables.Last_doEnemy = doEnemy
+		HealingTab_Variables.Back_Func = HealingTab_UpdateLinesTargets
+		HealingTab_Variables.Back_sourceVar = nil
+		HealingTab_Variables.Back_destVar = nil
 		local heal = {}
 		local total = 0
 		local totalOver = 0
@@ -8512,11 +9486,14 @@ function BWInterfaceFrameLoad()
 							sourcePos = heal[inDamagePos][9][sourcePos]
 
 							for spellID,spellAmount in pairs(destData) do
+								if spellID == 98021 then	--Spirit Link
+									spellAmount = HealingTab_Variables.NULLSpellAmount
+								end
 								heal[inDamagePos][2] = heal[inDamagePos][2] + spellAmount.amount - spellAmount.over + spellAmount.absorbed
 								heal[inDamagePos][3] = heal[inDamagePos][3] + spellAmount.amount 						--total
 								heal[inDamagePos][4] = heal[inDamagePos][4] + spellAmount.over 							--overheal
 								heal[inDamagePos][5] = heal[inDamagePos][5] + spellAmount.absorbed 						--absorbed
-								if HealingShowOverheal then
+								if HealingTab_Variables.ShowOverheal then
 									heal[inDamagePos][6] = heal[inDamagePos][6] + spellAmount.crit
 									heal[inDamagePos][7] = heal[inDamagePos][7] + spellAmount.ms
 								else
@@ -8527,7 +9504,7 @@ function BWInterfaceFrameLoad()
 								total = total + spellAmount.amount - spellAmount.over + spellAmount.absorbed
 								totalOver = totalOver + spellAmount.over
 								
-								sourcePos[2] = sourcePos[2] + spellAmount.amount + spellAmount.absorbed + (HealingShowOverheal and 0 or -spellAmount.over)
+								sourcePos[2] = sourcePos[2] + spellAmount.amount + spellAmount.absorbed + (HealingTab_Variables.ShowOverheal and 0 or -spellAmount.over)
 							end
 						end
 					end
@@ -8544,20 +9521,29 @@ function BWInterfaceFrameLoad()
 		reportOptions[2] = L.BossWatcherReportHPS
 		wipe(reportData[2])
 		reportData[2][1] = (DamageTab_GetGUIDsReport(HsourceVar) or L.BossWatcherAllSources).." > "..(DamageTab_GetGUIDsReport(HdestVar) or L.BossWatcherAllTargets)
+		
 		local activeFightLength = GetFightLength()
-		if not HealingShowOverheal then
-			local hps = total / activeFightLength
-			reportData[2][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(hps)..")@1#"
-			sort(heal,function(a,b) return a[2]>b[2] end)
-			_max = heal[1] and heal[1][2] or 0
-			HealingTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total,hps)
-		else
-			local hps = (total + totalOver) / activeFightLength
-			reportData[2][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total + totalOver).."@1@ ("..floor(hps)..")@1#"
+		if HealingTab_Variables.ShowOverheal then
+			total = total + totalOver
 			sort(heal,function(a,b) return (a[2]+a[4])>(b[2]+b[4]) end)
 			_max = heal[1] and (heal[1][2]+heal[1][4]) or 0
-			HealingTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total + totalOver,hps,nil,nil,nil,nil,nil,nil,totalOver / max(total + totalOver,1))		
+		else
+			sort(heal,function(a,b) return a[2]>b[2] end)
+			_max = heal[1] and heal[1][2] or 0
 		end
+		reportData[2][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(total / activeFightLength)..")@1#"
+		HealingTab_SetLine({
+			line = 1,
+			name = L.BossWatcherReportTotal,
+			num = total,
+			total = total,
+			max = total,
+			alpha = HealingTab_Variables.ShowOverheal and totalOver,
+			dps = total / activeFightLength,
+			spellID = -1,
+			check = BWInterfaceFrame.GraphFrame:IsShown(),
+			checkState = true,
+		})
 		for i=1,#heal do
 			local class = nil
 			if heal[i][1] and heal[i][1] ~= "" then
@@ -8572,9 +9558,9 @@ function BWInterfaceFrameLoad()
 				{L.BossWatcherHealTooltipAbsorbed,ExRT.F.shortNumber(heal[i][5])},
 				{L.BossWatcherHealTooltipTotal,ExRT.F.shortNumber(heal[i][3])},
 				{" "," "},
-				{L.BossWatcherHealTooltipFromCrit,format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][6]),heal[i][6]/max(1,heal[i][2]+(HealingShowOverheal and heal[i][4] or 0))*100)},
-				{L.BossWatcherHealTooltipFromMs,format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][7]),heal[i][7]/max(1,heal[i][2]+(HealingShowOverheal and heal[i][4] or 0))*100)},
-				{ACTION_SPELL_MISSED_ABSORB,format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][8]),heal[i][8]/max(heal[i][2]+(HealingShowOverheal and heal[i][4] or 0),1)*100)},
+				{L.BossWatcherHealTooltipFromCrit,format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][6]),heal[i][6]/max(1,heal[i][2]+(HealingTab_Variables.ShowOverheal and heal[i][4] or 0))*100)},
+				{L.BossWatcherHealTooltipFromMs,format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][7]),heal[i][7]/max(1,heal[i][2]+(HealingTab_Variables.ShowOverheal and heal[i][4] or 0))*100)},
+				{ACTION_SPELL_MISSED_ABSORB,format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][8]),heal[i][8]/max(heal[i][2]+(HealingTab_Variables.ShowOverheal and heal[i][4] or 0),1)*100)},
 			}
 			sort(heal[i][9],DamageTab_Temp_SortingBy2Param)
 			if #heal[i][9] > 0 then
@@ -8582,29 +9568,86 @@ function BWInterfaceFrameLoad()
 				tooltipData[#tooltipData + 1] = {L.BossWatcherHealTooltipSources," "}
 			end
 			for j=1,min(5,#heal[i][9]) do
-				tooltipData[#tooltipData + 1] = {SubUTF8String(GetGUID(heal[i][9][j][1]),20)..GUIDtoText(" [%s]",heal[i][9][j][1]),format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][9][j][2]),min(heal[i][9][j][2] / max(1,heal[i][2]+(HealingShowOverheal and (heal[i][4]) or 0))*100,100))}
+				tooltipData[#tooltipData + 1] = {SubUTF8String(GetGUID(heal[i][9][j][1]),20)..GUIDtoText(" [%s]",heal[i][9][j][1]),format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][9][j][2]),min(heal[i][9][j][2] / max(1,heal[i][2]+(HealingTab_Variables.ShowOverheal and (heal[i][4]) or 0))*100,100))}
 			end
-			if not HealingShowOverheal then
-				local hps = heal[i][2]/activeFightLength
-				HealingTab_SetLine(i+1,icon,GetGUID(heal[i][1])..GUIDtoText(" [%s]",heal[i][1]),heal[i][2]/total,heal[i][2]/max(_max,1),heal[i][2],hps,class,heal[i][1],doEnemy,nil,tooltipData,nil,heal[i][8]/max(1,heal[i][2]),true)
-				reportData[2][#reportData[2]+1] = i..". "..GetGUID(heal[i][1]).." - "..ExRT.F.shortNumber(heal[i][2]).."@1@ ("..floor(hps)..")@1#"
-			else
-				local hps = (heal[i][2]+heal[i][4])/activeFightLength
-				HealingTab_SetLine(i+1,icon,GetGUID(heal[i][1])..GUIDtoText(" [%s]",heal[i][1]),(heal[i][2]+heal[i][4])/(total+totalOver),(heal[i][2]+heal[i][4])/max(_max,1),(heal[i][2]+heal[i][4]),hps,class,heal[i][1],doEnemy,nil,tooltipData,nil,heal[i][4] / max(heal[i][2]+heal[i][4],1),true)			
-				reportData[2][#reportData[2]+1] = i..". "..GetGUID(heal[i][1]).." - "..ExRT.F.shortNumber(heal[i][2]+heal[i][4]).."@1@ ("..floor(hps)..")@1#"
-			end
+			
+			local currHealing = heal[i][2]+(HealingTab_Variables.ShowOverheal and heal[i][4] or 0)
+			local hps = currHealing/activeFightLength
+			HealingTab_SetLine({
+				line = i+1,
+				icon = icon,
+				name = GetGUID(heal[i][1])..GUIDtoText(" [%s]",heal[i][1]),
+				num = currHealing,
+				total = total,
+				max = _max,
+				alpha = HealingTab_Variables.ShowOverheal and heal[i][4] or heal[i][8],
+				dps = hps,
+				class = class,
+				sourceGUID = heal[i][1],
+				doEnemy = doEnemy,
+				isTargetLine = true,
+				tooltip = tooltipData,
+				check = BWInterfaceFrame.GraphFrame:IsShown(),
+				checkState = i <= 3,
+			})
+			reportData[2][#reportData[2]+1] = i..". "..GetGUID(heal[i][1]).." - "..ExRT.F.shortNumber(currHealing).."@1@ ("..floor(hps)..")@1#"
 		end
 		for i=#heal+2,#BWInterfaceFrame.tab.tabs[2].lines do
 			BWInterfaceFrame.tab.tabs[2].lines[i]:Hide()
 		end
 		BWInterfaceFrame.tab.tabs[2].scroll:Height((#heal+1) * 20)
+		
+		
+		if not BWInterfaceFrame.GraphFrame:IsShown() then
+			return
+		end
+		local graph = {[-1]={}}
+		local currFight = module.db.data[module.db.nowNum]
+		local maxFight = #module.db.data[module.db.nowNum].fight
+		for seg=1,maxFight do
+			for sourceGUID,sourceData in pairs(currFight.fight[seg].heal) do
+				local owner = ExRT.F.Pets:getOwnerGUID(sourceGUID,GetPetsDB())
+				if owner then
+					sourceGUID = owner
+				end
+				if ExRT.F.table_len(HsourceVar) == 0 or HsourceVar[sourceGUID] then
+					for destGUID,destData in pairs(sourceData) do
+						local isEnemy = not ExRT.F.UnitIsFriendlyByUnitFlag2(currFight.reaction[destGUID])
+						if ExRT.F.table_len(HdestVar) == 0 or HdestVar[destGUID] then
+							if (isEnemy and doEnemy) or (not isEnemy and not doEnemy) then
+								if not graph[ destGUID ] then
+									graph[ destGUID ] = {}
+								end
+								if not graph[ destGUID ][seg] then
+									graph[ destGUID ][seg] = 0
+								end
+								if not graph[ -1 ][seg] then
+									graph[ -1 ][seg] = 0
+								end
+								for spellID,spellAmount in pairs(destData) do
+									if spellID == 98021 then	--Spirit Link
+										spellAmount = HealingTab_Variables.NULLSpellAmount
+									end
+									local healCount = spellAmount.amount - (HealingTab_Variables.ShowOverheal and 0 or spellAmount.over) + spellAmount.absorbed
+									graph[ destGUID ][seg] = graph[ destGUID ][seg] + healCount
+									graph[ -1 ][seg] = graph[ -1 ][seg] + healCount
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+		HealingTab_ReloadGraph(graph,maxFight,heal,false)
 	end
 	local function HealingTab_UpdateLinesFromSpells()
 		HealingTab_UpdateDropDownSource()
 		HealingTab_UpdateDropDownDest()
 		HealingTab_UpdateDropDownType(6)
-		Healing_Last_Func = HealingTab_UpdateLinesFromSpells
-		Healing_Back_Func = Healing_Last_Func
+		HealingTab_Variables.Last_Func = HealingTab_UpdateLinesFromSpells
+		HealingTab_Variables.Back_Func = HealingTab_UpdateLinesFromSpells
+		HealingTab_Variables.Back_sourceVar = nil
+		HealingTab_Variables.Back_destVar = nil
 		local doEnemy = nil
 		
 		local heal = {}
@@ -8668,7 +9711,17 @@ function BWInterfaceFrameLoad()
 			reportData[2][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(hps)..")@1#"
 			sort(heal,function(a,b) return a[2]>b[2] end)
 			_max = heal[1] and heal[1][2] or 0
-			HealingTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total,hps)
+			HealingTab_SetLine({
+				line = 1,
+				name = L.BossWatcherReportTotal,
+				num = total,
+				total = total,
+				max = total,
+				dps = hps,
+				spellID = -1,
+				check = BWInterfaceFrame.GraphFrame:IsShown(),
+				checkState = true,
+			})
 		end
 		for i=1,#heal do
 			local spellName,_,spellIcon = GetSpellInfo(heal[i][1])
@@ -8696,7 +9749,20 @@ function BWInterfaceFrameLoad()
 			end
 			do
 				local hps = heal[i][2]/activeFightLength
-				HealingTab_SetLine(i+1,spellIcon,spellName,heal[i][2]/total,heal[i][2]/max(_max,1),heal[i][2],hps,nil,nil,nil,"spell:"..heal[i][1],tooltipData,school)
+				HealingTab_SetLine({
+					line = i+1,
+					icon = spellIcon,
+					name = spellName,
+					total = total,
+					num = heal[i][2],
+					max = _max,
+					dps = hps,
+					spellID = heal[i][1],
+					tooltip = tooltipData,
+					school = school,
+					check = BWInterfaceFrame.GraphFrame:IsShown(),
+					checkState = i <= 3,
+				})
 				reportData[2][#reportData[2]+1] = i..". "..GetSpellLink(heal[i][1]).." - "..ExRT.F.shortNumber(heal[i][2]).."@1@ ("..floor(hps)..")@1#"
 			end
 		end
@@ -8704,6 +9770,52 @@ function BWInterfaceFrameLoad()
 			BWInterfaceFrame.tab.tabs[2].lines[i]:Hide()
 		end
 		BWInterfaceFrame.tab.tabs[2].scroll:Height((#heal+1) * 20)
+		
+		
+		if not BWInterfaceFrame.GraphFrame:IsShown() then
+			return
+		end
+
+		local graph = {[-1]={}}
+		local currFight = module.db.data[module.db.nowNum]
+		local maxFight = #module.db.data[module.db.nowNum].fight
+		for seg=1,maxFight do
+			for sourceGUID,sourceData in pairs(currFight.fight[seg].healFrom) do
+				local owner = ExRT.F.Pets:getOwnerGUID(sourceGUID,GetPetsDB())
+				if owner then
+					sourceGUID = owner
+				end
+				if ExRT.F.table_len(HsourceVar) == 0 or HsourceVar[sourceGUID] then
+					for destGUID,destData in pairs(sourceData) do
+						local isEnemy = not ExRT.F.UnitIsFriendlyByUnitFlag2(module.db.data[module.db.nowNum].reaction[destGUID])
+						if ExRT.F.table_len(HdestVar) == 0 or HdestVar[destGUID] then
+							if (isEnemy and doEnemy) or (not isEnemy and not doEnemy) then
+								for spellID,spellData in pairs(destData) do
+									for fromSpellID,fromSpellAmount in pairs(spellData) do
+										if owner then
+											fromSpellID = -fromSpellID
+										end
+										if not graph[ fromSpellID ] then
+											graph[ fromSpellID ] = {}
+										end
+										if not graph[ fromSpellID ][seg] then
+											graph[ fromSpellID ][seg] = 0
+										end
+										if not graph[ -1 ][seg] then
+											graph[ -1 ][seg] = 0
+										end
+
+										graph[ fromSpellID ][seg] = graph[ fromSpellID ][seg] + fromSpellAmount
+										graph[ -1 ][seg] = graph[ -1 ][seg] + fromSpellAmount
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+		HealingTab_ReloadGraph(graph,maxFight,heal,true)
 	end
 	
 	
@@ -8711,8 +9823,10 @@ function BWInterfaceFrameLoad()
 		HealingTab_UpdateDropDownSource()
 		HealingTab_UpdateDropDownDest()
 		HealingTab_UpdateDropDownType(4)
-		Healing_Last_Func = HealingTab_UpdateLinesReductions
-		Healing_Back_Func = Healing_Last_Func
+		HealingTab_Variables.Last_Func = HealingTab_UpdateLinesReductions
+		HealingTab_Variables.Back_Func = HealingTab_UpdateLinesReductions
+		HealingTab_Variables.Back_sourceVar = nil
+		HealingTab_Variables.Back_destVar = nil
 		BWInterfaceFrame.tab.tabs[2].showOverhealChk.tooltipText = L.BossWatcherHealReductionChkTooltip
 		local heal = {}
 		local total = 0
@@ -8763,7 +9877,7 @@ function BWInterfaceFrameLoad()
 			end
 		end
 		
-		if HealingShowOverheal then
+		if HealingTab_Variables.ShowOverheal then
 			local missData = {}
 			local avgDamage = {}
 			for destGUID,destData in pairs(module.db.nowData.damage) do
@@ -8869,7 +9983,17 @@ function BWInterfaceFrameLoad()
 		reportData[2][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(hps)..")@1#"
 		sort(heal,function(a,b) return a[2]>b[2] end)
 		_max = heal[1] and heal[1][2] or 0
-		HealingTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total,hps)
+		HealingTab_SetLine({
+			line = 1,
+			name = L.BossWatcherReportTotal,
+			num = total,
+			total = total,
+			max = total,
+			dps = hps,
+			spellID = -1,
+			check = BWInterfaceFrame.GraphFrame:IsShown(),
+			checkState = true,
+		})
 		
 		for i=1,#heal do
 			local class = nil
@@ -8899,20 +10023,174 @@ function BWInterfaceFrameLoad()
 				tooltipData[#tooltipData + 1] = {(spellTexture and "|T"..spellTexture..":0|t" or "")..(spellName or "spell:"..spellName),format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][5][j][2]),min(heal[i][5][j][2] / max(1,heal[i][2])*100,100))}
 			end
 			local hps = heal[i][2]/activeFightLength
-			HealingTab_SetLine(i+1,icon,GetGUID(heal[i][1])..GUIDtoText(" [%s]",heal[i][1]),heal[i][2]/total,heal[i][2]/max(_max,1),heal[i][2],hps,class,heal[i][1],nil,nil,tooltipData,nil,HealingShowOverheal and heal[i][4] / heal[i][2],nil,true)
+			HealingTab_SetLine({
+				line = i+1,
+				icon = icon,
+				name = GetGUID(heal[i][1])..GUIDtoText(" [%s]",heal[i][1]),
+				num = heal[i][2],
+				total = total,
+				max = _max,
+				alpha = HealingTab_Variables.ShowOverheal and heal[i][4],
+				dps = hps,
+				class = class,
+				sourceGUID = heal[i][1],
+				tooltip = tooltipData,
+				isReduction = true,
+				check = BWInterfaceFrame.GraphFrame:IsShown(),
+				checkState = i <= 3,
+			})
 			reportData[2][#reportData[2]+1] = i..". "..GetGUID(heal[i][1]).." - "..ExRT.F.shortNumber(heal[i][2]).."@1@ ("..floor(hps)..")@1#"
 		end
 		for i=#heal+2,#BWInterfaceFrame.tab.tabs[2].lines do
 			BWInterfaceFrame.tab.tabs[2].lines[i]:Hide()
 		end
 		BWInterfaceFrame.tab.tabs[2].scroll:Height((#heal+1) * 20)
+		
+		if not BWInterfaceFrame.GraphFrame:IsShown() then
+			return
+		end
+
+		local graph = {[-1]={}}
+		local currFight = module.db.data[module.db.nowNum]
+		local maxFight = #module.db.data[module.db.nowNum].fight
+		for seg=1,maxFight do
+			for destGUID,destData in pairs(currFight.fight[seg].reduction) do
+				if ExRT.F.table_len(HdestVar) == 0 or HdestVar[destGUID] then
+					for sourceGUID,sourceData in pairs(destData) do
+						for spellID,spellData in pairs(sourceData) do
+							for reductorGUID,reductorData in pairs(spellData) do
+								local owner = ExRT.F.Pets:getOwnerGUID(reductorGUID,GetPetsDB())
+								if owner then
+									reductorGUID = owner
+								end
+								if ExRT.F.table_len(HsourceVar) == 0 or HsourceVar[reductorGUID] then
+									local isFriendly = ExRT.F.UnitIsFriendlyByUnitFlag2(currFight.reaction[reductorGUID])
+									if isFriendly then
+										if not graph[ reductorGUID ] then
+											graph[ reductorGUID ] = {}
+										end
+										if not graph[ reductorGUID ][seg] then
+											graph[ reductorGUID ][seg] = 0
+										end
+										if not graph[ -1 ][seg] then
+											graph[ -1 ][seg] = 0
+										end
+										for reductionSpellID,reductionSpellAmount in pairs(reductorData) do
+											graph[ reductorGUID ][seg] = graph[ reductorGUID ][seg] + reductionSpellAmount
+											graph[ -1 ][seg] = graph[ -1 ][seg] + reductionSpellAmount
+										end
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+		if HealingTab_Variables.ShowOverheal then
+			local missData = {}
+			local avgDamage = {}
+			for seg=1,maxFight do
+				for destGUID,destData in pairs(currFight.fight[seg].damage) do
+					for sourceGUID,sourceData in pairs(destData) do
+						local avgData = avgDamage[sourceGUID]
+						if not avgData then
+							avgData = {}
+							avgDamage[sourceGUID] = avgData
+						end
+						for spellID,spellAmount in pairs(sourceData) do
+							local avgSpell = avgData[spellID]
+							if not avgSpell then
+								avgSpell = {0,0}
+								avgData[spellID] = avgSpell
+							end
+							
+							avgSpell[1] = avgSpell[1] + spellAmount.count
+							avgSpell[2] = avgSpell[2] + spellAmount.amount + spellAmount.blocked + spellAmount.absorbed
+							
+							if spellAmount.parry > 0 or spellAmount.dodge > 0 or spellAmount.miss > 0 then
+								local missDestData = missData[destGUID]
+								if not missDestData then
+									missDestData = {}
+									missData[destGUID] = missDestData
+								end
+								local missSpell = missDestData[sourceGUID]
+								if not missSpell then
+									missSpell = {}
+									missDestData[sourceGUID] = missSpell
+								end
+								local missSeg = missSpell[spellID]
+								if not missSeg then
+									missSeg = {}
+									missSpell[spellID] = missSeg
+								end
+								missSeg[seg] = {
+									parry = spellAmount.parry,
+									dodge = spellAmount.dodge,
+									miss = spellAmount.miss,
+								}
+							end
+						end
+					end
+				end
+			end
+			local reductionMissToSpell = {
+				dodge = 81,
+				parry = 82243,
+				miss = 154592,
+			}
+			for destGUID,destData in pairs(missData) do
+				local isFriendly = ExRT.F.UnitIsFriendlyByUnitFlag2(module.db.data[module.db.nowNum].reaction[destGUID] or 0)
+				if isFriendly and (ExRT.F.table_len(HsourceVar) == 0 or HsourceVar[destGUID]) then
+					for sourceGUID,sourceData in pairs(destData) do
+						for spellID,spellSegments in pairs(sourceData) do
+							local avgData = avgDamage[ sourceGUID ][ spellID ]
+							local avg = avgData[3]
+							if not avg then
+								if avgData[1] > 0 then
+									avg = avgData[2] / avgData[1]
+								else
+									avg = 0
+								end
+								avgData[3] = avg
+							end
+							if avg > 0 then
+								for reductionName,reductionSpellID in pairs(reductionMissToSpell) do
+									for seg=1,maxFight do
+										if spellSegments[seg] and spellSegments[seg][reductionName] > 0 then
+											local amount = avg * spellSegments[seg][reductionName]
+										
+											if not graph[ destGUID ] then
+												graph[ destGUID ] = {}
+											end
+											if not graph[ destGUID ][seg] then
+												graph[ destGUID ][seg] = 0
+											end
+											if not graph[ -1 ][seg] then
+												graph[ -1 ][seg] = 0
+											end
+											graph[ destGUID ][seg] = graph[ destGUID ][seg] + amount
+											graph[ -1 ][seg] = graph[ -1 ][seg] + amount
+										end
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+		
+		HealingTab_ReloadGraph(graph,maxFight,heal,false)
 	end
 	local function HealingTab_UpdateLinesReductionsSpells()
 		HealingTab_UpdateDropDownSource()
 		HealingTab_UpdateDropDownDest()
 		HealingTab_UpdateDropDownType(4,true)
-		Healing_Last_Func = HealingTab_UpdateLinesReductionsSpells
-		Healing_Back_Func = Healing_Last_Func
+		HealingTab_Variables.Last_Func = HealingTab_UpdateLinesReductionsSpells
+		HealingTab_Variables.Back_Func = HealingTab_UpdateLinesReductionsSpells
+		HealingTab_Variables.Back_sourceVar = nil
+		HealingTab_Variables.Back_destVar = nil
 		BWInterfaceFrame.tab.tabs[2].showOverhealChk.tooltipText = L.BossWatcherHealReductionChkTooltip
 		local heal = {}
 		local total = 0
@@ -8923,6 +10201,9 @@ function BWInterfaceFrameLoad()
 					for spellID,spellData in pairs(sourceData) do
 						for reductorGUID,reductorData in pairs(spellData) do
 							local owner = ExRT.F.Pets:getOwnerGUID(reductorGUID,GetPetsDB())
+							if owner then
+								reductorGUID = owner
+							end
 							if ExRT.F.table_len(HsourceVar) == 0 or HsourceVar[reductorGUID] then
 								local isFriendly = ExRT.F.UnitIsFriendlyByUnitFlag2(module.db.data[module.db.nowNum].reaction[reductorGUID])
 								if isFriendly then
@@ -8964,7 +10245,7 @@ function BWInterfaceFrameLoad()
 			end
 		end
 		
-		if HealingShowOverheal then
+		if HealingTab_Variables.ShowOverheal then
 			local missData = {}
 			local avgDamage = {}
 			for destGUID,destData in pairs(module.db.nowData.damage) do
@@ -9079,7 +10360,17 @@ function BWInterfaceFrameLoad()
 		reportData[2][2] = L.BossWatcherReportTotal.." - "..ExRT.F.shortNumber(total).."@1@ ("..floor(hps)..")@1#"
 		sort(heal,function(a,b) return a[2]>b[2] end)
 		_max = heal[1] and heal[1][2] or 0
-		HealingTab_SetLine(1,"",L.BossWatcherReportTotal,totalIsFull,totalIsFull,total,hps)
+		HealingTab_SetLine({
+			line = 1,
+			name = L.BossWatcherReportTotal,
+			total = total,
+			num = total,
+			max = total,
+			dps = hps,
+			spellID = -1,
+			check = BWInterfaceFrame.GraphFrame:IsShown(),
+			checkState = true,
+		})
 		
 		for i=1,#heal do
 			local isPetAbility = heal[i][1] < 0
@@ -9114,17 +10405,177 @@ function BWInterfaceFrameLoad()
 				tooltipData[#tooltipData + 1] = {(spellTexture and "|T"..spellTexture..":0|t" or "")..(spellName or "spell:"..spellName),format("%s (%.1f%%)",ExRT.F.shortNumber(heal[i][5][j][2]),min(heal[i][5][j][2] / max(1,heal[i][2])*100,100))}
 			end
 			local hps = heal[i][2]/activeFightLength
-			HealingTab_SetLine(i+1,spellIcon,spellName,heal[i][2]/total,heal[i][2]/max(_max,1),heal[i][2],hps,nil,nil,nil,"spell:"..heal[i][1],tooltipData,school,HealingShowOverheal and heal[i][4] / heal[i][2])
+			HealingTab_SetLine({
+				line = i+1,
+				icon = spellIcon,
+				name = spellName,
+				total = total,
+				num = heal[i][2],
+				alpha = HealingTab_Variables.ShowOverheal and heal[i][4],
+				max = _max,
+				dps = hps,
+				spellID = heal[i][1],
+				tooltip = tooltipData,
+				school = school,
+				isPet = isPetAbility,
+				check = BWInterfaceFrame.GraphFrame:IsShown(),
+				checkState = i <= 3,
+			})
 			reportData[2][#reportData[2]+1] = i..". "..(isPetAbility and L.BossWatcherPetText..": " or "")..GetSpellLink(heal[i][1]).." - "..ExRT.F.shortNumber(heal[i][2]).."@1@ ("..floor(hps)..")@1#"
+
+			if isPetAbility then
+				heal[i][1] = -heal[i][1]
+			end
 		end
 		for i=#heal+2,#BWInterfaceFrame.tab.tabs[2].lines do
 			BWInterfaceFrame.tab.tabs[2].lines[i]:Hide()
 		end
 		BWInterfaceFrame.tab.tabs[2].scroll:Height((#heal+1) * 20)
+		
+		if not BWInterfaceFrame.GraphFrame:IsShown() then
+			return
+		end
+
+		local graph = {[-1]={}}
+		local currFight = module.db.data[module.db.nowNum]
+		local maxFight = #module.db.data[module.db.nowNum].fight
+		for seg=1,maxFight do
+			for destGUID,destData in pairs(currFight.fight[seg].reduction) do
+				if ExRT.F.table_len(HdestVar) == 0 or HdestVar[destGUID] then
+					for sourceGUID,sourceData in pairs(destData) do
+						for spellID,spellData in pairs(sourceData) do
+							for reductorGUID,reductorData in pairs(spellData) do
+								local owner = ExRT.F.Pets:getOwnerGUID(reductorGUID,GetPetsDB())
+								if owner then
+									reductorGUID = owner
+								end
+								if ExRT.F.table_len(HsourceVar) == 0 or HsourceVar[reductorGUID] then
+									local isFriendly = ExRT.F.UnitIsFriendlyByUnitFlag2(currFight.reaction[reductorGUID])
+									if isFriendly then
+										for reductionSpellID,reductionSpellAmount in pairs(reductorData) do
+											if owner then
+												reductionSpellID = -reductionSpellID
+											end
+											if not graph[ reductionSpellID ] then
+												graph[ reductionSpellID ] = {}
+											end
+											if not graph[ reductionSpellID ][seg] then
+												graph[ reductionSpellID ][seg] = 0
+											end
+											if not graph[ -1 ][seg] then
+												graph[ -1 ][seg] = 0
+											end
+											graph[ reductionSpellID ][seg] = graph[ reductionSpellID ][seg] + reductionSpellAmount
+											graph[ -1 ][seg] = graph[ -1 ][seg] + reductionSpellAmount
+										end
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+		if HealingTab_Variables.ShowOverheal then
+			local missData = {}
+			local avgDamage = {}
+			for seg=1,maxFight do
+				for destGUID,destData in pairs(currFight.fight[seg].damage) do
+					for sourceGUID,sourceData in pairs(destData) do
+						local avgData = avgDamage[sourceGUID]
+						if not avgData then
+							avgData = {}
+							avgDamage[sourceGUID] = avgData
+						end
+						for spellID,spellAmount in pairs(sourceData) do
+							local avgSpell = avgData[spellID]
+							if not avgSpell then
+								avgSpell = {0,0}
+								avgData[spellID] = avgSpell
+							end
+							
+							avgSpell[1] = avgSpell[1] + spellAmount.count
+							avgSpell[2] = avgSpell[2] + spellAmount.amount + spellAmount.blocked + spellAmount.absorbed
+							
+							if spellAmount.parry > 0 or spellAmount.dodge > 0 or spellAmount.miss > 0 then
+								local missDestData = missData[destGUID]
+								if not missDestData then
+									missDestData = {}
+									missData[destGUID] = missDestData
+								end
+								local missSpell = missDestData[sourceGUID]
+								if not missSpell then
+									missSpell = {}
+									missDestData[sourceGUID] = missSpell
+								end
+								local missSeg = missSpell[spellID]
+								if not missSeg then
+									missSeg = {}
+									missSpell[spellID] = missSeg
+								end
+								missSeg[seg] = {
+									parry = spellAmount.parry,
+									dodge = spellAmount.dodge,
+									miss = spellAmount.miss,
+								}
+							end
+						end
+					end
+				end
+			end
+			local reductionMissToSpell = {
+				dodge = 81,
+				parry = 82243,
+				miss = 154592,
+			}
+			for destGUID,destData in pairs(missData) do
+				local isFriendly = ExRT.F.UnitIsFriendlyByUnitFlag2(module.db.data[module.db.nowNum].reaction[destGUID] or 0)
+				if isFriendly and (ExRT.F.table_len(HsourceVar) == 0 or HsourceVar[destGUID]) then
+					for sourceGUID,sourceData in pairs(destData) do
+						for spellID,spellSegments in pairs(sourceData) do
+							local avgData = avgDamage[ sourceGUID ][ spellID ]
+							local avg = avgData[3]
+							if not avg then
+								if avgData[1] > 0 then
+									avg = avgData[2] / avgData[1]
+								else
+									avg = 0
+								end
+								avgData[3] = avg
+							end
+							if avg > 0 then
+								for reductionName,reductionSpellID in pairs(reductionMissToSpell) do
+									for seg=1,maxFight do
+										if spellSegments[seg] and spellSegments[seg][reductionName] > 0 then
+											local amount = avg * spellSegments[seg][reductionName]
+										
+											if not graph[ reductionSpellID ] then
+												graph[ reductionSpellID ] = {}
+											end
+											if not graph[ reductionSpellID ][seg] then
+												graph[ reductionSpellID ][seg] = 0
+											end
+											if not graph[ -1 ][seg] then
+												graph[ -1 ][seg] = 0
+											end
+											graph[ reductionSpellID ][seg] = graph[ reductionSpellID ][seg] + amount
+											graph[ -1 ][seg] = graph[ -1 ][seg] + amount
+										end
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+		HealingTab_ReloadGraph(graph,maxFight,heal,true)
 	end
 
 	
 	local function HealingTab_SelectDropDownSource(self,arg,doEnemy,doSpells,isReduction_isFromSpells)
+		local Back_destVar = ExRT.F.table_copy2(HdestVar)
+		local Back_sourceVar = ExRT.F.table_copy2(HsourceVar)
 		wipe(HsourceVar)
 		ELib:DropDownClose()
 		if arg then
@@ -9143,6 +10594,8 @@ function BWInterfaceFrameLoad()
 		end
 		if isReduction_isFromSpells == -1 then
 			HealingTab_UpdateLinesFromSpells()
+			HealingTab_Variables.Back_destVar = Back_destVar
+			HealingTab_Variables.Back_sourceVar = Back_sourceVar
 			return
 		end
 		if isReduction_isFromSpells then
@@ -9159,6 +10612,8 @@ function BWInterfaceFrameLoad()
 					HealingTab_UpdateLinesReductionsSpells()
 				end
 			end
+			HealingTab_Variables.Back_destVar = Back_destVar
+			HealingTab_Variables.Back_sourceVar = Back_sourceVar
 			return
 		end
 		if not doSpells then
@@ -9178,9 +10633,13 @@ function BWInterfaceFrameLoad()
 		else
 			HealingTab_UpdateLinesSpell(doEnemy)
 		end
+		HealingTab_Variables.Back_destVar = Back_destVar
+		HealingTab_Variables.Back_sourceVar = Back_sourceVar
 	end
 	local function HealingTab_SelectDropDownDest(self,arg,doEnemy,doSpells,isReduction_isFromSpells)
 		ELib:DropDownClose()
+		local Back_destVar = ExRT.F.table_copy2(HdestVar)
+		local Back_sourceVar = ExRT.F.table_copy2(HsourceVar)
 		wipe(HdestVar)
 		if arg then
 			HdestVar[arg] = true
@@ -9198,6 +10657,8 @@ function BWInterfaceFrameLoad()
 		end
 		if isReduction_isFromSpells == -1 then
 			HealingTab_UpdateLinesFromSpells()
+			HealingTab_Variables.Back_destVar = Back_destVar
+			HealingTab_Variables.Back_sourceVar = Back_sourceVar
 			return
 		end
 		if isReduction_isFromSpells then
@@ -9214,6 +10675,8 @@ function BWInterfaceFrameLoad()
 					HealingTab_UpdateLinesReductionsSpells()
 				end
 			end
+			HealingTab_Variables.Back_destVar = Back_destVar
+			HealingTab_Variables.Back_sourceVar = Back_sourceVar
 			return
 		end
 		if not doSpells then
@@ -9230,6 +10693,8 @@ function BWInterfaceFrameLoad()
 		else
 			HealingTab_UpdateLinesSpell(doEnemy)
 		end
+		HealingTab_Variables.Back_destVar = Back_destVar
+		HealingTab_Variables.Back_sourceVar = Back_sourceVar
 	end
 	
 	local function HealingTab_CheckDropDownSource(self,checked)
@@ -9238,7 +10703,7 @@ function BWInterfaceFrameLoad()
 		else
 			HsourceVar[self.arg1] = nil
 		end
-		Healing_Last_Func(self.arg2)
+		HealingTab_Variables.Last_Func(self.arg2)
 	end
 	local function HealingTab_CheckDropDownDest(self,checked)
 		if checked then
@@ -9246,7 +10711,7 @@ function BWInterfaceFrameLoad()
 		else
 			HdestVar[self.arg1] = nil
 		end
-		Healing_Last_Func(self.arg2)
+		HealingTab_Variables.Last_Func(self.arg2)
 	end
 
 	local function HealingTab_HPS(doEnemy,doSpells,doNotUpdateLines,isFromSpells)		
@@ -9468,31 +10933,76 @@ function BWInterfaceFrameLoad()
 	
 	tab.showOverhealChk = ELib:Check(tab,""):Point(833,-50):Tooltip(L.BossWatcherHealShowOver):OnClick(function (self)
 		if self:GetChecked() then
-			HealingShowOverheal = true
+			HealingTab_Variables.ShowOverheal = true
 		else
-			HealingShowOverheal = false
+			HealingTab_Variables.ShowOverheal = false
 		end
-		Healing_Last_Func(Healing_Last_doEnemy,Healing_Last_doReduction)
+		HealingTab_Variables.Last_Func(HealingTab_Variables.Last_doEnemy,HealingTab_Variables.Last_doReduction)
 	end)
 	
-	tab.scroll = ELib:ScrollFrame(tab):Size(835,508):Point("TOP",0,-80):Height(600)
+	tab.showGraphChk = ELib:Check(tab,"|cffffffff"..L.BossWatcherTabGraphics.." ",VExRT.BossWatcher.optionsHealingGraph):Point(833,-75):Left():OnClick(function (self)
+		local tab2 = BWInterfaceFrame.tab.tabs[2]
+		if self:GetChecked() then
+			tab2.scroll:Point("TOP",0,-280)
+			BWInterfaceFrame.GraphFrame:Show()
+		else
+			tab2.scroll:Point("TOP",0,-100)
+			BWInterfaceFrame.GraphFrame:Hide()
+		end
+		VExRT.BossWatcher.optionsHealingGraph = self:GetChecked()
+		HealingTab_Variables.Last_Func(HealingTab_Variables.Last_doEnemy,HealingTab_Variables.Last_doReduction)
+	end)
+	
+	tab.scroll = ELib:ScrollFrame(tab):Point("TOP",0,VExRT.BossWatcher.optionsHealingGraph and -280 or -100):Point("BOTTOM",0,10):Height(600)
+	tab.scroll:SetWidth(835)
+	tab.scroll.C:SetWidth(835)
 	tab.lines = {}
 	
-	tab.scroll:SetScript("OnMouseUp",function(self,button)
-		if button == "RightButton" and Healing_Back_Func then
+	local function HealingTab_RightClick_BackFunction()
+		if not HealingTab_Variables.Back_Func then
+			return
+		end
+		if HealingTab_Variables.Back_sourceVar then
+			HsourceVar = HealingTab_Variables.Back_sourceVar
+		else
 			wipe(HsourceVar)
+		end
+		if HealingTab_Variables.Back_destVar then
+			HdestVar = HealingTab_Variables.Back_destVar
+		else
 			wipe(HdestVar)
-			Healing_Back_Func(Healing_Last_doEnemy,Healing_Last_doReduction)
+		end
+		HealingTab_Variables.Back_Func(HealingTab_Variables.Last_doEnemy,HealingTab_Variables.Last_doReduction)
+	end
+	
+	tab.scroll:SetScript("OnMouseUp",function(self,button)
+		if button == "RightButton" then
+			HealingTab_RightClick_BackFunction()
 		end
 	end)
 	
+	local function HealingTab_Line_Check_OnClick(self)
+		local spellID = self:GetParent().spellID or self:GetParent().sourceGUID
+		if not spellID then
+			return
+		end
+		if self:GetParent().isPet and type(spellID) == 'number' then
+			spellID = -spellID
+		end
+		local graphData = BWInterfaceFrame.GraphFrame.G.data
+		local findPos = ExRT.F.table_find(graphData,spellID,'info_spellID')
+		if findPos then
+			graphData[ findPos ].hide = not self:GetChecked()
+		end
+		BWInterfaceFrame.GraphFrame.G:Reload()
+	end
 	local function HealingTab_Line_OnClick(self,button)
 		if button == "RightButton" then
-			if Healing_Back_Func then
-				wipe(HsourceVar)
-				wipe(HdestVar)
-				Healing_Back_Func(Healing_Last_doEnemy,Healing_Last_doReduction)
-			end
+			HealingTab_RightClick_BackFunction()
+			return
+		end
+		local x,y = ExRT.F.GetCursorPos(self)
+		if (self.check and self.check:IsShown() or (self:GetParent().check and self:GetParent().check:IsShown())) and x <= 30 then
 			return
 		end
 		local GUID = self.sourceGUID
@@ -9519,29 +11029,29 @@ function BWInterfaceFrameLoad()
 			if isReduction then
 				wipe(HsourceVar)
 				HsourceVar[GUID] = true
-				local lastFunc = Healing_Last_Func
+				local lastFunc = HealingTab_Variables.Last_Func
 				if isReduction == 2 then
 					HealingTab_UpdateLinesSpell(false,true)
 				else
 					HealingTab_UpdateLinesReductionsSpells()
 				end
-				Healing_Back_Func = lastFunc
+				HealingTab_Variables.Back_Func = lastFunc
 				return
 			end
-			if not isTargetLine then
+			local Back_destVar = ExRT.F.table_copy2(HdestVar)
+			local Back_sourceVar = ExRT.F.table_copy2(HsourceVar)
+			local lastFunc = HealingTab_Variables.Last_Func
+			if isTargetLine then
+				wipe(HdestVar)
+				HdestVar[GUID] = true
+			else
 				wipe(HsourceVar)
 				HsourceVar[GUID] = true
-				local lastFunc = Healing_Last_Func
-				HealingTab_UpdateLinesSpell(doEnemy)
-				Healing_Back_Func = lastFunc
-			else
-				wipe(HdestVar)
-				wipe(HsourceVar)
-				HdestVar[GUID] = true
-				local lastFunc = Healing_Last_Func
-				HealingTab_UpdateLinesPlayers(doEnemy)
-				Healing_Back_Func = lastFunc
 			end
+			HealingTab_UpdateLinesSpell(doEnemy)
+			HealingTab_Variables.Back_Func = lastFunc
+			HealingTab_Variables.Back_destVar = Back_destVar
+			HealingTab_Variables.Back_sourceVar = Back_sourceVar
 		end
 	end
 	local function HealingTab_LineOnEnter(self)
@@ -9576,20 +11086,57 @@ function BWInterfaceFrameLoad()
 			HealingTab_LineOnEnter(parent)
 		end
 	end
-	function HealingTab_SetLine(i,icon,name,overall_num,overall,total,dps,class,sourceGUID,doEnemy,spellLink,tooltip,school,overall_black,isTargetLine,isReduction)
+	function HealingTab_SetLine(dataTable)
+		local i,icon,name,overall_num,overall,total,dps,class,sourceGUID,doEnemy,spellLink,tooltip,school,overall_black,isTargetLine,isReduction
+		local showCheck,checkState,spellID,isPet
+
+		i = dataTable.line
+		icon = dataTable.icon or ""
+		name = dataTable.name
+		total = dataTable.num
+		overall_num = dataTable.num / max(dataTable.total,1)
+		overall = dataTable.num / max(dataTable.max,1)
+		if dataTable.alpha then
+			overall_black = dataTable.alpha / max(dataTable.num,1)
+		end
+		dps = dataTable.dps
+		class = dataTable.class
+		sourceGUID = dataTable.sourceGUID
+		doEnemy = dataTable.doEnemy
+		if dataTable.spellID and dataTable.spellID ~= -1 then
+			spellLink = "spell:"..dataTable.spellID
+		end
+		tooltip = dataTable.tooltip
+		school = dataTable.school
+		isTargetLine = dataTable.isTargetLine
+		isReduction = dataTable.isReduction
+		showCheck = dataTable.check
+		checkState = dataTable.checkState
+		spellID = dataTable.spellID
+		isPet = dataTable.isPet
+
 		if not BWInterfaceFrame.tab.tabs[2].lines[i] then
 			local line = CreateFrame("Button",nil,BWInterfaceFrame.tab.tabs[2].scroll.C)
 			BWInterfaceFrame.tab.tabs[2].lines[i] = line
 			line:SetSize(815,20)
 			line:SetPoint("TOPLEFT",0,-(i-1)*20)
 			
-			line.icon = ELib:Icon(line,nil,18):Point(5,-1)
-			line.name = ELib:Text(line,"name",12):Size(225,20):Point(25,0):Color():Shadow()
+			line.leftSide = CreateFrame("Frame",nil,line)
+			line.leftSide:SetSize(1,20)
+			line.leftSide:SetPoint("LEFT",5,0)
+			
+			line.check = ELib:Check(line,""):Point("TOPLEFT",5,-2)
+			line.check:SetSize(16,16)
+			line.check:SetScript("OnClick",HealingTab_Line_Check_OnClick)
+			
+			line.overall_num = ELib:Text(line,"45.76%",12):Size(70,20):Point(250,0):Right():Color():Shadow()
+
+			line.icon = ELib:Icon(line,nil,18):Point("TOPLEFT",line.leftSide,0,-1)
+			line.name = ELib:Text(line,"name",12):Size(0,20):Point("TOPLEFT",line.leftSide,25,0):Point("TOPRIGHT",line.overall_num,"TOPLEFT",0,0):Color():Shadow()
 			line.name:SetMaxLines(1)
 			
 			line.name_tooltip = CreateFrame('Button',nil,line)
 			line.name_tooltip:SetAllPoints(line.name)
-			line.overall_num = ELib:Text(line,"45.76%",12):Size(70,20):Point(250,0):Right():Color():Shadow()
 			line.overall = line:CreateTexture(nil, "BACKGROUND")
 			--line.overall:SetTexture(0.7, 0.1, 0.1, 1)
 			line.overall:SetTexture("Interface\\AddOns\\ExRT\\media\\bar24.tga")
@@ -9606,7 +11153,7 @@ function BWInterfaceFrameLoad()
 			line.back = line:CreateTexture(nil, "BACKGROUND")
 			line.back:SetAllPoints()
 			if i%2==0 then
-				line.back:SetColorTexture(0.3, 0.3, 0.3, 0.1)
+				line.back:SetTexture(0.3, 0.3, 0.3, 0.1)
 			end
 			line.name_tooltip:SetScript("OnClick",HealingTab_Line_OnClick)
 			line.name_tooltip:SetScript("OnEnter",HealingTab_Line_OnEnter)
@@ -9668,12 +11215,22 @@ function BWInterfaceFrameLoad()
 			SetSchoolColorsToLine(line.overall,school)
 			SetSchoolColorsToLine(line.overall_black,school)
 		end
+		if showCheck then
+			line.leftSide:SetPoint("LEFT",25,0)
+			line.check:SetChecked(checkState)
+			line.check:Show()
+		else
+			line.leftSide:SetPoint("LEFT",5,0)
+			line.check:Hide()
+		end
 		line.sourceGUID = sourceGUID
+		line.spellID = spellID
 		line.doEnemy = doEnemy
 		line.spellLink = spellLink
 		line.tooltip = tooltip
 		line.isTargetLine = isTargetLine
 		line.isReduction = isReduction
+		line.isPet = isPet
 		line:Show()
 	end
 	
@@ -9715,10 +11272,28 @@ function BWInterfaceFrameLoad()
 		infoFrame:Show()
 	end
 	
+	local function HealingTab_Graph_ZoomSecondUpdate_1(self)
+		self.ZoomSecondUpdate_arg1 = HealingTab_Variables.Last_Func
+		self.ZoomSecondUpdate_arg2 = HealingTab_Variables.Last_doEnemy
+		self.ZoomSecondUpdate_arg3 = HealingTab_Variables.Last_doReduction
+	end
+	local function HealingTab_Graph_ZoomSecondUpdate_2(self)
+		if self.ZoomSecondUpdate_arg1 then
+			self.ZoomSecondUpdate_arg1(self.ZoomSecondUpdate_arg2,self.ZoomSecondUpdate_arg3)
+		end
+	end
+	
 	tab:SetScript("OnShow",function (self)
 		BWInterfaceFrame.timeLineFrame:ClearAllPoints()
 		BWInterfaceFrame.timeLineFrame:SetPoint("TOP",self,"TOP",0,-10)
 		BWInterfaceFrame.timeLineFrame:Show()
+		
+		BWInterfaceFrame.GraphFrame:SetPoint("TOP",0,-80)
+		BWInterfaceFrame.GraphFrame.G.ZoomSecondUpdate_1 = HealingTab_Graph_ZoomSecondUpdate_1
+		BWInterfaceFrame.GraphFrame.G.ZoomSecondUpdate_2 = HealingTab_Graph_ZoomSecondUpdate_2
+		if BWInterfaceFrame.tab.tabs[2].showGraphChk:GetChecked() then
+			BWInterfaceFrame.GraphFrame:Show()
+		end
 	
 		BWInterfaceFrame.report:Show()
 		if BWInterfaceFrame.nowFightID ~= self.lastFightID then
@@ -9730,11 +11305,14 @@ function BWInterfaceFrameLoad()
 			else
 				HealingTab_AddSpecialInfo()
 			end
+		elseif BWInterfaceFrame.tab.tabs[2].showGraphChk:GetChecked() and HealingTab_Variables.Last_Func then
+			HealingTab_Variables.Last_Func(HealingTab_Variables.Last_doEnemy,HealingTab_Variables.Last_doReduction)
 		end
 	end)
 	tab:SetScript("OnHide",function (self)
 		BWInterfaceFrame.timeLineFrame:Hide()
 		BWInterfaceFrame.report:Hide()
+		BWInterfaceFrame.GraphFrame:Hide()
 	end)
 	
 	
@@ -9783,7 +11361,6 @@ function BWInterfaceFrameLoad()
 			[57330]=true,
 		}
 	}
-	-- DeathTab_Variables.
 	
 	local DeathTab_SetLine = nil
 		
@@ -10039,8 +11616,14 @@ function BWInterfaceFrameLoad()
 		GameTooltip_Hide()
 		ELib.Tooltip:HideAdd()
 	end
-	local function DeathTab_LineOnClick(self)
+	local function DeathTab_LineOnClick(self,button)
 		if not self.clickToLog then
+			if button == "RightButton" then
+				DeathTab_SetType(nil,DeathTab_Variables.isEnemy)
+			end
+			return
+		end
+		if button == "RightButton" then
 			return
 		end
 		local name = self.text:GetText()
@@ -10061,12 +11644,14 @@ function BWInterfaceFrameLoad()
 			
 			line.back = line:CreateTexture(nil, "BACKGROUND")
 			line.back:SetAllPoints()
-			line.back:SetColorTexture( 1, 1, 1, 1)
+			line.back:SetTexture( 1, 1, 1, 1)
 			line.back:SetGradientAlpha("HORIZONTAL", 0, 0, 0, 0, 0, 0, 0, 0)
 			
 			line:SetScript("OnEnter",DeathTab_LineOnEnter)
 			line:SetScript("OnLeave",DeathTab_LineOnLeave)
 			line:SetScript("OnClick",DeathTab_LineOnClick)
+			
+			line:RegisterForClicks("LeftButtonDown","RightButtonDown")
 		end
 		line.time:SetText(textTime)
 		line.text:SetText(textText)
@@ -10438,7 +12023,7 @@ function BWInterfaceFrameLoad()
 		},
 		SelectedDot = nil,
 		DebuffsBlackList = {
-			[160029] = true,	--Resurrecting; haven't CLEU event for removing
+			[160029] = not ExRT.is7,	--Resurrecting; haven't CLEU event for removing
 		},
 	}
 	--[[
@@ -10512,6 +12097,24 @@ function BWInterfaceFrameLoad()
 		[1784] = PositionsTab_Variables.Maps[1448][8],	--"Tyrant Velhari"
 		[1795] = PositionsTab_Variables.Maps[1448][9],	--"Mannoroth"
 		[1799] = PositionsTab_Variables.Maps[1448][10],	--"Archimonde"
+		
+		[1841] = nil,	--"Ursoc"
+		[1853] = nil,	--"Plague Dragon": <Nythendra>
+		[1873] = nil,	--"Il'gynoth, The Heart of Corruption"
+		[1854] = nil,	--"Dragons of Nightmare"
+		[1864] = nil,	--"Xavius"
+		[1876] = nil,	--"Elerethe Renferal"
+		[1877] = nil,	--"Cenarius"
+		
+		[1849] = nil,	--"Skorpyron"
+		[1865] = nil,	--"Anomaly"
+		[1867] = nil,	--"Trilliax"
+		[1842] = nil,	--"Krosus"
+		[1862] = nil,	--"Tichondrius"
+		[1871] = nil,	--"Spellblade Aluriel"
+		[1863] = nil,	--"Astromancer"
+		[1872] = nil,	--"Grand Magistrix Elisande"
+		[1866] = nil,	--"Gul'dan"
 	}
 	
 	local function PositionsTab_UpdatePositions(segment)
@@ -10545,9 +12148,47 @@ function BWInterfaceFrameLoad()
 			tab.unitFrames[i]:Update(time)
 		end
 	end
+	local function PositionsTab_UpdateDistanceEarned(segment,segmentsData)
+		local tab = BWInterfaceFrame.tab.tabs[10]
+		local result = L.BossWatcherDistanceEarned..": "
+		if segmentsData[segment] then
+			local tmp = {}
+			local total = 0
+			for name,dist in pairs(segmentsData[segment]) do
+				local unitGUID = ExRT.F.table_find2(module.db.data[module.db.nowNum].raidguids,name)
+				local colorStr
+				if unitGUID then
+					local _,class = GetPlayerInfoByGUID(unitGUID)
+					if class then
+						colorStr = ExRT.F.classColor(class)
+					end
+				end
+				if name:find("%-") then
+					name = name:match("^([^%-]+)%-")
+				end
+				tmp[#tmp+1] = {"|c"..(colorStr or "ffbbbbbb")..name.."|r",dist}
+				total = total + dist
+			end
+			result = result .. format("%dy",total) .. "|n"
+			sort(tmp,function(a,b) return a[2]>b[2] end)
+			for i=1,#tmp do
+				result = result .. tmp[i][1] .. ": ".. format("%dy",tmp[i][2]) .. (i < #tmp and "|n" or "")
+			end
+			tab.EarnedFrame:SetHeight(10*(#tmp+1))
+			if #tmp == 0 then
+				result = " -- "
+			end
+		end
+		tab.EarnedFrame.text:SetText(result)
+		local w = tab.EarnedFrame.text:GetStringWidth()
+		tab.EarnedFrame:SetWidth(w)
+	end
 	
 	tab.timeSlider = ELib:Slider(tab,L.BossWatcherPositionsSlider):Size(780):Point("TOP",-10,-20):Range(1,1):OnChange(function (self,value)
 		value = ExRT.F.Round(value)
+		
+		PositionsTab_UpdateDistanceEarned(value,self.distanceEarned)
+		
 		local time = floor(value / 2)
 		self.tooltipText = format("%d:%02d",time / 60,time % 60)
 		self:tooltipReload(self)
@@ -10780,6 +12421,41 @@ function BWInterfaceFrameLoad()
 			func = PositionsTab_SelectMapDropDown_SetValue,
 		}
 	end
+	
+	tab.EarnedFrame = CreateFrame("Frame",nil,tab.scroll)
+	tab.EarnedFrame:SetWidth(150)
+	tab.EarnedFrame:SetPoint("BOTTOMRIGHT",tab.SelectMapDropDown,"TOPRIGHT",0,5)
+	tab.EarnedFrame.background = ELib:Texture(tab.EarnedFrame,0.05,0.05,0.07,.7):Point('x')
+	ELib:Border(tab.EarnedFrame,1,0,0,0,1)
+	tab.EarnedFrame.text = ELib:Text(tab.EarnedFrame,"",10):Point('x'):Left():Top():Color()
+	
+	tab.EarnedFrame.close = ELib:Button(tab.EarnedFrame,"",1):Point("BOTTOMRIGHT",tab.EarnedFrame,"TOPRIGHT",0,0):Size(14,14):OnClick(function(self)
+		local parent = self:GetParent()
+		parent.EarnedFrameExploreButton:Show()
+		parent:Hide()
+		VExRT.BossWatcher.optionsPositionsDist = nil
+	end)
+	tab.EarnedFrame.close:SetHighlightTexture( ELib:Texture(tab.EarnedFrame.close,"Interface\\AddOns\\ExRT\\media\\DiesalGUIcons16x256x128"):Point('x'):Color(1,0,0,1):TexCoord(0.5,0.5625,0.5,0.625) )
+	tab.EarnedFrame.close:SetNormalTexture( ELib:Texture(tab.EarnedFrame.close,"Interface\\AddOns\\ExRT\\media\\DiesalGUIcons16x256x128"):Point('x'):Color(1,1,1,.7):TexCoord(0.5,0.5625,0.5,0.625) )
+	
+	tab.EarnedFrameExploreButton = ELib:Button(tab.scroll,"",1):Point("BOTTOMRIGHT",tab.SelectMapDropDown,"TOPRIGHT",-2,5):Size(16,16):Tooltip(L.BossWatcherDistanceEarned):OnClick(function(self)
+		self:Hide()
+		self.EarnedFrame:Show()
+		VExRT.BossWatcher.optionsPositionsDist = true
+	end)
+	tab.EarnedFrameExploreButton.EarnedFrame = tab.EarnedFrame
+	tab.EarnedFrame.EarnedFrameExploreButton = tab.EarnedFrameExploreButton
+	ELib:Border(tab.EarnedFrameExploreButton,1,0.24,0.25,0.30,1)
+	tab.EarnedFrameExploreButton.background = ELib:Texture(tab.EarnedFrameExploreButton,0,0,0,.3):Point('x')
+
+	tab.EarnedFrameExploreButton:SetHighlightTexture( ELib:Texture(tab.EarnedFrameExploreButton,"Interface\\AddOns\\ExRT\\media\\DiesalGUIcons16x256x128"):Point("TOPLEFT",-5,2):Point("BOTTOMRIGHT",5,-2):Color(1,1,1,1):TexCoord(0.25,0.3125,0.625,0.5) )
+	tab.EarnedFrameExploreButton:SetNormalTexture( ELib:Texture(tab.EarnedFrameExploreButton,"Interface\\AddOns\\ExRT\\media\\DiesalGUIcons16x256x128"):Point("TOPLEFT",-5,2):Point("BOTTOMRIGHT",5,-2):Color(1,1,1,.7):TexCoord(0.25,0.3125,0.625,0.5) )
+	
+	if VExRT.BossWatcher.optionsPositionsDist then
+		tab.EarnedFrameExploreButton:Hide()
+	else
+		tab.EarnedFrame:Hide()
+	end
 
 	local function PositionsTab_RaidFrame_UpdateHP(self,segment)
 		if not self.Unit then
@@ -10901,20 +12577,20 @@ function BWInterfaceFrameLoad()
 			frame.borderright:SetPoint("TOPLEFT",frame,"TOPRIGHT",0,0)
 			frame.borderright:SetPoint("BOTTOMRIGHT",frame,"BOTTOMRIGHT",1,0)
 		
-			frame.bordertop:SetColorTexture(0,0,0,1)
-			frame.borderbottom:SetColorTexture(0,0,0,1)
-			frame.borderleft:SetColorTexture(0,0,0,1)
-			frame.borderright:SetColorTexture(0,0,0,1)
+			frame.bordertop:SetTexture(0,0,0,1)
+			frame.borderbottom:SetTexture(0,0,0,1)
+			frame.borderleft:SetTexture(0,0,0,1)
+			frame.borderright:SetTexture(0,0,0,1)
 			
 			frame.back = frame:CreateTexture(nil, "BACKGROUND",nil,-5)
 			frame.back:SetSize(50,16)
 			frame.back:SetPoint("LEFT",0,0)
-			frame.back:SetColorTexture(.05,.05,.05,1)
+			frame.back:SetTexture(.05,.05,.05,1)
 
 			frame.hp = frame:CreateTexture(nil, "BACKGROUND",nil,0)
 			frame.hp:SetSize(50,16)
 			frame.hp:SetPoint("LEFT",0,0)
-			frame.hp:SetColorTexture(.3,.3,.3,1)
+			frame.hp:SetTexture(.3,.3,.3,1)
 			
 			frame.Update = PositionsTab_RaidFrame_UpdateHP
 			
@@ -10957,20 +12633,20 @@ function BWInterfaceFrameLoad()
 		frame.borderright:SetPoint("TOPLEFT",frame,"TOPRIGHT",0,0)
 		frame.borderright:SetPoint("BOTTOMRIGHT",frame,"BOTTOMRIGHT",1,0)
 	
-		frame.bordertop:SetColorTexture(0,0,0,1)
-		frame.borderbottom:SetColorTexture(0,0,0,1)
-		frame.borderleft:SetColorTexture(0,0,0,1)
-		frame.borderright:SetColorTexture(0,0,0,1)
+		frame.bordertop:SetTexture(0,0,0,1)
+		frame.borderbottom:SetTexture(0,0,0,1)
+		frame.borderleft:SetTexture(0,0,0,1)
+		frame.borderright:SetTexture(0,0,0,1)
 		
 		frame.back = frame:CreateTexture(nil, "BACKGROUND",nil,-5)
 		frame.back:SetSize(95,20)
 		frame.back:SetPoint("LEFT",0,0)
-		frame.back:SetColorTexture(.05,.05,.05,1)
+		frame.back:SetTexture(.05,.05,.05,1)
 
 		frame.hp = frame:CreateTexture(nil, "BACKGROUND",nil,0)
 		frame.hp:SetSize(95,20)
 		frame.hp:SetPoint("LEFT",0,0)
-		frame.hp:SetColorTexture(.3,.3,.3,1)
+		frame.hp:SetTexture(.3,.3,.3,1)
 		
 		frame.Update = PositionsTab_UnitFrame_UpdateHP
 		
@@ -11018,6 +12694,7 @@ function BWInterfaceFrameLoad()
 		local positionsData = module.db.data[module.db.nowNum].positionsData
 		local minX,maxX,minY,maxY
 		local knownMap = nil
+		local distanceEarned = {[1]={}}
 		
 		local encounterID = module.db.data[module.db.nowNum].encounterID
 		if encounterID and PositionsTab_Variables.BossToMap[encounterID] then
@@ -11182,7 +12859,30 @@ function BWInterfaceFrameLoad()
 			end
 		end
 		
+		for i=2,#positionsData do
+			distanceEarned[i] = {}
+			for name,data in pairs(positionsData[i]) do
+				distanceEarned[1][name] = 0
+				local prevData = positionsData[i-1] and positionsData[i-1][name]
+				if prevData then
+					distanceEarned[i][name] = 0
+				
+					local prevX,prevY = prevData[1],prevData[2]
+					local currX,currY = data[1],data[2]
+					
+					if currX and currY then
+						local dX = prevX - currX
+						local dY = prevY - currY
+						local dist = sqrt(dX * dX + dY * dY)
+						
+						distanceEarned[i][name] = dist + (distanceEarned[i-1] and distanceEarned[i-1][name] or 0)
+					end
+				end
+			end
+		end
+		
 		tab.timeSlider:SetMinMaxValues(1,max(1,#positionsData))
+		tab.timeSlider.distanceEarned = distanceEarned
 		
 		tab.scroll.C:SetScale(1)
 		tab.scroll.scrollH = 0

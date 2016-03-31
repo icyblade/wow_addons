@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1491, "DBM-Party-Legion", 3, 716)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14807 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14879 $"):sub(12, -3))
 mod:SetCreatureID(91797)
 mod:SetEncounterID(1812)
 mod:SetZone()
@@ -22,7 +22,7 @@ local specWarnBubbles				= mod:NewSpecialWarningSpell(193018, "-Tank", nil, nil,
 
 local timerQuakeCD					= mod:NewCDTimer(21.8, 193152, nil, nil, nil, 2)--21-25
 local timerCallSeasCD				= mod:NewNextTimer(30, 193051, nil, nil, nil, 2)
-local timerGroundSlamCD				= mod:NewCDTimer(24, 193093, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)--24-30
+local timerGroundSlamCD				= mod:NewCDTimer(19, 193093, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)--19-30
 local timerBubblesCD				= mod:NewNextTimer(32, 193018, nil, "-Tank", nil, 3, nil, DBM_CORE_DEADLY_ICON)
 
 local voiceQuake					= mod:NewVoice(193152)--range5
@@ -33,7 +33,7 @@ local voiceBubbles					= mod:NewVoice(193018, "-Tank")--takedamage
 mod:AddRangeFrameOption(5, 193152)
 
 function mod:OnCombatStart(delay)
-	timerGroundSlamCD:Start(6-delay)
+--	timerGroundSlamCD:Start(6-delay)--More data, 6-32? pssht
 	timerBubblesCD:Start(10-delay)
 	timerQuakeCD:Start(15-delay)
 	timerCallSeasCD:Start(20-delay)

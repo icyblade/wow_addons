@@ -55,6 +55,7 @@ TheArcway\Corstilax.lua
 TheArcway\GeneralXakal.lua
 TheArcway\Naltira.lua
 TheArcway\Vandros.lua
+TheArcway\ArcwayTrash.lua
 CourtofStars\Gerdo.lua
 CourtofStars\Talixae.lua
 CourtofStars\Melandrus.lua
@@ -70,6 +71,7 @@ VioletHold\PrincessThalena.lua
 VioletHold\Anubesset.lua
 VioletHold\Saelorn.lua
 VioletHold\FelLordBetrug.lua
+VioletHold\AVHTrash.lua
 GroveOfWarden\TirathonSaltheril.lua
 GroveOfWarden\Tormentorum.lua
 GroveOfWarden\Ashgolm.lua

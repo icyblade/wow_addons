@@ -1,6 +1,6 @@
 local GlobalAddonName, ExRT = ...
 
-local math_ceil, IsEncounterInProgress, abs, UnitHealth, UnitHealthMax, GetTime, format = math.ceil, IsEncounterInProgress, abs, UnitHealth, UnitHealthMax, GetTime, format
+local math_ceil, IsEncounterInProgress, abs, UnitHealth, UnitHealthMax, GetTime, format, tableCopy = math.ceil, IsEncounterInProgress, abs, UnitHealth, UnitHealthMax, GetTime, format, ExRT.F.table_copy2
 
 local VExRT = nil
 
@@ -10,10 +10,52 @@ local ELib,L = ExRT.lib,ExRT.L
 module.db.lasttimertopull = 0
 module.db.timertopull = 0
 module.db.firstmsg = false
-module.db.segmentToKill = 1
-module.db.maxSegments = 16	-- 0.5 sec every seg
 
 local timeToKillEnabled = nil
+
+module.db.classNames = ExRT.GDB.ClassList
+local defaultSpecTimers = {
+	[62] = 10,    -- Mage: Arcane
+	[63] = 10,    -- Mage: Fire
+	[64] = 10,    -- Mage: Frost
+	[65] = 10,    -- Paladin: Holy
+	[66] = 10,    -- Paladin: Protection
+	[70] = 10,    -- Paladin: Retribution
+	[71] = 10,    -- Warrior: Arms
+	[72] = 10,    -- Warrior: Fury
+	[73] = 10,    -- Warrior: Protection
+	[102] = 10,   -- Druid: Balance
+	[103] = 10, -- Druid: Feral
+	[104] = 10, -- Druid: Guardian
+	[105] = 10, -- Druid: Restoration
+	[250] = 10, -- Death Knight: Blood
+	[251] = 10, -- Death Knight: Frost
+	[252] = 10, -- Death Knight: Unholy
+	[253] = 10, -- Hunter: Beast Mastery
+	[254] = 10, -- Hunter: Marksmanship
+	[255] = 10, -- Hunter: Survival
+	[256] = 10, -- Priest: Discipline
+	[257] = 10, -- Priest: Holy
+	[258] = 10, -- Priest: Shadow
+	[259] = 10, -- Rogue: Assassination
+	[260] = 10, -- Rogue: Combat
+	[261] = 25, -- Rogue: Subtlety
+	[262] = 16, -- Shaman: Elemental
+	[263] = 10, -- Shaman: Enhancement
+	[264] = 10, -- Shaman: Restoration
+	[265] = 22, -- Warlock: Affliction
+	[266] = 10, -- Warlock: Demonology
+	[267] = 10, -- Warlock: Destruction
+	[268] = 10, -- Monk: Brewmaster
+	[269] = 10, -- Monk: Windwalker
+	[270] = 10, -- Monk: Mistweaver
+	[577] = 10, -- Demon Hunter: Havoc
+	[581] = 10, -- Demon Hunter: Vengeance	
+}
+
+module.db.specIcons = ExRT.GDB.ClassSpecializationIcons
+module.db.specByClass = ExRT.GDB.ClassSpecializationList
+module.db.localizatedClassNames = L.classLocalizate
 
 local function ToRaid(msg)
 	if IsInRaid() then
@@ -73,13 +115,43 @@ function module:timer(elapsed)
 	end
 end
 
-function ExRT.F:DoPull(inum)
+local function GetDynamicPullTime()
+	local time_needed = 10
+	local n = GetNumGroupMembers() or 0
+	if n == 0 then
+		local spec = ExRT.A.Inspect.db.inspectDB[ ExRT.SDB.charName ] and ExRT.A.Inspect.db.inspectDB[ ExRT.SDB.charName ].spec
+		if spec then
+			local currTime = VExRT.Timers.specTimes[spec] or defaultSpecTimers[spec] or 10
+			if currTime > time_needed then
+				time_needed = currTime
+			end
+		end
+	end
+	for i=1,n do
+		local name,_, subgroup, _, _, _, _, online = GetRaidRosterInfo(i)
+		if subgroup <= 6 and online then
+			local spec = ExRT.A.Inspect.db.inspectDB[name] and ExRT.A.Inspect.db.inspectDB[name].spec
+			if spec then
+				local currTime = VExRT.Timers.specTimes[spec] or defaultSpecTimers[spec] or 10
+				if currTime > time_needed then
+					time_needed = currTime
+				end
+			end
+		end
+	end
+	return time_needed
+end
+
+function ExRT.F:DoPull(inum,ignoreDRT)
 	if module.db.timertopull > 0 then
 		module.db.timertopull = 0
 		ToRaid(">>> "..L.timerattackcancel.." <<<")
 		CreateTimers(0,L.timerattack)
 	else
 		inum = tonumber(inum) or 10
+		if VExRT.Timers.useDPT and not ignoreDRT then
+			inum = GetDynamicPullTime()
+		end
 		module.db.firstmsg = true
 		module.db.lasttimertopull = inum + 1
 		module.db.timertopull = inum
@@ -89,31 +161,17 @@ end
 
 function module:slash(arg,msgDeformatted)
 	if arg == "pull" then
-		if module.db.timertopull > 0 then
-			module.db.timertopull = 0
-			ToRaid(">>> "..L.timerattackcancel.." <<<")
-			CreateTimers(0,L.timerattack)
-		else
-			module.db.firstmsg = true
-			module.db.lasttimertopull = 11
-			module.db.timertopull = 10
-			CreateTimers(10,L.timerattack)
-		end
+		ExRT.F:DoPull(10)
 	elseif arg:find("^pull ") then
-		if module.db.timertopull > 0 then
-			module.db.timertopull = 0
-			ToRaid(">>> "..L.timerattackcancel.." <<<")
-			CreateTimers(0,L.timerattack)
-		else
-			local id = arg:match("%d+")
-			if id then
-				id = tonumber(id)
-				module.db.firstmsg = true
-				module.db.lasttimertopull = id + 1
-				module.db.timertopull = id
-				CreateTimers(id,L.timerattack)
+		local sec = arg:match("%d+")
+		sec = tonumber(sec or "?")
+		if not sec then
+			if module.db.timertopull > 0 then
+				ExRT.F:DoPull()
 			end
+			return
 		end
+		ExRT.F:DoPull(sec,true)
 	elseif arg:find("^afk ") then
 		local id = arg:match("%d+")
 		if id then
@@ -140,6 +198,22 @@ function module:slash(arg,msgDeformatted)
 		local id = arg:match("%d+")
 		if id then
 			module.frame.total = -tonumber(id)
+		end
+	elseif arg == "dpt" then
+		local parentModule = ExRT.A.Inspect
+		if not parentModule then
+			return
+		end
+		if module.db.timertopull > 0 then
+			module.db.timertopull = 0
+			ToRaid(">>> "..L.timerattackcancel.." <<<")
+			CreateTimers(0, L.timerattack)
+		else
+			module.db.firstmsg = true
+			local time_needed = GetDynamicPullTime()
+			module.db.lasttimertopull = time_needed + 1
+			module.db.timertopull = time_needed
+			CreateTimers(time_needed,L.timerattack)
 		end	
 	end
 end
@@ -147,10 +221,12 @@ end
 function module.options:Load()
 	self:CreateTilte()
 
-	self.shtml1 = ELib:Text(self,L.timerstxt1,13):Size(650,200):Point(5,-30):Top()
-	self.shtml2 = ELib:Text(self,L.timerstxt2,13):Size(550,200):Point(105,-30):Top():Color()
+	self.shtml1 = ELib:Text(self,L.timerstxt1,12):Size(650,200):Point(5,-30):Top()
+	self.shtml2 = ELib:Text(self,L.timerstxt2,12):Size(550,200):Point(105,-30):Top():Color()
 	
-	self.chkEnable = ELib:Check(self,L.timerTimerFrame,VExRT.Timers.enabled):Point(5,-155):OnClick(function(self) 
+	self.TabTimerFrame = ELib:OneTab(self):Size(655,95):Point("TOP",0,-165)
+	
+	self.chkEnable = ELib:Check(self.TabTimerFrame,L.timerTimerFrame,VExRT.Timers.enabled):Point(10,-10):OnClick(function(self) 
 		if self:GetChecked() then
 			VExRT.Timers.enabled = true
 			module.frame:Show()
@@ -168,7 +244,7 @@ function module.options:Load()
 		end
 	end)
 	
-	self.chkOnlyInCombat = ELib:Check(self,L.TimerOnlyInCombat,VExRT.Timers.OnlyInCombat):Point(30,-180):OnClick(function(self) 
+	self.chkOnlyInCombat = ELib:Check(self.TabTimerFrame,L.TimerOnlyInCombat,VExRT.Timers.OnlyInCombat):Point(10,-35):OnClick(function(self) 
 		if self:GetChecked() then
 			VExRT.Timers.OnlyInCombat = true
 			if not (module.frame.inCombat or module.frame.encounter) then
@@ -182,7 +258,7 @@ function module.options:Load()
 		end
 	end)
 	
-	self.chkFixate = ELib:Check(self,L.cd2fix,VExRT.Timers.Lock):Point(5,-205):OnClick(function(self) 
+	self.chkFixate = ELib:Check(self.TabTimerFrame,L.cd2fix,VExRT.Timers.Lock):Point(338,-10):OnClick(function(self) 
 		if self:GetChecked() then
 			VExRT.Timers.Lock = true
 			module.frame:SetMovable(false)
@@ -194,7 +270,7 @@ function module.options:Load()
 		end
 	end)
 	
-	self.chkTimeToKill = ELib:Check(self,L.TimerTimeToKill,VExRT.Timers.timeToKill):Point(5,-230):Tooltip(L.TimerTimeToKillHelp):OnClick(function(self) 
+	self.chkTimeToKill = ELib:Check(self.TabTimerFrame,L.TimerTimeToKill,VExRT.Timers.timeToKill):Point(338,-35):Tooltip(L.TimerTimeToKillHelp):OnClick(function(self) 
 		if self:GetChecked() then
 			VExRT.Timers.timeToKill = true
 			timeToKillEnabled = true
@@ -205,7 +281,7 @@ function module.options:Load()
 		end
 	end)
 	
-	self.ButtonToCenter = ELib:Button(self,L.TimerResetPos):Size(255,20):Point(5,-255):Tooltip(L.TimerResetPosTooltip):OnClick(function()
+	self.ButtonToCenter = ELib:Button(self.TabTimerFrame,L.TimerResetPos):Size(255,20):Point(10,-60):Tooltip(L.TimerResetPosTooltip):OnClick(function()
 		VExRT.Timers.Left = nil
 		VExRT.Timers.Top = nil
 
@@ -213,6 +289,93 @@ function module.options:Load()
 		module.frame:SetPoint("CENTER",UIParent, "CENTER", 0, 0)
 	end) 
 	
+	self.TimerFrameStrataDropDown = ELib:DropDown(self.TabTimerFrame,275,8):Point(338,-60):Size(200):SetText(L.S_Strata)
+	local function TimerFrameStrataDropDown_SetVaule(_,arg)
+		VExRT.Timers.Strata = arg
+		ELib:DropDownClose()
+		for i=1,#self.TimerFrameStrataDropDown.List do
+			self.TimerFrameStrataDropDown.List[i].checkState = arg == self.TimerFrameStrataDropDown.List[i].arg1
+		end
+		module.frame:SetFrameStrata(arg)
+	end
+	for i,strataString in ipairs({"BACKGROUND","LOW","MEDIUM","HIGH","DIALOG","FULLSCREEN","FULLSCREEN_DIALOG","TOOLTIP"}) do
+		self.TimerFrameStrataDropDown.List[i] = {
+			text = strataString,
+			checkState = VExRT.Timers.Strata == strataString,
+			radio = true,
+			arg1 = strataString,
+			func = TimerFrameStrataDropDown_SetVaule,
+		}
+	end
+	
+	self.chkDPT = ELib:Check(self,L.TimerUseDptInstead,VExRT.Timers.useDPT):Point(5,-270):OnClick(function(self) 
+		if self:GetChecked() then
+			VExRT.Timers.useDPT = true
+		else
+			VExRT.Timers.useDPT = nil
+		end
+	end)
+	
+	local function SpecsEditBoxTextChanged(self,isUser)
+		if not isUser then
+			return
+		end
+		local spec = self.id
+		local val = tonumber(self:GetText())
+		if not val then
+			val = 0
+		elseif val > 60 then
+			val = 60
+		elseif val < 0 then
+			val = 0
+		end
+		self:SetText(val)
+		VExRT.Timers.specTimes[spec] = val
+	end
+	
+	self.scrollFrame = ELib:ScrollFrame(self):Size(645,284):Point("TOP",-3,-325):Height(600)
+	self.scrollFrameText = ELib:Text(self,L.TimerSpecTimerHeader,12):Size(620,30):Point("BOTTOMLEFT",self.scrollFrame,"TOPLEFT",5,5):Bottom()
+	self.scrollFrame.C.classTitles = {}
+	self.scrollFrame.C.classFrames = {}
+	for key, class in ipairs(module.db.classNames) do
+		
+		local column = (key-1) % 3
+		local row = math.floor((key-1) / 3)
+		local frame = CreateFrame("Frame",nil,self.scrollFrame.C)
+		self.scrollFrame.C.classFrames[class] = frame
+		frame:SetSize(210,26)
+		frame:SetPoint("TOPLEFT", 70 + 205 * column, -20 - 140 * row)
+		local className = module.db.localizatedClassNames[class] or class
+		self.scrollFrame.C.classTitles[class] = ELib:Text(frame,"\124c"..ExRT.F.classColor(class)..className.."\124r",13):Size(200,20):Point(0,0 ):Top()
+		frame.icon = frame:CreateTexture(nil, "BACKGROUND")
+		
+		self.scrollFrame.C.classFrames[class].specFrames = {}
+		for specRow, spec in ipairs(module.db.specByClass[class]) do
+			local specFrame = CreateFrame("Frame", nil, frame)
+			self.scrollFrame.C.classFrames[class].specFrames[spec] = specFrame
+			specFrame:SetSize(20, 26)
+			specFrame:SetPoint("TOPLEFT", -40, 0 - 22*specRow)
+			specFrame.icon = specFrame:CreateTexture(nil, "BACKGROUND")
+			specFrame.icon:SetTexture(module.db.specIcons[spec])
+			specFrame.icon:SetPoint("TOPLEFT", 0, 0)
+			specFrame.icon:SetSize(20,20)
+			local _,specName = GetSpecializationInfoByID(spec)
+			specFrame.specName = ELib:Text(specFrame,specName,13):Size(100,20):Point(22,-5):Top():FontSize(10)
+			specFrame.specEditBox = ELib:Edit(specFrame):Size(30,20):Point(120,0):Text(VExRT.Timers.specTimes[spec] or "10"):OnChange(SpecsEditBoxTextChanged)
+			specFrame.specEditBox.id = spec
+		end
+	end
+	self.scrollFrame.C.ButtonToDefaultTimers = ELib:Button(self.scrollFrame.C,L.TimerSpecTimerDefault):Size(255,20):Point("TOP",0,-560):OnClick(function()
+		VExRT.Timers.specTimes = tableCopy(defaultSpecTimers)
+		for key, class in ipairs(module.db.classNames) do
+			for specRow, spec in ipairs(module.db.specByClass[class]) do
+				local specFrame = self.scrollFrame.C.classFrames[class].specFrames[spec]
+				specFrame.specEditBox:SetText(VExRT.Timers.specTimes[spec])
+			end
+		end
+		
+	end) 
+
 	if not VExRT.Timers.enabled then
 		self.chkTimeToKill:SetChecked(nil)
 		self.chkTimeToKill:SetEnabled(false)
@@ -242,6 +405,14 @@ function module.main:ADDON_LOADED()
 		module.frame:SetMovable(false)
 		module.frame:EnableMouse(false)
 	end
+	if not VExRT.Timers.specTimes then
+		VExRT.Timers.specTimes = tableCopy(defaultSpecTimers)
+	end
+	
+	VExRT.Timers.Strata = VExRT.Timers.Strata or "HIGH"
+	
+	module.frame:SetFrameStrata(VExRT.Timers.Strata)
+	
 	module:RegisterTimer()
 	module:RegisterSlash()
 end
@@ -289,8 +460,6 @@ module.frame.killTmr = 0
 module.frame.txt = ELib:Text(module.frame,"00:00.0"):Size(77,27):Point("LEFT",11,0):Left():Font(ExRT.F.defFont,16):Color():Shadow():Outline()
 module.frame.killTime = ELib:Text(module.frame,""):Size(77,27):Point("TOP",module.frame,"BOTTOM",0,0):Top():Center():Font(ExRT.F.defFont,14):Color():Shadow():Outline()
 module:RegisterHideOnPetBattle(module.frame)
-
-module.frame:SetFrameStrata("HIGH")
 
 module.db.TTK = {}
 

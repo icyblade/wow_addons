@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1654, "DBM-Party-Legion", 2, 762)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14752 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14874 $"):sub(12, -3))
 mod:SetCreatureID(96512)
 mod:SetEncounterID(1836)
 mod:SetZone()
@@ -34,7 +34,7 @@ local voiceRampage				= mod:NewVoice(198379, "Tank")--defensive
 
 --mod:AddRangeFrameOption(5, 153396)
 
-function mod:ScytheTarget(targetname, uId)
+function mod:LeapTarget(targetname, uId)
 	if not targetname then
 		warnLeap:Show(DBM_CORE_UNKNOWN)
 		return

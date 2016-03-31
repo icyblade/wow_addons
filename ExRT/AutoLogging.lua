@@ -5,12 +5,8 @@ local VExRT = nil
 local module = ExRT.mod:New("AutoLogging",ExRT.L.Logging,nil,true)
 local ELib,L = ExRT.lib,ExRT.L
 
-module.db.raidIDs = {
-	[988]=true,	--BF
-	[994]=true,	--H
-	[1026]=true,	--HC
-	[-999]=true,	--All new raids
-}
+module.db.minRaidMapID = ExRT.SDB.charLevel > 100 and 1520 or 1205
+module.db.minPartyMapID = 1456
 
 function module.options:Load()
 	self:CreateTilte()
@@ -29,13 +25,23 @@ function module.options:Load()
 
 	self.shtml2 = ELib:Text(self,L.LoggingHelp1,12):Size(650,0):Point("TOP",self.shtml1,"BOTTOM",0,-15):Top()
 	
-	self.disableLFR =  ELib:Check(self,L.RaidCheckDisableInLFR,VExRT.Logging.disableLFR):Point("TOP",self.shtml2,"BOTTOM",0,-15):Point("LEFT",self,5,0):OnClick(function(self) 
+	self.disableLFR = ELib:Check(self,L.RaidCheckDisableInLFR,VExRT.Logging.disableLFR):Point("TOP",self.shtml2,"BOTTOM",0,-15):Point("LEFT",self,5,0):OnClick(function(self) 
 		if self:GetChecked() then
 			VExRT.Logging.disableLFR = true
 		else
 			VExRT.Logging.disableLFR = nil
 		end
 	end)
+	
+	if ExRT.is7 then
+		self.enable5ppLegion = ELib:Check(self,"5ppl: Legion",VExRT.Logging.enable5ppLegion):Point("TOPLEFT",self.disableLFR,0,-25):OnClick(function(self) 
+			if self:GetChecked() then
+				VExRT.Logging.enable5ppLegion = true
+			else
+				VExRT.Logging.enable5ppLegion = nil
+			end
+		end)
+	end
 end
 
 
@@ -51,57 +57,44 @@ end
 
 function module.main:ADDON_LOADED()
 	VExRT = _G.VExRT
-	VExRT.Logging = VExRT.Logging or {}
+	VExRT.Logging = VExRT.Logging or {
+		disableLFR = true,
+	}
 
 	if VExRT.Logging.enabled then
 		module:Enable()
 	end
 end
 
-local function GetCurrentMapAreaID_Fix()
+local function GetCurrentMapForLogging()
 	if VExRT.Logging.enabled then
-		if VExRT.Logging.disableLFR then
-			local _,zoneType,difficulty, _, _, _, _, mapID = GetInstanceInfo()
-			if difficulty == 7 or difficulty == 17 then
-				return 0
-			else
-				local zoneID = GetCurrentMapAreaID()
-				if ((zoneID and zoneID > 1026) or (tonumber(mapID) and mapID >= 1520)) and zoneType == 'raid' then
-					zoneID = -999
-				end
-				return zoneID
-			end
-		else
-			local _, _, _, _, _, _, _, mapID = GetInstanceInfo()
-			local zoneID = GetCurrentMapAreaID()
-			local _,zoneType = GetInstanceInfo()
-			if ((zoneID and zoneID > 1026) or (tonumber(mapID) and mapID >= 1520)) and zoneType == 'raid' then
-				zoneID = -999
-			end
-			return zoneID
+		local _, zoneType, difficulty, _, _, _, _, mapID = GetInstanceInfo()
+		if VExRT.Logging.disableLFR and (difficulty == 7 or difficulty == 17) then
+			return false
+		elseif zoneType == 'raid' and (tonumber(mapID) and mapID >= module.db.minRaidMapID) then
+			return true
+		elseif VExRT.Logging.enable5ppLegion and zoneType == 'party' and (tonumber(mapID) and mapID >= module.db.minPartyMapID) then
+			return true
 		end
-	else
-		return 0
 	end
+	return false
 end
 
-local prevZone = 0
+local prevZone = false
 local function ZoneNewFunction()
-	local zoneID = GetCurrentMapAreaID_Fix()
-	if module.db.raidIDs[zoneID] then
+	local zoneForLogging = GetCurrentMapForLogging()
+	if zoneForLogging then
 		LoggingCombat(true)
 		print('==================')
 		print(ExRT.L.LoggingStart)
 		print('==================')
-	else
-		if module.db.raidIDs[prevZone] and LoggingCombat() then
-			LoggingCombat(false)
-			print('==================')
-			print(ExRT.L.LoggingEnd)
-			print('==================')
-		end
+	elseif prevZone and LoggingCombat() then
+		LoggingCombat(false)
+		print('==================')
+		print(ExRT.L.LoggingEnd)
+		print('==================')
 	end
-	prevZone = zoneID
+	prevZone = zoneForLogging
 end
 
 function module.main:ZONE_CHANGED_NEW_AREA()

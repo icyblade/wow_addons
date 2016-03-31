@@ -419,6 +419,18 @@ function ExRT.F.table_copy(table1,table2)
 	end
 end
 
+function ExRT.F.table_copy2(table1)
+	local table2 = {}
+	for key,val in pairs(table1) do
+		if type(val) == 'table' then
+			table2[key] = ExRT.F.table_copy2(val)
+		else
+			table2[key] = val
+		end
+	end
+	return table2
+end
+
 function ExRT.F.table_wipe(arr)
 	if not arr or type(arr) ~= "table" then
 		return
@@ -584,6 +596,15 @@ function ExRT.F._unp(str)
 		d = d + strbyte(str, 1)
 	end
 	return d * 1000 + c
+end
+
+function ExRT.F.CreateAddonMsg(...)
+	local result = ""
+	for i=1,select('#',...) do
+		local a = select(i,...)
+		result = result..(result ~= "" and "\t" or "")..tostring(a)
+	end
+	return result
 end
 
 do
@@ -931,7 +952,6 @@ do
 end
 
 ---------------> Chat links hook <---------------
-
 do
 	local chatLinkFormat = "|HExRT:%s:0|h|cffffff00[ExRT: %s]|r|h"
 	local funcTable = {}
@@ -960,5 +980,174 @@ do
 		return chatLinkFormat:format(funcName,stringName)
 	end
 end
+---------------> Export Window <---------------
+do
+	local exportWindow
+	function ExRT.F:Export(stringData)
+		if not exportWindow then
+			exportWindow = ELib:Popup(ExRT.L.Export):Size(650,615)
+			exportWindow.Edit = ELib:MultiEdit(exportWindow):Point("TOP",0,-20):Size(640,575)
+			exportWindow.TextInfo = ELib:Text(exportWindow,ExRT.L.ExportInfo,11):Color():Point("BOTTOM",0,3):Size(640,15):Bottom():Left()
+			exportWindow:SetScript("OnHide",function(self)
+				self.Edit:SetText("")
+			end)
+		end
+		exportWindow.Edit:SetText(stringData)
+		exportWindow:NewPoint("CENTER",UIParent,0,0)
+		exportWindow:Show()
+		exportWindow.Edit.EditBox:HighlightText()
+		exportWindow.Edit.EditBox:SetFocus()
+	end
 
--------------------------
+end
+-------------------> Data <--------------------
+
+ExRT.GDB.ClassSpecializationIcons = {
+	[62] = "Interface\\Icons\\Spell_Holy_MagicalSentry",
+	[63] = "Interface\\Icons\\Spell_Fire_FireBolt02",
+	[64] = "Interface\\Icons\\Spell_Frost_FrostBolt02",
+	[65] = "Interface\\Icons\\Spell_Holy_HolyBolt",
+	[66] = "Interface\\Icons\\Ability_Paladin_ShieldoftheTemplar",
+	[70] = "Interface\\Icons\\Spell_Holy_AuraOfLight",
+	[71] = "Interface\\Icons\\Ability_Warrior_SavageBlow",
+	[72] = "Interface\\Icons\\Ability_Warrior_InnerRage",
+	[73] = "Interface\\Icons\\Ability_Warrior_DefensiveStance",
+	[102] = "Interface\\Icons\\Spell_Nature_StarFall",
+	[103] = "Interface\\Icons\\Ability_Druid_CatForm",
+	[104] = "Interface\\Icons\\Ability_Racial_BearForm",
+	[105] = "Interface\\Icons\\Spell_Nature_HealingTouch",
+	[250] = "Interface\\Icons\\Spell_Deathknight_BloodPresence",
+	[251] = "Interface\\Icons\\Spell_Deathknight_FrostPresence",
+	[252] = "Interface\\Icons\\Spell_Deathknight_UnholyPresence",
+	[253] = "INTERFACE\\ICONS\\ability_hunter_bestialdiscipline",
+	[254] = "Interface\\Icons\\Ability_Hunter_FocusedAim",
+	[255] = "INTERFACE\\ICONS\\ability_hunter_camouflage",
+	[256] = "Interface\\Icons\\Spell_Holy_PowerWordShield",
+	[257] = "Interface\\Icons\\Spell_Holy_GuardianSpirit",
+	[258] = "Interface\\Icons\\Spell_Shadow_ShadowWordPain",
+	[259] = "Interface\\Icons\\Ability_Rogue_Eviscerate",
+	[260] = "Interface\\Icons\\Ability_BackStab",
+	[261] = "Interface\\Icons\\Ability_Stealth",
+	[262] = "Interface\\Icons\\Spell_Nature_Lightning",
+	[263] = "Interface\\Icons\\Spell_Shaman_ImprovedStormstrike",
+	[264] = "Interface\\Icons\\Spell_Nature_MagicImmunity",
+	[265] = "Interface\\Icons\\Spell_Shadow_DeathCoil",
+	[266] = "Interface\\Icons\\Spell_Shadow_Metamorphosis",
+	[267] = "Interface\\Icons\\Spell_Shadow_RainOfFire",
+	[268] = "Interface\\Icons\\spell_monk_brewmaster_spec",
+	[269] = "Interface\\Icons\\spell_monk_windwalker_spec",
+	[270] = "Interface\\Icons\\spell_monk_mistweaver_spec",
+	[577] = "Interface\\Icons\\ability_demonhunter_specdps",
+	[581] = "Interface\\Icons\\ability_demonhunter_spectank",
+}
+
+ExRT.GDB.ClassList = ExRT.is7 and {
+	"WARRIOR",
+	"PALADIN",
+	"HUNTER",
+	"ROGUE",
+	"PRIEST",
+	"DEATHKNIGHT",
+	"SHAMAN",
+	"MAGE",
+	"WARLOCK",
+	"MONK",
+	"DRUID",
+	"DEMONHUNTER",
+} or {
+	"WARRIOR",
+	"PALADIN",
+	"HUNTER",
+	"ROGUE",
+	"PRIEST",
+	"DEATHKNIGHT",
+	"SHAMAN",
+	"MAGE",
+	"WARLOCK",
+	"MONK",
+	"DRUID",
+}
+
+ExRT.GDB.ClassSpecializationList = {
+	["WARRIOR"] = {71, 72, 73},
+	["PALADIN"] = {65, 66, 70},
+	["HUNTER"] = {253, 254, 255},
+	["ROGUE"] = {259, 260, 261},
+	["PRIEST"] = {256, 257, 258},
+	["DEATHKNIGHT"] = {250, 251, 252},
+	["SHAMAN"] = {262, 263, 264},
+	["MAGE"] = {62, 63, 64},
+	["WARLOCK"] = {265, 266, 267},
+	["MONK"] = {268, 269, 270},
+	["DRUID"] = {102, 103, 104, 105},
+	["DEMONHUNTER"] = {577, 581},
+}
+
+ExRT.GDB.ClassArmorType = {
+	WARRIOR="PLATE",
+	PALADIN="PLATE",
+	HUNTER="MAIL",
+	ROGUE="LEATHER",
+	PRIEST="CLOTH",
+	DEATHKNIGHT="PLATE",
+	SHAMAN="MAIL",
+	MAGE="CLOTH",
+	WARLOCK="CLOTH",
+	MONK="LEATHER",
+	DRUID="LEATHER",
+	DEMONHUNTER="LEATHER",
+}
+
+ExRT.GDB.ClassSpecializationRole = {
+	[62] = 'RANGE',
+	[63] = 'RANGE',
+	[64] = 'RANGE',
+	[65] = 'HEAL',
+	[66] = 'TANK',
+	[70] = 'MELEE',
+	[71] = 'MELEE',
+	[72] = 'MELEE',
+	[73] = 'TANK',
+	[102] = 'RANGE',
+	[103] = 'MELEE',
+	[104] = 'TANK',
+	[105] = 'HEAL',
+	[250] = 'TANK',
+	[251] = 'MELEE',
+	[252] = 'MELEE',
+	[253] = 'RANGE',
+	[254] = 'RANGE',
+	[255] = 'RANGE',
+	[256] = 'HEAL',
+	[257] = 'HEAL',
+	[258] = 'RANGE',
+	[259] = 'MELEE',
+	[260] = 'MELEE',
+	[261] = 'MELEE',
+	[262] = 'RANGE',
+	[263] = 'MELEE',
+	[264] = 'HEAL',
+	[265] = 'RANGE',
+	[266] = 'RANGE',
+	[267] = 'RANGE',
+	[268] = 'TANK',
+	[269] = 'MELEE',
+	[270] = 'HEAL',
+	[577] = 'MELEE',
+	[581] = 'TANK',
+}
+
+ExRT.GDB.ClassID = {
+	WARRIOR=1,
+	PALADIN=2,
+	HUNTER=3,
+	ROGUE=4,
+	PRIEST=5,
+	DEATHKNIGHT=6,
+	SHAMAN=7,
+	MAGE=8,
+	WARLOCK=9,
+	MONK=10,
+	DRUID=11,
+	DEMONHUNTER=12,
+}

@@ -3,6 +3,8 @@ local GlobalAddonName, ExRT = ...
 local module = ExRT.mod:New("Arrow",ExRT.L.Arrow,nil,true)
 local ELib,L = ExRT.lib,ExRT.L
 
+local VExRT = nil
+
 -- This file uses models and textures taken from TomTom. The 3d arrow model was created by Guillotine (curse.guillotine@gmail.com).
 
 --[[
@@ -30,12 +32,12 @@ local isWorldCoord
 
 local textureArrow,textureTop = "Interface\\AddOns\\ExRT\\media\\Arrow", "Interface\\AddOns\\ExRT\\media\\Arrow-UP"
 
-local pi, pi2 = math.pi, math.pi * 2
+local pi, pi2, pi05 = math.pi, math.pi * 2, math.pi * 0.5
 local floor = math.floor
 local sin, cos, atan2, sqrt, min = math.sin, math.cos, math.atan2, math.sqrt, math.min
 local GetPlayerMapPosition = GetPlayerMapPosition
 local GetCurrentMapZone, GetCurrentMapDungeonLevel, GetCurrentMapAreaID = GetCurrentMapZone, GetCurrentMapDungeonLevel, GetCurrentMapAreaID
-local GetTime, GGetPlayerFacing = GetTime, GetPlayerFacing
+local GetTime, GetPlayerFacing = GetTime, GetPlayerFacing
 local UnitPosition = UnitPosition
 
 --------------------
@@ -66,6 +68,7 @@ end)
 frame:SetScript("OnClick", function(self)
 	self:Hide()
 end)
+frame:SetClampedToScreen(true)
 local arrow = frame:CreateTexture(nil, "OVERLAY")
 arrow:SetTexture(textureArrow)
 arrow:SetAllPoints(frame)
@@ -127,19 +130,6 @@ local function mapPositionToCoords(x,y)
 	end
 	return coords[1] - x * (coords[1] - coords[3]),coords[2] - y * (coords[2] - coords[4])
 end
-arrowFrame.playerInTheWorld = function (player)
-	player = player or "player"
-	print( mapPositionToCoords(GetPlayerMapPosition(player)) )
-end
---/run GExRT.F.Arrow.playerInTheWorld()
-
-local GetPlayerFacing = function(...)
-	local result = GGetPlayerFacing(...)
-	if result < 0 then
-		result = result + pi2
-	end
-	return result
-end
 
 -----------------
 --  Map Sizes  --
@@ -176,7 +166,7 @@ function module:UpdateMapSizes()
 	
 	--[[
 		! Note:
-		GetCurrentMapDungeonLevel() > return 3001,-13.833,3938.75,611.333 instead 3938.75,611.333,3001,-13.833	[xB,yB,xT,xT instead xT,yT,xB,yB]
+		GetCurrentMapDungeonLevel() > return 3001,-13.833,3938.75,611.333 instead 3938.75,611.333,3001,-13.833	[xB,yB,xT,yT instead xT,yT,xB,yB]
 	]]
 end
 
@@ -264,12 +254,10 @@ do
 					end
 				end
 				txtrng:SetText(floor(distance))
+			elseif runAwayArrow then
+				arrow:SetVertexColor(1, 0.3, 0)
 			else
-				if runAwayArrow then
-					arrow:SetVertexColor(1, 0.3, 0)
-				else
-					arrow:SetVertexColor(1, 1, 0)
-				end
+				arrow:SetVertexColor(1, 1, 0)
 			end
 		end
 	end
@@ -281,58 +269,32 @@ end
 ------------------------
 --  OnUpdate Handler  --
 ------------------------
+
+local functionOnUpdateWorld,functionOnUpdateMap = nil
 do
 	local rotateState = 0
-	frame:SetScript("OnUpdate", function(self, elapsed)
-		--[[
-		if WorldMapFrame:IsShown() then -- it doesn't work while the world map frame is shown
-			arrow:Hide()
-			return
-		end
-		]]
+	
+	function functionOnUpdateWorld(self, elapsed)
 		if hideTime and GetTime() > hideTime then
 			frame:Hide()
 		end
-		arrow:Show()
-		-- the static arrow type is special because it doesn't depend on the player's orientation or position
-		--[[	--Doesn't used by exrt now, only waste cpu
-		if targetType == "static" then
-			return updateArrow(targetX) -- targetX contains the static angle to show
-		end
-		]]
 
-		local x, y 
+		local y, x = UnitPosition'player'
 		
-		if isWorldCoord then
-			y,x = UnitPosition'player'
-			if not x or not y then
-				self:Hide() 
-				return
-			end
-		else
-			x,y = GetPlayerMapPosition("player")
-			if x == 0 and y == 0 then
-				SetMapToCurrentZone()
-				x, y = GetPlayerMapPosition("player")
-				if x == 0 and y == 0 then
-					self:Hide() -- hide the arrow if you enter a zone without a map
-					return
-				end
-			end
+		if not y or not x then
+			self:Hide() 
+			return
 		end
 		
 		if targetType == "player" then
-			targetX, targetY = GetPlayerMapPosition(targetPlayer)
-			if targetX == 0 and targetY == 0 then
-				self:Hide() -- hide the arrow if the target doesn't exist. TODO: just hide the texture and add a timeout
+			targetY, targetX = UnitPosition(targetPlayer)
+			if not targetY or not targetX then
+				self:Hide() -- hide the arrow if the target doesn't exist
 			end
 		elseif targetType == "rotate" then
 			rotateState = rotateState + elapsed
 			targetX = x + cos(rotateState)
 			targetY = y + sin(rotateState)
-		end
-		if not targetX or not targetY then
-			return
 		end
 
 		local angle = atan2(x - targetX, targetY - y)
@@ -342,24 +304,71 @@ do
 			else
 				angle = pi - angle -- pi < angle < 2pi
 			end
+		elseif runAwayArrow then
+			angle = pi2 - angle -- pi < angle < 2pi
 		else
+			angle = pi - angle  -- 0 < angle < pi
+		end
+		
+		local player = GetPlayerFacing() - pi
+		if player < 0 then
+			player = pi2 + player
+		end
+		
+		local dX = (x - targetX)
+		local dY = (y - targetY)
+		
+		updateArrow(angle - player, sqrt(dX * dX + dY * dY))
+	end
+	
+	function functionOnUpdateMap(self, elapsed)
+		if hideTime and GetTime() > hideTime then
+			frame:Hide()
+		end
+		if targetType == "static" then
+			return updateArrow(targetX, 0) -- targetX contains the static angle to show
+		end
+
+		local x,y = GetPlayerMapPosition("player")
+		if x == 0 and y == 0 then
+			SetMapToCurrentZone()
+			x, y = GetPlayerMapPosition("player")
+			if x == 0 and y == 0 then
+				self:Hide() -- hide the arrow if you enter a zone without a map
+				return
+			end
+		end
+		
+		if targetType == "player" then
+			targetX, targetY = GetPlayerMapPosition(targetPlayer)
+			if targetX == 0 and targetY == 0 then
+				self:Hide() -- hide the arrow if the target doesn't exist
+			end
+		elseif targetType == "rotate" then
+			rotateState = rotateState + elapsed
+			targetX = x + cos(rotateState)
+			targetY = y + sin(rotateState)
+		end
+
+		local angle = atan2(x - targetX, targetY - y)
+		if angle <= 0 then -- -pi < angle < pi but we need/want a value between 0 and 2 pi
 			if runAwayArrow then
-				angle = pi2 - angle -- pi < angle < 2pi
+				angle = -angle -- 0 < angle < pi
 			else
-				angle = pi - angle  -- 0 < angle < pi
+				angle = pi - angle -- pi < angle < 2pi
 			end
-		end
-		if isWorldCoord then
-			local player = GetPlayerFacing()
-			player = player - pi
-			if player < 0 then
-				player = pi2 + player
-			end
-			updateArrow(angle - player, calculateWorldDistance(x, y, targetX, targetY))
+		elseif runAwayArrow then
+			angle = pi2 - angle -- pi < angle < 2pi
 		else
-			updateArrow(angle - GetPlayerFacing(), calculateDistance(x, y, targetX, targetY))
+			angle = pi - angle  -- 0 < angle < pi
 		end
-	end)
+		
+		local player = GetPlayerFacing()
+		if player < 0 then
+			player = pi2 + player
+		end
+		updateArrow(angle - player, calculateDistance(x, y, targetX, targetY))
+	end
 end
 
 
@@ -371,6 +380,9 @@ local function show(runAway, x, y, distance, time, world, hide)
 	if not world then	--Update Map Only if local coords
 		SetMapToCurrentZone()--Set map to current zone before checking other stuff
 		module:UpdateMapSizes()--Force a mapsize update after SetMapToCurrentZone to ensure our information is current
+		frame:SetScript("OnUpdate", functionOnUpdateMap)
+	else
+		frame:SetScript("OnUpdate", functionOnUpdateWorld)
 	end
 	if type(x) == "string" then
 		player, hideDistance, hideTime = x, y, distance
@@ -489,6 +501,7 @@ end
 
 ExRT.F.Arrow = arrowFrame
 function module.main:ADDON_LOADED()
+	VExRT = _G.VExRT
 	VExRT.Arrow = VExRT.Arrow or {}
 
 	if VExRT.Arrow.PointX and VExRT.Arrow.PointY and VExRT.Arrow.Point1 and VExRT.Arrow.Point2 then
@@ -591,6 +604,11 @@ function module:slash(arg)
 	elseif arg:find("^arrowget") then
 		local x,y = arrowFrame:GetPosition()
 		print(x,y)
+	elseif arg:find("^arrowstatic ") then
+		local angle = arg:match("%d+")
+		if angle then
+			arrowFrame:ShowStatic(angle)
+		end
 	end
 end
 
@@ -646,8 +664,11 @@ function ExRT.F.ArrowTextPlayer(unit,width,height)
 	end
 	local angle = atan2(pX - tX, pY - tY)
 	local player = GetPlayerFacing()
+	if player < 0 then
+		player = player + pi2
+	end
 	
-	return ExRT.F.ArrowText( angle - player - pi, width,height )
+	return ExRT.F.ArrowText( angle - player - pi, width, height )
 end
 
 function ExRT.F.ArrowTextCoord(tX,tY,width,height)
@@ -657,14 +678,60 @@ function ExRT.F.ArrowTextCoord(tX,tY,width,height)
 	end
 	local angle = atan2(pX - tX, pY - tY)
 	local player = GetPlayerFacing()
+	if player < 0 then
+		player = player + pi2
+	end
 
-	return ExRT.F.ArrowText( angle - player - pi, width,height )
+	return ExRT.F.ArrowText( angle - player - pi, width, height )
+end
+
+function ExRT.F.ArrowTextMapCoord(tX,tY,width,height)
+	local pY,pX = GetPlayerMapPosition('player')
+	if not tX or not tY or (tY == 0 and tX == 0) then
+		return ""
+	end
+	tX,tY = tX/100,tY/100
+	local angle = atan2(pX - tX, tY - pY)
+
+	local player = GetPlayerFacing()
+
+	return ExRT.F.ArrowText( angle - player - pi05, width, height )
 end
 
 function ExRT.F.ArrowTexture(texture,top)
 	textureArrow = texture
 	textureTop = top
 	arrow:SetTexture(IsArrowDown() and textureTop or textureArrow)
+end
+
+local BlackFrames = {}
+local function FindArrow()
+	if not BlackFrames[1] then
+		BlackFrames.G = CreateFrame("Frame",nil,UIParent)
+		BlackFrames.G:SetFrameStrata("FULLSCREEN_DIALOG")
+		
+		BlackFrames[1] = ELib:Texture(BlackFrames.G,0,0,0,.7,"OVERLAY"):Point("TOPLEFT",UIParent,0,0):Point("BOTTOMRIGHT",frame,"TOPRIGHT",0,0)
+		BlackFrames[2] = ELib:Texture(BlackFrames.G,0,0,0,.7,"OVERLAY"):Point("LEFT",UIParent,0,0):Point("TOP",frame,0,0):Point("BOTTOM",frame,0,0):Point("RIGHT",frame,"LEFT",0,0)
+		BlackFrames[3] = ELib:Texture(BlackFrames.G,0,0,0,.7,"OVERLAY"):Point("BOTTOMLEFT",UIParent,0,0):Point("TOPRIGHT",frame,"BOTTOMRIGHT",0,0)
+		BlackFrames[4] = ELib:Texture(BlackFrames.G,0,0,0,.7,"OVERLAY"):Point("TOPRIGHT",UIParent,0,0):Point("BOTTOMRIGHT",UIParent,0,0):Point("LEFT",frame,"RIGHT",0,0)
+		
+		BlackFrames.Hide = ELib:Button(BlackFrames.G,L.minimapmenuclose):Point("BOTTOM",frame,"TOP",0,0):Size(100,30):OnClick(function()
+			BlackFrames.G:Hide()
+			frame:Hide()
+			BlackFrames.G:SetScript('OnKeyDown',nil)
+			BlackFrames.G:SetPropagateKeyboardInput(true)
+		end)
+		BlackFrames.Hide:SetFrameStrata("TOOLTIP")
+	end
+	BlackFrames.G:Show()
+	BlackFrames.G:SetPropagateKeyboardInput(false)
+	BlackFrames.G:SetScript('OnKeyDown',function(self,key)
+		if key == 'ESCAPE' or key == 'ENTER' or key == 'SPACE' then
+			BlackFrames.Hide:Click()
+		end
+	end)
+	local y,x = UnitPosition("player")
+	arrowFrame:ShowRunTo(x, y, 3, nil, true, true)
 end
 
 function module.options:Load()
@@ -698,8 +765,11 @@ function module.options:Load()
 		frame:ClearAllPoints()
 		arrowFrame:LoadPosition("TOP",UIParent,"TOP",0,-30)
 	end)
+	self.ButtonFindPos = ELib:Button(self,L.ArrowFind.." |TInterface\\common\\help-i:24|t"):Size(255,20):Point(5,-230):OnClick(function()
+		FindArrow()
+	end)
 	
-	self.chkFix = ELib:Check(self,L.ArrowFixate,VExRT.Arrow.Fix):Point(7,-230):OnClick(function(self) 
+	self.chkFix = ELib:Check(self,L.ArrowFixate,VExRT.Arrow.Fix):Point(7,-255):OnClick(function(self) 
 		if self:GetChecked() then
 			VExRT.Arrow.Fix = true
 			frame:SetMovable(false)
@@ -709,7 +779,7 @@ function module.options:Load()
 		end
 	end)
 	
-	self.SliderScale = ELib:Slider(self,L.ArrowScale):Point("TOP",0,-270):Size(640):Range(5,300):SetTo(VExRT.Arrow.Scale or 100):OnChange(function(self,event) 
+	self.SliderScale = ELib:Slider(self,L.ArrowScale):Point("TOP",0,-295):Size(640):Range(5,300):SetTo(VExRT.Arrow.Scale or 100):OnChange(function(self,event) 
 		event = event - event%1
 		VExRT.Arrow.Scale = event
 		ExRT.F.SetScaleFix(frame,event/100)
@@ -717,7 +787,7 @@ function module.options:Load()
 		self:tooltipReload(self)
 	end)
 	
-	self.SliderAlpha = ELib:Slider(self,L.ArrowAlpha):Point("TOP",0,-300):Size(640):Range(0,100):SetTo(VExRT.Arrow.Alpha or 100):OnChange(function(self,event) 
+	self.SliderAlpha = ELib:Slider(self,L.ArrowAlpha):Point("TOP",0,-325):Size(640):Range(0,100):SetTo(VExRT.Arrow.Alpha or 100):OnChange(function(self,event) 
 		event = event - event%1
 		VExRT.Arrow.Alpha = event
 		frame:SetAlpha(event/100)
@@ -726,15 +796,17 @@ function module.options:Load()
 	end)
 	
 	local getbottomtext = L.ArrowTextBottom
-	local examples = "GExRT.F.ArrowTextPlayer(\""..UnitName'player'.."\")    ==>   "..GExRT.F.ArrowTextPlayer('player').."|n".."GExRT.F.ArrowTextCoord(1000,1000,24)    ==>   "..GExRT.F.ArrowTextCoord(1000,1000,24)
-	self.shtml3 = ELib:Text(self,getbottomtext..examples,12):Size(650,200):Point(5,-350):Top()
+	local examples = ""
+	self.shtml3 = ELib:Text(self,getbottomtext..examples,12):Size(650,200):Point(5,-375):Top()
 	
 	local tmr = 0
 	self:SetScript("OnUpdate",function(self,elapsed)
 		tmr = tmr + elapsed
 		if tmr > 0.04 then
 			tmr = 0
-			local examples = "GExRT.F.ArrowTextPlayer(\""..UnitName'player'.."\")    ==>   "..GExRT.F.ArrowTextPlayer('player').."|n".."GExRT.F.ArrowTextCoord(1000,1000,24)    ==>   "..GExRT.F.ArrowTextCoord(1000,1000,24)
+			local examples = "GExRT.F.ArrowTextPlayer(\""..UnitName'player'.."\")    ==>   "..GExRT.F.ArrowTextPlayer('player').."|n"..
+				"GExRT.F.ArrowTextCoord(1000,1000,24)    ==>   "..GExRT.F.ArrowTextCoord(1000,1000,24).."     *world coords|n"..
+				"GExRT.F.ArrowTextMapCoord(50,50,24)    ==>   "..GExRT.F.ArrowTextMapCoord(50,50,24).."       *map coords (0-100)"
 			self.shtml3:SetText(getbottomtext..examples)
 		end
 	end)

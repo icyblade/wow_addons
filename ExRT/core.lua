@@ -1,30 +1,46 @@
---	17:07 03.02.2016
+--	18:17 24.03.2016
 
 --[[
+3640
+Invite tools: update for 6.2.4 (fixed invite via bnet whisper)
+Raid Attendance: added filter "only this char"
+Raid Attendance: added editing (right click on line with report)
+Raid Attendance: added option for sorting attendance by column (1 col for overall att, 2 for att on bosses)
+Raid Attendance: added button "Save current roster"
+Fight Log: minor updates
+Arrow: added GExRT.F.ArrowTextMapCoord(X,Y) function for map coords
+Marks Bar: added option for selecting strata
+Marks Bar: added option for reverse World Marks buttons
 
-Legendary Ring: fixed major bug
-Bossmods: Gorefiend: added numbers for timers
-Minor Fixes
 
-Added German Localization [thanks Gyffes]
-Bossmods: Iskar: try to reduce lag for some players
-InspectViewer: added option for marking items without max valor upgrades [thanks Cubetrace]
-Note: quick way to auto note per boss. Add "{e:EncounterID}" or "{e:EncounterName}" (without quotes) at start of note, that will be shared with raid at start of the fight. (ex. "{e:Archimonde}Run around and cry"). Commands "{ep:EncounterID}" and "{ep:EncounterName}" for personal note.
-Loot to chat: added option "Show ilvl"
-Raid cooldowns: added new heirlooms trinkets
-
-Legion Alpha: this version works on both clients: live 6.2.3+ and legion alpha 7.0
-Legion Alpha: modules Classes and Raid loot will be removed
+3630
+New module: Raid Attendance
+Fight Log: added graphs to damage & healing pages
+Fight Log: added boss hp on timeline tooltips
+Fight Log: visuals for spells page
+Fight Log: added phases to timelime
+Fight Log: added tracking page (exact time of damage taken for some abilities)
+Fight Log: Positions tab: added distance earned info
+Timers: added Dynamic pull timer (/rt dpt) by tigerlolol
+Legendary Ring: removed delay if sended by rl
+Arrow: added button "Find arrow"
+Timers: added option for selecting strata
+Bonus Loot: added "Export" button
+Statistics bosses: added "Export" button
+Modules "Classes" and "Raid loot" were removed
+Raid cooldowns: major CPU usage optimization
+Minor fixes
 
 TODO:
+Loot log
 Legion Alpha: Add 1 parameter for UnitAura in BossWatcher.lua (15 - nameplateShowAll)
 GetPlayerMapAreaID ???
-Fix DE font
+dpt for marks bar
 
 ]]
 local GlobalAddonName, ExRT = ...
 
-ExRT.V = 3575
+ExRT.V = 3640
 ExRT.T = "R"
 ExRT.is7 = false		--> Legion (7.x) Client
 
@@ -46,7 +62,6 @@ ExRT.msg_prefix = {
 
 ExRT.L = {}			--> локализация
 ExRT.locale = GetLocale()
-
 
 ---------------> Version <---------------
 do
@@ -73,8 +88,10 @@ do
 	ExRT.SDB.realmKey = realmKey
 	ExRT.SDB.charKey = charName .. "-" .. realmKey
 	ExRT.SDB.charName = charName
+	ExRT.SDB.charLevel = UnitLevel'player'
 end
-
+-------------> global DB <------------
+ExRT.GDB = {}
 -------------> upvalues <-------------
 local pcall, unpack, pairs = pcall, unpack, pairs
 local GetTime, IsEncounterInProgress = GetTime, IsEncounterInProgress
@@ -98,7 +115,9 @@ do
 	local function mod_LoadOptions(this)
 		if not InCombatLockdown() or this.enableLoadInCombat then
 			this:Load()
-			this:SetScript("OnShow",nil)
+			if not this.OnShow_disableNil then
+				this:SetScript("OnShow",nil)
+			end
 			ExRT.F.dprint(this.moduleName.."'s options loaded")
 			this.isLoaded = true
 		else
@@ -106,7 +125,7 @@ do
 		end
 	end
 	local function mod_Options_CreateTitle(self)
-		self.title = ExRT.lib:Text(self,self.name,16):Size(605,200):Point(5,-5):Top()
+		self.title = ExRT.lib:Text(self,self.name,16):Point(5,-5):Top()
 	end
 	function ExRT.mod:New(moduleName,localizatedName,disableOptions,enableLoadInCombat)
 		local self = {}
