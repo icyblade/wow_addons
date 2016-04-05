@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [3.2.0] - 2016-04-05
+### BlizzMove 现在可以移动神器框体了
+### 新增 Omen
+
 ## [3.1.2] - 2016-03-31
 ### TrufiGCD 现在不会显示一大堆碧玉疾风
 

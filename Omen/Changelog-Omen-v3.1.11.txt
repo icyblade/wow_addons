@@ -1,0 +1,12 @@
+tag v3.1.11
+3aecab0745285b3b5e771392bd35f194dbd70727
+funkydude <none>
+2015-06-24 03:07:32 +0100
+
+Tagging as v3.1.11
+
+
+--------------------
+
+funkydude:
+	- bump toc

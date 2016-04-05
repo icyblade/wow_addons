@@ -273,6 +273,8 @@ local function OnEvent(self, event, arg1, arg2)
 		frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
 
 	-- blizzard lod addons
+    elseif arg1 == "Blizzard_ArtifactUI" then -- ICY: artifact
+		SetMoveHandler(ArtifactFrame)
 	elseif arg1 == "Blizzard_InspectUI" then
 		SetMoveHandler(InspectFrame)
 	elseif arg1 == "Blizzard_GuildBankUI" then
