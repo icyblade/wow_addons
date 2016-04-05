@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1203, "DBM-BlackrockFoundry", nil, 457)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14858 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14890 $"):sub(12, -3))
 mod:SetCreatureID(77557, 77231, 77477)
 mod:SetEncounterID(1695)
 mod:SetZone()
@@ -119,11 +119,11 @@ local countdownBladeDash				= mod:NewCountdown("AltTwo20", 155794, "Tank")
 local countdownDarkHunt					= mod:NewCountdownFades("AltTwo8", 158315)
 
 local voiceRapidFire					= mod:NewVoice(156631) --runout
-local voiceBloodRitual					= mod:NewVoice(158078, "MeleeDps", nil, 2) --158078.ogg, farawayfromline
+local voiceBloodRitual					= mod:NewVoice(158078, "MeleeDps", nil, 2) --farfromline
 local voiceHeartSeeker					= mod:NewVoice(158010) --spread
 local voiceShip							= mod:NewVoice("ej10019") --1695uktar, 1695gorak, 1695ukurogg
 local voiceEarthenbarrier				= mod:NewVoice(158708)  --int
-local voiceDeployTurret					= mod:NewVoice(158599, "RangedDps", nil, 2) --158599.ogg attack turret
+local voiceDeployTurret					= mod:NewVoice(158599, "RangedDps", nil, 2) --158599 attack turret
 local voiceConvulsiveShadows			= mod:NewVoice(156214) --runaway, target
 local voiceDarkHunt						= mod:NewVoice(158315) --defensive, target
 local voicePenetratingShot				= mod:NewVoice(164271) --stack
@@ -446,11 +446,6 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		if (noFilter or not isPlayerOnBoat()) then
 			countdownBloodRitual:Start()
-			if self.Options.SpecWarn158078targetcount then
-				specWarnBloodRitualOther:Show(self.vb.bloodRitual, args.destName)
-			else
-				warnBloodRitual:Show(self.vb.bloodRitual, args.destName)
-			end
 			if self.Options.HudMapOnBloodRitual then
 				DBMHudMap:RegisterRangeMarkerOnPartyMember(spellId, "highlight", args.destName, 3.5, 7, 1, 0, 0, 0.5, nil, true, 2):Pulse(0.5, 0.5)
 			end
@@ -458,9 +453,14 @@ function mod:SPELL_AURA_APPLIED(args)
 				yellBloodRitual:Yell()
 				if UnitDebuff("player", GetSpellInfo(170405)) and self.Options.filterBloodRitual3 then return end
 				specWarnBloodRitual:Show()
-				--voiceBloodRitual:Play("???")--Player needs a different warning than "far away from lines". player IS the line so they can't be far away from lines
+				voiceBloodRitual:Play("targetyou")
 			else
-				voiceBloodRitual:Play("158078")--Good sound fit for everyone ELSE
+				if self.Options.SpecWarn158078targetcount then
+					specWarnBloodRitualOther:Show(self.vb.bloodRitual, args.destName)
+				else
+					warnBloodRitual:Show(self.vb.bloodRitual, args.destName)
+				end
+				voiceBloodRitual:Play("farfromline")--Good sound fit for everyone ELSE
 			end
 		end
 	elseif spellId == 156631 then

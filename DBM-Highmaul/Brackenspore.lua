@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1196, "DBM-Highmaul", nil, 477)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14581 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14889 $"):sub(12, -3))
 mod:SetCreatureID(78491)
 mod:SetEncounterID(1720)
 mod:SetZone()
@@ -30,7 +30,7 @@ local specWarnInfestingSpores		= mod:NewSpecialWarningCount(159996, nil, nil, ni
 local specWarnDecay					= mod:NewSpecialWarningInterruptCount(160013, "-Healer", nil, nil, nil, 2)
 local specWarnNecroticBreath		= mod:NewSpecialWarningSpell(159219, "Tank", nil, nil, 3)
 local specWarnRot					= mod:NewSpecialWarningStack(163241, nil, 3)
-local specWarnRotOther				= mod:NewSpecialWarningTaunt(163241, nil, nil, nil, nil, 2)
+local specWarnRotOther				= mod:NewSpecialWarningTaunt(163241, nil, nil, nil, 1, 2)
 local specWarnExplodingFungus		= mod:NewSpecialWarningDodge(163794, nil, nil, nil, 2, 2)--Change warning type/sound? need to know more about spawn.
 local specWarnWaves					= mod:NewSpecialWarningDodge(160425, nil, nil, nil, 2, 2)
 --Adds

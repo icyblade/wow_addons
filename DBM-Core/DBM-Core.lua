@@ -40,7 +40,7 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 14880 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 14894 $"):sub(12, -3)),
 	DisplayVersion = "6.2.22 alpha", -- the string that is shown as version
 	ReleaseRevision = 14865 -- the revision of the latest stable version that is available
 }
@@ -5925,6 +5925,7 @@ do
 				bossuIdFound = false
 				eeSyncSender = {}
 				eeSyncReceived = 0
+				targetMonitor = nil
 				self:CreatePizzaTimer(time, "", nil, nil, nil, nil, true)--Auto Terminate infinite loop timers on combat end
 			elseif self.BossHealth:IsShown() then
 				if mod.bossHealthInfo then
@@ -6298,7 +6299,40 @@ function DBM:SendVariableInfo(mod, target)
 end
 
 do
+	local soundFiles = {
+		"Sound\\Creature\\Rhonin\\UR_Rhonin_Event01.ogg",--5
+		"Sound\\Creature\\Rhonin\\UR_Rhonin_Event02.ogg",--5
+		"Sound\\Creature\\Rhonin\\UR_Rhonin_Event03.ogg",--5.5
+		"Sound\\Creature\\Rhonin\\UR_Rhonin_Event04.ogg",--9
+		"Sound\\Creature\\Rhonin\\UR_Rhonin_Event05.ogg",--4
+		"Sound\\Creature\\Rhonin\\UR_Rhonin_Event06.ogg",--10
+		"Sound\\Creature\\Rhonin\\UR_Rhonin_Event07.ogg",--15
+		"Sound\\Creature\\Rhonin\\UR_Rhonin_Event08.ogg",
+	}
+	local function playDelay(self, count)
+		self:PlaySoundFile(soundFiles[count])
+	end
+
+	function DBM:AprilFools()
+		self:Unschedule(self.AprilFools)
+		SetMapToCurrentZone()
+		local currentMapId = GetCurrentMapAreaID()
+		self:Schedule(180 + math.random(0, 600) , self.AprilFools, self)
+		if currentMapId ~= 1014 then return end--Legion Dalaran
+		playDelay(self, 1)
+		self:Schedule(5, playDelay, self, 2)
+		self:Schedule(10, playDelay, self, 3)
+		self:Schedule(15.5, playDelay, self, 4)
+		self:Schedule(24.5, playDelay, self, 5)
+		self:Schedule(28, playDelay, self, 6)
+		self:Schedule(37.5, playDelay, self, 7)
+		self:Schedule(50.5, playDelay, self, 8)
+	end
 	function DBM:PLAYER_ENTERING_WORLD()
+		local weekday, month, day, year = CalendarGetDate()--Must be called after PLAYER_ENTERING_WORLD
+		if month == 4 and day == 1 then--April 1st
+			self:Schedule(180 + math.random(0, 600) , self.AprilFools, self)
+		end
 		if GetLocale() == "ptBR" or GetLocale() == "frFR" or GetLocale() == "esES" or GetLocale() == "esMX" or GetLocale() == "itIT" then
 			C_TimerAfter(10, function() if self.Options.HelpMessageVersion < 3 then self.Options.HelpMessageVersion = 3 self:AddMsg(DBM_CORE_NEED_SUPPORT) end end)
 		end
@@ -7276,6 +7310,42 @@ function bossModPrototype:CheckNearby(range, targetname)
 	return false
 end
 
+do
+	local bossCache = {}
+	local lastTank = nil
+
+	function bossModPrototype:GetCurrentTank(cidOrGuid)
+		if lastTank and GetTime() - (bossCache[cidOrGuid] or 0) < 2 then -- return last tank within 2 seconds of call
+			return lastTank
+		else	
+			local cidOrGuid = cidOrGuid or self.creatureId--GetBossTarget supports GUID or CID and it will automatically return correct values with EITHER ONE
+			local uId
+			local _, fallbackuId, mobuId = self:GetBossTarget(cidOrGuid)
+			if mobuId then--Have a valid mob unit ID
+				--First, use trust threat more than fallbackuId and see what we pull from it first.
+				--This is because for GetCurrentTank we want to know who is tanking it, not who it's targeting.
+				local unitId = (IsInRaid() and "raid") or "party"
+				for i = 0, GetNumGroupMembers() do
+					local id = (i == 0 and "target") or unitId..i
+					local tanking, status = UnitDetailedThreatSituation(id, mobuId)--Tanking may return 0 if npc is temporarily looking at an NPC (IE fracture) but status will still be 3 on true tank
+					if tanking or (status == 3) then uId = id end--Found highest threat target, make them uId
+					if uId then break end
+				end
+				--Did not get anything useful from threat, so use who the boss was looking at, at time of cast (ie fallbackuId)
+				if fallbackuId and not uId then
+					uId = fallbackuId
+				end
+			end
+			if uId then--Now we have a valid uId
+				bossCache[cidOrGuid] = GetTime()
+				lastTank = UnitName(uId)
+				return UnitName(lastTank)
+			end
+			return false
+		end
+	end
+end
+
 --Now this function works perfectly. But have some limitation due to DBM.RangeCheck:GetDistance() function.
 --Unfortunely, DBM.RangeCheck:GetDistance() function cannot reflects altitude difference. This makes range unreliable.
 --So, we need to cafefully check range in difference altitude (Especially, tower top and bottom)
@@ -7298,7 +7368,7 @@ do
 			local _, fallbackuId, mobuId = self:GetBossTarget(cidOrGuid)
 			if mobuId then--Have a valid mob unit ID
 				--First, use trust threat more than fallbackuId and see what we pull from it first.
-				--This is because for CheckTankDistance we want to know who is tanking it, not who it's targeting it.
+				--This is because for CheckTankDistance we want to know who is tanking it, not who it's targeting.
 				local unitId = (IsInRaid() and "raid") or "party"
 				for i = 0, GetNumGroupMembers() do
 					local id = (i == 0 and "target") or unitId..i
@@ -8751,8 +8821,6 @@ do
 		if (name == "changemt" or name == "tauntboss") and DBM.Options.FilterTankSpec and not self.mod:IsTank() and not always then return end
 		if not self.option or self.mod.Options[self.option] or always then
 			local path = customPath or "Interface\\AddOns\\DBM-VP"..voice.."\\"..name..".ogg"
-			--Example "Interface\\AddOns\\DBM-VPHenry\\dispelnow.ogg"
-			--Usage: voiceBerserkerRush:Play("dispelnow")
 			DBM:PlaySoundFile(path)
 		end
 	end

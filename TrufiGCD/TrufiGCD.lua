@@ -7,6 +7,7 @@ local icy_blacklist = {
     81297,  -- consecration
     204242, -- consecration
     198137, -- divine hammer
+    148187, -- rushing jade wind
 }
 
 --sizeicon = 30 

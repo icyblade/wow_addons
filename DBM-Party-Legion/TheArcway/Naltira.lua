@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1500, "DBM-Party-Legion", 6, 726)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14876 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14886 $"):sub(12, -3))
 mod:SetCreatureID(98207)
 mod:SetEncounterID(1826)
 mod:SetZone()
@@ -73,7 +73,6 @@ function mod:OnCombatStart(delay)
 end
 
 function mod:OnCombatEnd()
-	self:BossUnitTargetScannerAbort()
 --	if self.Options.HudMapOnBlink then
 --		DBMHudMap:Disable()
 --	end
