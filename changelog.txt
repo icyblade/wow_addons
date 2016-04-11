@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.0.0] - 2016-04-11
+### 修复了版本号过低的 BUG
+
 ## [3.3.0] - 2016-04-07
 ### 修复了 MSBT 不显示吸收量的 BUG
 ### IcyBetaToolbox 新增显示史诗五人本进度条详细进度功能
