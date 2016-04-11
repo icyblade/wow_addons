@@ -1,12 +1,13 @@
 local mod	= DBM:NewMod(1486, "DBM-Party-Legion", 4, 721)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14850 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14903 $"):sub(12, -3))
 mod:SetCreatureID(95833)
 mod:SetEncounterID(1806)
 mod:SetZone()
 
 mod:RegisterCombat("combat")
+mod:SetWipeTime(120)
 
 mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 192048 192133 192132",
@@ -21,9 +22,9 @@ mod:RegisterEventsInCombat(
 local warnExpelLight				= mod:NewTargetAnnounce(192048, 3)
 local warnPhase2					= mod:NewPhaseAnnounce(2, 2)
 
-local specWarnShieldOfLight			= mod:NewSpecialWarningSpell(192018, "Tank", nil, nil, 3, 2)--Journal lies, this is NOT dodgable
+local specWarnShieldOfLight			= mod:NewSpecialWarningDefensive(192018, "Tank", nil, nil, 3, 2)--Journal lies, this is NOT dodgable
 local specWarnSanctify				= mod:NewSpecialWarningDodge(192158, nil, nil, nil, 2, 5)
-local specWarnEyeofStorm			= mod:NewSpecialWarningMoveTo(200901, nil, DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell:format(200901), nil, 2)
+local specWarnEyeofStorm			= mod:NewSpecialWarningMoveTo(200901, nil, DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell:format(200901), nil, 2, 2)
 local specWarnExpelLight			= mod:NewSpecialWarningMoveAway(192048, nil, nil, nil, 2, 2)
 local yellExpelLight				= mod:NewYell(192048)
 
@@ -33,7 +34,7 @@ local timerSpecialCD				= mod:NewNextTimer(30, 200736, nil, nil, nil, 2, nil, DB
 
 local countdownSpecial				= mod:NewCountdown(30, 200736)
 
---local voiceEyeofStorm				= mod:NewVoice(200901)--"move center" generic or "move into eye" or maybe "findshelter"
+local voiceEyeofStorm				= mod:NewVoice(200901)--findshelter
 local voiceShieldOfLight			= mod:NewVoice(192018, "Tank")--defensive
 local voiceSanctify					= mod:NewVoice(192158)--watchorb
 local voiceExpelLight				= mod:NewVoice(192048)--runout
@@ -84,6 +85,7 @@ function mod:SPELL_CAST_START(args)
 		voiceSanctify:Play("watchorb")
 		if spellId == 192307 then
 			timerSpecialCD:Start()
+			countdownSpecial:Cancel()
 			countdownSpecial:Start()
 		end
 	elseif spellId == 192018 then
@@ -92,9 +94,10 @@ function mod:SPELL_CAST_START(args)
 		timerShieldOfLightCD:Start()
 	elseif spellId == 200901 then
 		specWarnEyeofStorm:Show(eyeShortName)
---		voiceEyeofStorm:Play("movecenter")
+		voiceEyeofStorm:Play("findshelter")
 		if self.vb.phase == 2 then
 			timerSpecialCD:Start()
+			countdownSpecial:Cancel()
 			countdownSpecial:Start()
 		end
 	end

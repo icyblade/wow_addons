@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1762, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14890 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14899 $"):sub(12, -3))
 mod:SetCreatureID(103685)
 mod:SetEncounterID(1862)
 mod:SetZone()
@@ -231,12 +231,12 @@ function mod:SPELL_CAST_START(args)
 				if UnitIsUnit(uId, "player") then
 					--Player dot already created
 					if currentTank then--Create Line from current tank to seeker targets.
-						DBMHudMap:AddEdge(0, 1, 0, 0.5, 3, currentTank, name, nil, nil, nil, nil, 135)
+						DBMHudMap:AddEdge(0, 1, 0, 0.5, 3, currentTank, name, nil, nil, nil, nil, 125)
 					end
 				else
 					DBMHudMap:RegisterRangeMarkerOnPartyMember(213238, "party", name, 0.35, 3, nil, nil, nil, 0.5, nil, false):Appear():SetLabel(name, nil, nil, nil, nil, nil, 0.8, nil, -13, 8, nil)
 					if currentTank then--Create Line from current tank to seeker targets.
-						DBMHudMap:AddEdge(1, 0, 0, 0.5, 3, currentTank, name, nil, nil, nil, nil, 135)
+						DBMHudMap:AddEdge(1, 0, 0, 0.5, 3, currentTank, name, nil, nil, nil, nil, 125)
 					end
 				end
 			end

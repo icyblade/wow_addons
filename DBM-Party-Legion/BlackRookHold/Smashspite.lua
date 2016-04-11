@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1664, "DBM-Party-Legion", 1, 740)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14860 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14902 $"):sub(12, -3))
 mod:SetCreatureID(98949)
 mod:SetEncounterID(1834)
 mod:SetZone()
@@ -23,7 +23,7 @@ mod:RegisterEventsInCombat(
 local warnHatefulGaze				= mod:NewTargetAnnounce(198079, 4)
 
 local specWarnStomp					= mod:NewSpecialWarningSpell(198073, nil, nil, nil, 2, 2)
-local specWarnHatefulGaze			= mod:NewSpecialWarningYou(198079, nil, nil, nil, 1, 2)
+local specWarnHatefulGaze			= mod:NewSpecialWarningDefensive(198079, nil, nil, nil, 1, 2)
 local yellHatefulGaze				= mod:NewYell(198079)
 local specWarnBrutalHaymakerSoon	= mod:NewSpecialWarningSoon(198245, "Tank|Healer", nil, nil, 1)--Face fuck soon
 local specWarnBrutalHaymaker		= mod:NewSpecialWarningSpell(198245, "Tank", nil, nil, 3, 2)--Incoming face fuck

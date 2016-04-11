@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1396, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14890 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14902 $"):sub(12, -3))
 mod:SetCreatureID(90378)
 mod:SetEncounterID(1786)
 mod:SetZone()
@@ -34,7 +34,7 @@ local warnVisionofDeath				= mod:NewTargetAnnounce(181488, 2)--The targets that 
 local warnBloodthirster				= mod:NewSpellAnnounce("ej11266", 3, 131150)
 
 --Boss
-local specWarnShred					= mod:NewSpecialWarningSpell(180199, nil, nil, nil, 3, 2)--Block, or get debuff
+local specWarnShred					= mod:NewSpecialWarningDefensive(180199, nil, nil, nil, 3, 2)--Block, or get debuff
 local specWarnHeartSeeker			= mod:NewSpecialWarningRun(180372, nil, nil, nil, 4, 2)--Must run as far from boss as possible
 local yellHeartSeeker				= mod:NewYell(180372)
 local specWarnDeathThroes			= mod:NewSpecialWarningCount(180224, nil, nil, nil, 2, 2)

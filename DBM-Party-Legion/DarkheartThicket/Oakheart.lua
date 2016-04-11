@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1655, "DBM-Party-Legion", 2, 762)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14875 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14902 $"):sub(12, -3))
 mod:SetCreatureID(103344)
 mod:SetEncounterID(1837)
 mod:SetZone()
@@ -17,7 +17,7 @@ local warnThrowTarget				= mod:NewTargetAnnounce(204646, 2)--This is target the 
 
 local specWarnRoots					= mod:NewSpecialWarningDodge(204574, nil, nil, nil, 2, 2)
 local yellThrow						= mod:NewYell(204646)--yell so others can avoid splash damage. I don't think target can avoid
-local specWarnBreath				= mod:NewSpecialWarningSpell(204667, "Tank", nil, nil, 1, 2)
+local specWarnBreath				= mod:NewSpecialWarningDefensive(204667, "Tank", nil, nil, 1, 2)
 
 local timerShatteredEarthCD			= mod:NewCDTimer(40, 204666, nil, nil, nil, 2)--40-62 variation? is this health based?
 local timerThrowCD					= mod:NewCDTimer(28, 204646, nil, nil, nil, 3)--29-31

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1667, "DBM-EmeraldNightmare", nil, 768)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14825 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14902 $"):sub(12, -3))
 mod:SetCreatureID(100497)
 mod:SetEncounterID(1841)
 mod:SetZone()
@@ -150,4 +150,4 @@ function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
 		voiceMiasma:Play("runaway")
 	end
 end
-mod.SPELL_ABSORBED = mod.SPELL_PERIODIC_DAMAGE
+mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE

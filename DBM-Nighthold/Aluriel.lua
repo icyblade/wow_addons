@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1751, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14894 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14899 $"):sub(12, -3))
 mod:SetCreatureID(104881)
 mod:SetEncounterID(1871)
 mod:SetZone()
@@ -138,10 +138,11 @@ local function hudDelay(self)
 		DBM:Debug("Tank Detection Failure in hudDelay", 2)
 		return
 	end
+	DBMHudMap:RegisterRangeMarkerOnPartyMember(213166, "party", UnitName("player"), 0.7, 5, nil, nil, nil, 1, nil, false):Appear()--Create Player Dot
 	for i = 1, #chargeTable do
 		local name = chargeTable[i]
-		DBMHudMap:RegisterRangeMarkerOnPartyMember(213238, "party", name, 0.35, 5, nil, nil, nil, 0.5, nil, false):Appear():SetLabel(name, nil, nil, nil, nil, nil, 0.8, nil, -13, 8, nil)
-		DBMHudMap:AddEdge(1, 0, 0, 0.5, 5, currentTank, name, nil, nil, nil, nil, 135)
+		DBMHudMap:RegisterRangeMarkerOnPartyMember(213166, "party", name, 0.35, 5, nil, nil, nil, 0.5, nil, false):Appear():SetLabel(name, nil, nil, nil, nil, nil, 0.8, nil, -13, 8, nil)
+		DBMHudMap:AddEdge(1, 0, 0, 0.5, 5, currentTank, name, nil, nil, nil, nil, 125)
 	end
 end
 

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1706, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14858 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14902 $"):sub(12, -3))
 mod:SetCreatureID(102263)
 mod:SetEncounterID(1849)
 mod:DisableESCombatDetection()--Remove if blizz fixes trash firing ENCOUNTER_START
@@ -26,7 +26,7 @@ local warnVulnerable				= mod:NewTargetAnnounce(204459, 1)
 local warnCallScorp					= mod:NewSpellAnnounce(204372, 3)
 
 local specWarnTether				= mod:NewSpecialWarningYou(204531, nil, nil, nil, 1, 2)
-local specWarnArcanoslash			= mod:NewSpecialWarningSpell(204275, "Tank", nil, nil, 1, 2)
+local specWarnArcanoslash			= mod:NewSpecialWarningDefensive(204275, "Tank", nil, nil, 1, 2)
 local specWarnCallofScorp			= mod:NewSpecialWarningSwitch(204372, "Tank", nil, nil, 1, 2)--Determine common strat for dps switching
 local specWarnNetherDischarge		= mod:NewSpecialWarningDodge(204471, nil, nil, nil, 2, 2)
 local specWarnShockwave				= mod:NewSpecialWarningMoveTo(204316, nil, DBM_CORE_AUTO_SPEC_WARN_OPTIONS.dodge:format(158986), nil, 3, 2)
