@@ -198,6 +198,7 @@ L["Hide"] = "隱藏"
 L["High Damage"] = "高傷害"
 L["Higher Than Tank"] = "高於坦克"
 L["Holy Power"] = "神聖能量"
+L["Arcane Charges"] = "秘法充能" -- ICY
 -- L["Horde"] = ""
 L["Hostile"] = "敵對"
 L["Hostility"] = "敵意"

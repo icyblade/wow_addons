@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.1.0] - 2016-04-12
+### WeakAuras 新增监控奥法奥术充能的功能
+### TellMeWhen 新增监控奥法奥术充能的功能
+
 ## [4.0.0] - 2016-04-11
 ### 修复了版本号过低的 BUG
 

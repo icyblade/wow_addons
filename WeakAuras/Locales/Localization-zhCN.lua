@@ -198,6 +198,7 @@ L["Hide"] = "隐藏"
 L["High Damage"] = "高伤害" -- Needs review
 L["Higher Than Tank"] = "比MT高"
 L["Holy Power"] = "圣能(圣骑士)"
+L["Arcane Charges"] = "奥术充能" -- ICY
 -- L["Horde"] = ""
 L["Hostile"] = "敌对的"
 L["Hostility"] = "敌对"

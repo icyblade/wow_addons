@@ -84,14 +84,15 @@ Type:RegisterConfigPanel_ConstructorFunc(100, "TellMeWhen_ValueSettings", functi
 	    [SPELL_POWER_RUNES] = RUNES,
 	    [SPELL_POWER_RUNIC_POWER] = RUNIC_POWER,
 	    [SPELL_POWER_SOUL_SHARDS] = SOUL_SHARDS,
-	    [SPELL_POWER_ECLIPSE] = L["ECLIPSE"],
+	    --[SPELL_POWER_ECLIPSE] = L["ECLIPSE"], -- ICY: this resource has been removed in legion
 	    [SPELL_POWER_HOLY_POWER] = HOLY_POWER,
 	    [SPELL_POWER_ALTERNATE_POWER] = L["CONDITIONPANEL_ALTPOWER"],
 	    --[11] = DARK_FORCE,
 	    [SPELL_POWER_CHI] = CHI,
-	    [SPELL_POWER_SHADOW_ORBS] = SHADOW_ORBS,
-	    [SPELL_POWER_BURNING_EMBERS] = BURNING_EMBERS,
-	    [SPELL_POWER_DEMONIC_FURY] = DEMONIC_FURY,
+        [SPELL_POWER_ARCANE_CHARGES] = ARCANE_CHARGES, -- ICY: add arcane charges
+	    -- [SPELL_POWER_SHADOW_ORBS] = SHADOW_ORBS, -- ICY: this resource has been removed in legion
+	    -- [SPELL_POWER_BURNING_EMBERS] = BURNING_EMBERS, -- ICY: this resource has been removed in legion
+	    -- [SPELL_POWER_DEMONIC_FURY] = DEMONIC_FURY, -- ICY: this resource has been removed in legion
 
 		--[100] = L["CONDITIONPANEL_COMBO"],
 	}

@@ -232,6 +232,7 @@ L["Hide"] = "Hide"
 L["High Damage"] = "High Damage"
 L["Higher Than Tank"] = "Higher Than Tank"
 L["Holy Power"] = "Holy Power"
+L["Arcane Charges"] = "Arcane Charges" -- ICY
 L["Horde"] = "Horde"
 L["Hostile"] = "Hostile"
 L["Hostility"] = "Hostility"

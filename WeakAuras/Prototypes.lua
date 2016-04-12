@@ -810,6 +810,30 @@ WeakAuras.event_prototypes = {
     end,
     automatic = true
   },
+  ["Arcane Charges"] = { -- ICY: arcane charges for arcane mage
+    type = "status",
+    events = {
+      "UNIT_POWER",
+      "WA_DELAYED_PLAYER_ENTERING_WORLD"
+    },
+    force_events = true,
+    name = L["Arcane Charges"],
+    args = {
+      {
+        name = "power",
+        display = L["Arcane Charges"],
+        type = "number",
+        init = "UnitPower('player', SPELL_POWER_ARCANE_CHARGES)"
+      },
+    },
+    durationFunc = function(trigger)
+      return UnitPower('player', SPELL_POWER_ARCANE_CHARGES), UnitPowerMax('player', SPELL_POWER_ARCANE_CHARGES), true;
+    end,
+    stacksFunc = function(trigger)
+      return UnitPower('player', SPELL_POWER_ARCANE_CHARGES);
+    end,
+    automatic = true
+  },
   ["Demonic Fury"] = {
     type = "status",
     events = {
