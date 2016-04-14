@@ -1011,8 +1011,30 @@ local function TrGCDAddGcdSpell(texture, i, spellid) -- добавление н�
 	TrGCDIcon[i][TrGCDi[i]].spellID = spellid
 	TrGCDi[i] = TrGCDi[i] + 1
 end
+
+local function icy_split(str, pat) -- ICY: split function
+   local t = {}  -- NOTE: use {n = 0} in Lua-5.0
+   local fpat = "(.-)" .. pat
+   local last_end = 1
+   local s, e, cap = str:find(fpat, 1)
+   while s do
+      if s ~= 1 or cap ~= "" then
+         table.insert(t,cap)
+      end
+      last_end = e+1
+      s, e, cap = str:find(fpat, last_end)
+   end
+   if last_end <= #str then
+      cap = str:sub(last_end)
+      table.insert(t, cap)
+   end
+   return t
+end
+
 function TrGCDEventHandler(self, event, ...)
-	local arg1, _, _, _, arg5 = ...; -- arg1 - who,  arg5 - spellID
+	-- local arg1, _, _, _, arg5 = ...; -- arg1 - who,  arg5 - spellID -- ICY: event change
+    local arg1, _, _, arg4, _ = ...; -- arg1 - who,  arg5 - something like 3-2084-870-25-212219-00108F65FE
+    arg5 = icy_split(arg4,'-')[5]
 	local spellicon = select(3, GetSpellInfo(arg5))
 	local casttime = select(4, GetSpellInfo(arg5))/1000
 	local spellname = GetSpellInfo(arg5)

@@ -4041,7 +4041,8 @@ local function loadUnitOptions()
 						hidden = function(info) 
 							local unit = info[2]
 							if( unit == "global" ) then
-								return not globalConfig.runeBar and not globalConfig.eclipseBar and not globalConfig.totemBar and not globalConfig.druidBar and not globalConfig.monkBar and not globalConfig.xpBar and not globalConfig.demonicFuryBar and not globalConfig.burningEmbersBar and not globalConfig.staggerBar
+								-- return not globalConfig.runeBar and not globalConfig.eclipseBar and not globalConfig.totemBar and not globalConfig.druidBar and not globalConfig.monkBar and not globalConfig.xpBar and not globalConfig.demonicFuryBar and not globalConfig.burningEmbersBar and not globalConfig.staggerBar -- ICY: burning ember has been removed in Legion
+                                return not globalConfig.runeBar and not globalConfig.eclipseBar and not globalConfig.totemBar and not globalConfig.druidBar and not globalConfig.monkBar and not globalConfig.xpBar and not globalConfig.demonicFuryBar and not globalConfig.staggerBar
 							else
 								return unit ~= "player" and unit ~= "pet"
 							end
@@ -4079,6 +4080,7 @@ local function loadUnitOptions()
 								hidden = hideRestrictedOption,
 								arg = "staggerBar.enabled",
 							},
+                            --[[
 							burningEmbersBar = {
 								order = 1.25,
 								type = "toggle",
@@ -4086,7 +4088,7 @@ local function loadUnitOptions()
 								desc = L["Adds a Burning Embers bar for Destruction Warlocks."],
 								hidden = hideRestrictedOption,
 								arg = "burningEmbersBar.enabled",
-							},
+							},]]
 							druidBar = {
 								order = 3,
 								type = "toggle",

@@ -31,6 +31,7 @@ ShowChallengeProgress = LibStub("AceAddon-3.0"):NewAddon("ShowChallengeProgress"
 function ShowChallengeProgress:OnEnable()
     self:RegisterEvent('PLAYER_ENTERING_WORLD')
 	self:RegisterEvent('CRITERIA_UPDATE')
+    self:RegisterEvent('SCENARIO_CRITERIA_UPDATE')
 end
 
 function ShowChallengeProgress:PLAYER_ENTERING_WORLD()
@@ -39,7 +40,7 @@ function ShowChallengeProgress:PLAYER_ENTERING_WORLD()
             if key == 'ProgressBar' then
                 local criteriaString, criteriaType, completed, quantity, totalQuantity, flags, assetID, quantityString, criteriaID, duration, elapsed, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
                 if quantity ~= nil then
-                    element.Bar.Label:SetFormattedText('%d/%d %s', quantity, totalQuantity, quantityString);
+                    element.Bar.Label:SetFormattedText('%d/%d %s', quantityString or '', totalQuantity or '', quantity or '');
                 end
             end
         end
@@ -51,9 +52,19 @@ function ShowChallengeProgress:CRITERIA_UPDATE()
         for key, element in pairs(line) do
             if key == 'ProgressBar' then
                 local criteriaString, criteriaType, completed, quantity, totalQuantity, flags, assetID, quantityString, criteriaID, duration, elapsed, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
-                element.Bar.Label:SetFormattedText('%d/%d %s', quantity, totalQuantity, quantityString);
+                element.Bar.Label:SetFormattedText('%d/%d %s', quantityString or '', totalQuantity or '', quantity or '');
             end
         end
     end
 end
 
+function ShowChallengeProgress:SCENARIO_CRITERIA_UPDATE()
+    for criteriaIndex, line in pairs(SCENARIO_TRACKER_MODULE:GetBlock().lines) do
+        for key, element in pairs(line) do
+            if key == 'ProgressBar' then
+                local criteriaString, criteriaType, completed, quantity, totalQuantity, flags, assetID, quantityString, criteriaID, duration, elapsed, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
+                element.Bar.Label:SetFormattedText('%d/%d %s', quantityString or '', totalQuantity or '', quantity or '');
+            end
+        end
+    end
+end

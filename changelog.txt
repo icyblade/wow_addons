@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.1.2] - 2016-04-14
+### 修复了 21491 更新后由于 API 改动导致 TrufiGCD 报错的问题
+### 移除了 ShadowedUnitFrame 的爆燃灰烬模块
+
+## [4.1.1] - 2016-04-13
+### 修复了 IcyBetaToolbox 显示大秘境进度错位的问题
+
 ## [4.1.0] - 2016-04-12
 ### WeakAuras 新增监控奥法奥术充能的功能
 ### TellMeWhen 新增监控奥法奥术充能的功能
