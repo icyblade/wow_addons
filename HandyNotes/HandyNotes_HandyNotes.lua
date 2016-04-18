@@ -447,7 +447,13 @@ function HN:FillDungeonLevelData()
 	-- Thus no WhereAmI here.
 	local mapname = strupper(GetMapInfo() or "")
 	local usesTerrainMap = DungeonUsesTerrainMap() and 1 or 0
-	local numLevels, firstFloor = GetNumDungeonMapLevels()
+	-- local numLevels, firstFloor = GetNumDungeonMapLevels() -- ICY: 21491 api change
+    local dungeonLevels = { GetNumDungeonMapLevels() };
+    local numLevels = #dungeonLevels
+    local firstFloor = 0
+    if numLevels ~= 0 then
+        local firstFloor = dungeonLevels[0]
+    end
 	local lastFloor = firstFloor + numLevels - 1
 	if numLevels > 0 then
 		HNEditFrame.leveldata[0] = ALL
