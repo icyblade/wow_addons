@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.1.6] - 2016-04-19
+### 修复 MSBT 对近战/远程攻击的吸收不显示吸收数值的问题
+
 ## [4.1.5] - 2016-04-18
 ### 修复 Handynotes 不能打点的问题
 

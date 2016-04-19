@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1738, "DBM-EmeraldNightmare", nil, 768)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14902 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14913 $"):sub(12, -3))
 mod:SetCreatureID(105393)
 mod:SetEncounterID(1873)
 mod:SetZone()
@@ -20,9 +20,9 @@ mod:RegisterEventsInCombat(
 	"SPELL_PERIODIC_DAMAGE 212886",
 	"SPELL_PERIODIC_MISSED 212886",
 	"INSTANCE_ENCOUNTER_ENGAGE_UNIT",
+	"UNIT_DIED",
 	"RAID_BOSS_WHISPER",
-	"CHAT_MSG_ADDON",
-	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3 boss4 boss5"
+	"CHAT_MSG_ADDON"
 )
 
 --TODO, figure out how often deathglare is cast to determine swap count for tanks

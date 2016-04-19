@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1703, "DBM-EmeraldNightmare", nil, 768)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14912 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14920 $"):sub(12, -3))
 mod:SetCreatureID(102672)
 mod:SetEncounterID(1853)
 mod:SetZone()
@@ -23,7 +23,8 @@ mod:RegisterEventsInCombat(
 
 --TODO, maybe improve timers by on fly corrections off breaths 1 and 2 to fix their accuracy a little do to variations
 --TODO, Fix yellsi if they are still 1 second off for volatile rot in later tests.
---TODO, figure out wtf on the timers. they were completely different on mythic. But she's not health based boss it's UNIT POWER
+--TODO, figure out wtf on the timers. they were completely different on mythic. See if heroic also changed
+--TODO, redo pull timers when boss is starting at 100 energy again
 --consider countdowns if timers made more accurate.
 local warnVolatileRot				= mod:NewTargetAnnounce(204463, 4)
 local warnRot						= mod:NewTargetAnnounce(203096, 3)
@@ -40,10 +41,11 @@ local specWarnInfestedGround		= mod:NewSpecialWarningMove(203045, nil, nil, nil,
 local specWarnInfestedMind			= mod:NewSpecialWarningSwitch(205043, "Dps", nil, nil, 1, 2)
 local specWarnSpreadInfestation		= mod:NewSpecialWarningInterrupt(205070, "HasInterrupt", nil, nil, 1, 2)
 
-local timerBreathCD					= mod:NewCDCountTimer(40, 202977, nil, nil, nil, 3)--40-47
+local timerBreathCD					= mod:NewCDCountTimer(42.5, 202977, nil, nil, nil, 3)--42.5-47
 local timerVolatileRotCD			= mod:NewCDCountTimer(22.8, 204463, nil, "Tank", nil, 5)
 local timerRotCD					= mod:NewCDCountTimer(22.8, 203096, nil, nil, nil, 3)
-local timerSwarmCD					= mod:NewCDCountTimer(94, 203552, nil, nil, nil, 6)--94-98
+local timerSwarm					= mod:NewBuffActiveTimer(23, 203552, nil, nil, nil, 6)
+local timerSwarmCD					= mod:NewCDCountTimer(103, 203552, nil, nil, nil, 6)--103-106
 
 local countdownBreath				= mod:NewCountdown(40, 202977)
 local countdownVolatileRot			= mod:NewCountdown("Alt22.8", 204463, "Tank")
@@ -68,11 +70,17 @@ function mod:OnCombatStart(delay)
 	self.vb.rotCast = 0
 	self.vb.volatileRotCast = 0
 	self.vb.swarmCast = 0
-	timerRotCD:Start(10, 1)
-	timerVolatileRotCD:Start(20, 1)--20-25.8
-	timerBreathCD:Start(35-delay, 1)--35-40 variable
-	countdownBreath:Start(35-delay)
-	timerSwarmCD:Start(86-delay, 1)--86-100
+	--Only start timers if boss isn't starting at 0 energy
+	if UnitExists("boss1") and UnitPower("boss1") > 80 then
+		timerRotCD:Start(10, 1)
+		timerVolatileRotCD:Start(20, 1)--20-25.8
+		timerBreathCD:Start(35-delay, 1)--35-40 variable
+		countdownBreath:Start(35-delay)
+		timerSwarmCD:Start(86-delay, 1)--86-100
+		DBM:AddMsg("Note, pull timers are subject to inaccuracies since they were changed after heroic was tested BUT didn't work right during mythic testing do to energy bug")
+	else--Boss started at 0 energy and will go right into swarm phase after about 5 seconds
+		timerSwarmCD:Start(5-delay, 1)
+	end
 	if self.Options.InfoFrame and self:IsMythic() then
 		DBM.InfoFrame:SetHeader(GetSpellInfo(204506))
 		DBM.InfoFrame:Show(5, "playerdebuffstacks", 204506)
@@ -88,8 +96,15 @@ end
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 203552 then
+		--Cancel for good measure since blizzard is still tweaking fight
+		timerRotCD:Stop()
+		timerVolatileRotCD:Stop()
+		timerBreathCD:Stop()
+		countdownBreath:Cancel()
+		--Cancel for good measure since blizzard is still tweaking fight
 		self.vb.swarmCast = self.vb.swarmCast + 1
 		warnHeartofSwarm:Show(self.vb.swarmCast)
+		timerSwarm:Start()
 	elseif spellId == 202977 then
 		self.vb.breathCount = self.vb.breathCount + 1
 		specWarnBreath:Show(self.vb.breathCount)
@@ -108,11 +123,11 @@ function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
 	if spellId == 204463 then
 		self.vb.volatileRotCast = self.vb.volatileRotCast + 1
-		if self:IsMythic() then
-			timerVolatileRotCD:Start(43, self.vb.volatileRotCast+1)--43-48
-		else
-			timerVolatileRotCD:Start(nil, self.vb.volatileRotCast+1)
-		end
+--		if self:IsMythic() then
+			timerVolatileRotCD:Start(42.5, self.vb.volatileRotCast+1)--42.5-48
+--		else
+--			timerVolatileRotCD:Start(nil, self.vb.volatileRotCast+1)
+--		end
 	end
 end
 
@@ -179,10 +194,10 @@ function mod:SPELL_AURA_REMOVED(args)
 		self.vb.breathCount = 0
 		self.vb.rotCast = 0
 		self.vb.volatileRotCast = 0
-		timerRotCD:Start(15, 1)
-		timerVolatileRotCD:Start(28.5, 1)--28.5-31
-		timerBreathCD:Start(44, 1)
-		countdownBreath:Start(44)
+		timerRotCD:Start(17, 1)--17-19
+		timerVolatileRotCD:Start(32, 1)--32-33
+		timerBreathCD:Start(47, 1)--47-48
+		countdownBreath:Start(47)
 		timerSwarmCD:Start(nil, self.vb.swarmCast+1)
 	end
 end
@@ -199,11 +214,11 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 	if spellId == 203095 then--CAST Doesn't show in combat log for some reason. Applied does but don't want to risk misses
 		self.vb.rotCast = self.vb.rotCast + 1
 		if self.vb.rotCast == 1 then
-			if self:IsMythic() then
+--			if self:IsMythic() then
 				timerRotCD:Start(45, 2)
-			else
-				timerRotCD:Start(33, 2)--33-36
-			end
+--			else
+--				timerRotCD:Start(33, 2)--33-36
+--			end
 		elseif not self:IsMythic() and self.vb.rotCast == 2 then
 			timerRotCD:Start(18.5, 3)--18.5-22
 		end

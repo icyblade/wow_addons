@@ -607,10 +607,18 @@ local function CreateCaptureFuncs()
    end,]]
 
   -- Miss events.
-  SWING_MISSED = function (p, ...) p.eventType, p.missType, p.isOffHand, p.isMultistrike, p.amount = "miss", ... end,
-  RANGE_MISSED = function (p, ...) p.eventType, p.isRange, p.skillID, p.skillName, p.skillSchool, p.missType, p.isOffHand, p.isMultistrike, p.amount = "miss", true, ... end,
+  -- SWING_MISSED = function (p, ...) p.eventType, p.missType, p.isOffHand, p.isMultistrike, p.amount = "miss", ... end, -- ICY: event change
+  -- RANGE_MISSED = function (p, ...) p.eventType, p.isRange, p.skillID, p.skillName, p.skillSchool, p.missType, p.isOffHand, p.isMultistrike, p.amount = "miss", true, ... end, -- ICY: event change
   -- SPELL_MISSED = function (p, ...) p.eventType, p.skillID, p.skillName, p.skillSchool, p.missType, p.isOffHand, p.isMultistrike, p.amount = "miss", ... end, -- ICY: event change
   -- SPELL_PERIODIC_MISSED = function (p, ...) p.eventType, p.skillID, p.skillName, p.skillSchool, p.missType, p.isOffHand, p.isMultistrike, p.amount = "miss", ... end, -- ICY: event change
+  SWING_MISSED = function (p, ...) 
+    p.eventType, p.missType, p.isOffHand, p.amount = "miss", ... 
+    p.isMultistrike = false
+  end,
+  RANGE_MISSED = function (p, ...) 
+    p.eventType, p.isRange, p.skillID, p.skillName, p.skillSchool, p.missType, p.isOffHand, p.amount = "miss", true, ... 
+    p.isMultistrike = false
+  end,
   SPELL_MISSED = function (p, ...) 
     p.eventType, p.skillID, p.skillName, p.skillSchool, p.missType, p.isOffHand, p.amount = "miss", ... 
     p.isMultistrike = false
