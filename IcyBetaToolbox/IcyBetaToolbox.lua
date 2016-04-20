@@ -40,7 +40,7 @@ function ShowChallengeProgress:PLAYER_ENTERING_WORLD()
             if key == 'ProgressBar' then
                 local criteriaString, criteriaType, completed, quantity, totalQuantity, flags, assetID, quantityString, criteriaID, duration, elapsed, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
                 if quantity ~= nil then
-                    element.Bar.Label:SetFormattedText('%d/%d %s', quantityString or '', totalQuantity or '', quantity or '');
+                    element.Bar.Label:SetFormattedText('%s/%s %s', quantityString or '', totalQuantity or '', quantity or '');
                 end
             end
         end
@@ -52,7 +52,9 @@ function ShowChallengeProgress:CRITERIA_UPDATE()
         for key, element in pairs(line) do
             if key == 'ProgressBar' then
                 local criteriaString, criteriaType, completed, quantity, totalQuantity, flags, assetID, quantityString, criteriaID, duration, elapsed, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
-                element.Bar.Label:SetFormattedText('%d/%d %s', quantityString or '', totalQuantity or '', quantity or '');
+                if quantity ~= nil then
+                    element.Bar.Label:SetFormattedText('%s/%s %s', quantityString or '', totalQuantity or '', quantity or '');
+                end
             end
         end
     end
@@ -63,7 +65,9 @@ function ShowChallengeProgress:SCENARIO_CRITERIA_UPDATE()
         for key, element in pairs(line) do
             if key == 'ProgressBar' then
                 local criteriaString, criteriaType, completed, quantity, totalQuantity, flags, assetID, quantityString, criteriaID, duration, elapsed, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
-                element.Bar.Label:SetFormattedText('%d/%d %s', quantityString or '', totalQuantity or '', quantity or '');
+                if quantity ~= nil then
+                    element.Bar.Label:SetFormattedText('%s/%s %s', quantityString or '', totalQuantity or '', quantity or '');
+                end
             end
         end
     end
