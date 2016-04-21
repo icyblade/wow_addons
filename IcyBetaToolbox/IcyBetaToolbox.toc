@@ -12,5 +12,6 @@ libs\AceEvent-3.0\AceEvent-3.0.xml
 libs\AceHook-3.0\AceHook-3.0.xml
 
 IcyBetaToolbox.lua
+MythicDungeon.lua
 
 

@@ -1,7 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [4.1.7] - 2016-04-29
+## [4.1.8] - 2016-04-21
+### 修复 IcyBetaToolbox 可能导致副本内卡的问题
+
+## [4.1.7] - 2016-04-21
 ### 修复 IcyBetaToolbox 在大秘境进度显示出错的问题
 
 ## [4.1.6] - 2016-04-19
