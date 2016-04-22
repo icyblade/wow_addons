@@ -12,7 +12,7 @@ function Nameplate.create(f)
     nameplate.np = f
     name = f:GetName()
     nameplate.npuf = _G[name..'UnitFrame']
-    nameplate.npufhb = _G[name..'UnitFrameHealthBar']
+    nameplate.npufhb = nameplate.npuf.healthBar
     return nameplate
 end
 

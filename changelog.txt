@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.1.9] - 2016-04-22
+### 修复 IcyNameplates 在 21531 报错的问题
+
 ## [4.1.8] - 2016-04-21
 ### 修复 IcyBetaToolbox 可能导致副本内卡的问题
 
