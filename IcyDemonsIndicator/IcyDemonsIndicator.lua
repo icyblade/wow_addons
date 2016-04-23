@@ -85,6 +85,7 @@ function WarlockDemons:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
                 bar = WarlockDemons:CreateBar(v.icon, v.duration, destGUID)
                 table.insert(WarlockDemons.BarPool, bar)
                 bar:Start()
+                return
             end
         end
     elseif combat_event == 'SPELL_INSTAKILL' then
