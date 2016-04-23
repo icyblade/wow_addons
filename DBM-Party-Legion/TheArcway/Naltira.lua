@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1500, "DBM-Party-Legion", 6, 726)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14886 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14928 $"):sub(12, -3))
 mod:SetCreatureID(98207)
 mod:SetEncounterID(1826)
 mod:SetZone()
@@ -115,7 +115,8 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 --"<53.44 00:02:07> [UNIT_SPELLCAST_SUCCEEDED] Nal'tira(Omegal) [[boss1:Blink Strikes::3-2084-1516-4913-199809-00064E8ACE:199809]]", -- [197]
 --"<54.03 00:02:07> [UNIT_SPELLCAST_CHANNEL_START] Nal'tira(Dayani) - spell_mage_arcaneorb - 2.5sec [[boss1:Blink Strikes::0-0-0-0-0-0000000000:199811]]", -- [201]
 --It's not that much slower to just use UNIT_SPELLCAST_CHANNEL_START target and ditch scanning Will leave it this way for now for the .6 second gain though
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
+	local _, _, _, _, spellId = strsplit("-", spellGUID)
 	if spellId == 199809 then--Blink Strikes begin
 		timerBlinkCD:Start()
 		self.vb.blinkCount = 0

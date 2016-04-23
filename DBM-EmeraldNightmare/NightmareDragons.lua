@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1704, "DBM-EmeraldNightmare", nil, 768)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14909 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14928 $"):sub(12, -3))
 mod:SetCreatureID(102679)--Ysondre, 102683 (Emeriss), 102682 (Lethon), 102681 (Taerar)
 mod:SetEncounterID(1854)
 mod:SetZone()
@@ -261,7 +261,8 @@ function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
+	local _, _, _, _, spellId = strsplit("-", spellGUID)
 	if spellId == 203147 then--Nightmare Blast
 		warnNightmareBlast:Show()
 		timerNightmareBlastCD:Start()

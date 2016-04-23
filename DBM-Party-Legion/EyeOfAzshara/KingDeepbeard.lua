@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1491, "DBM-Party-Legion", 3, 716)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14879 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14928 $"):sub(12, -3))
 mod:SetCreatureID(91797)
 mod:SetEncounterID(1812)
 mod:SetZone()
@@ -10,8 +10,7 @@ mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 193152 193093 193018",
-	"SPELL_CAST_SUCCESS 193051",
-	"UNIT_SPELLCAST_SUCCEEDED boss1"
+	"SPELL_CAST_SUCCESS 193051"
 )
 
 --TODO: Info frame that shows all player name and sheild remaining for Gaseous Bubbles

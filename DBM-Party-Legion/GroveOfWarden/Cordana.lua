@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1470, "DBM-Party-Legion", 10, 707)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14879 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14928 $"):sub(12, -3))
 mod:SetCreatureID(95888)
 mod:SetEncounterID(1818)
 mod:SetZone()
@@ -79,7 +79,8 @@ function mod:SPELL_CAST_START(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
+	local _, _, _, _, spellId = strsplit("-", spellGUID)
 	if spellId == 203416 then--Shadowstep. Faster than 192750 applied
 		timerDeepeningShadowsCD:Stop()
 		timerKickCD:Stop()

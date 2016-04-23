@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1467, "DBM-Party-Legion", 10, 707)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14902 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14928 $"):sub(12, -3))
 mod:SetCreatureID(95885)
 mod:SetEncounterID(1815)
 mod:DisableESCombatDetection()--Remove if blizz fixes trash firing ENCOUNTER_START
@@ -12,10 +12,9 @@ mod:RegisterCombat("combat")
 mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 191941",
 	"SPELL_AURA_REMOVED 191941",
-	"SPELL_CAST_START 204151 191823 191941 202913",
+	"SPELL_CAST_START 204151 191823 191941 202913"
 --	"SPELL_PERIODIC_DAMAGE",
---	"SPELL_PERIODIC_MISSED",
-	"UNIT_SPELLCAST_SUCCEEDED boss1"
+--	"SPELL_PERIODIC_MISSED"
 )
 
 --TODO, timers possibly. Right now it's up in hair and possibly all health based. No timer matched between multiple pulls
@@ -61,18 +60,3 @@ function mod:SPELL_CAST_START(args)
 		voiceFelMortar:Play("watchstep")
 	end
 end
-
---[[
-function mod:SPELL_PERIODIC_DAMAGE(_, _, _, _, destGUID, _, _, _, spellId)
-	if spellId == 153616 and destGUID == UnitGUID("player") and self:AntiSpam(2, 2) then
-
-	end
-end
-mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
-
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
-	if spellId == 153500 then
-
-	end
-end
---]]

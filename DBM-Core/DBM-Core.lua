@@ -40,7 +40,7 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 14927 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 14933 $"):sub(12, -3)),
 	DisplayVersion = "6.2.22 alpha", -- the string that is shown as version
 	ReleaseRevision = 14865 -- the revision of the latest stable version that is available
 }
@@ -3437,15 +3437,10 @@ do
 	end
 
 	function DBM:PARTY_INVITE_REQUEST(sender)
-		self:Debug("PARTY_INVITE_REQUEST fired with sender: "..sender)
 		--First off, if you are in queue for something, lets not allow guildies or friends boot you from it.
 		if (IsInInstance() and not C_Garrison:IsOnGarrisonMap()) or GetLFGMode(1) or GetLFGMode(2) or GetLFGMode(3) or GetLFGMode(4) or GetLFGMode(5) then return end
 		--First check realID
 		if self.Options.AutoAcceptFriendInvite then
-			self:Debug("AutoAcceptFriendInvite is true", 2)
-			--if BNet_GetToonPresenceID(sender) then--6.2.2
-			--	AcceptPartyInvite()
-			--end
 			local _, numBNetOnline = BNGetNumFriends()
 			for i = 1, numBNetOnline do
 				local presenceID, _, _, _, _, _, _, isOnline = BNGetFriendInfo(i)
@@ -3453,19 +3448,25 @@ do
 				for i=1, BNGetNumFriendGameAccounts(friendIndex) do
 					local _, toonName, client = BNGetFriendGameAccountInfo(friendIndex, i)
 					if toonName and client == BNET_CLIENT_WOW then--Check if toon name exists and if client is wow. If yes to both, we found right client
-						self:Debug("Found a wow tooname: "..toonName, 3)
 						if toonName == sender then--Now simply see if this is sender
-							self:Debug("Found toonname match to invite sender: "..toonName)
 							AcceptPartyInvite()
 							return
 						end
 					end
 				end
 			end
+            -- Check regular non-BNet friends
+            local nf = GetNumFriends()
+			for i = 1, nf do
+				local toonName = GetFriendInfo(i)
+				if toonName == sender then
+					AcceptPartyInvite()
+					return
+				end
+			end
 		end
 		--Second check guildies
 		if self.Options.AutoAcceptGuildInvite then
-			self:Debug("AutoAcceptGuildInvite is true", 2)
 			local totalMembers, numOnlineGuildMembers, numOnlineAndMobileMembers = GetNumGuildMembers()
 			local scanTotal = GetGuildRosterShowOffline() and totalMembers or numOnlineAndMobileMembers
 			for i=1, scanTotal do
@@ -3474,10 +3475,8 @@ do
 				--therefor, this feature is just a "yes/no" for if sender is a guildy
 				local name, rank, rankIndex = GetGuildRosterInfo(i)
 				if not name then break end
-				self:Debug("Found name for guildy: "..name, 3)
 				name = Ambiguate(name, "none")
 				if sender == name then
-					self:Debug("Found name match to invite sender: "..name)
 					AcceptPartyInvite()
 					return
 				end
@@ -5090,8 +5089,15 @@ do
 		end
 	end
 
-	function DBM:UNIT_SPELLCAST_SUCCEEDED(uId, spellName, _, _, spellId)
-		self:Debug("UNIT_SPELLCAST_SUCCEEDED fired: "..UnitName(uId).."'s "..spellName.."("..spellId..")", 3)
+	function DBM:UNIT_SPELLCAST_SUCCEEDED(uId, spellName, _, spellGUID, spellId)
+		local correctSpellId = 0
+		if wowTOC >= 70000 then--in Legion spellId arg is canned as of latest build, it existed until talarn testing.
+			local _, _, _, _, legSpellId = strsplit("-", spellGUID)
+			correctSpellId = legSpellId
+		else
+			correctSpellId = spellId
+		end
+		self:Debug("UNIT_SPELLCAST_SUCCEEDED fired: "..UnitName(uId).."'s "..spellName.."("..correctSpellId..")", 3)
 	end
 
 	function DBM:ENCOUNTER_START(encounterID, name, difficulty, size)
@@ -7645,7 +7651,6 @@ do
 			["Tank"] = true,
 			["Melee"] = true,
 			["Physical"] = true,
-			["MagicDispeller"] = true,--REMOVE IN LEGION
 			["HasInterrupt"] = true,
 		},
 		[74] = {	--Gladiator Warrior --REMOVE IN LEGION?

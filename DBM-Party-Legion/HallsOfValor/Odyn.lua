@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1489, "DBM-Party-Legion", 4, 721)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14844 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14928 $"):sub(12, -3))
 mod:SetCreatureID(95676)
 mod:SetEncounterID(1809)
 mod:SetZone()
@@ -106,7 +106,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
+	local _, _, _, _, spellId = strsplit("-", spellGUID)
 	if spellId == 198396 then
 		warnSpear:Show()
 	end

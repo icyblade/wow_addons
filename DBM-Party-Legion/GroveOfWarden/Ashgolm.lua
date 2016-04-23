@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1468, "DBM-Party-Legion", 10, 707)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14814 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14928 $"):sub(12, -3))
 mod:SetCreatureID(95886)
 mod:SetEncounterID(1816)
 mod:SetZone()
@@ -11,8 +11,7 @@ mod:RegisterCombat("combat")
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 192522 192631 192621",
 	"SPELL_PERIODIC_DAMAGE",
-	"SPELL_PERIODIC_MISSED",
-	"UNIT_SPELLCAST_SUCCEEDED boss1"
+	"SPELL_PERIODIC_MISSED"
 )
 
 local warnVolcano					= mod:NewSpellAnnounce(192621, 3)

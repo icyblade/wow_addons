@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1695, "DBM-Party-Legion", 10, 707)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14824 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14928 $"):sub(12, -3))
 mod:SetCreatureID(96015)
 mod:SetEncounterID(1850)
 mod:SetZone()
@@ -10,8 +10,7 @@ mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 201488 200898",
-	"SPELL_CAST_SUCCESS 200905",
-	"UNIT_SPELLCAST_SUCCEEDED boss1"
+	"SPELL_CAST_SUCCESS 200905"
 )
 
 local warnTeleport				= mod:NewSpellAnnounce(200898, 2)

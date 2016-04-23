@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1726, "DBM-EmeraldNightmare", nil, 768)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14916 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14928 $"):sub(12, -3))
 mod:SetCreatureID(103769)----TODO, verify
 mod:SetEncounterID(1864)
 mod:SetZone()
@@ -213,7 +213,8 @@ function mod:UNIT_DIED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
+function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
+	local _, _, _, _, spellId = strsplit("-", spellGUID)
 	if spellId == 206653 then--Nightmare Blades (only version that has cast time
 		specWarnNightmareBlades:Show()
 		voiceNightmareBlades:Play("watchstep")
