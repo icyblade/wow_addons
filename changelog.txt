@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.2.0] - 2016-04-23
+### 新增 IcyDemonsIndicator，用于显示恶魔术恶魔的存活时间
+
 ## [4.1.11] - 2016-04-23
 ### Quartz 的 0 延迟现在不会显示一大块红色了
 
