@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1438, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14921 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14935 $"):sub(12, -3))
 mod:SetCreatureID(91331)--Doomfire Spirit (92208), Hellfire Deathcaller (92740), Felborne Overfiend (93615), Dreadstalker (93616), Infernal doombringer (94412)
 mod:SetEncounterID(1799)
 mod:SetMinSyncRevision(13964)
@@ -123,7 +123,7 @@ local timerRainofChaosCD			= mod:NewCDCountTimer(62, 182225, 23426, nil, nil, 2)
 ----The Nether
 --Mythic
 mod:AddTimerLine(ENCOUNTER_JOURNAL_SECTION_FLAG12)
-local timerDarkConduitCD			= mod:NewNextCountTimer(107, 190394, 199787, "-Melee", 2, 3)
+local timerDarkConduitCD			= mod:NewNextCountTimer(107, 190394, nil, "-Melee", 2, 3)
 local timerMarkOfLegionCD			= mod:NewNextCountTimer(107, 187050, 28836, nil, nil, 3)
 local timerInfernalsCD				= mod:NewNextCountTimer(107, 187111, 23426, nil, nil, 1, 1122)
 local timerSourceofChaosCD			= mod:NewNextCountTimer(107, 190703, nil, nil, 2, 1)

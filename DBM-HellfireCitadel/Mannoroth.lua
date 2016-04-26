@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1395, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14902 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14934 $"):sub(12, -3))
 mod:SetCreatureID(91349)--91305 Fel Iron Summoner
 mod:SetEncounterID(1795)
 mod:SetZone()
@@ -220,8 +220,7 @@ do
 	end
 	updateInfoFrame = function()
 		table.wipe(lines)
-		local total = 0
-		local total2 = 0
+		local total, total2 = 0, 0
 		for i = 1, #gazeTargets do
 			local name = gazeTargets[i]
 			local uId = DBM:GetRaidUnitId(name)
