@@ -1,15 +1,15 @@
 ## Interface: 70000
 ## Title: IcyDemonsIndicator
 ## Notes: Indicate demon expire time for demonology warlock
-## Version: 0.0.1
+## Version: 0.1.1
 ## Author: Icyblade
 
 libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
 libs\LibCandyBar-3.0\LibCandyBar-3.0.lua
-
 libs\AceAddon-3.0\AceAddon-3.0.xml
 libs\AceEvent-3.0\AceEvent-3.0.xml
 libs\AceHook-3.0\AceHook-3.0.xml
+libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
 
 IcyDemonsIndicator.lua

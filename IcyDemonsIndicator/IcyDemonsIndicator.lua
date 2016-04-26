@@ -64,7 +64,12 @@ function WarlockDemons:OnEnable()
     local specialization = GetSpecialization()
     if player_class == 'WARLOCK' and specialization == 2 then -- Demonology only
         self:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
+        DEFAULT_CHAT_FRAME:AddMessage('Demonology warlock detected, launching nuclear weapon...|cff00FF00DONE|r')
     end
+end
+
+function WarlockDemons:OnInitialize()
+    media:Register('statusbar', 'Glaze2', [[Interface\Addons\IcyDemonsIndicator\textures\Glaze2]])
 end
 
 function WarlockDemons:OnDisable()
