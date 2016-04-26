@@ -436,8 +436,12 @@ function TMW:ProcessEquivalencies()
 					else
 						
 						if clientVersion >= addonVersion then -- only warn for newer clients using older versions
+                            --[[
 							TMW:Debug("Invalid spellID found: %s (%s - %s)!",
 							idWithoutUnderscore, category, equiv)
+                            ]]
+                            -- ICY: spam info
+                            local icy_pass = nil
 						end
 						
 						-- substitute it back in without the underscore to prevent recusion
@@ -448,8 +452,12 @@ function TMW:ProcessEquivalencies()
 			local t = TMW:SplitNames(str)
 			for _, spell in pairs(t) do
 				if type(spell) == "number" and not GetSpellInfo(spell) then
+                    --[[
 					TMW:Debug("Invalid spellID found: %s (%s - %s)!",
 						spell, category, equiv)
+                    ]]
+                    -- ICY: spam info
+                    local icy_pass = nil
 				end
 			end
 
