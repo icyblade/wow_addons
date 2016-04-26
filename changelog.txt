@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.3.1] - 2016-04-26
+### IcyDemonsIndicator 现在会使用自己的材质和库
+
 ## [4.3.0] - 2016-04-26
 ### 新增 Clique
 
