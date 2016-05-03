@@ -925,7 +925,9 @@ function addon:UpdateRegisteredClicks(button)
 
     -- Short version that only updates clicks for one frame
     if button and not self:IsFrameBlacklisted(button) then
-        button:RegisterForClicks(direction)
+        if button.RegisterForClicks then -- ICY: fix
+            button:RegisterForClicks(direction)
+        end
         button:EnableMouseWheel(true)
         return
     end
