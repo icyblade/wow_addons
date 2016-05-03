@@ -59,17 +59,19 @@ function WarlockDemons:RemoveBar(bar)
     end
 end
 
-function WarlockDemons:OnEnable()
+function check_status()
     local player_class = select(2, UnitClass('player'))
     local specialization = GetSpecialization()
     if player_class == 'WARLOCK' and specialization == 2 then -- Demonology only
-        self:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
+        WarlockDemons:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
         DEFAULT_CHAT_FRAME:AddMessage('Demonology warlock detected, launching nuclear weapon...|cff00FF00DONE|r')
     end
 end
 
 function WarlockDemons:OnInitialize()
     media:Register('statusbar', 'Glaze2', [[Interface\Addons\IcyDemonsIndicator\textures\Glaze2]])
+    self:RegisterEvent('ACTIVE_TALENT_GROUP_CHANGED', check_status)
+    self:RegisterEvent('PLAYER_ENTERING_WORLD', check_status)
 end
 
 function WarlockDemons:OnDisable()
