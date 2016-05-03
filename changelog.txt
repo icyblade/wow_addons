@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.4.1] - 2016-04-28
+### 修复了一个 Clique 报错的问题
+### IcyDemonsIndicator 现在支持切天赋了
+
+## [4.4.0] - 2016-04-26
+### 由于已经有大姓名板功能，IcyNameplates 被移除
+
 ## [4.3.1] - 2016-04-26
 ### IcyDemonsIndicator 现在会使用自己的材质和库
 ### TellMeWhen 现在不会在登陆的时候刷屏了
