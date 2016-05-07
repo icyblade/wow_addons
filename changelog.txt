@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.4.2] - 2016-05-08
+### BlizzMove 现在应该可以移动 TalkingHeadFrame 了
+
 ## [4.4.1] - 2016-04-28
 ### 修复了一个 Clique 报错的问题
 ### IcyDemonsIndicator 现在支持切天赋了
