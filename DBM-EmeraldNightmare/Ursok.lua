@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1667, "DBM-EmeraldNightmare", nil, 768)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14923 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14938 $"):sub(12, -3))
 mod:SetCreatureID(100497)
 mod:SetEncounterID(1841)
 mod:SetZone()
@@ -26,7 +26,7 @@ local warnBloodFrenzy				= mod:NewSpellAnnounce(198388, 4)
 
 local specWarnFocusedGaze			= mod:NewSpecialWarningYou(198006, nil, nil, nil, 1, 2)
 local specWarnFocusedGazeOther		= mod:NewSpecialWarningMoveTo(198006, nil, nil, nil, 1, 6)
-local yellFocusedGaze				= mod:NewPoSYell(198006)
+local yellFocusedGaze				= mod:NewPosYell(198006)
 local specWarnRoaringCacophony		= mod:NewSpecialWarningCount(197969, nil, nil, nil, 2, 2)--Don't know what voice to give it yet, aesoon used for now
 local specWarnMiasma				= mod:NewSpecialWarningMove(205611, nil, nil, nil, 1, 2)
 local specWarnRendFlesh				= mod:NewSpecialWarningDefensive(198006, "Tank", nil, nil, 3, 2)

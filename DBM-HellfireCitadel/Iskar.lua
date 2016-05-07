@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1433, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14858 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14938 $"):sub(12, -3))
 mod:SetCreatureID(90316)
 mod:SetEncounterID(1788)
 mod:DisableESCombatDetection()--Remove if blizz fixes trash firing ENCOUNTER_START
@@ -164,12 +164,12 @@ local function showChakram(self)
 		DBMHudMap:RegisterRangeMarkerOnPartyMember(182178, "party", ranged, 0.65, 6, nil, nil, nil, 0.8, nil, false):Appear():SetLabel(ranged, nil, nil, nil, nil, nil, 0.8, nil, -15, 8, nil)
 		DBMHudMap:RegisterRangeMarkerOnPartyMember(182178, "party", melee, 0.65, 6, nil, nil, nil, 0.8, nil, false):Appear():SetLabel(melee, nil, nil, nil, nil, nil, 0.8, nil, -15, 8, nil)
 		DBMHudMap:RegisterRangeMarkerOnPartyMember(182178, "party", tank, 0.65, 6, nil, nil, nil, 0.8, nil, false):Appear():SetLabel(tank, nil, nil, nil, nil, nil, 0.8, nil, -15, 8, nil)
-		if playerName == melee or playerName == ranged or playerName == tank then--Player in it, green lines
-			DBMHudMap:AddEdge(0, 1, 0, 0.5, 6, ranged, melee, nil, nil, nil, nil)
-			DBMHudMap:AddEdge(0, 1, 0, 0.5, 6, melee, tank, nil, nil, nil, nil)
-		else--Yellow lines
+		if playerName == melee or playerName == ranged or playerName == tank then--Player in it, Yellow lines
 			DBMHudMap:AddEdge(1, 1, 0, 0.5, 6, ranged, melee, nil, nil, nil, nil)
 			DBMHudMap:AddEdge(1, 1, 0, 0.5, 6, melee, tank, nil, nil, nil, nil)
+		else--Red lines
+			DBMHudMap:AddEdge(1, 0, 0, 0.5, 6, ranged, melee, nil, nil, nil, nil)
+			DBMHudMap:AddEdge(1, 0, 0, 0.5, 6, melee, tank, nil, nil, nil, nil)
 		end
 	end
 end

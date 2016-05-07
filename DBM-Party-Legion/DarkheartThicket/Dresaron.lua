@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1656, "DBM-Party-Legion", 2, 762)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14928 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14947 $"):sub(12, -3))
 mod:SetCreatureID(99200)
 mod:SetEncounterID(1838)
 mod:SetZone()
@@ -69,7 +69,7 @@ end
 mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
-	local _, _, _, _, spellId = strsplit("-", spellGUID)
+	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
 	if spellId == 199332 then--Even with this scanner, it's abougt 50/50 hit or miss you can grab a target at all
 		voiceBreath:Play("breathsoon")
 		self:BossUnitTargetScanner(uId, "BreathTarget", 2)

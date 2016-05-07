@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1479, "DBM-Party-Legion", 3, 716)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14928 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14947 $"):sub(12, -3))
 mod:SetCreatureID(91808)
 mod:SetEncounterID(1813)
 mod:SetZone(1456)
@@ -90,7 +90,7 @@ mod.SPELL_MISSED = mod.SPELL_DAMAGE
 local wrathMod
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 	if not wrathMod then wrathMod = DBM:GetModByName(1492) end
-	local _, _, _, _, spellId = strsplit("-", spellGUID)
+	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
 	if spellId == 191798 and self:AntiSpam(3, 2) then--Violent Winds
 		if wrathMod.vb.phase == 2 then return end--Phase 2 against Wrath of Azshara, which means this is happening every 10 seconds
 		warnWinds:Show()

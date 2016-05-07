@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1687, "DBM-Party-Legion", 5, 767)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14928 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14947 $"):sub(12, -3))
 mod:SetCreatureID(91007)
 mod:SetEncounterID(1793)
 mod:SetZone()
@@ -61,7 +61,7 @@ end
 
 local spikeName = GetSpellInfo(200551)
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
-	local _, _, _, _, spellId = strsplit("-", spellGUID)
+	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
 	if spellId == 200418 then--Magma Wave (1 second faster than combat log)
 		specWarnMagmaWave:Show(spikeName)
 		voiceMagmaWave:Play("findshelter")
