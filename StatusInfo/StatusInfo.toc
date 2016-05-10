@@ -1,0 +1,7 @@
+﻿## Interface: 50001
+## Author: surgesoft
+## Notes:   A simple combat attributes    monitor 
+## Version: 2.1
+## Title: |cffff00ffStatusInfor 2.1
+## SavedVariables: StatusSave
+StatusInfo.lua

@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.5.0] - 2016-05-10
+### IcyBetaToolbox 现在支持批量删除钥石了
+### 新增 StatusInfo 来应对傻逼暴雪默认不显示 AP SP 的问题
+
 ## [4.4.2] - 2016-05-08
 ### BlizzMove 现在应该可以移动 TalkingHeadFrame 了
 
