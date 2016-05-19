@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [5.0.0] - 2016-05-19
+### IcyBetaToolbox 新增耐萨里奥巢穴二王自动寻找石头功能
+### 新增 SimulationCraft 用于导入角色数据
+### TrufiGCD 不会被毁灭术士的火焰之雨刷屏了
+### 修复了 StatusInfo 对于某绿字为 0 的新角色的报错问题
+
 ## [4.5.2] - 2016-05-15
 ### 给 ClassTimer 添加了一些 DH 技能
 
