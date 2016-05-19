@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [5.0.1] - 2016-05-19
+### 修复 5.0.0 对 TrufiGCD 的修改导致的报错问题
+
 ## [5.0.0] - 2016-05-19
 ### IcyBetaToolbox 新增耐萨里奥巢穴二王自动寻找石头功能
 ### 新增 SimulationCraft 用于导入角色数据
