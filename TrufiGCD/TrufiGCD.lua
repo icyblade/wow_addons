@@ -8,6 +8,7 @@ local icy_blacklist = {
     204242, -- consecration
     198137, -- divine hammer
     148187, -- rushing jade wind
+    42223,  -- rain of fire
 }
 
 --sizeicon = 30 
@@ -996,8 +997,8 @@ function TrGCDEventBuffHandler(self,event, ...) --запущена эвенто�
 end
 local function TrGCDAddGcdSpell(texture, i, spellid) -- добавление нового спелла в очередь
     -- ICY: blacklist
-    for _, icy_black in pairs(icy_blacklist) do
-        if spellid == icy_black then
+    for _, v in pairs(icy_blacklist) do
+        if spellid == v then
             return
         end
     end
@@ -1034,7 +1035,7 @@ end
 function TrGCDEventHandler(self, event, ...)
 	-- local arg1, _, _, _, arg5 = ...; -- arg1 - who,  arg5 - spellID -- ICY: event change
     local arg1, _, _, arg4, _ = ...; -- arg1 - who,  arg5 - something like 3-2084-870-25-212219-00108F65FE
-    arg5 = icy_split(arg4,'-')[5]
+    arg5 = tonumber(icy_split(arg4,'-')[5])
     if arg5 ~= nil  and arg5 ~= '0' then
         local spellicon = select(3, GetSpellInfo(arg5))
         local casttime = select(4, GetSpellInfo(arg5))/1000
