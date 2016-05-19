@@ -1036,7 +1036,7 @@ function TrGCDEventHandler(self, event, ...)
 	-- local arg1, _, _, _, arg5 = ...; -- arg1 - who,  arg5 - spellID -- ICY: event change
     local arg1, _, _, arg4, _ = ...; -- arg1 - who,  arg5 - something like 3-2084-870-25-212219-00108F65FE
     arg5 = tonumber(icy_split(arg4,'-')[5])
-    if arg5 ~= nil  and arg5 ~= '0' then
+    if arg5 ~= nil and arg5 ~= 0 then
         local spellicon = select(3, GetSpellInfo(arg5))
         local casttime = select(4, GetSpellInfo(arg5))/1000
         local spellname = GetSpellInfo(arg5)
