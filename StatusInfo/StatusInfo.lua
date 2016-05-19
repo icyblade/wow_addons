@@ -33,6 +33,11 @@ function Monitor(name, value)
     if  StandardValue[name]> value and UnitAffectingCombat("player")  or StandardValue[name]==0 then 
         StandardValue[name]=value
     end
+    
+    if StandardValue[name] == 0 then -- Melons: fix for really no stats
+        return 0
+    end
+    
     if (value-StandardValue[name])/StandardValue[name] >=tonumber(Threshold) then 
 
         if value%1 ~=0 then value =  format("%.2f", value) end
