@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.5.2] - 2016-05-15
+### 给 ClassTimer 添加了一些 DH 技能
+
+## [4.5.1] - 2016-05-13
+### 修复 StatusInfo 报错的问题
+
 ## [4.5.0] - 2016-05-10
 ### IcyBetaToolbox 现在支持批量删除钥石了
 ### 新增 StatusInfo 来应对傻逼暴雪默认不显示 AP SP 的问题
