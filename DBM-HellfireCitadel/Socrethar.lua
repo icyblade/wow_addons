@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1427, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14858 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14963 $"):sub(12, -3))
 mod:SetCreatureID(92330)
 mod:SetEncounterID(1794)
 mod:SetZone()
@@ -167,7 +167,19 @@ function mod:ChargeTarget(targetname, uId)
 		warnFelCharge:Show(targetname)
 	end
 	if self.Options.HudMapOnCharge then
-		DBMHudMap:RegisterRangeMarkerOnPartyMember(182051, "highlight", targetname, 5, 4, 1, 0, 0, 0.5, nil, true, 2):Pulse(0.5, 0.5)
+		local currentTank = self:GetCurrentTank(90296)
+		if currentTank then
+			DBMHudMap:RegisterRangeMarkerOnPartyMember(182051, "party", targetname, 0.35, 4, nil, nil, nil, 0.5, nil, false):Appear():SetLabel(targetname, nil, nil, nil, nil, nil, 0.8, nil, -13, 8, nil)
+			if targetname == UnitName("player") then
+				DBMHudMap:AddEdge(1, 1, 0, 0.5, 4, currentTank, targetname, nil, nil, nil, nil, 125)
+			else
+				DBMHudMap:RegisterRangeMarkerOnPartyMember(182051, "party", UnitName("player"), 0.7, 4, nil, nil, nil, 1, nil, false):Appear()
+				DBMHudMap:AddEdge(1, 0, 0, 0.5, 4, currentTank, targetname, nil, nil, nil, nil, 125)
+			end
+		else--Old school
+			DBM:Debug("Tank Detection Failure in HudMapOnCharge", 2)
+			DBMHudMap:RegisterRangeMarkerOnPartyMember(182051, "highlight", targetname, 5, 4, 1, 0, 0, 0.5, nil, true, 2):Pulse(0.5, 0.5)
+		end
 	end
 	if self.Options.SetIconOnCharge then
 		self:SetIcon(targetname, 1, 4)

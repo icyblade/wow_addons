@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1438, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14938 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14971 $"):sub(12, -3))
 mod:SetCreatureID(91331)--Doomfire Spirit (92208), Hellfire Deathcaller (92740), Felborne Overfiend (93615), Dreadstalker (93616), Infernal doombringer (94412)
 mod:SetEncounterID(1799)
 mod:SetMinSyncRevision(13964)
@@ -992,7 +992,6 @@ function mod:SPELL_AURA_APPLIED(args)
 			if not self:IsMythic() then
 				specWarnFocusedChaos:Show()
 				voiceFocusedChaos:Play("185014")
-				yellFocusedChaos:Yell(5)
 				yellFocusedChaos:Schedule(3, 2)
 				yellFocusedChaos:Schedule(2, 3)
 				yellFocusedChaos:Schedule(1, 4)
@@ -1263,6 +1262,7 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, _, spellId)
 		--Cancel stuff that resets in phase 2
 		timerAllureofFlamesCD:Stop()
 		timerDeathbrandCD:Stop()
+		timerLightCD:Stop()
 		countdownDeathBrand:Cancel()
 		--Begin phase 2
 		warnPhase2:Show()

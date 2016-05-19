@@ -40,7 +40,7 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 14951 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 14971 $"):sub(12, -3)),
 	DisplayVersion = "6.2.23 alpha", -- the string that is shown as version
 	ReleaseRevision = 14943 -- the revision of the latest stable version that is available
 }
@@ -52,8 +52,9 @@ if not DBM.Revision then
 	DBM.Revision = DBM.ReleaseRevision
 end
 
+local testBuild = false
 if IsTestBuild() then
-	DBM.ReleaseRevision = DBM.Revision
+	testBuild = true
 end
 
 -- dual profile setup
@@ -310,6 +311,7 @@ DBM.Counts = {
 	{	text	= "HoTS: Necromancer",	value 	= "HoTS_N", path = "Interface\\AddOns\\DBM-Core\\Sounds\\Heroes\\Necromancer\\", max = 5},
 	{	text	= "HoTS: Ravenlord",	value 	= "HoTS_R", path = "Interface\\AddOns\\DBM-Core\\Sounds\\Heroes\\RavenLord\\", max = 5},
 	{	text	= "HoTS: Snake",	value 	= "HoTS_S", path = "Interface\\AddOns\\DBM-Core\\Sounds\\Heroes\\Snake\\", max = 5},
+	{	text	= "Overwatch: Announcer",	value 	= "Overwatch", path = "Interface\\AddOns\\DBM-Core\\Sounds\\Overwatch\\", max = 10},
 	{	text	= "Anshlun (ptBR Male)",value = "Anshlun", path = "Interface\\AddOns\\DBM-Core\\Sounds\\Anshlun\\", max = 10},
 	{	text	= "Neryssa (ptBR Female)",value = "Neryssa", path = "Interface\\AddOns\\DBM-Core\\Sounds\\Neryssa\\", max = 10},
 }
@@ -1888,6 +1890,8 @@ do
 		elseif cmd:sub(1, 4) == "pull" then
 			local timer = tonumber(cmd:sub(5)) or 10
 			Pull(timer)
+		elseif cmd:sub(1, 5) == "rpull" then
+			Pull(30)
 		elseif cmd:sub(1, 3) == "lag" then
 			if not LL then
 				DBM:AddMsg(DBM_CORE_UPDATE_REQUIRES_RELAUNCH)
@@ -2373,9 +2377,9 @@ do
 		elseif arg1 == "update" then
 			DBM:ShowUpdateReminder(arg2, arg3) -- displayVersion, revision
 		elseif arg == "localizersneeded" then
-			DBM:ShowUpdateReminder(nil, nil, DBM_FORUMS_COPY_URL_DIALOG, "http://forums.elitistjerks.com/topic/132449-dbm-localizers-needed/")
+			DBM:ShowUpdateReminder(nil, nil, DBM_FORUMS_COPY_URL_DIALOG, "http://www.deadlybossmods.com/forum/viewtopic.php?f=3&t=5")
 		elseif arg1 == "forumsnews" then
-			DBM:ShowUpdateReminder(nil, nil, DBM_FORUMS_COPY_URL_DIALOG_NEWS, "http://forums.elitistjerks.com/topic/133665-new-feature-color-bars-by-type-updated-9-18-15/")
+			DBM:ShowUpdateReminder(nil, nil, DBM_FORUMS_COPY_URL_DIALOG_NEWS, "http://www.deadlybossmods.com/forum/viewtopic.php?f=7&t=10")
 		elseif arg1 == "forums" then
 			DBM:ShowUpdateReminder(nil, nil, DBM_FORUMS_COPY_URL_DIALOG)
 		elseif arg1 == "showRaidIdResults" then
@@ -4194,12 +4198,12 @@ do
 						local revDifference = mmin((raid[newerVersionPerson[1]].revision - DBM.Revision), (raid[newerVersionPerson[2]].revision - DBM.Revision), (raid[newerVersionPerson[3]].revision - DBM.Revision))
 						--The following code requires at least THREE people to send that higher revision (I just upped it from 2). That should be more than adaquate.
 						--Disable if out of date and it's a major patch.
-						if dbmToc < wowTOC then
+						if not testBuild and dbmToc < wowTOC then
 							updateNotificationDisplayed = 3
 							DBM:AddMsg(DBM_CORE_UPDATEREMINDER_MAJORPATCH)
 							DBM:Disable(true)
 						--Disable if revision grossly out of date even if not major patch.
-						elseif revDifference > 150 then
+						elseif revDifference > 180 then
 							if updateNotificationDisplayed < 3 then
 								updateNotificationDisplayed = 3
 								DBM:AddMsg(DBM_CORE_UPDATEREMINDER_DISABLE)
@@ -4209,14 +4213,21 @@ do
 					end
 				end
 			end
-			if DBM.DisplayVersion:find("alpha") and #newerVersionPerson < 2 and #newerRevisionPerson < 2 and updateNotificationDisplayed < 2 and (revision - DBM.Revision) > 30 then--Revision 20 can be increased in 1 day, so raised it to 30. Requires 2 person.
+			if DBM.DisplayVersion:find("alpha") and #newerVersionPerson < 2 and #newerRevisionPerson < 2 and updateNotificationDisplayed < 2 and (revision - DBM.Revision) > 20 then
 				if not checkEntry(newerRevisionPerson, sender) then
 					newerRevisionPerson[#newerRevisionPerson + 1] = sender
 					DBM:Debug("Newer revision detected from "..sender.." : Rev - "..revision..", Ver - "..version..", Rev Diff - "..(revision - DBM.Revision))
 				end
 				if #newerRevisionPerson == 2 then
-					updateNotificationDisplayed = 2
-					DBM:AddMsg(DBM_CORE_UPDATEREMINDER_HEADER_ALPHA:format(revision - DBM.Revision))
+					local revDifference = mmin((raid[newerRevisionPerson[1]].revision - DBM.Revision), (raid[newerRevisionPerson[2]].revision - DBM.Revision))
+					if testBuild and revDifference > 5 then
+						updateNotificationDisplayed = 3
+						DBM:AddMsg(DBM_CORE_UPDATEREMINDER_DISABLE)
+						DBM:Disable(true)
+					else
+						updateNotificationDisplayed = 2
+						DBM:AddMsg(DBM_CORE_UPDATEREMINDER_HEADER_ALPHA:format(revDifference))
+					end
 				end
 			end
 		end
@@ -4375,9 +4386,9 @@ do
 			end
 		end
 		
-		syncHandlers["GCE"] = function(sender, modId, ver, wipe, time, wipeHP, difficulty)
+		syncHandlers["GCE"] = function(sender, modId, ver, wipe, time, difficulty, wipeHP)
 			if not DBM.Options.ShowGuildMessages or not difficulty then return end
-			if not ver or not (ver == "2") then return end--Ignore old versions
+			if not ver or not (ver == "3") then return end--Ignore old versions
 			if DBM:AntiSpam(5, "GCE") then
 				if IsInInstance() then return end--Simple filter, if you are inside an instance, just filter it, if not in instance, good to go.
 				local bossName = EJ_GetEncounterInfo(modId) or UNKNOWN
@@ -5565,7 +5576,7 @@ do
 						end
 					end
 				end
-				if IsTestBuild() and difficultyIndex == 16 then
+				if testBuild and difficultyIndex == 16 then
 					self:AddMsg(DBM_CORE_NEED_LOGS)
 				end
 				--call OnCombatStart
@@ -5745,7 +5756,7 @@ do
 							self:AddMsg(DBM_CORE_COMBAT_ENDED_AT_LONG:format(difficultyText..name, wipeHP, strFromTime(thisTime), totalPulls - totalKills))
 							if difficultyIndex == 14 or difficultyIndex == 15 or difficultyIndex == 16 then
 								if InGuildParty() then--Guild Group
-									SendAddonMessage("D4", "GCE\t"..modId.."\t2\t1\t"..strFromTime(thisTime).."\t"..wipeHP.."\t"..difficultyIndex, "GUILD")
+									SendAddonMessage("D4", "GCE\t"..modId.."\t3\t1\t"..strFromTime(thisTime).."\t"..difficultyIndex.."\t"..wipeHP, "GUILD")
 								end
 							end
 						end
@@ -5815,7 +5826,7 @@ do
 							msg = DBM_CORE_BOSS_DOWN:format(difficultyText..name, strFromTime(thisTime))
 							if difficultyIndex == 14 or difficultyIndex == 15 or difficultyIndex == 16 then
 								if InGuildParty() then--Guild Group
-									SendAddonMessage("D4", "GCE\t"..modId.."\t2\t0\t"..strFromTime(thisTime).."\t"..difficultyIndex, "GUILD")
+									SendAddonMessage("D4", "GCE\t"..modId.."\t3\t0\t"..strFromTime(thisTime).."\t"..difficultyIndex, "GUILD")
 								end
 							end
 						end
@@ -5826,7 +5837,7 @@ do
 							msg = DBM_CORE_BOSS_DOWN_NR:format(difficultyText..name, strFromTime(thisTime), strFromTime(bestTime), totalKills)
 							if difficultyIndex == 14 or difficultyIndex == 15 or difficultyIndex == 16 then
 								if InGuildParty() then--Guild Group
-									SendAddonMessage("D4", "GCE\t"..modId.."\t2\t0\t"..strFromTime(thisTime).."\t"..difficultyIndex, "GUILD")
+									SendAddonMessage("D4", "GCE\t"..modId.."\t3\t0\t"..strFromTime(thisTime).."\t"..difficultyIndex, "GUILD")
 								end
 							end
 						end
@@ -5837,7 +5848,7 @@ do
 							msg = DBM_CORE_BOSS_DOWN_L:format(difficultyText..name, strFromTime(thisTime), strFromTime(lastTime), strFromTime(bestTime), totalKills)
 							if difficultyIndex == 14 or difficultyIndex == 15 or difficultyIndex == 16 then
 								if InGuildParty() then--Guild Group
-									SendAddonMessage("D4", "GCE\t"..modId.."\t2\t0\t"..strFromTime(thisTime).."\t"..difficultyIndex, "GUILD")
+									SendAddonMessage("D4", "GCE\t"..modId.."\t3\t0\t"..strFromTime(thisTime).."\t"..difficultyIndex, "GUILD")
 								end
 							end
 						end
@@ -6343,12 +6354,12 @@ do
 		if month == 4 and day == 1 then--April 1st
 			self:Schedule(180 + math.random(0, 600) , self.AprilFools, self)
 		end
-		--if GetLocale() == "ptBR" or GetLocale() == "frFR" or GetLocale() == "esES" or GetLocale() == "esMX" or GetLocale() == "itIT" then
-			--C_TimerAfter(10, function() if self.Options.HelpMessageVersion < 3 then self.Options.HelpMessageVersion = 3 self:AddMsg(DBM_CORE_NEED_SUPPORT) end end)
-		--end
+		if GetLocale() == "ptBR" or GetLocale() == "frFR" or GetLocale() == "esES" or GetLocale() == "esMX" or GetLocale() == "itIT" then
+			C_TimerAfter(10, function() if self.Options.HelpMessageVersion < 3 then self.Options.HelpMessageVersion = 3 self:AddMsg(DBM_CORE_NEED_LOCALS) end end)
+		end
 		C_TimerAfter(20, function() if not self.Options.ForumsMessageShown then self.Options.ForumsMessageShown = self.ReleaseRevision self:AddMsg(DBM_FORUMS_MESSAGE) end end)
 		C_TimerAfter(30, function() if not self.Options.SettingsMessageShown then self.Options.SettingsMessageShown = true self:AddMsg(DBM_HOW_TO_USE_MOD) end end)
-		--C_TimerAfter(40, function() if self.Options.NewsMessageShown < 5 then self.Options.NewsMessageShown = 5 self:AddMsg(DBM_CORE_WHATS_NEW_LINK) end end)
+		C_TimerAfter(40, function() if self.Options.NewsMessageShown < 5 then self.Options.NewsMessageShown = 5 self:AddMsg(DBM_CORE_WHATS_NEW) end end)
 		if type(RegisterAddonMessagePrefix) == "function" then
 			if not RegisterAddonMessagePrefix("D4") then -- main prefix for DBM4
 				self:AddMsg("Error: unable to register DBM addon message prefix (reached client side addon message filter limit), synchronization will be unavailable") -- TODO: confirm that this actually means that the syncs won't show up

@@ -1,6 +1,6 @@
 ﻿if GetLocale() ~= "zhTW" then return end
 
-DBM_CORE_NEED_SUPPORT				= "你是否擁有良好的程式開發或語言能力? 如果是的話, DBM需要你的本地化翻譯。拜訪我們的討論區|HDBM:localizersneeded|h|cff3588ffclicking here|r"
+DBM_CORE_NEED_LOCALS				= "你是否擁有良好的程式開發或語言能力? 如果是的話, DBM需要你的本地化翻譯。拜訪我們的討論區|HDBM:localizersneeded|h|cff3588ffclicking here|r"
 DBM_CORE_NEED_LOGS					= "DBM需要Transcriptor (http://www.wowace.com/addons/transcriptor/) 去紀錄測試伺服器的戰鬥紀錄讓插件更加完美。如果你願意幫忙，請使用transcriptor去紀錄這些戰鬥過程然後將記錄發佈在。需要7.0的團隊和五人副本戰鬥紀錄，。"
 DBM_HOW_TO_USE_MOD					= "歡迎使用DBM。在聊天頻道輸入 /dbm 打開設定開始設定。你可以載入特定區域後為任何首領設定你喜歡的特別設置。DBM會在第一次啟動時嘗試掃描你的職業天賦，但有些選項你可能想打開。"
 
@@ -17,7 +17,7 @@ DBM_CORE_BAD_LOAD					= "DBM偵測到你的此副本的模組在戰鬥中讀取�
 DBM_CORE_LOAD_MOD_VER_MISMATCH		= "%s不能被讀取因為你的DBM核心未達需求，請更新版本。"
 
 --DBM_CORE_WHATS_NEW					= "此版本新功能：計時條選項加入嵌入圖示和自訂可計時條顏色選項。"
-DBM_CORE_WHATS_NEW_LINK			= "此版本新功能： 計時條選項加入嵌入圖示和自訂可計時條顏色選項。想知道此功能的詳細資訊請至|HDBM:forumsnews|h|cff3588ffclicking here|r"
+--DBM_CORE_WHATS_NEW_LINK			= "此版本新功能： 計時條選項加入嵌入圖示和自訂可計時條顏色選項。想知道此功能的詳細資訊請至|HDBM:forumsnews|h|cff3588ffclicking here|r"
 
 DBM_CORE_DYNAMIC_DIFFICULTY_CLUMP	= "DBM已中禁用動態距離框架，你目前的團隊人數在這場戰鬥中的機制資訊不足。"
 DBM_CORE_DYNAMIC_ADD_COUNT			= "DBM已中禁用小怪計數警告，你目前的團隊人數在這場戰鬥中的機制資訊不足。"

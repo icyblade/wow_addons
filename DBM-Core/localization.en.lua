@@ -1,5 +1,5 @@
 
-DBM_CORE_NEED_SUPPORT				= "Are you good with programming or languages? If yes, the DBM needs your help in localizing DBM in more languages. If you can help, visit our forums by |HDBM:localizersneeded|h|cff3588ffclicking here|r"
+DBM_CORE_NEED_LOCALS				= "Are you good with programming or languages? If yes, the DBM needs your help in localizing DBM in more languages. If you can help, visit our forums by |HDBM:localizersneeded|h|cff3588ffclicking here|r"
 DBM_CORE_NEED_LOGS					= "DBM needs Transcriptor (http://www.wowace.com/addons/transcriptor/) logs of these test fights to make best mods possible. If you want to help, log these fights with transcriptor and post them to our forums. Only interested in 7.0 raid & dungeon logs."
 DBM_HOW_TO_USE_MOD					= "Welcome to DBM. Type /dbm help for a list of supported commands. To access options type /dbm in your chat to begin configuration. Load specific zones manually to configure any boss specific settings to your liking as well. DBM tries to do this for you by scanning your spec on first run, but some might want additional options turned on anyways."
 
@@ -15,8 +15,8 @@ DBM_CORE_LOAD_GUI_COMBAT			= "GUI cannot be initially loaded in combat. GUI will
 DBM_CORE_BAD_LOAD					= "DBM has detected your mod for this instance failed to fully load correctly because of combat. As soon as you are out of combat, please do /console reloadui as soon as possible."
 DBM_CORE_LOAD_MOD_VER_MISMATCH		= "%s could not be loaded because your DBM-Core does not meet requirements. An updated version is required"
 
---DBM_CORE_WHATS_NEW				= "New in this version: New timer options for inline icons and a new bar color option with custom user options."
-DBM_CORE_WHATS_NEW_LINK				= "New in this version: New timer options for inline icons and a new bar color option with custom user options.. To learn more about this feature you can read about it by |HDBM:forumsnews|h|cff3588ffclicking here|r"
+DBM_CORE_WHATS_NEW					= "New in this version: A new countdown voice 'Overwatch: Announcer' has been added by popular request. You can select this new count option in /dbm then 'Options' then 'Spoken Alerts'."
+--DBM_CORE_WHATS_NEW_LINK				= "New in this version: New timer options for inline icons and a new bar color option with custom user options.. To learn more about this feature you can read about it by |HDBM:forumsnews|h|cff3588ffclicking here|r"
 
 DBM_CORE_DYNAMIC_DIFFICULTY_CLUMP	= "DBM has disabled dynamic range frame on this fight do to insufficient information about number of players needed to affect clump check for a group of your size."
 DBM_CORE_DYNAMIC_ADD_COUNT			= "DBM has disabled add count warnings on this fight do to insufficient information about number of adds that spawn for a group of your size."
@@ -149,7 +149,7 @@ DBM_BIG_WIGS						= "BigWigs"
 DBM_BIG_WIGS_ALPHA					= "BigWigs Alpha"
 
 DBM_CORE_UPDATEREMINDER_HEADER			= "Your version of Deadly Boss Mods is out-of-date.\n Version %s (r%d) is available for download through Curse, WoWI, or from here:"
-DBM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "Your alpha version of Deadly Boss Mods is out-of-date.\n You are at least %d test versions behind. It is recommended that DBM users that choose alpha versions run the latest alpha. Otherwise, they should run latest stable version. Out of date alphas can lead to poor or incomplete functionality."
+DBM_CORE_UPDATEREMINDER_HEADER_ALPHA	= "Your ALPHA version of Deadly Boss Mods is out-of-date.\n You are at least %d test versions behind. It is recommended that DBM users that choose ALPHA versions run the latest ALPHA. Otherwise, they should run latest RELEASE version. Out of date ALPHAs have a stricter version check because they are development versions of DBM."
 DBM_CORE_UPDATEREMINDER_FOOTER			= "Press " .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  " to copy the download link to your clipboard."
 DBM_CORE_UPDATEREMINDER_FOOTER_GENERIC	= "Press " .. (IsMacClient() and "Cmd-C" or "Ctrl-C")  ..  " to copy the link to your clipboard."
 DBM_CORE_UPDATEREMINDER_DISABLE			= "WARNING: Do to your Deadly Boss Mods being too out of date, it has been force disabled and cannot be enabled until updated. This is to ensure old and incompatible code doesn't cause poor play experience for yourself or fellow raid members."
