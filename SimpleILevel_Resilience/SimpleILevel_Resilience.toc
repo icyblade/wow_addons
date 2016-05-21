@@ -1,0 +1,37 @@
+## Interface: 60200
+## X-Curse-Packaged-Version: 3.2.19
+## X-Curse-Project-Name: Simple iLevel
+## X-Curse-Project-ID: simple-ilevel
+## X-Curse-Repository-ID: wow/simple-ilevel/mainline
+
+## Title: Simple iLevel - Resilience
+## Notes: Shows the amount of PvP gear other players have equipped in the tooltip
+
+## Title-deDE: Simple iLevel - Abhärtung
+## Notes-deDE: Zeigt die angelegte Menge der PvP Ausrüstung anderer Spieler im Tooltip an
+# Title-esES: 
+# Notes-esES: 
+# Title-esMX: 
+# Notes-esMX: 
+## Title-frFR: Simple iLevel - Résilience
+## Notes-frFR: Indique la quantité d'équipement PvP équipé par les autres joueurs dans l'info-bulle
+# Title-itIT: 
+# Notes-itIT: 
+## Title-koKR: Simple iLevel - 탄력
+## Notes-koKR: 툴팁에 다른 플레이어가 장착한 PvP 장비에 대한 내용를 표시
+## Title-ptBR: Ilevel Simples - Resiliência
+## Notes-ptBR: Mostra o valor de GEAR PVP que os outros players tem equipado em seu grupo
+## Title-ruRU: Simple iLevel - Устойчивость
+## Notes-ruRU: Показывает количество ПвП предметов, которые одели другие игроки в подсказке
+## Title-zhCN: Simple iLevel - 韧性
+## Notes-zhCN: 于提示栏显示其他玩家装备几件PvP装备
+## Title-zhTW: Simple iLevel - 韌性
+## Notes-zhTW: 於提示欄顯示其他玩家裝備幾件PvP裝備
+
+## Author: Scotepi
+## Version: 3.2.19
+## Dependencies: SimpleILevel
+## SavedVariables: SIL_ResilSettings
+## LoadOnDemand: 1
+
+SimpleILevel_Resilience.lua
