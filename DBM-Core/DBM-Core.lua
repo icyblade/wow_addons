@@ -10,7 +10,7 @@
 --
 -- The localizations are written by:
 --    * enGB/enUS: Omegal				Twitter @MysticalOS
---    * deDE: Ebmor						http://forums.elitistjerks.com/user/616736-ebmor/
+--    * deDE: Ebmor						http://www.deadlybossmods.com/forum/memberlist.php?mode=viewprofile&u=79
 --    * ruRU: TOM_RUS					http://www.curseforge.com/profiles/TOM_RUS/
 --    * zhTW: Whyv						ultrashining@gmail.com
 --    * koKR: nBlueWiz					everfinale@gmail.com
@@ -40,7 +40,7 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 14971 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 14972 $"):sub(12, -3)),
 	DisplayVersion = "6.2.23 alpha", -- the string that is shown as version
 	ReleaseRevision = 14943 -- the revision of the latest stable version that is available
 }
