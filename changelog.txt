@@ -1,6 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [5.1.2] - 2016-05-24
+### 修复了 Simple iLvL 对主副手神器装等显示不正确的问题
+### 修复了 Simple iLvL 不考虑空装备的问题
+### 给 IcyBetaToolbox 添加了开启 2 级 4 级大秘境钥石的功能
+### 修复 Ularogg 的一个 BUG
+
+## [5.1.1] - 2016-05-22
+### 给 idTips 添加了物品链接功能
+
 ## [5.1.0] - 2016-05-21
 ### 新增 Simple iLvL 用于显示装等
 ### 新增 OmniCC 显示图标时间
