@@ -10,7 +10,8 @@ local types = {
     talent      = "TalentID:",
     achievement = "AchievementID:",
     ability     = "AbilityID:",
-    currency    = "CurrencyID:"
+    currency    = "CurrencyID:",
+    itemlink    = 'Item Link:' -- Melons: add item link
 }
 
 local function addLine(tooltip, id, type)
@@ -111,6 +112,7 @@ local function attachItemTooltip(self)
     end
     if id then
       addLine(self, id, types.item)
+      addLine(self, string.match(link,'item[:0-9]+'), types.itemlink) -- Melons: add item link
     end
   end
 end
