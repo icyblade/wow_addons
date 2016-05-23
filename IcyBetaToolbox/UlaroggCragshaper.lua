@@ -27,7 +27,7 @@ function UlaroggCragshaper:PLAYER_ENTERING_WORLD()
 end
 
 function UlaroggCragshaper:COMBAT_LOG_EVENT_UNFILTERED(self, timestamp, event, ...)
-    local sourceGUID, sourceName, sourceFlags, sourceFlags2, destGUID, destName, destFlags, destFlags2, spellId, spellName, spellSchool = ...
+    local _, sourceGUID, sourceName, sourceFlags, sourceFlags2, destGUID, destName, destFlags, destFlags2, spellId, spellName, spellSchool = ...
     
     -- enable & disable
     if event == 'SPELL_AURA_APPLIED' and spellId == 198510 then
