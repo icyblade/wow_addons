@@ -40,7 +40,7 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 14972 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 14976 $"):sub(12, -3)),
 	DisplayVersion = "6.2.23 alpha", -- the string that is shown as version
 	ReleaseRevision = 14943 -- the revision of the latest stable version that is available
 }
@@ -2973,6 +2973,11 @@ function DBM:LoadModOptions(modId, inCombat, first)
 					elseif mod.DefaultOptions[option] and (type(mod.DefaultOptions[option]) == "table") then--recover broken dropdown option
 						if savedOptions[id][profileNum][option] and (type(savedOptions[id][profileNum][option]) == "boolean") then
 							savedOptions[id][profileNum][option] = mod.DefaultOptions[option].value
+						end
+					--Fix default options for colored bar by type that were set to 0 because no defaults existed at time they were created, but do now.
+					elseif option:find("TColor") then
+						if savedOptions[id][profileNum][option] and savedOptions[id][profileNum][option] == 0 and mod.DefaultOptions[option] and mod.DefaultOptions[option] ~= 0 then
+							savedOptions[id][profileNum][option] = mod.DefaultOptions[option]
 						end
 					end
 				end
