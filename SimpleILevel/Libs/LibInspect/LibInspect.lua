@@ -346,7 +346,11 @@ function lib:GetItems(target, guid)
         
         for i = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
             local itemLink = GetInventoryItemLink(target, i);
-            items[i] = itemLink;
+            if itemLink ~= nil then -- Melons: add empty string to indicate no armor equipped
+                items[i] = itemLink;
+            else
+                items[i] = ''
+            end
             
             if itemLink then 
                  --- print('LibInspect:GetItems', UnitName(target), i, itemLink);

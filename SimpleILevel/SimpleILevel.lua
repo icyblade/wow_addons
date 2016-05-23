@@ -597,6 +597,8 @@ function SIL:GearSum(items, level)
         local totalItems = 0;
         local totalScore = 0;
         
+        -- Melons: legion artifact rework
+        --[[
         for i,itemLink in pairs(items) do
             if itemLink and not ( i == INVSLOT_BODY or i == INVSLOT_RANGED or i == INVSLOT_TABARD ) then
                 -- local name, link, itemRarity , itemLevel = GetItemInfo(itemLink);
@@ -613,6 +615,65 @@ function SIL:GearSum(items, level)
                     
                     totalItems = totalItems + 1;
                     totalScore = totalScore + itemLevel;
+                end
+            end
+        end]]
+        
+
+        if HasArtifactEquipped() then
+            for i,itemLink in pairs(items) do
+                if not ( i == INVSLOT_BODY or i == INVSLOT_RANGED or i == INVSLOT_TABARD or i == INVSLOT_MAINHAND or i == INVSLOT_OFFHAND ) then
+                    if itemLink ~= '' then
+                        local itemLevel = self.itemUpgrade:GetUpgradedItemLevel(itemLink);
+
+                        if itemLevel then
+                            
+                            -- Fix for heirlooms
+                            if itemRarity == 7 then
+                                itemLevel = self:Heirloom(level, itemLink);
+                            end
+                            
+                            totalItems = totalItems + 1;
+                            totalScore = totalScore + itemLevel;
+                        end
+                    else
+                        totalItems = totalItems + 1;
+                    end
+                end
+            end
+
+            if items[INVSLOT_MAINHAND] ~= '' and items[INVSLOT_OFFHAND] ~= '' then
+                -- has dual artifact
+                local mainhand_itemLevel = self.itemUpgrade:GetUpgradedItemLevel(items[INVSLOT_MAINHAND]);
+                local offhand_itemLevel = self.itemUpgrade:GetUpgradedItemLevel(items[INVSLOT_OFFHAND]);
+                local itemLevel = max(mainhand_itemLevel, offhand_itemLevel)
+                
+                totalItems = totalItems + 2
+                totalScore = totalScore + itemLevel*2
+            else
+                -- has only on artifact
+                totalItems = totalItems + 1
+                totalScore = totalScore + self.itemUpgrade:GetUpgradedItemLevel(items[INVSLOT_MAINHAND]);
+            end
+        else
+            for i,itemLink in pairs(items) do
+                if not ( i == INVSLOT_BODY or i == INVSLOT_RANGED or i == INVSLOT_TABARD ) then
+                    if itemLink ~= '' then
+                        local itemLevel = self.itemUpgrade:GetUpgradedItemLevel(itemLink);
+          
+                        if itemLevel then
+                            
+                            -- Fix for heirlooms
+                            if itemRarity == 7 then
+                                itemLevel = self:Heirloom(level, itemLink);
+                            end
+                            
+                            totalItems = totalItems + 1;
+                            totalScore = totalScore + itemLevel;
+                        end
+                    else
+                        totalItems = totalItems + 1
+                    end
                 end
             end
         end
