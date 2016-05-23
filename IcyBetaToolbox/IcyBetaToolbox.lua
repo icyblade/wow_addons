@@ -52,7 +52,7 @@ function filter_keystone()
             end
             local item_id = lst[2]
             local instance_id = lst[6]
-            if item_id == '139383' then
+            if item_id == '139381' or item_id == '139382' or item_id == '139383' then
                 UseContainerItem(b, s)
             end
           end 
