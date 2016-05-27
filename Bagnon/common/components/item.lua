@@ -275,7 +275,7 @@ function ItemSlot:UpdateCooldown()
 		ContainerFrame_UpdateCooldown(self:GetBag(), self)
 	else
 		self.Cooldown:Hide()
-		CooldownFrame_SetTimer(self.Cooldown, 0, 0, 0)
+		CooldownFrame_Set(self.Cooldown, 0, 0, 0)
 	end
 end
 
