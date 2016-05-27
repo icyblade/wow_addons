@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1502, "DBM-Party-Legion", 8, 727)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14902 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14987 $"):sub(12, -3))
 mod:SetCreatureID(96756)
 mod:SetEncounterID(1822)
 mod:SetZone()
@@ -33,8 +33,8 @@ local voiceAriseFallen				= mod:NewVoice(193566, "-Healer")--mobkill
 function mod:OnCombatStart(delay)
 	timerDarkSlashCD:Start(3.5-delay)
 	timerScreamsCD:Start(5.9-delay)
-	timerWindsCD:Start(15.5-delay)
-	timerBaneCD:Start(21.5-delay)
+	timerWindsCD:Start(15-delay)
+	timerBaneCD:Start(21-delay)
 end
 
 function mod:SPELL_CAST_START(args)

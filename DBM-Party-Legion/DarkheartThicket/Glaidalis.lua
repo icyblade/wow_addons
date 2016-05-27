@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1654, "DBM-Party-Legion", 2, 762)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14947 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14983 $"):sub(12, -3))
 mod:SetCreatureID(96512)
 mod:SetEncounterID(1836)
 mod:SetZone()
@@ -16,7 +16,6 @@ mod:RegisterEventsInCombat(
 	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
---TODO, verify target scanning timing. May need debug level 3 to examine the scan time for leap
 local warnLeap					= mod:NewTargetAnnounce(196346, 2)--0.5 seconds may still be too hard to dodge even if target scanning works.
 local warnNightFall				= mod:NewSpellAnnounce(198401, 2)
 

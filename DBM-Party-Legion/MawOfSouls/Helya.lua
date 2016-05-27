@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1663, "DBM-Party-Legion", 8, 727)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14947 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14987 $"):sub(12, -3))
 mod:SetCreatureID(96759)
 mod:SetEncounterID(1824)
 mod:SetZone()
@@ -21,7 +21,7 @@ local warnSubmerged						= mod:NewTargetAnnounce(196947, 2)
 local specWarnDestructorTentacle		= mod:NewSpecialWarningSwitch("ej12364", "Tank")
 local specWarnSubmergedOver				= mod:NewSpecialWarningEnd(196947)
 
-local timerTaintofSeaCD					= mod:NewNextTimer(13, 197262, nil, false, nil, 3)
+local timerTaintofSeaCD					= mod:NewCDTimer(12, 197262, nil, false, nil, 3)
 local timerPiercingTentacleCD			= mod:NewNextTimer(9, 197596, nil, nil, nil, 3)
 --local timerDestructorTentacleCD		= mod:NewCDTimer(26, "ej12364", nil, nil, nil, 1)--More data
 local timerSubmerged					= mod:NewBuffFadesTimer(15, 196947, nil, nil, nil, 6)
@@ -39,8 +39,8 @@ end
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
 	if spellId == 196947 then
-		timerPiercingTentacleCD:Cancel()
-		timerTaintofSeaCD:Cancel()
+		timerPiercingTentacleCD:Stop()
+		timerTaintofSeaCD:Stop()
 		warnSubmerged:Show(args.destName)
 		timerSubmerged:Start()
 		if self.vb.phase == 1 then

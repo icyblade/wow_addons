@@ -56,6 +56,16 @@ L= DBM:GetModLocalization(1656)
 L= DBM:GetModLocalization(1657)
 
 -----------------------
+--Darkheart Thicket Trash
+-----------------------
+L = DBM:GetModLocalization("DHTTrash")
+
+L:SetGeneralLocalization({
+	name =	"Darkheart Thicket Trash"
+})
+
+
+-----------------------
 -- <<<Eye of Azshara>>> --
 -----------------------
 -----------------------
@@ -82,6 +92,15 @@ L= DBM:GetModLocalization(1479)
 -- Wrath of Azshara --
 -----------------------
 L= DBM:GetModLocalization(1492)
+
+-----------------------
+--Eye of Azshara Trash
+-----------------------
+L = DBM:GetModLocalization("EoATrash")
+
+L:SetGeneralLocalization({
+	name =	"Eye of Azshara Trash"
+})
 
 -----------------------
 -- <<<Halls of Valor>>> --
@@ -142,6 +161,15 @@ L= DBM:GetModLocalization(1673)
 -- Dargrul the Underking --
 -----------------------
 L= DBM:GetModLocalization(1687)
+
+-----------------------
+--Neltharion's Lair Trash
+-----------------------
+L = DBM:GetModLocalization("NLTrash")
+
+L:SetGeneralLocalization({
+	name =	"Neltharion's Lair Trash"
+})
 
 -----------------------
 -- <<<The Arcway>>> --

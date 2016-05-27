@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1731, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14890 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14977 $"):sub(12, -3))
 mod:SetCreatureID(104327)
 mod:SetEncounterID(1867)
 mod:SetZone()
@@ -44,13 +44,16 @@ local specWarnTidyUp				= mod:NewSpecialWarningDodge(207513, nil, nil, nil, 2, 2
 local timerSpearCD					= mod:NewCDTimer(9, 206641, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)
 local timerPhaseChange				= mod:NewNextTimer(45, 155005, nil, nil, nil, 6)
 --Cleaner
+mod:AddTimerLine(GetSpellInfo(206560))
 local timerToxicSliceCD				= mod:NewCDTimer(18, 206788, nil, nil, nil, 3)
 local timerSterilizeCD				= mod:NewNextTimer(3.5, 208499, nil, nil, nil, 3)
 local timerCleansingRageCD			= mod:NewNextTimer(11, 206820, nil, nil, nil, 2)
 --Maniac
+mod:AddTimerLine(GetSpellInfo(206557))
 local timerSearingBondsCD			= mod:NewCDTimer(5.7, 208924, nil, nil, nil, 3)--5.7-8
 local timerAnnihilationCD			= mod:NewCDTimer(20.3, 201427, nil, nil, nil, 2, nil, DBM_CORE_DEADLY_ICON)
 --Caretaker
+mod:AddTimerLine(GetSpellInfo(206559))
 local timerTidyUpCD					= mod:NewNextTimer(10, 207513, nil, nil, nil, 1)
 local timerSucculentFeastCD			= mod:NewNextTimer(4.5, 207502, nil, nil, nil, 3)
 

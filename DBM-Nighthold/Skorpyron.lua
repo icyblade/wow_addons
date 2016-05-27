@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1706, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14947 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14977 $"):sub(12, -3))
 mod:SetCreatureID(102263)
 mod:SetEncounterID(1849)
 mod:DisableESCombatDetection()--Remove if blizz fixes trash firing ENCOUNTER_START
@@ -45,6 +45,7 @@ local timerShockwaveCD				= mod:NewCDTimer(57.9, 204316, nil, nil, nil, 2, nil, 
 local timerFocusedBlastCD			= mod:NewCDTimer(30.4, 204471, nil, nil, nil, 3)--30-34
 local timerVulnerable				= mod:NewBuffFadesTimer(15, 204459, nil, nil, nil, 6)
 --These are all 46 unless delayed by shockwave or stun
+mod:AddTimerLine(PLAYER_DIFFICULTY6)
 local timerVolatileFragments		= mod:NewCDTimer(46, 214661, nil, nil, nil, 6)
 local timerAcidicFragments			= mod:NewCDTimer(46, 214652, nil, nil, nil, 6)
 local timerCrystallineFragments		= mod:NewCDTimer(46, 204292, nil, nil, nil, 6)

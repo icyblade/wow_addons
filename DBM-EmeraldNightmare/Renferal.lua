@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1744, "DBM-EmeraldNightmare", nil, 768)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14947 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14977 $"):sub(12, -3))
 mod:SetCreatureID(106087)
 mod:SetEncounterID(1876)
 mod:SetZone()
@@ -55,10 +55,12 @@ local yellTwistingShadows			= mod:NewFadesYell(210864)
 local specWarnRazorWing				= mod:NewSpecialWarningDodge(210547, nil, nil, nil, 3, 2)
 
 --Spider Form
+mod:AddTimerLine(GetSpellInfo(210326))
 local timerSpiderFormCD				= mod:NewNextTimer(70, 210326, nil, nil, nil, 6)
 local timerFeedingTimeCD			= mod:NewNextTimer(15.5, 212364, nil, nil, nil, 1)
 local timerNecroticVenomCD			= mod:NewNextTimer(26.5, 215443, nil, nil, nil, 3)--This only targets ranged, but melee/tanks need to be sure to also move away from them
 --Roc Form
+mod:AddTimerLine(GetSpellInfo(210308))
 local timerRocFormCD				= mod:NewNextTimer(47, 210308, nil, nil, nil, 6)
 local timerGatheringCloudsCD		= mod:NewNextTimer(6, 212707, nil, nil, nil, 2)
 local timerDarkStormCD				= mod:NewNextTimer(16, 210948, nil, nil, nil, 2)
