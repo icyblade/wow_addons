@@ -230,7 +230,7 @@ end
 
 function PetButtonPrototype:UpdateCooldown()
 	local start, duration, enable = GetPetActionCooldown(self.id)
-	CooldownFrame_SetTimer(self.cooldown, start, duration, enable)
+	CooldownFrame_Set(self.cooldown, start, duration, enable) -- ICY: 21796 fix
 end
 
 function PetButtonPrototype:GetHotkey()

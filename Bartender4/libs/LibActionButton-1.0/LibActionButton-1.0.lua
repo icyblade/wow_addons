@@ -1246,7 +1246,7 @@ function UpdateCooldown(self)
 			EndChargeCooldown(self.chargeCooldown)
 		end
 
-		CooldownFrame_SetTimer(self.cooldown, start, duration, enable)
+		CooldownFrame_Set(self.cooldown, start, duration, enable) -- ICY: 21796 fix
 	end
 end
 
