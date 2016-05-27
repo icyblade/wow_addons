@@ -646,14 +646,18 @@ function SIL:GearSum(items, level)
                 -- has dual artifact
                 local mainhand_itemLevel = self.itemUpgrade:GetUpgradedItemLevel(items[INVSLOT_MAINHAND]);
                 local offhand_itemLevel = self.itemUpgrade:GetUpgradedItemLevel(items[INVSLOT_OFFHAND]);
-                local itemLevel = max(mainhand_itemLevel, offhand_itemLevel)
-                
-                totalItems = totalItems + 2
-                totalScore = totalScore + itemLevel*2
+                local itemLevel = max(mainhand_itemLevel or 0, offhand_itemLevel or 0)
+                if itemLevel and itemLevel ~= 0 then
+                    totalItems = totalItems + 2
+                    totalScore = totalScore + itemLevel*2
+                end
             else
                 -- has only on artifact
-                totalItems = totalItems + 1
-                totalScore = totalScore + self.itemUpgrade:GetUpgradedItemLevel(items[INVSLOT_MAINHAND]);
+                local itemLevel = self.itemUpgrade:GetUpgradedItemLevel(items[INVSLOT_MAINHAND])
+                if itemLevel then
+                    totalItems = totalItems + 1
+                    totalScore = totalScore + itemLevel;
+                end
             end
         else
             for i,itemLink in pairs(items) do
@@ -677,7 +681,6 @@ function SIL:GearSum(items, level)
                 end
             end
         end
-        
         return totalScore, totalItems;
     else
         return false;
