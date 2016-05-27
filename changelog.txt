@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [5.1.3] - 2016-05-27
+### 修复了一个 Simple iLvL 的 BUG
+### 修复了 21796 Bartender4 报错的 BUG
+
 ## [5.1.2] - 2016-05-24
 ### 修复了 Simple iLvL 对主副手神器装等显示不正确的问题
 ### 修复了 Simple iLvL 不考虑空装备的问题
