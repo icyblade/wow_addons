@@ -1,4 +1,5 @@
--- 显示大秘境精确进度
+-- Show actual progress in Mythic+ Dungeon
+
 MythicDungeon = LibStub('AceAddon-3.0'):NewAddon('MythicDungeon', 'AceEvent-3.0', 'AceHook-3.0')
 
 function MythicDungeon:OnEnable()
@@ -14,12 +15,10 @@ function MythicDungeon:PLAYER_ENTERING_WORLD()
     if difficulty_id == 8 or difficulty_id == 23 then
         self:RegisterEvent('CRITERIA_UPDATE', 'update_progress_bar')
         self:RegisterEvent('SCENARIO_CRITERIA_UPDATE', 'update_progress_bar')
-        DEFAULT_CHAT_FRAME:AddMessage('大秘境进度: |cff00FF00ON|r')
         MythicDungeon:update_progress_bar() -- direct call
     else
         self:UnregisterEvent('CRITERIA_UPDATE')
         self:UnregisterEvent('SCENARIO_CRITERIA_UPDATE')
-        DEFAULT_CHAT_FRAME:AddMessage('大秘境进度: |cffFF0000OFF|r')
     end
 end
 

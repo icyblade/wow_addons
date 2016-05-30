@@ -1,4 +1,7 @@
--- 找石头
+-- Find the boss in Stance of the Mountain phase
+-- During the phase, you can TAB all these five stones
+-- And the actual one will be skulled
+
 UlaroggCragshaper = LibStub('AceAddon-3.0'):NewAddon('UlaroggCragshaper', 'AceEvent-3.0', 'AceHook-3.0')
 
 local stones = {}
