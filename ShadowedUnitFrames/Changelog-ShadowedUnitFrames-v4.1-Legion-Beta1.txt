@@ -1,0 +1,43 @@
+tag v4.1-Legion-Beta1
+9584b03c599d482205a395ae1eac280ce41341c3
+Hendrik Leppkes <h.leppkes@gmail.com>
+2016-05-30 10:01:59 +0200
+
+Tag as 4.1-Legion-Beta1
+
+
+--------------------
+
+Hendrik Leppkes:
+	- Properly use SetColorTexture in aura indicators
+	- Disable numbers on aura indicator cooldowns
+	- Replace ruby scripts by a lua script
+	- Ruby scripts should not be part of the TOC file
+	- Update TOC of the options addon
+	- Add a shaman mana bar
+	- Limit Holy Power module to retribution
+	- Update rune handling for legion
+	- Force upgrading of profiles until development is done
+	- Upgrade existing profiles and add proper defaults for new elements
+	- Add Astral Power for Balance Druids
+	- Update the totem bar for druid changes
+	Its only used by restoration druids efflorescene now.
+	- Remove eclipse bar
+	- Add Fury and Pain power types for demon hunters
+	- Remove unused power types
+	- Add Insanity and Maelstrom power types
+	- Remove Shadow Orbs bar, add a Priest Mana bar (shadow only)
+	- Remove more remnants of removed bars
+	- Update Monk Chi bar, 5 Chi and only for Windwalker
+	- Remove mistweaver monk special mana bar
+	- Remove remnants of other warlock spec specific bars
+	- Remove handling of UNIT_COMBO_POINTS, its all done through UNIT_POWER now
+	- Remove the Burning Embers module and enable Soul Shards for all warlock specs
+	- Add Demon Hunter to class groupings
+	- Add Demon Hunter class color entry
+	- Check for player controlled units in tap handling
+	- Remove class power frames from blizzard hider which no longer exist
+	- Update TOC for 7.0
+	- Remove linked spells that no longer exist
+	- Update handling of tapped units for 7.0
+	- Convert LibDualSpec to an optional dependency

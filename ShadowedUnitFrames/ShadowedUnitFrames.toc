@@ -1,11 +1,11 @@
-## Interface: 60200
+## Interface: 70000
 ## Title: Shadowed Unit Frames
 ## Notes: "Debug" code free since '93!
 ## Author: Shadowed
-## Version: v4.0.10
+## Version: v4.1-Legion-Beta1
 ## SavedVariables: ShadowedUFDB
 ## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, LibDualSpec-1.0, Clique
-## X-Curse-Packaged-Version: v4.0.10
+## X-Curse-Packaged-Version: v4.1-Legion-Beta1
 ## X-Curse-Project-Name: Shadowed Unit Frames
 ## X-Curse-Project-ID: shadowed-unit-frames
 ## X-Curse-Repository-ID: wow/shadowed-unit-frames/mainline
@@ -56,15 +56,12 @@ modules\healabsorb.lua
 modules\range.lua
 modules\empty.lua
 modules\druid.lua
-modules\eclipse.lua
 modules\soulshards.lua
 modules\holypower.lua
 modules\chi.lua
-modules\demonicfury.lua
-modules\burningembers.lua
 modules\altpower.lua
-modules\shadoworbs.lua
-modules\monk.lua
 modules\monkstagger.lua
 modules\aurapoints.lua
+modules\priest.lua
+modules\shaman.lua
 

@@ -63,10 +63,10 @@ function Indicators:OnLayoutApplied(frame)
 			indicator.cooldown = CreateFrame("Cooldown", nil, indicator, "CooldownFrameTemplate")
 			indicator.cooldown:SetReverse(true)
 			indicator.cooldown:SetPoint("CENTER", 0, -1)
+			indicator.cooldown:SetHideCountdownNumbers(true)
 
 			indicator.stack = indicator:CreateFontString(nil, "OVERLAY")
-			-- indicator.stack:SetFont("Interface\\AddOns\\ShadowedUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf", 12, "OUTLINE") -- ICY: 3rd party font
-            indicator.stack:SetFont("Fonts\\2002.ttf", 12, "OUTLINE")
+			indicator.stack:SetFont("Interface\\AddOns\\ShadowedUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf", 12, "OUTLINE")
 			indicator.stack:SetShadowColor(0, 0, 0, 1.0)
 			indicator.stack:SetShadowOffset(0.8, -0.8)
 			indicator.stack:SetPoint("BOTTOMRIGHT", indicator, "BOTTOMRIGHT", 1, 0)
@@ -219,7 +219,7 @@ function Indicators:UpdateIndicators(frame)
 				indicator.texture:SetTexture(indicator.spellIcon)
 				indicator:SetBackdropColor(0, 0, 0, 0)
 			else
-				indicator.texture:SetTexture(indicator.colorR, indicator.colorG, indicator.colorB)
+				indicator.texture:SetColorTexture(indicator.colorR, indicator.colorG, indicator.colorB)
 				indicator:SetBackdropColor(0, 0, 0, 1)
 			end
 			

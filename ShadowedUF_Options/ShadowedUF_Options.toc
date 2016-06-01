@@ -1,10 +1,10 @@
-## Interface: 60200
+## Interface: 70000
 ## Title: Shadowed UF (Options)
 ## Notes: Configuration for Shadowed Unit Frames.
 ## Author: Shadowed
 ## LoadOnDemand: true
 ## Dependencies: ShadowedUnitFrames
-## X-Curse-Packaged-Version: v4.0.10
+## X-Curse-Packaged-Version: v4.1-Legion-Beta1
 ## X-Curse-Project-Name: Shadowed Unit Frames
 ## X-Curse-Project-ID: shadowed-unit-frames
 ## X-Curse-Repository-ID: wow/shadowed-unit-frames/mainline

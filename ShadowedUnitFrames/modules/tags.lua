@@ -210,7 +210,7 @@ local function createTagFunction(tags, resetCache)
 		for id, func in pairs(args) do
 			temp[id] = func(fontString.parent.unit, fontString.parent.unitOwner, fontString) or ""
 		end
-        fontString:SetFont('Interface\\AddOns\\ShadowedUnitFrames\\media\\fonts\\Myriad Condensed Web.ttf', 10) -- ICY: need specify font
+
 		fontString:SetFormattedText(formattedText, unpack(temp))
 	end
 
@@ -912,11 +912,6 @@ Tags.defaultTags = {
 		
 		return string.format("%s/%s", ShadowUF:FormatLargeNumber(power), ShadowUF:FormatLargeNumber(maxPower))
 	end]],
-	["druid:eclipse"] = [[function(unit, unitOwner)
-		if( GetSpecialization() ~= 1 ) then return nil end
-
-		return UnitPower(unitOwner, SPELL_POWER_ECLIPSE)
-	end]],
 	["druid:absolutepp"] = [[function(unit, unitOwner)
 		if( select(2, UnitClass(unit)) ~= "DRUID" ) then return nil end
 		if( GetSpecialization() ~= SPEC_MONK_MISTWEAVER ) then return nil end
@@ -1064,7 +1059,6 @@ Tags.defaultEvents = {
 	["curmaxpp"]				= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT UNIT_MAXPOWER",
 	["absolutepp"]				= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT UNIT_MAXPOWER",
 	["smart:curmaxpp"]			= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT UNIT_MAXPOWER",
-	["druid:eclipse"]			= "SUF_POWERTYPE:ECLIPSE UNIT_POWER_FREQUENT UNIT_MAXPOWER",
 	["druid:curpp"]  	    	= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_DISPLAYPOWER",
 	["druid:abscurpp"]      	= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_DISPLAYPOWER",
 	["druid:curmaxpp"]			= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_DISPLAYPOWER",
@@ -1295,7 +1289,6 @@ Tags.defaultHelp = {
 	["abbrev:name"]				= L["Abbreviates unit names above 10 characters, \"Dark Rune Champion\" becomes \"D.R.Champion\" and \"Dark Rune Commoner\" becomes \"D.R.Commoner\"."],
 	["group"]					= L["Shows current group number of the unit."],
 	["close"]					= L["Closes a color code, prevents colors from showing up on text that you do not want it to."],
-	["druid:eclipse"]			= L["Current Eclipse, <0 is Lunar Energy and >0 is Solar Energy."],
 	["druid:curpp"]         	= string.format(L["Works the same as [%s], but this is only shown if the unit is in Cat or Bear form."], "currpp"),
 	["druid:abscurpp"]      	= string.format(L["Works the same as [%s], but this is only shown if the unit is in Cat or Bear form."], "abscurpp"),
 	["druid:curmaxpp"]			= string.format(L["Works the same as [%s], but this is only shown if the unit is in Cat or Bear form."], "curmaxpp"),
@@ -1395,7 +1388,6 @@ Tags.defaultNames = {
 	["dechp"]					= L["Decimal percent HP"],
 	["group"]					= L["Group number"],
 	["close"]					= L["Close color"],
-	["druid:eclipse"]			= L["Eclipse (Druid)"],
 	["druid:curpp"]         	= L["Current power (Druid)"],
 	["druid:abscurpp"]      	= L["Current power (Druid/Absolute)"],
 	["druid:curmaxpp"]			= L["Cur/Max power (Druid)"],

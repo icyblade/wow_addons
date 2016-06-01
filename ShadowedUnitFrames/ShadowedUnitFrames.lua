@@ -1,10 +1,11 @@
 --[[ 
 	Shadowed Unit Frames, Shadowed of Mal'Ganis (US) PvP
 ]]
+
 ShadowUF = select(2, ...)
 
 local L = ShadowUF.L
-ShadowUF.dbRevision = 55
+ShadowUF.dbRevision = 56
 ShadowUF.playerUnit = "player"
 ShadowUF.enabledUnits = {}
 ShadowUF.modules = {}
@@ -50,8 +51,8 @@ function ShadowUF:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileCopied", "ProfilesChanged")
 	self.db.RegisterCallback(self, "OnProfileReset", "ProfileReset")
 
-	local LibDualSpec = LibStub("LibDualSpec-1.0")
-	LibDualSpec:EnhanceDatabase(self.db, "ShadowedUnitFrames")
+	local LibDualSpec = LibStub("LibDualSpec-1.0", true)
+	if LibDualSpec then LibDualSpec:EnhanceDatabase(self.db, "ShadowedUnitFrames") end
 
 	-- Setup tag cache
 	self.tagFunc = setmetatable({}, {
@@ -98,6 +99,30 @@ end
 
 function ShadowUF:CheckUpgrade()
 	local revision = self.db.profile.revision or self.dbRevision
+	if( revision <= 56 ) then
+		-- new classes
+		self.db.profile.classColors.DEMONHUNTER = {r = 0.64, g = 0.19, b = 0.79}
+
+		-- new power types
+		self.db.profile.powerColors.INSANITY = {r = 0.40, g = 0, b = 0.80}
+		self.db.profile.powerColors.MAELSTROM = {r = 0.00, g = 0.50, b = 1.00}
+		self.db.profile.powerColors.FURY = {r = 0.788, g = 0.259, b = 0.992}
+		self.db.profile.powerColors.PAIN = {r = 1, g = 0, b = 0}
+		self.db.profile.powerColors.LUNAR_POWER = {r = 0.30, g = 0.52, b = 0.90}
+
+		-- new bars
+		local config = self.db.profile.units
+		config.player.priestBar = {enabled = true, background = true, height = 0.40, order = 70}
+		config.player.shamanBar = {enabled = true, background = true, height = 0.40, order = 70}
+
+		-- clean out old bars
+		config.player.demonicFuryBar = nil
+		config.player.burningEmbersBar = nil
+		config.player.shadowOrbs = nil
+		config.player.eclipseBar = nil
+		config.player.monkBar = nil
+	end
+
 	if( revision <= 53 ) then
 		for i=1, #(self.db.profile.units.player.text) do
 			if( self.db.profile.units.player.text[i].anchorTo == "$eclipseBar" ) then
@@ -261,17 +286,14 @@ function ShadowUF:LoadUnitDefaults()
 	self.defaults.profile.units.player.runeBar = {enabled = false}
 	self.defaults.profile.units.player.totemBar = {enabled = false}
 	self.defaults.profile.units.player.druidBar = {enabled = false}
-	self.defaults.profile.units.player.monkBar = {enabled = false}
+	self.defaults.profile.units.player.priestBar = {enabled = true}
+	self.defaults.profile.units.player.shamanBar = {enabled = true}
 	self.defaults.profile.units.player.xpBar = {enabled = false}
 	self.defaults.profile.units.player.fader = {enabled = false}
 	self.defaults.profile.units.player.soulShards = {enabled = true, isBar = true}
 	self.defaults.profile.units.player.staggerBar = {enabled = true}
-	self.defaults.profile.units.player.demonicFuryBar = {enabled = true}
 	self.defaults.profile.units.player.comboPoints = {enabled = true, isBar = true}
-	-- self.defaults.profile.units.player.burningEmbersBar = {enabled = true} -- ICY: burning ember has been removed in Legion
-	self.defaults.profile.units.player.eclipseBar = {enabled = true}
 	self.defaults.profile.units.player.holyPower = {enabled = true, isBar = true}
-	self.defaults.profile.units.player.shadowOrbs = {enabled = true, isBar = true}
 	self.defaults.profile.units.player.chi = {enabled = true, isBar = true}
 	self.defaults.profile.units.player.indicators.lfdRole = {enabled = true, size = 0, x = 0, y = 0}
 	self.defaults.profile.units.player.auraPoints = {enabled = false, isBar = true}
@@ -390,11 +412,7 @@ function ShadowUF:LoadUnitDefaults()
 	self.defaults.profile.auraIndicators = {
 		disabled = {},
 		missing = {},
-		linked = {
-			-- [GetSpellInfo(61316)] = GetSpellInfo(1459), -- Dalarn Brilliance -> AB -- ICY: no such spell in LEG
-			-- [GetSpellInfo(109773)] = GetSpellInfo(1459), -- Dark Intent -> AB -- ICY: no such spell in LEG
-			-- [GetSpellInfo(126309)] = GetSpellInfo(1459) -- Waterstrider -> AB -- ICY: no such spell in LEG
-		},
+		linked = {},
 		indicators = {
 			["tl"] = {name = L["Top Left"], anchorPoint = "TLI", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = 4, y = -4, friendly = true, hostile = true},
 			["tr"] = {name = L["Top Right"], anchorPoint = "TRI", anchorTo = "$parent", height = 8, width = 8, alpha = 1.0, x = -3, y = -3, friendly = true, hostile = true},
@@ -434,7 +452,6 @@ function ShadowUF:LoadUnitDefaults()
 			["109773"] = [[{r=0.52941176470588, group="Warlock", indicator="", g=0.12941176470588, alpha=1, b=0.71372549019608, priority=0, missing=true, iconTexture="INTERFACE\\ICONS\\spell_warlock_focusshadow"}]],
 			["17"] = [[{r=1, group="Priest", indicator="tl", g=0.41960784313725, player=true, alpha=1, duration=true, b=0.5843137254902, priority=0, icon=false, iconTexture="Interface\\Icons\\Spell_Holy_PowerWordShield"}]],
 			["152118"] = [[{r=1, group="Priest", indicator="tl", g=0.41960784313725, player=true, alpha=1, duration=true, b=0.5843137254902, priority=0, icon=false, iconTexture="Interface\\Icons\\Ability_Priest_ClarityOfWill"}]],
-			["29166"] = [[{r=0, group="Druid", indicator="c", g=0, b=0, duration=true, priority=0, icon=true, iconTexture="Interface\\Icons\\Spell_Nature_Lightning"}]],
 			["23335"] = [[{r=0, group="PvP Flags", indicator="bl", g=0, duration=false, b=0, priority=0, icon=true, iconTexture="Interface\\Icons\\INV_BannerPVP_02"}]],
 			["102342"] = [[{r=0, group="Druid", indicator="c", g=0, duration=true, b=0, priority=0, icon=true, iconTexture="Interface\\Icons\\spell_druid_ironbark"}]],
 			["121177"] = [[{r=0.78039215686275, group="PvP Flags", indicator="bl", g=0.42352941176471, alpha=1, b=0, priority=0, icon=false, iconTexture="Interface\\Icons\\INV_BannerPVP_03"}]],
@@ -593,7 +610,7 @@ end
 local function basicHideBlizzardFrames(...)
 	for i=1, select("#", ...) do
 		local frame = select(i, ...)
-        -- ICY: fix
+        -- ICY: wierd nil things
         if frame ~= nil then
             if frame.UnregisterAllEvents ~= nil then
                 frame:UnregisterAllEvents()
@@ -696,7 +713,7 @@ function ShadowUF:HideBlizzardFrames()
 	end
 
 	if( self.db.profile.hidden.playerPower and not active_hiddens.playerPower ) then
-		basicHideBlizzardFrames(PriestBarFrame, PaladinPowerBar, EclipseBarFrame, ShardBarFrame, RuneFrame, MonkHarmonyBar, WarlockPowerFrame)
+		basicHideBlizzardFrames(PriestBarFrame, RuneFrame, WarlockPowerFrame)
 	end
 
 	if( self.db.profile.hidden.pet and not active_hiddens.pet ) then
