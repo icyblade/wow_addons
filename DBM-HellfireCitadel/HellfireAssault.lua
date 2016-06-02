@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1426, "DBM-HellfireCitadel", nil, 669)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14858 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 14990 $"):sub(12, -3))
 mod:SetCreatureID(90019)--Main ID is door, door death= win. 94515 Siegemaster Mar'tak
 mod:SetEncounterID(1778)
 mod:SetZone()
@@ -148,8 +148,8 @@ end
 function mod:CannonTarget(targetname, uId)
 	if not targetname then return end
 	if targetname == UnitName("player") then
-		yellCannon:Yell()
 		specWarnCannon:Show()
+		yellCannon:Yell()
 	elseif self:CheckNearby(5, targetname) then
 		specWarnCannonNear:Show(targetname)
 	else
