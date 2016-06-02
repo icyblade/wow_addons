@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [5.2.0] - 2016-05-30
+### 新增 AdvancedInterfaceOptions
+### 修复 Skada 不记录队友召唤物伤害的 BUG
+### ShadowedUnitFrame 和官方源做了一个 merge
+### ShadowedUnitFrame 字体可以使用了
+
 ## [5.1.4] - 2016-05-27
 ### 修复多个插件由于 CooldownFrame_SetTimer API 改名为 CooldownFrame_Set 带来的报错问题
 
