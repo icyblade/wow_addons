@@ -1642,6 +1642,11 @@ end
 local band = bit.band
 local PET_FLAGS = bit.bor(COMBATLOG_OBJECT_TYPE_PET, COMBATLOG_OBJECT_TYPE_GUARDIAN)
 local RAID_FLAGS = bit.bor(COMBATLOG_OBJECT_AFFILIATION_MINE, COMBATLOG_OBJECT_AFFILIATION_PARTY, COMBATLOG_OBJECT_AFFILIATION_RAID)
+local ICY_A28_SUMMON_FLAGS = 0xa28 -- ICY: fix for wierd 0xa28 flag for destruction warlock's portal
+--[[
+When destruction warlock's portal and loyal druid(neck enchanting) deals damage, the combatlog will have a 0xa28 source UnitFlag, whether the player is in party/raid or not
+]]
+
 -- The basic idea for CL processing:
 -- Modules register for interest in a certain event, along with the function to call and the flags determining if the particular event is interesting.
 -- On a new event, loop through the interested parties.
@@ -1656,7 +1661,8 @@ cleuFrame:SetScript("OnEvent", function(frame, event, timestamp, eventtype, hide
 	-- Instead of simply checking when we enter combat, combat start is also detected based on needing a certain
 	-- amount of interesting (as defined by our modules) CL events.
 	if not Skada.current and Skada.db.profile.tentativecombatstart and srcName and dstName and srcGUID ~= dstGUID and (eventtype == 'SPELL_DAMAGE' or eventtype == 'SPELL_BUILDING_DAMAGE' or eventtype == 'RANGE_DAMAGE' or eventtype == 'SWING_DAMAGE' or eventtype == 'SPELL_PERIODIC_DAMAGE') then
-		src_is_interesting = band(srcFlags, RAID_FLAGS) ~= 0 or (band(srcFlags, PET_FLAGS) ~= 0 and pets[srcGUID]) or players[srcGUID]
+		-- src_is_interesting = band(srcFlags, RAID_FLAGS) ~= 0 or (band(srcFlags, PET_FLAGS) ~= 0 and pets[srcGUID]) or players[srcGUID] -- ICY: fix for wierd 0xa28 flag
+        src_is_interesting = band(srcFlags, RAID_FLAGS) ~= 0 or (band(srcFlags, PET_FLAGS) ~= 0 and pets[srcGUID]) or players[srcGUID] or (srcFlags == ICY_A28_SUMMON_FLAGS and pets[srcGUID])
 		-- AWS: To avoid incoming periodic damage (e.g. from a debuff) triggering combat, we simply do not initialize
 		-- dst_is_interesting for periodic damage...
 		if eventtype ~= 'SPELL_PERIODIC_DAMAGE' then
@@ -1731,7 +1737,7 @@ cleuFrame:SetScript("OnEvent", function(frame, event, timestamp, eventtype, hide
 			end
 			if not fail and mod.flags.src_is_interesting or mod.flags.src_is_not_interesting then
 				if not src_is_interesting then
-					src_is_interesting = band(srcFlags, RAID_FLAGS) ~= 0 or (band(srcFlags, PET_FLAGS) ~= 0 and pets[srcGUID]) or players[srcGUID]
+					src_is_interesting = band(srcFlags, RAID_FLAGS) ~= 0 or (band(srcFlags, PET_FLAGS) ~= 0 and pets[srcGUID]) or players[srcGUID] or (srcFlags == ICY_A28_SUMMON_FLAGS and pets[srcGUID])
 				end
 				if mod.flags.src_is_interesting and not src_is_interesting then
 				--self:Print("fail on src_is_interesting")
