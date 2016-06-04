@@ -33,14 +33,14 @@ function UlaroggCragshaper:COMBAT_LOG_EVENT_UNFILTERED(self, timestamp, event, .
     local _, sourceGUID, sourceName, sourceFlags, sourceFlags2, destGUID, destName, destFlags, destFlags2, spellId, spellName, spellSchool = ...
     
     -- enable & disable
-    if event == 'SPELL_AURA_APPLIED' and spellId == 198510 then
+    if event == 'ENCOUNTER_START' and sourceGUID == 1791 then
         -- new five stones
-        DEFAULT_CHAT_FRAME:AddMessage('Time to find the BOSS!')
+        DEFAULT_CHAT_FRAME:AddMessage('Ularogg Cragshaper encounter starts')
         stones = {}
         enabled = true
-    elseif event == 'SPELL_AURA_REMOVED' and spellId == 198510 then
+    elseif event == 'ENCOUNTER_END' and sourceGUID == 1791 then
         -- finished
-        DEFAULT_CHAT_FRAME:AddMessage('Time to kill the BOSS!')
+        DEFAULT_CHAT_FRAME:AddMessage('Ularogg Cragshaper encounter ends')
         stones = {}
         enabled = false
     end
@@ -50,6 +50,7 @@ function UlaroggCragshaper:COMBAT_LOG_EVENT_UNFILTERED(self, timestamp, event, .
             for _, v in pairs(stance_of_the_mountain_ids) do
                 if v == spellId then
                     table.insert(stones, destGUID)
+                    DEFAULT_CHAT_FRAME:AddMessage('Find stone GUID: '..tostring(destGUID))
                 end
             end
         elseif event == 'SPELL_AURA_APPLIED' and spellId == 198717 then
