@@ -1,6 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [5.2.3] - 2016-06-04
+### 修复所有材质
+
+## [5.2.2] - 2016-06-04
+### 修复部分材质
+
+## [5.2.1] - 2016-06-04
+### 修复部分材质
+
 ## [5.2.0] - 2016-05-30
 ### 新增 AdvancedInterfaceOptions
 ### 修复 Skada 不记录队友召唤物伤害的 BUG
