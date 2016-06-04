@@ -1,8 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [5.2.3] - 2016-06-04
+## [5.3.0] - 2016-06-04
 ### 修复所有材质
+### add TSM
 
 ## [5.2.2] - 2016-06-04
 ### 修复部分材质
