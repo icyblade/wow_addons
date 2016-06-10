@@ -112,7 +112,7 @@ local function attachItemTooltip(self)
     end
     if id then
       addLine(self, id, types.item)
-      addLine(self, string.match(link,'item[:0-9]+'), types.itemlink) -- Melons: add item link
+      -- addLine(self, string.match(link,'item[:0-9]+'), types.itemlink) -- Melons: add item link
     end
   end
 end
