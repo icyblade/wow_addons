@@ -181,6 +181,15 @@ insets = {left = -1, right = -1, top = -1, bottom = -1},
                     elseif tplayerClass=="WARLOCK" then
                         PlayAs=2
                         --9 to 10:只能做法系DPS
+                    elseif tplayerClass == "MONK" then
+                        -- ICY: 酒仙织雾踏风
+                        if tmaintalent==1 then
+                            PlayAs=4
+                        elseif tmaintalent==2 then
+                            PlayAs=3
+                        elseif tmaintalent==3 then
+                            PlayAs=1
+                        end
                     elseif tplayerClass == "DEMONHUNTER" then
                         if tmaintalent==1 then
                             PlayAs=1
