@@ -143,7 +143,7 @@ options = {
 	},
 	Texture = {
 		type = "string",
-		default = "Interface\\AddOns\\DBM-DefaultSkin\\textures\\default.tga",
+		default = "Interface\\AddOns\\DBM-DefaultSkin\\textures\\default.blp",
 	},
 	StartColorR = {
 		type = "number",
@@ -626,6 +626,16 @@ do
 		DBM:Schedule(2, delaySkinCheck, self)
 		if not self.options.Font then--Fix font if it's nil
 			self.options.Font = standardFont
+		end
+		--Repair options from texture conversions
+		if self.options.Texture == "Interface\\AddOns\\DBM-DefaultSkin\\textures\\default.tga" then
+			self.options.Texture = "Interface\\AddOns\\DBM-DefaultSkin\\textures\\default.blp"
+		elseif self.options.Texture == "Interface\\AddOns\\DBM-DefaultSkin\\textures\\smooth.tga" then
+			self.options.Texture = "Interface\\AddOns\\DBM-DefaultSkin\\textures\\smooth.blp"
+		elseif self.options.Texture == "Interface\\AddOns\\DBM-DefaultSkin\\textures\\glaze.tga" then
+			self.options.Texture = "Interface\\AddOns\\DBM-DefaultSkin\\textures\\glaze.blp"
+		elseif self.options.Texture == "Interface\\AddOns\\DBM-DefaultSkin\\textures\\otravi.tga" then
+			self.options.Texture = "Interface\\AddOns\\DBM-DefaultSkin\\textures\\otravi.blp"
 		end
 	end
 

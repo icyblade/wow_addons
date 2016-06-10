@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(968, "DBM-Party-WoD", 7, 476)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14197 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15003 $"):sub(12, -3))
 mod:SetCreatureID(76266)
 mod:SetEncounterID(1701)
 mod:SetZone()
@@ -32,7 +32,7 @@ local specWarnAdd			= mod:NewSpecialWarning("specWarnAdd", "Dps")
 local specWarnShielding		= mod:NewSpecialWarningInterrupt(154055, "Dps")
 
 local timerLenseFlareCD		= mod:NewCDTimer(38, 154032, nil, nil, nil, 3)
-local timerCastDownCD		= mod:NewCDTimer(28, 153954, nil, nil, nil, 1)
+local timerCastDownCD		= mod:NewCDTimer(28, 153954, nil, nil, nil, 1, DBM_CORE_DAMAGE_ICON)
 
 local voiceCastDown			= mod:NewVoice(153954)
 local voiceLensFlare		= mod:NewVoice(154032)

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1133, "DBM-Party-WoD", 3, 536)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14030 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15003 $"):sub(12, -3))
 mod:SetCreatureID(80005)
 mod:SetEncounterID(1736)
 mod:SetZone()
@@ -28,7 +28,7 @@ local specWarnMark				= mod:NewSpecialWarningMoveAway(163447)
 local yellMark					= mod:NewYell(163447)
 
 local timerFreezingSnareCD		= mod:NewNextTimer(20, 162066, nil, nil, nil, 3)
-local timerSpinningSpearCD		= mod:NewNextTimer(20, 162058, nil, "Tank", 2, 5)
+local timerSpinningSpearCD		= mod:NewNextTimer(20, 162058, nil, "Tank", 2, 5, nil, DBM_CORE_TANK_ICON)
 local timerMark					= mod:NewTargetTimer(5, 163447)
 local timerMarkCD				= mod:NewNextTimer(20, 163447, nil, nil, nil, 3)
 

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1186, "DBM-Party-WoD", 1, 547)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14196 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15003 $"):sub(12, -3))
 mod:SetCreatureID(76177)
 mod:SetEncounterID(1685)
 mod:SetZone()
@@ -23,7 +23,7 @@ local specWarnSoulVessel		= mod:NewSpecialWarningSpell(155327, nil, nil, nil, 2)
 local specWarnSoulVesselEnd		= mod:NewSpecialWarningEnd(155327)
 local specWarnTornSpirits		= mod:NewSpecialWarningSwitch(153991, "-Healer")
 
-local timerSoulVessel			= mod:NewBuffActiveTimer(11.5, 155327)
+local timerSoulVessel			= mod:NewBuffActiveTimer(11.5, 155327, nil, nil, nil, 2, nil, DBM_CORE_DEADLY_ICON)
 local timerSoulVesselCD			= mod:NewCDTimer(51.5, 155327, nil, nil, nil, 6)
 local timerTornSpiritsCD		= mod:NewCDTimer(25.5, 153991, nil, nil, nil, 1)
 
