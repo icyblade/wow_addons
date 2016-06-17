@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1234, "DBM-Party-WoD", 8, 559)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 15003 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15007 $"):sub(12, -3))
 mod:SetCreatureID(77120)
 mod:SetEncounterID(1762)
 mod:SetZone()
@@ -20,7 +20,7 @@ local warnReboundingBlade		= mod:NewSpellAnnounce(155705, 2, nil, false)--More f
 local warnBlackIronCyclone		= mod:NewTargetAnnounce(155721, 3)
 local warnZaela					= mod:NewSpellAnnounce("ej10312", 3, "Interface\\ICONS\\INV_Misc_Head_Orc_01.blp")
 
-local specWarnBlackIronCyclone	= mod:NewSpecialWarningRun(155721, nil, nil, 2, 4)
+local specWarnBlackIronCyclone	= mod:NewSpecialWarningRun(155721, nil, nil, 2, 4, 2)
 local specWarnZaela				= mod:NewSpecialWarningSwitch("ej10312", "Tank", nil, 3)
 
 local timerDestructiveSmiteCD	= mod:NewNextTimer(15.5, 155673, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)

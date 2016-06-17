@@ -1,10 +1,12 @@
 local mod	= DBM:NewMod(1711, "DBM-Party-Legion", 9, 777)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 15001 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15008 $"):sub(12, -3))
 mod:SetCreatureID(102446)
 mod:SetEncounterID(1856)
 mod:SetZone()
+
+mod.imaspecialsnowflake = true
 
 mod:RegisterCombat("combat")
 
@@ -54,7 +56,7 @@ function mod:OnCombatStart(delay)
 	if not self:IsNormal() then
 		timerSeedsCD:Start(17-delay)
 	end
-	timerMightySmashCD:Start(37-delay)
+	timerMightySmashCD:Start(30-delay)
 end
 
 function mod:OnCombatEnd()

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1185, "DBM-Party-WoD", 1, 547)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 15003 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15007 $"):sub(12, -3))
 mod:SetCreatureID(75839)--Soul Construct
 mod:SetEncounterID(1686)
 mod:SetZone()
@@ -18,11 +18,11 @@ local warnHolyShield			= mod:NewTargetAnnounce(153002, 3)
 local warnConsecratedLight		= mod:NewSpellAnnounce(153006, 4)
 local warnFate					= mod:NewSpellAnnounce(157465, 2)
 
-local specWarnHolyShield		= mod:NewSpecialWarningTarget(153002)
+local specWarnHolyShield		= mod:NewSpecialWarningTarget(153002, nil, nil, nil, 1, 2)
 local yellHolyShield			= mod:NewYell(153002)
 local specWarnConsecreatedLight	= mod:NewSpecialWarningSpell(153006, nil, nil, nil, 3)
 local specWarnFate				= mod:NewSpecialWarningSpell(157465, nil, nil, nil, 2)
-local specWarnSanctifiedGround	= mod:NewSpecialWarningMove(161457)
+local specWarnSanctifiedGround	= mod:NewSpecialWarningMove(161457, nil, nil, nil, 1, 2)
 
 local timerHolyShieldCD			= mod:NewNextTimer(47, 153002, nil, nil, nil, 3)
 local timerConsecratedLightCD	= mod:NewNextTimer(7, 153006, nil, nil, nil, 2, nil, DBM_CORE_DEADLY_ICON)

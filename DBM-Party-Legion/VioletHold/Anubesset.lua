@@ -1,12 +1,14 @@
 local mod	= DBM:NewMod(1696, "DBM-Party-Legion", 9, 777)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14994 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15008 $"):sub(12, -3))
 mod:SetCreatureID(102246)
 mod:SetEncounterID(1852)
 mod:SetZone()
 
 mod:RegisterCombat("combat")
+
+mod.imaspecialsnowflake = true
 
 mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 202480",
@@ -77,7 +79,7 @@ function mod:SPELL_CAST_START(args)
 		voiceMandibleStrike:Play("defensive")
 		timerMandibleStrikeCD:Start()
 	elseif spellId == 202341 then
-		self:BossUnitTargetScanner("boss1", "ImpaleTarget")
+		self:BossUnitTargetScanner("boss1", "ImpaleTarget", 3.4)
 		timerImpaleCD:Start()
 	elseif spellId == 201863 then
 		warnSwarm:Show()

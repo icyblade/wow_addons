@@ -1,10 +1,12 @@
 local mod	= DBM:NewMod(1718, "DBM-Party-Legion", 7, 800)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14929 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15008 $"):sub(12, -3))
 mod:SetCreatureID(104215)
 mod:SetEncounterID(1868)
 mod:SetZone()
+
+mod.onlyMythic = true
 
 mod:RegisterCombat("combat")
 

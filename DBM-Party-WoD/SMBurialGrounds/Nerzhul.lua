@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1160, "DBM-Party-WoD", 6, 537)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 15003 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15007 $"):sub(12, -3))
 mod:SetCreatureID(76407)
 mod:SetEncounterID(1682)
 
@@ -17,8 +17,8 @@ local warnRitualOfBones			= mod:NewSpellAnnounce(154671, 4)
 local warnOmenOfDeath			= mod:NewTargetAnnounce(154350, 3)
 local warnMalevolence			= mod:NewSpellAnnounce(154442, 3, nil, nil, 2)--Some tank has terrible move. May need everyone
 
-local specWarnRitualOfBones		= mod:NewSpecialWarningSpell(154671, nil, nil, nil, 2)
-local specWarnOmenOfDeath		= mod:NewSpecialWarningMove(154350)
+local specWarnRitualOfBones		= mod:NewSpecialWarningSpell(154671, nil, nil, nil, 2, 2)
+local specWarnOmenOfDeath		= mod:NewSpecialWarningMove(154350, nil, nil, nil, 1, 2)
 local specWarnOmenOfDeathNear	= mod:NewSpecialWarningClose(154350)
 local yellOmenOfDeath			= mod:NewYell(154350)
 local specWarnMalevolence		= mod:NewSpecialWarningDodge(154442, nil, nil, nil, 2, 2)

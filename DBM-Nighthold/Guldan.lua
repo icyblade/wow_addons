@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1737, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14977 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15004 $"):sub(12, -3))
 mod:SetCreatureID(105503)--104537 (Fel Lord Kuraz'mal)
 mod:SetEncounterID(1866)
 mod:SetZone()
@@ -24,7 +24,7 @@ mod:RegisterEventsInCombat(
 
 --TODO, pretty sure 106986 (Gaze of Vethriz) has to be killed
 --TODO, if anquished sperits is important, add a timer. if not, remove warning.
---TODO, a LOT more owrk on bonds of fel. Once I understand how it breaks. if it's like shackled torment. how many targets, etc.
+--TODO, a LOT more work on bonds of fel. Once I understand how it breaks. if it's like shackled torment. how many targets, etc.
 --TODO, more work on eye of guldan. if pulsing aoe, maybe only ranged switch?. Timer for duplicate when energy gain rate known
 --TODO, hand of guldan in phase 2 probably diff spellid than phase 1, since it calls a different add.
 --TODO, adjust charred laceration stacks as needed.

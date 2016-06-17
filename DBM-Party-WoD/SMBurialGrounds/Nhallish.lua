@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1168, "DBM-Party-WoD", 6, 537)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14030 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15007 $"):sub(12, -3))
 mod:SetCreatureID(75829)
 mod:SetEncounterID(1688)
 
@@ -20,7 +20,7 @@ local warnSoulShred				= mod:NewSpellAnnounce(152979, 3)
 local warnVoidDevastation		= mod:NewSpellAnnounce(153067, 4)
 
 local specWarnVoidVortex		= mod:NewSpecialWarningRun(152801, nil, nil, 2, 4, 2)
-local specWarnSoulShred			= mod:NewSpecialWarningSpell(152979)
+local specWarnSoulShred			= mod:NewSpecialWarningSpell(152979, nil, nil, nil, 1, 2)
 local specWarnVoidDevastation	= mod:NewSpecialWarningSpell(153067, nil, nil, nil, 2)
 local specWarnVoidDevastationM	= mod:NewSpecialWarningMove(153070)
 
