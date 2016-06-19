@@ -9,7 +9,8 @@ local ELib,L = ExRT.lib,ExRT.L
 ------------------------------------------------------------
 
 local OptionsFrameName = "ExRTOptionsFrame"
-local Options = CreateFrame("Frame",OptionsFrameName,UIParent,"ExRTBWInterfaceFrame")
+local Options = ELib:Template("ExRTBWInterfaceFrame",UIParent)
+_G[OptionsFrameName] = Options
 
 ExRT.Options.Frame = Options
 
@@ -23,6 +24,8 @@ Options:SetScript("OnDragStart", function(self) self:StartMoving() end)
 Options:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 Options:SetDontSavePosition(true)
 Options.border = ExRT.lib.CreateShadow(Options,20)
+
+ELib:ShadowInside(Options)
 
 Options.bossButton:Hide()
 Options.backToInterface:SetScript("OnClick",function ()
@@ -309,16 +312,10 @@ end
 
 ----> Options
 
-OptionsFrame.title = ELib:Text(OptionsFrame,"Exorsus Raid Tools",22):Size(500,22):Point(160,-35):Color()
+OptionsFrame.image = ELib:Texture(OptionsFrame,"Interface\\AddOns\\ExRT\\media\\OptionLogo2"):Point("CENTER",OptionsFrame,"TOPLEFT",75,-60):Size(140,140):Color(.9,.9,.9,1):TexCoord(0,140/256,0,140/256)
+OptionsFrame.title = ELib:Text(OptionsFrame,"Exorsus Raid Tools",22):Size(500,22):Point("LEFT",OptionsFrame.image,"RIGHT",20,0):Color()
 
-OptionsFrame.image = CreateFrame("FRAME",nil,OptionsFrame)
-OptionsFrame.image:SetSize(256,256)
-OptionsFrame.image:SetBackdrop({bgFile = "Interface\\AddOns\\ExRT\\media\\OptionLogo"})
-OptionsFrame.image:SetPoint("TOPLEFT",-45,25)	
-OptionsFrame.image:SetFrameLevel(5)
-
-
-OptionsFrame.chkIconMiniMap = ELib:Check(OptionsFrame,L.setminimap1):Point(25,-140):OnClick(function(self) 
+OptionsFrame.chkIconMiniMap = ELib:Check(OptionsFrame,L.setminimap1):Point(25,-150):OnClick(function(self) 
 	if self:GetChecked() then
 		VExRT.Addon.IconMiniMapHide = true
 		ExRT.MiniMapIcon:Hide()
@@ -378,9 +375,8 @@ OptionsFrame.eventsCountTextFrame:SetScript("OnShow",function()
 end)
 
 OptionsFrame.eggBut = CreateFrame("Button",nil,OptionsFrame)  
-OptionsFrame.eggBut:SetSize(12,12) 
-OptionsFrame.eggBut:SetPoint("TOPLEFT",75,-23)
-OptionsFrame.eggBut:SetFrameLevel(8)
+OptionsFrame.eggBut:SetSize(14,14) 
+OptionsFrame.eggBut:SetPoint("CENTER",OptionsFrame.image,0,12)
 OptionsFrame.eggBut:SetScript("OnClick",function(s) 
 	local superMode = nil
 	OptionsFrame.timerSlider:SetValue(VExRT.Addon.Timer*1000 or 100)

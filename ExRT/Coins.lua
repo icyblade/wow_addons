@@ -5,6 +5,8 @@ local ELib,L = ExRT.lib,ExRT.L
 
 local VExRT = nil
 
+local strsplit = strsplit
+
 module.db.spellsCoins = {
 	[188958] = L.RaidLootT18HCBoss1,	-- T18x1
 	[188959] = L.RaidLootT18HCBoss2,	-- T18x2
@@ -201,6 +203,24 @@ do
 			end
 		end
 	end
+	if ExRT.is7 then
+		function module.main:UNIT_SPELLCAST_SUCCEEDED(unitID,_,_,spellLine)
+			local unitType,_,serverID,instanceID,zoneUID,spellID,spawnID = strsplit("-", spellLine or "")
+			spellID = tonumber(spellID or 0) or 0
+			if module_db_spellsCoins[spellID] and unitID:find("^raid%d+$") then
+				local name = ExRT.F.UnitCombatlogname(unitID)
+				if name then
+					local _,className,class = UnitClass(unitID)
+					VExRT.Coins.list[#VExRT.Coins.list + 1] = ExRT.F.tohex(class or 0,1)..spellID..name..time()
+					
+					if VExRT.Coins.ShowMessage then
+						local msg = L.CoinsMessage
+						print( msg:format( "|c"..ExRT.F.classColor( className or "?" )..name.."|r" ) )
+					end
+				end
+			end
+		end
+	end
 end
 
 function module.options:Load()
@@ -390,7 +410,7 @@ function module.options:Load()
 		historyBoxUpdate(1)
 	end)
 	
-	self.textList = ExRT.lib:MultiEdit2(self):Size(650,500):Point("TOP",0,-85):Font('x',FONT_SIZE):Hyperlinks()
+	self.textList = ExRT.lib:MultiEdit2(self):Size(653,500):Point("TOP",0,-85):Font('x',FONT_SIZE):Hyperlinks()
 	self.textList.ScrollBar:Range(1,1)
 	self.textList.wheelRange = FONT_SIZE
 	

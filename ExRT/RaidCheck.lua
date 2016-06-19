@@ -9,7 +9,7 @@ local ELib,L = ExRT.lib,ExRT.L
 
 module.db.isEncounter = nil
 module.db.tableFood = {
---Stamina,	Spirit,		Int,		Agi,		Str 		Crit		Haste		Mastery		MS		Versatility	Armor
+--Stamina,	Spirit,		Int,		Agi,		Str 		Crit		Haste		Mastery		MS		Versatility	Armor		Other
 [160600]=50,	[160778]=50,							[160724]=50,	[160726]=50,	[160793]=50,	[160832]=50,	[160839]=50,	[160722]=50,
 [160600]=75,	[160895]=75,							[160889]=75,	[160893]=75,	[160897]=75,	[160900]=75,	[160902]=75,	[160885]=75,	
 [175784]=75,									[174062]=75,	[174079]=75,	[174077]=75,	[174080]=75,	[174078]=75,			--Blue food
@@ -19,32 +19,38 @@ module.db.tableFood = {
 [180747]=125,									[180745]=125,	[180748]=125,	[180750]=125,	[180749]=125,	[180746]=125,
 
 [188534]=125, --new food
+
+										[225597]=600,	[225598]=600,	[225599]=600,			[225600]=600,			[225601]=600,
+										[225602]=750,	[225603]=750,	[225604]=750,			[225605]=750,			[225606]=750,
 }
 module.db.StaminaFood = {[160600]=true,[175784]=true,[160883]=true,[165802]=true,[180747]=true}
 
-module.db.tableFood_headers = {0,50,75,100,125}
+module.db.tableFood_headers = ExRT.isLegionContent and {0,600,750} or {0,50,75,100,125}
 module.db.tableFlask = {
 	--Stamina,	Spirit,		Int,		Agi,		Str 
 	[156077]=200,			[156070]=200,	[156073]=200,	[156071]=200,
 	[156084]=250,			[156079]=250,	[156064]=250,	[156080]=250,
+	
+	[188035]=1300,			[188031]=1300,	[188033]=1300,	[188034]=1300,
 }
-module.db.tableFlask_headers = {0,200,250}
+module.db.tableFlask_headers = ExRT.isLegionContent and {0,1300} or {0,200,250}
 module.db.tablePotion = {
-	[105702]=true,	[156426]=true,	--Int
-	[105697]=true,	[156423]=true,	--Agi	
-	[105706]=true,	[156428]=true,	--Str
-	[105709]=true,	[156436]=true,	--Mana 3k, 17k
-	[105701]=true,	[156432]=true,	--Mana 4.5k, 25.5k
-	[105707]=true,			--Run haste
-	[105698]=true,	[156430]=true,	--Armor
-	--[105708]=true,[156438]=true,	--Health
-	[105704]=true,	[156455]=true,	--Health + Mana [alchim]	
-	[125282]=true,			--Kafa Boost
+	[105702]=true,	[156426]=true,			--Int
+	[105697]=true,	[156423]=true,			--Agi	
+	[105706]=true,	[156428]=true,			--Str
+	[105709]=true,	[156436]=true,	[188017]=true,	--Mana 3k, 17k
+	[105701]=true,	[156432]=true,	[188030]=true,	--Mana 4.5k, 25.5k
+	[105707]=true,			[188024]=true,	--Run haste
+	[105698]=true,	[156430]=true,	[188029]=true,	--Armor
+	[105704]=true,	[156455]=true,	[188018]=true,	--Health + Mana [alchim]	
+	[125282]=true,					--Kafa Boost
 }
 module.db.hsSpells = {
 	[6262] = true,
 	[105708] = true,
 	[156438] = true,
+	[188016] = true,
+	[188018] = true,
 }
 module.db.potionList = {}
 module.db.hsList = {}
@@ -490,6 +496,7 @@ local function GetFlask(checkType)
 end
 
 local function GetRaidBuffs(checkType)
+	if ExRT.is7 then return end
 	local f = {}
 	for i=1,#module.db.buffsList do f[i]={} end
 	local gMax = ExRT.F.GetRaidDiffMaxGroup()
@@ -711,8 +718,9 @@ function module.options:Load()
 	self.optReadyCheckFrame:SetSize(650,125)
 	self.optReadyCheckFrame:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",edgeFile = ExRT.F.defBorder,tile = false,edgeSize = 8})
 	self.optReadyCheckFrame:SetBackdropColor(0,0,0,0.3)
-	self.optReadyCheckFrame:SetBackdropBorderColor(.24,.25,.30,1)
-	self.optReadyCheckFrame:SetPoint("TOP",0,-425)
+	self.optReadyCheckFrame:SetBackdropBorderColor(.24,.25,.30,0)
+	ELib:Border(self.optReadyCheckFrame,2,.24,.25,.30,1)
+	self.optReadyCheckFrame:SetPoint("TOP",0,-430)
 
 	self.optReadyCheckFrameHeader = ELib:Text(self.optReadyCheckFrame,L.raidcheckReadyCheck):Size(550,20):Point("BOTTOMLEFT",self.optReadyCheckFrame,"TOPLEFT",10,1):Bottom()
 
@@ -847,7 +855,7 @@ function module:slash(arg)
 	end
 end
 
-module.frame = CreateFrame("FRAME",nil,UIParent,"ExRTDialogModernTemplate")
+module.frame = ELib:Template("ExRTDialogModernTemplate",UIParent)
 module.frame:SetSize(140*2+20,18*13+40)
 module.frame:SetPoint("CENTER",UIParent,"CENTER",0,0)
 module.frame:SetFrameStrata("TOOLTIP")

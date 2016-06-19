@@ -633,6 +633,14 @@ function module:addonMessage(sender, prefix, ...)
 			world = (world == "true" or world == "1") and true or false
 			hide = (hide == "true" or hide == "1") and true or false
 			show(runAway, x, y, distance, time, world, hide)
+		elseif sub_prefix == "p" then
+			local _, _, runAway, toPlayer, distance, time, hide = ...
+			runAway = (runAway == "true" or runAway == "1") and true or false
+			distance = tonumber(distance)
+			time = tonumber(time)
+			world = (world == "true" or world == "1") and true or false
+			hide = (hide == "true" or hide == "1") and true or false
+			show(runAway, toPlayer, distance, time, nil, true, hide)
 		end
 	end 
 end
@@ -673,7 +681,7 @@ end
 
 function ExRT.F.ArrowTextCoord(tX,tY,width,height)
 	local pY,pX = UnitPosition('player')
-	if not tX or not tY or (tY == 0 and tX == 0) then
+	if not tX or not tY or not pX or not pY then
 		return ""
 	end
 	local angle = atan2(pX - tX, pY - tY)
@@ -687,7 +695,7 @@ end
 
 function ExRT.F.ArrowTextMapCoord(tX,tY,width,height)
 	local pY,pX = GetPlayerMapPosition('player')
-	if not tX or not tY or (tY == 0 and tX == 0) then
+	if not tX or not tY or (pY == 0 and pX == 0) then
 		return ""
 	end
 	tX,tY = tX/100,tY/100

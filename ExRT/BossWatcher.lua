@@ -25,6 +25,7 @@ local wipe = wipe
 local UnitPosition = UnitPosition
 local bit_band = bit.band
 local tremove = tremove
+local strsplit = strsplit
 local dtime = ExRT.F.dtime
 
 local VExRT = nil
@@ -380,36 +381,13 @@ module.db.def_trackingDamageSpells = {
 	[199237]=1841,	--Ursoc: Barreling Momentum > Crushing Impact
 	[210074]=1849,	--Crystal Scorpion: Shockwave
 	[204733]=1849,	--Crystal Scorpion: Volatile Chitin
+	[211073]=1877,	--Cenarius: Desiccating Stomp
+	[210619]=1877,	--Cenarius: Destructive Nightmares
+	[209471]=1873,	--Il'gynoth: Nightmare Explosion
 }
 
 local var_reductionAuras,var_reductionCurrent = module.db.reductionAuras,module.db.reductionCurrent
 local var_trackingDamageSpells = nil
-
--- SetTexture doesnt work for numbers vaules, use SetColorTexture instead. Check builds when it will be fixed or rewrite addon
----- Quick alpha build fix
-local CreateFrame = CreateFrame
-if ExRT.is7 then
-	local _CreateFrame = CreateFrame
-	local function SetTexture(self,arg1,arg2,...)
-		if arg2 and type(arg2)=='number' and arg2 <= 1 then	--GetSpellTexture now return spellid (number) with more than 1 arg
-			return self:SetColorTexture(arg1,arg2,...)
-		else
-			return self:_SetTexture(arg1,arg2,...)
-		end
-	end
-	local function CreateTexture(self,...)
-		local ret1,ret2,ret3,ret4,ret5 = self:_CreateTexture(...)
-		ret1._SetTexture = ret1.SetTexture
-		ret1.SetTexture = SetTexture
-		return ret1,ret2,ret3,ret4,ret5
-	end
-	function CreateFrame(...)
-		local ret1,ret2,ret3,ret4,ret5 = _CreateFrame(...)
-		ret1._CreateTexture = ret1.CreateTexture
-		ret1.CreateTexture = CreateTexture 
-		return ret1,ret2,ret3,ret4,ret5
-	end
-end
 
 local encounterSpecial = {}
 
@@ -2839,6 +2817,18 @@ function module.main:UNIT_SPELLCAST_SUCCEEDED(unitID,_,_,_,spellID)
 		end
 	end
 end
+if ExRT.is7 then
+	function module.main:UNIT_SPELLCAST_SUCCEEDED(unitID,_,_,spellLine)
+		local unitType,_,serverID,instanceID,zoneUID,spellID,spawnID = strsplit("-", spellLine or "")
+		spellID = tonumber(spellID or 0) or 0
+		if autoSegmentsUPValue.UNIT_SPELLCAST_SUCCEEDED[spellID] then
+			local guid = UnitGUID(unitID)
+			if AntiSpam("BossWatcherUSS"..(guid or "0x0")..(spellID or "0"),0.5) then
+				StartSegment("UNIT_SPELLCAST_SUCCEEDED",spellID)
+			end
+		end
+	end
+end
 
 function module.main:CHAT_MSG_RAID_BOSS_EMOTE(msg,sender)
 	for emote,_ in pairs(autoSegmentsUPValue.CHAT_MSG_RAID_BOSS_EMOTE) do
@@ -2984,7 +2974,8 @@ function BWInterfaceFrameLoad()
 	local GetSpellInfo = GetSpellInfo
 	
 	local BWInterfaceFrame_Name = 'GExRTBWInterfaceFrame'
-	BWInterfaceFrame = CreateFrame('Frame',BWInterfaceFrame_Name,UIParent,"ExRTBWInterfaceFrame")
+	BWInterfaceFrame = ELib:Template("ExRTBWInterfaceFrame",UIParent)
+	_G[BWInterfaceFrame_Name] = BWInterfaceFrame
 	BWInterfaceFrame:SetPoint("CENTER",0,0)
 	BWInterfaceFrame.HeaderText:SetText(L.BossWatcher)
 	BWInterfaceFrame.backToInterface:SetText("<<")
@@ -2993,6 +2984,8 @@ function BWInterfaceFrameLoad()
 	BWInterfaceFrame:SetScript("OnDragStart", function(self) self:StartMoving() end)
 	BWInterfaceFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 	BWInterfaceFrame:SetDontSavePosition(true)
+		
+	ELib:ShadowInside(BWInterfaceFrame)
 	
 	module.options.SecondFrame = BWInterfaceFrame
 
@@ -3231,9 +3224,13 @@ function BWInterfaceFrameLoad()
 					wipe(reportData[4][3])
 				end
 			end
-			self:Hide()
-			self:Show()
+			--self:Hide()
+			--self:Show()
 		end
+		BWInterfaceFrame.tab:Show()
+	end)
+	BWInterfaceFrame:SetScript("OnHide",function (self)
+		BWInterfaceFrame.tab:Hide()
 	end)
 	
 	BWInterfaceFrame.bossButtonDropDown = CreateFrame("Frame", BWInterfaceFrame_Name.."BossButtonDropDown", nil, "UIDropDownMenuTemplate")
@@ -3375,7 +3372,7 @@ function BWInterfaceFrameLoad()
 		TLframe.texture = TLframe:CreateTexture(nil, "BACKGROUND",nil,0)
 		--TLframe.texture:SetTexture("Interface\\AddOns\\ExRT\\media\\bar9.tga")
 		--TLframe.texture:SetVertexColor(0.3, 1, 0.3, 1)
-		TLframe.texture:SetTexture(1, 1, 1, 1)
+		TLframe.texture:SetColorTexture(1, 1, 1, 1)
 		TLframe.texture:SetGradientAlpha("VERTICAL",1,0.82,0,.7,0.95,0.65,0,.7)
 		TLframe.texture:SetAllPoints()
 		
@@ -3384,7 +3381,7 @@ function BWInterfaceFrameLoad()
 		TLframe.textRight = ELib:Text(TLframe,"",12):Size(200,16):Point("BOTTOMRIGHT",TLframe,"BOTTOMRIGHT", -2, 2):Top():Right():Color():Shadow()
 		
 		TLframe.lifeUnderLine = TLframe:CreateTexture(nil, "BACKGROUND")
-		TLframe.lifeUnderLine:SetTexture(1,1,1,1)
+		TLframe.lifeUnderLine:SetColorTexture(1,1,1,1)
 		TLframe.lifeUnderLine:SetGradientAlpha("VERTICAL", 1,0.2,0.2, 0, 1,0.2,0.2, 0.7)
 		TLframe.lifeUnderLine._SetPoint = TLframe.lifeUnderLine.SetPoint
 		TLframe.lifeUnderLine.SetPoint = function(self,start,_end)
@@ -3412,11 +3409,11 @@ function BWInterfaceFrameLoad()
 			end
 			label:SetPoint("TOP",TLframe,"BOTTOMLEFT",BWInterfaceFrame.timeLineFrame.width*pos,0)
 			if not type then
-				label:SetTexture(.35,.38,1,.7)
+				label:SetColorTexture(.35,.38,1,.7)
 			elseif type == 1 then
-				label:SetTexture(.2,1,0,1)
+				label:SetColorTexture(.2,1,0,1)
 			elseif type == 2 then
-				label:SetTexture(1,.25,.3,.7)
+				label:SetColorTexture(1,.25,.3,.7)
 			end
 			label:Show()
 		end
@@ -3497,6 +3494,8 @@ function BWInterfaceFrameLoad()
 				},
 			},	--"Archimonde"
 			
+			--Emerald
+			
 			[1853] = {
 				cast = {
 					[203552] = {phase = -12744, isCastStart = true,},
@@ -3507,12 +3506,30 @@ function BWInterfaceFrameLoad()
 			},	--"Plague Dragon": <Nythendra>
 			[1841] = {
 				aura = {
-					--[0] = {phase = -12740,},	--Enrage 30%hp; remove hp attr when this will be added
-				},
-				hp = {
-					{hp = 0.305,phase = -12740,},
+					[198388] = {phase = -12740,},
 				},
 			},	--"Ursoc"
+			[1873] = {
+				cast = {
+					[210781] = {phase = -13192, isCastStart = true,},
+					[209915] = {phase = -13184,},
+				},
+			},	--"Il'gynoth, The Heart of Corruption"
+			[1854] = {
+				hp = {
+					{hp = 0.705,phase = 2,},
+					{hp = 0.405,phase = 3,},
+				},
+			},	--"Dragons of Nightmare"
+			[1876] = nil,	--"Elerethe Renferal"
+			[1877] = {
+				cast = {
+					[212726] = {phase = -13487,},
+				},
+			},	--"Cenarius"
+			[1864] = nil,	--"Xavius"
+			
+			--Suramar
 			
 			[1849] = {
 				cast = {
@@ -3522,7 +3539,6 @@ function BWInterfaceFrameLoad()
 					[204448] = {phase = 1,},
 				},
 			},	--"Skorpyron"
-			[1865] = nil,	--"Anomaly";	shittesting, no data
 			[1867] = {
 				cast = {
 					[207630] = {phase = -13011, next = {
@@ -3531,19 +3547,28 @@ function BWInterfaceFrameLoad()
 					}}
 				}
 			},	--"Trilliax"
+			[1865] = nil,	--"Anomaly"
+			[1842] = nil,	--"Krosus"
+			[1862] = nil,	--"Tichondrius"
+			[1871] = nil,	--"Spellblade Aluriel"
+			[1886] = nil,	--"High Botanist Tel'arn"
+			[1863] = nil,	--"Star Augur Etraeus"
+			[1872] = nil,	--"Grand Magistrix Elisande"
+			[1866] = nil,	--"Gul'dan"			
+
 		}
 		
 		TLframe.redLine = {}
 		local function CreateRedLine(i)
 			TLframe.redLine[i] = TLframe:CreateTexture(nil, "BACKGROUND",nil,3)
-			TLframe.redLine[i]:SetTexture(0.7, 0.1, 0.1, 0.5)
+			TLframe.redLine[i]:SetColorTexture(0.7, 0.1, 0.1, 0.5)
 			TLframe.redLine[i]:SetSize(2,30)
 		end
 		
 		TLframe.blueLine = {}
 		local function CreateBlueLine(i)
 			TLframe.blueLine[i] = TLframe:CreateTexture(nil, "BACKGROUND",nil,4)
-			TLframe.blueLine[i]:SetTexture(0.1, 0.1, 0.7, 0.5)
+			TLframe.blueLine[i]:SetColorTexture(0.1, 0.1, 0.7, 0.5)
 			TLframe.blueLine[i]:SetSize(3,30)
 		end
 		
@@ -3560,12 +3585,12 @@ function BWInterfaceFrameLoad()
 				l = TLframe:CreateTexture(nil, "BACKGROUND",nil,5)
 				TLframe.phaseMarker[currNum] = l
 				l:SetSize(2,30)
-				l:SetTexture(1, 1, 1, 0.8)
+				l:SetColorTexture(1, 1, 1, 0.8)
 				
 				l2 = TLframe:CreateTexture(nil, "BACKGROUND",nil,5)
 				TLframe.phaseMarker[currNum+0.5] = l2
 				l2:SetSize(1,30)
-				l2:SetTexture(0, 0, 0, 0.8)
+				l2:SetColorTexture(0, 0, 0, 0.8)
 				l2:SetPoint("TOPLEFT",l,"TOPRIGHT",0,0)
 				
 				t = ELib:Text(TLframe,"",10):Point("TOPLEFT",l,"TOPRIGHT",2,-1):Point("TOPRIGHT",TLframe,"TOPRIGHT",0,-1):Color(1,1,1,1)
@@ -3812,7 +3837,7 @@ function BWInterfaceFrameLoad()
 		TLframe.ImprovedSelectSegment.Texture = TLframe:CreateTexture(nil, "BACKGROUND",nil,2)
 		--TLframe.ImprovedSelectSegment.Texture:SetTexture("Interface\\AddOns\\ExRT\\media\\bar9.tga")
 		--TLframe.ImprovedSelectSegment.Texture:SetVertexColor(0, 0.65, 0.9, .7)
-		TLframe.ImprovedSelectSegment.Texture:SetTexture(1, 1, 1, 1)
+		TLframe.ImprovedSelectSegment.Texture:SetColorTexture(1, 1, 1, 1)
 		TLframe.ImprovedSelectSegment.Texture:SetGradientAlpha("VERTICAL",0.3,0.75,0.90,.7,0,0.62,0.90,.7)
 		TLframe.ImprovedSelectSegment.Texture:SetHeight(30)
 		TLframe.ImprovedSelectSegment.Texture:Hide()
@@ -3992,7 +4017,7 @@ function BWInterfaceFrameLoad()
 					self.backgroundHighlight[count] = background
 					background:SetPoint("TOP",0,0)
 					background:SetPoint("BOTTOM",0,0)
-					background:SetTexture(0.7, 0.65, 0.9, .3)
+					background:SetColorTexture(0.7, 0.65, 0.9, .3)
 					if count == 1 then
 						self.highlightHideButton:SetPoint("TOPRIGHT",background,2,-2)
 					end
@@ -5528,7 +5553,7 @@ function BWInterfaceFrameLoad()
 			line.back = line:CreateTexture(nil, "BACKGROUND")
 			line.back:SetAllPoints()
 			if i%2 == 0 then
-				line.back:SetTexture(0.3, 0.3, 0.3, 0.1)
+				line.back:SetColorTexture(0.3, 0.3, 0.3, 0.1)
 			end
 			line.name_tooltip:SetScript("OnClick",DamageTab_Line_OnClick)
 			line.name_tooltip:SetScript("OnEnter",DamageTab_Line_OnEnter)
@@ -5677,7 +5702,7 @@ function BWInterfaceFrameLoad()
 		tab.timeLine[i]:SetSize(2,AurasTab_Variables.TotalLines * 18 + 14)
 		
 		tab.timeLine[i].texture = tab.timeLine[i]:CreateTexture(nil, "BACKGROUND")
-		tab.timeLine[i].texture:SetTexture(1, 1, 1, 0.3)
+		tab.timeLine[i].texture:SetColorTexture(1, 1, 1, 0.3)
 		tab.timeLine[i].texture:SetAllPoints()		
 		
 		tab.timeLine[i].timeText = ELib:Text(tab.timeLine[i],"",11):Size(200,12):Point("TOPRIGHT",tab.timeLine[i],"TOPLEFT",-1,-1):Right():Top():Color()
@@ -5687,7 +5712,7 @@ function BWInterfaceFrameLoad()
 	local function CreateRedDeathLine(i)
 		if not BWInterfaceFrame.tab.tabs[3].redDeathLine[i] then
 			BWInterfaceFrame.tab.tabs[3].redDeathLine[i] = BWInterfaceFrame.tab.tabs[3]:CreateTexture(nil, "BACKGROUND",0,-4)
-			BWInterfaceFrame.tab.tabs[3].redDeathLine[i]:SetTexture(1, 0.3, 0.3, 1)
+			BWInterfaceFrame.tab.tabs[3].redDeathLine[i]:SetColorTexture(1, 0.3, 0.3, 1)
 			BWInterfaceFrame.tab.tabs[3].redDeathLine[i]:SetSize(2,AurasTab_Variables.TotalLines * 18 + 14)
 			BWInterfaceFrame.tab.tabs[3].redDeathLine[i]:Hide()
 		end
@@ -5791,7 +5816,7 @@ function BWInterfaceFrameLoad()
 				line.back = line:CreateTexture(nil, "BACKGROUND")
 				line.back:SetAllPoints()
 				if i%2==0 then
-					line.back:SetTexture(0.3, 0.3, 0.3, 0.1)
+					line.back:SetColorTexture(0.3, 0.3, 0.3, 0.1)
 				end
 				
 				line:SetScript("OnEnter",LineOnEnter)
@@ -6011,8 +6036,8 @@ function BWInterfaceFrameLoad()
 	
 	local function CreateBuffGreen(i,j)
 		BWInterfaceFrame.tab.tabs[3].lines[i].green[j] = BWInterfaceFrame.tab.tabs[3].lines[i]:CreateTexture(nil, "BACKGROUND",nil,5)
-		--BWInterfaceFrame.tab.tabs[3].lines[i].green[j]:SetTexture(0.1, 0.7, 0.1, 0.7)
-		BWInterfaceFrame.tab.tabs[3].lines[i].green[j]:SetTexture(1, 0.82, 0, 0.7)	
+		--BWInterfaceFrame.tab.tabs[3].lines[i].green[j]:SetColorTexture(0.1, 0.7, 0.1, 0.7)
+		BWInterfaceFrame.tab.tabs[3].lines[i].green[j]:SetColorTexture(1, 0.82, 0, 0.7)	
 		BWInterfaceFrame.tab.tabs[3].lines[i].greenFrame[j] = CreateFrame("Frame",nil,BWInterfaceFrame.tab.tabs[3].lines[i])
 	end
 	
@@ -6732,11 +6757,11 @@ function BWInterfaceFrameLoad()
 	
 	tab.DecorationLine = CreateFrame("Frame",nil,tab)
 	tab.DecorationLine:SetPoint("TOPLEFT",tab.targetsList,"TOPRIGHT",0,2)
-	tab.DecorationLine:SetPoint("RIGHT",tab,-3,0)
+	tab.DecorationLine:SetPoint("RIGHT",tab,-5,0)
 	tab.DecorationLine:SetHeight(37)
 	tab.DecorationLine.texture = tab.DecorationLine:CreateTexture(nil, "BACKGROUND")
 	tab.DecorationLine.texture:SetAllPoints()
-	tab.DecorationLine.texture:SetTexture(1,1,1,1)
+	tab.DecorationLine.texture:SetColorTexture(1,1,1,1)
 	tab.DecorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
 	
 	tab.selectedMob = ELib:Text(tab.DecorationLine,"",11):Size(530,12):Point(5,-5):Color():Top()
@@ -7361,7 +7386,7 @@ function BWInterfaceFrameLoad()
 	tab.DecorationLine:SetHeight(20)
 	tab.DecorationLine.texture = tab.DecorationLine:CreateTexture(nil, "BACKGROUND")
 	tab.DecorationLine.texture:SetAllPoints()
-	tab.DecorationLine.texture:SetTexture(1,1,1,1)
+	tab.DecorationLine.texture:SetColorTexture(1,1,1,1)
 	tab.DecorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
 	
 	tab.graphicsTab = ELib:Tabs(tab,0,
@@ -7838,7 +7863,7 @@ function BWInterfaceFrameLoad()
 	tab.DecorationLine:SetHeight(20)
 	tab.DecorationLine.texture = tab.DecorationLine:CreateTexture(nil, "BACKGROUND")
 	tab.DecorationLine.texture:SetAllPoints()
-	tab.DecorationLine.texture:SetTexture(1,1,1,1)
+	tab.DecorationLine.texture:SetColorTexture(1,1,1,1)
 	tab.DecorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
 
 	tab.headerTab = ELib:Tabs(tab,0,
@@ -8086,7 +8111,7 @@ function BWInterfaceFrameLoad()
 		if not BWInterfaceFrame.tab.tabs[3].timeSegments[i] then
 		  	BWInterfaceFrame.tab.tabs[3].timeSegments[i] = CreateFrame("Frame",nil,BWInterfaceFrame.tab.tabs[3])
 			BWInterfaceFrame.tab.tabs[3].timeSegments[i].texture = BWInterfaceFrame.tab.tabs[3].timeSegments[i]:CreateTexture(nil, "BACKGROUND",0,-5)
-			BWInterfaceFrame.tab.tabs[3].timeSegments[i].texture:SetTexture(1, 1, 0.5, 0.2)
+			BWInterfaceFrame.tab.tabs[3].timeSegments[i].texture:SetColorTexture(1, 1, 0.5, 0.2)
 			BWInterfaceFrame.tab.tabs[3].timeSegments[i].texture:SetAllPoints()
 		end
 		if not BWInterfaceFrame.timeLineFrame.timeLine.timeSegments[i] then
@@ -8470,7 +8495,7 @@ function BWInterfaceFrameLoad()
 	tab.DecorationLine:SetHeight(20)
 	tab.DecorationLine.texture = tab.DecorationLine:CreateTexture(nil, "BACKGROUND")
 	tab.DecorationLine.texture:SetAllPoints()
-	tab.DecorationLine.texture:SetTexture(1,1,1,1)
+	tab.DecorationLine.texture:SetColorTexture(1,1,1,1)
 	tab.DecorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
 
 	do
@@ -11138,7 +11163,7 @@ function BWInterfaceFrameLoad()
 			line.name_tooltip = CreateFrame('Button',nil,line)
 			line.name_tooltip:SetAllPoints(line.name)
 			line.overall = line:CreateTexture(nil, "BACKGROUND")
-			--line.overall:SetTexture(0.7, 0.1, 0.1, 1)
+			--line.overall:SetColorTexture(0.7, 0.1, 0.1, 1)
 			line.overall:SetTexture("Interface\\AddOns\\ExRT\\media\\bar24.tga")
 			line.overall:SetSize(300,16)
 			line.overall:SetPoint("TOPLEFT",325,-2)
@@ -11153,7 +11178,7 @@ function BWInterfaceFrameLoad()
 			line.back = line:CreateTexture(nil, "BACKGROUND")
 			line.back:SetAllPoints()
 			if i%2==0 then
-				line.back:SetTexture(0.3, 0.3, 0.3, 0.1)
+				line.back:SetColorTexture(0.3, 0.3, 0.3, 0.1)
 			end
 			line.name_tooltip:SetScript("OnClick",HealingTab_Line_OnClick)
 			line.name_tooltip:SetScript("OnEnter",HealingTab_Line_OnEnter)
@@ -11644,7 +11669,7 @@ function BWInterfaceFrameLoad()
 			
 			line.back = line:CreateTexture(nil, "BACKGROUND")
 			line.back:SetAllPoints()
-			line.back:SetTexture( 1, 1, 1, 1)
+			line.back:SetColorTexture( 1, 1, 1, 1)
 			line.back:SetGradientAlpha("HORIZONTAL", 0, 0, 0, 0, 0, 0, 0, 0)
 			
 			line:SetScript("OnEnter",DeathTab_LineOnEnter)
@@ -12112,7 +12137,8 @@ function BWInterfaceFrameLoad()
 		[1842] = nil,	--"Krosus"
 		[1862] = nil,	--"Tichondrius"
 		[1871] = nil,	--"Spellblade Aluriel"
-		[1863] = nil,	--"Astromancer"
+		[1886] = nil,	--"High Botanist Tel'arn"
+		[1863] = nil,	--"Star Augur Etraeus"
 		[1872] = nil,	--"Grand Magistrix Elisande"
 		[1866] = nil,	--"Gul'dan"
 	}
@@ -12577,20 +12603,20 @@ function BWInterfaceFrameLoad()
 			frame.borderright:SetPoint("TOPLEFT",frame,"TOPRIGHT",0,0)
 			frame.borderright:SetPoint("BOTTOMRIGHT",frame,"BOTTOMRIGHT",1,0)
 		
-			frame.bordertop:SetTexture(0,0,0,1)
-			frame.borderbottom:SetTexture(0,0,0,1)
-			frame.borderleft:SetTexture(0,0,0,1)
-			frame.borderright:SetTexture(0,0,0,1)
+			frame.bordertop:SetColorTexture(0,0,0,1)
+			frame.borderbottom:SetColorTexture(0,0,0,1)
+			frame.borderleft:SetColorTexture(0,0,0,1)
+			frame.borderright:SetColorTexture(0,0,0,1)
 			
 			frame.back = frame:CreateTexture(nil, "BACKGROUND",nil,-5)
 			frame.back:SetSize(50,16)
 			frame.back:SetPoint("LEFT",0,0)
-			frame.back:SetTexture(.05,.05,.05,1)
+			frame.back:SetColorTexture(.05,.05,.05,1)
 
 			frame.hp = frame:CreateTexture(nil, "BACKGROUND",nil,0)
 			frame.hp:SetSize(50,16)
 			frame.hp:SetPoint("LEFT",0,0)
-			frame.hp:SetTexture(.3,.3,.3,1)
+			frame.hp:SetColorTexture(.3,.3,.3,1)
 			
 			frame.Update = PositionsTab_RaidFrame_UpdateHP
 			
@@ -12633,20 +12659,20 @@ function BWInterfaceFrameLoad()
 		frame.borderright:SetPoint("TOPLEFT",frame,"TOPRIGHT",0,0)
 		frame.borderright:SetPoint("BOTTOMRIGHT",frame,"BOTTOMRIGHT",1,0)
 	
-		frame.bordertop:SetTexture(0,0,0,1)
-		frame.borderbottom:SetTexture(0,0,0,1)
-		frame.borderleft:SetTexture(0,0,0,1)
-		frame.borderright:SetTexture(0,0,0,1)
+		frame.bordertop:SetColorTexture(0,0,0,1)
+		frame.borderbottom:SetColorTexture(0,0,0,1)
+		frame.borderleft:SetColorTexture(0,0,0,1)
+		frame.borderright:SetColorTexture(0,0,0,1)
 		
 		frame.back = frame:CreateTexture(nil, "BACKGROUND",nil,-5)
 		frame.back:SetSize(95,20)
 		frame.back:SetPoint("LEFT",0,0)
-		frame.back:SetTexture(.05,.05,.05,1)
+		frame.back:SetColorTexture(.05,.05,.05,1)
 
 		frame.hp = frame:CreateTexture(nil, "BACKGROUND",nil,0)
 		frame.hp:SetSize(95,20)
 		frame.hp:SetPoint("LEFT",0,0)
-		frame.hp:SetTexture(.3,.3,.3,1)
+		frame.hp:SetColorTexture(.3,.3,.3,1)
 		
 		frame.Update = PositionsTab_UnitFrame_UpdateHP
 		

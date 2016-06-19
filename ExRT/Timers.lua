@@ -224,7 +224,7 @@ function module.options:Load()
 	self.shtml1 = ELib:Text(self,L.timerstxt1,12):Size(650,200):Point(5,-30):Top()
 	self.shtml2 = ELib:Text(self,L.timerstxt2,12):Size(550,200):Point(105,-30):Top():Color()
 	
-	self.TabTimerFrame = ELib:OneTab(self):Size(655,95):Point("TOP",0,-165)
+	self.TabTimerFrame = ELib:OneTab(self):Size(650,95):Point("TOP",0,-165)
 	
 	self.chkEnable = ELib:Check(self.TabTimerFrame,L.timerTimerFrame,VExRT.Timers.enabled):Point(10,-10):OnClick(function(self) 
 		if self:GetChecked() then
@@ -333,7 +333,7 @@ function module.options:Load()
 		VExRT.Timers.specTimes[spec] = val
 	end
 	
-	self.scrollFrame = ELib:ScrollFrame(self):Size(645,284):Point("TOP",-3,-325):Height(600)
+	self.scrollFrame = ELib:ScrollFrame(self):Size(650,285):Point("TOP",0,-325):Height(600)
 	self.scrollFrameText = ELib:Text(self,L.TimerSpecTimerHeader,12):Size(620,30):Point("BOTTOMLEFT",self.scrollFrame,"TOPLEFT",5,5):Bottom()
 	self.scrollFrame.C.classTitles = {}
 	self.scrollFrame.C.classFrames = {}

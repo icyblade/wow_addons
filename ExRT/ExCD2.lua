@@ -12,32 +12,6 @@ local VExRT, VExRT_CDE = nil
 local module = ExRT.mod:New("ExCD2",ExRT.L.cd2)
 local ELib,L = ExRT.lib,ExRT.L
 
--- SetTexture doesnt work for numbers vaules, use SetColorTexture instead. Check builds when it will be fixed or rewrite addon
----- Quick alpha build fix
-local CreateFrame = CreateFrame
-if ExRT.is7 then
-	local _CreateFrame = CreateFrame
-	local function SetTexture(self,arg1,arg2,...)
-		if arg2 and type(arg2)=='number' and arg2 <= 1 then	--GetSpellTexture now return spellid (number) with more than 1 arg
-			return self:SetColorTexture(arg1,arg2,...)
-		else
-			return self:_SetTexture(arg1,arg2,...)
-		end
-	end
-	local function CreateTexture(self,...)
-		local ret1,ret2,ret3,ret4,ret5 = self:_CreateTexture(...)
-		ret1._SetTexture = ret1.SetTexture
-		ret1.SetTexture = SetTexture
-		return ret1,ret2,ret3,ret4,ret5
-	end
-	function CreateFrame(...)
-		local ret1,ret2,ret3,ret4,ret5 = _CreateFrame(...)
-		ret1._CreateTexture = ret1.CreateTexture
-		ret1.CreateTexture = CreateTexture 
-		return ret1,ret2,ret3,ret4,ret5
-	end
-end
-
 local is6 = not ExRT.is7
 
 module._C = {}
@@ -92,6 +66,7 @@ module.db.spellDB = {
 {20608,	"SHAMAN",	{21169,	1800,	0},	nil,			nil,			nil,			},	--Реинкарнация
 {6940,	"PALADIN",	{6940,	240,	12},	nil,			nil,			nil,			},	--Длань жертвенности
 {633,	"PALADIN",	{633,	600,	0},	nil,			nil,			nil,			},	--Возложение рук
+{31821,	"PALADIN",	nil,			{31821,	180,	6},	nil,			nil,			},	--Аура благочестия
 {97462,	"WARRIOR",	nil,			{97462,	180,	10},	{97462,	180,	10},	nil,			},	--Ободряющий клич
 {114030,"WARRIOR",	{114030,120,	12},	nil,			nil,			nil,			},	--Бдительность
 {62618,	"PRIEST",	nil,			{62618,	180,	10},	nil,			nil,			},	--Слово силы: Барьер
@@ -99,7 +74,6 @@ module.db.spellDB = {
 {15286,	"PRIEST",	nil,			nil,			nil,			{15286,	180,	15},	},	--Объятия вампира
 {47788,	"PRIEST",	nil,			nil,			{47788,	240,	10},	nil,			},	--Оберегающий дух
 {33206,	"PRIEST",	nil,			{33206,	300,	8},	nil,			nil,			},	--Подавление боли
-{51052,	"DEATHKNIGHT",	{51052,	120,	5},	nil,			nil,			nil,			},	--Зона антимагии
 {108199,"DEATHKNIGHT",	nil,			{108199,180,	0},	nil,			nil,			},	--Хватка Кровожада
 {98008,	"SHAMAN",	nil,			nil,			nil,			{98008,	180,	6},	},	--Тотем духовной связи
 {108280,"SHAMAN",	nil,			nil,			nil,			{108280,180,	10},	},	--Тотем целительного прилива
@@ -108,6 +82,11 @@ module.db.spellDB = {
 {102342,"DRUID",	nil,			nil,			nil,			nil,{102342,90,	12},	},	--Железная кора
 {115310,"MONK",		nil,			nil,			nil,			{115310,180,	0},	},	--Восстановление сил
 {116849,"MONK",		nil,			nil,			nil,			{116849,180,	12},	},	--Исцеляющий кокон
+
+{192077,"SHAMAN",	nil,			nil,			nil,			{192077,120,	15},	},	--Wind Rush Totem
+{207399,"SHAMAN",	nil,			nil,			nil,			{207399,300,	30},	},	--Ancestral Protection Totem
+{64901, "PRIEST",	nil,			nil,			{64901, 360,	10},	nil,			},	--Symbol of Hope
+
 }
 end
 
@@ -307,10 +286,13 @@ module.db.spell_isTalent = {		-- SpellID талантов
 	
 	--Other & items
 	[67826]=true,
+	
+	--Legion
+	[192077]=2,	[207399]=5,	[64901]=4,
 }
 
 -- 1:01 22.09.2014; build 18918
-module.db.spell_talentsList = {
+module.db.spell_talentsList = is6 and {
 	["WARRIOR"] = {
 		103826,103827,103828,
 		55694,29838,103840,
@@ -410,8 +392,358 @@ module.db.spell_talentsList = {
 		{108291,108292,108293,108294},{108373,158497,158501,158504},124974,
 		{152222,155580,155578,155577},{152221,155672,80313,155675},{152220,171746,155835,155834},
 	},
+} or {
+--19:21 06.05.2016 Build 21655 [Alpha]
+	["WARRIOR"] = {
+		[71] = {
+			202297,7384,202161,
+			46968,107570,103827,
+			202316,772,107574,
+			29838,202163,118038,
+			215550,202593,46924,
+			207982,215538,202612,
+			152278,203179,152277,
+		},
+		[72] = {
+			215556,202296,215568,
+			46968,107570,103827,
+			215569,206320,107574,
+			202224,202163,208154,
+			206315,215571,46924,
+			206312,206313,215573,
+			202922,202751,118000,
+		},
+		[73] = {
+			46968,107570,103828,
+			202168,205484,223657,
+			202288,122509,107574,
+			223662,202163,203201,
+			202560,202561,202095,
+			202572,202603,202743,
+			152278,203177,152277,
+		},
+	},
+	["PALADIN"] = {
+		[65] = {
+			223306,114158,196926,
+			205656,114154,214202,
+			198054,20066,115750,
+			183425,183416,183415,
+			197646,105809,114165,
+			196923,53376,183778,
+			156910,197446,200025,
+		},
+		[66] = {
+			203776,213652,203785,
+			152261,204139,203791,
+			198054,20066,115750,
+			204018,204013,203797,
+			204035,204023,204019,
+			204150,183778,204054,
+			204074,152262,204077,
+		},
+		[70] = {
+			198038,213757,205228,
+			203316,217020,218178,
+			198054,20066,115750,
+			202271,202270,198034,
+			215661,205191,210191,
+			213313,205656,202273,
+			223817,224668,210220,
+		},
+	},
+	["HUNTER"] = {
+		[253] = {
+			204308,194397,193532,
+			199530,217200,53209,
+			109215,199523,199921,
+			199528,194306,130392,
+			109248,19386,19577,
+			131894,120360,194386,
+			201430,199532,191384,
+		},
+		[254] = {
+			155228,193533,199527,
+			212431,194599,199522,
+			109215,199523,199921,
+			53238,206817,213423,
+			109248,19386,198783,
+			131894,120360,194386,
+			214579,198670,194595,
+		},
+		[255] = {
+			204315,200163,201082,
+			194277,199518,162488,
+			109215,199523,199921,
+			206505,194855,201078,
+			191241,200108,199483,
+			212436,201075,87935,
+			194407,199543,191384,
+		},
+	},
+	["ROGUE"] = {
+		[259] = {
+			196864,193640,16511,
+			14062,108208,108209,
+			193531,114015,14983,
+			108211,79008,31230,
+			196861,131511,154904,
+			200802,193539,200806,
+			152152,137619,152150,
+		},
+		[260] = {
+			196937,200733,196938,
+			195457,196924,196922,
+			193531,114015,14983,
+			193546,79008,31230,
+			199743,131511,108216,
+			185767,193539,51690,
+			5171,137619,152150,
+		},
+		[261] = {
+			31223,193537,200758,
+			14062,108208,108209,
+			193531,114015,14983,
+			200759,79008,31230,
+			196951,131511,200778,
+			196979,193539,206237,
+			196976,137619,152150,
+		},
+	},
+	["PRIEST"] = {
+		[256] = {
+			200347,193134,214621,
+			121536,64129,193063,
+			204263,196704,205367,
+			129250,197045,123040,
+			197419,10060,109142,
+			152118,110744,120517,
+			204197,200309,204065,
+		},
+		[257] = {
+			200128,200153,193155,
+			121536,214121,19236,
+			204263,200199,196707,
+			196985,200209,64901,
+			109186,32546,197034,
+			197031,110744,120517,
+			200183,193157,204883,
+		},
+		[258] = {
+			109142,193195,205351,
+			193173,64129,193063,
+			205369,196704,205367,
+			199849,199853,205371,
+			199855,155271,162452,
+			10060,200174,205385,
+			193225,73510,193223,
+		},
+	},
+	["DEATHKNIGHT"] = {
+		[250] = {
+			195679,221536,206931,
+			194662,212744,211078,
+			219786,221699,205727,
+			206940,205723,219809,
+			206970,206960,219779,
+			206967,194679,206974,
+			194844,206977,114556,
+		},
+		[251] = {
+			207057,194878,207061,
+			207060,194909,57330,
+			207126,207127,207142,
+			207161,207167,207170,
+			207188,207200,212765,
+			207230,207104,194912,
+			207256,152279,194913,
+		},
+		[252] = {
+			194916,207264,207269,
+			207317,194917,194918,
+			207289,207305,207311,
+			207313,108194,207316,
+			207321,207319,212763,
+			198943,207346,207272,
+			207349,152280,130736,
+		},
+	},
+	["SHAMAN"] = {
+		[262] = {
+			201909,170374,210643,
+			192063,108281,192077,
+			192058,51485,196932,
+			117014,192087,108283,
+			192235,117013,197210,
+			210689,192249,210707,
+			114050,210714,192222,
+		},
+		[263] = {
+			201898,201900,201897,
+			215864,196884,192077,
+			192058,51485,196932,
+			192106,192087,197214,
+			192234,210727,197992,
+			192246,210853,210731,
+			114051,197211,188089,
+		},
+		[264] = {
+			200071,73685,200072,
+			192063,192088,192077,
+			192058,51485,196932,
+			197464,108281,200076,
+			207399,198838,207401,
+			197467,157153,108283,
+			114052,197995,157154,
+		},
+	},
+	["MAGE"] = {
+		[62] = {
+			205022,205025,205028,
+			212653,86949,11958,
+			55342,116011,1463,
+			157980,205032,205035,
+			108839,113724,205036,
+			114923,157976,205039,
+			155147,198923,153626,
+		},
+		[63] = {
+			205020,205023,205026,
+			212653,86949,11958,
+			55342,116011,1463,
+			157981,205029,205033,
+			108839,113724,205036,
+			44457,157976,205037,
+			155148,198929,153561,
+		},
+		[64] = {
+			205021,205024,205027,
+			212653,86949,11958,
+			55342,116011,1463,
+			157997,205030,56377,
+			108839,113724,205036,
+			112948,157976,205038,
+			155149,199786,153595,
+		},
+	},
+	["WARLOCK"] = {
+		[265] = {
+			48181,196102,198590,
+			196105,196103,196104,
+			219272,6789,5484,
+			63106,196226,196098,
+			48018,111400,108416,
+			152107,108501,108503,
+			205178,205179,215941,
+		},
+		[266] = {
+			196269,205181,205145,
+			196270,196272,196277,
+			219272,6789,30283,
+			196283,196605,196098,
+			48018,111400,108416,
+			152107,108501,171975,
+			205180,157695,215941,
+		},
+		[267] = {
+			196406,205184,17877,
+			205148,196408,196104,
+			219272,6789,30283,
+			196412,152108,196098,
+			48018,111400,108416,
+			152107,108501,108503,
+			196410,196447,215941,
+		},
+	},
+	["MONK"] = {
+		[268] = {
+			123986,196607,115098,
+			115008,116841,115173,
+			196721,115399,196719,
+			116844,115315,119381,
+			122281,122783,122278,
+			116847,132578,196730,
+			196738,196736,196737,
+		},
+		[269] = {
+			123986,196607,115098,
+			115008,116841,115173,
+			115288,115396,121817,
+			116844,196722,119381,
+			122281,122783,122278,
+			116847,123904,196740,
+			196743,152175,152173,
+		},
+		[270] = {
+			123986,124081,197945,
+			115008,116841,115173,
+			197915,210802,197900,
+			116844,198898,119381,
+			122281,122783,122278,
+			196725,198664,115313,
+			197908,197895,210804,
+		},
+	},
+	["DRUID"] = {
+		[102] = {
+			205636,202425,202345,
+			108238,102280,102401,
+			202157,197491,197492,
+			5211,102359,132469,
+			114107,102560,202347,
+			202342,202359,202360,
+			202770,202354,202430,
+		},
+		[103] = {
+			202021,202022,155580,
+			108238,102280,102401,
+			197488,217615,197492,
+			5211,102359,132469,
+			158476,102543,52610,
+			202031,202032,202060,
+			202028,155672,155577,
+		},
+		[104] = {
+			203953,80313,203962,
+			204012,102280,102401,
+			197488,202155,197492,
+			5211,102359,132469,
+			158477,102558,203964,
+			203974,155578,203965,
+			204053,204066,155835,
+		},
+		[105] = {
+			200383,102351,155675,
+			108238,102280,102401,
+			197632,197490,197491,
+			5211,102359,132469,
+			158478,33891,200390,
+			207383,197073,207385,
+			155577,197061,197721,
+		},
+	},
+	["DEMONHUNTER"] = {
+		[577] = {
+			192939,206478,203550,
+			203551,203555,211881,
+			213241,206416,193897,
+			196555,205411,204909,
+			206476,206473,206491,
+			203556,206477,206475,
+			211048,211053,213410,
+		},
+		[581] = {
+			207550,203753,209795,
+			207548,209281,211881,
+			213241,211511,209258,
+			218679,211662,217996,
+			207739,207666,207697,
+			218640,207684,209400,
+			212084,207810,218612,
+		},
+	},
 }
-module.db.spell_glyphsList = {
+module.db.spell_glyphsList = is6 and {
 	["WARRIOR"] = {
 		[94374]=true,	[58356]=true,	[63328]=true,	[63325]=true,	[58387]=true,	[63329]=true,	[159708]=true,	[58386]=true,
 	},
@@ -445,7 +777,7 @@ module.db.spell_glyphsList = {
 	["DRUID"] = {
 		[62970]=true,	[114223]=true,	[116216]=true,	[116238]=true,	[59219]=true,	[116203]=true,	[54825]=true,	[171924]=true,	[159445]=true,
 	}
-}
+} or {}
 module.db.spell_charge_fix = {		--Спелы с зарядами
 	[161642]=1,
 
@@ -479,6 +811,10 @@ module.db.spell_charge_fix = {		--Спелы с зарядами
 	
 	--[774]=1,
 }
+if ExRT.is7 then ExRT.F.table_add2(module.db.spell_charge_fix,{
+	[98008]=999999,
+}) end
+
 module.db.spell_durationByTalent_fix = {	--Изменение длительности талантом\глифом   вид: [спелл] = {spellid глифа\таланта, изменение времени (-10;10;*0.5;*1.5)}
 	[31884] = {53376,"*1.5"},
 	[31842] = {53376,"*1.5"},
@@ -505,6 +841,10 @@ module.db.spell_durationByTalent_fix = {	--Изменение длительно
 	[112071] = {159445,45},
 	[82692] = {188200,1},
 }
+if ExRT.is7 then ExRT.F.table_add2(module.db.spell_durationByTalent_fix,{
+
+}) end
+
 module.db.spell_cdByTalent_fix = {		--Изменение кд талантом\глифом   вид: [спелл] = {spellid глифа\таланта, изменение времени (-60;60);spellid2,time2;spellid3,time3;...}
 	[498] = {114154,"*0.5"},
 	[633] = {54939,120,	114154,"*0.5"},
@@ -584,6 +924,11 @@ module.db.spell_cdByTalent_fix = {		--Изменение кд талантом\�
 	[34433] = {186980,-160},
 	[123040] = {186980,-40},
 }
+if ExRT.is7 then ExRT.F.table_add2(module.db.spell_cdByTalent_fix,{
+	[740] = {197073,-60},
+	[633] = {114154,"*0.7"},
+}) end
+
 module.db.tierSetsSpells = {	--[specID.tierID.tierMark] = {2P Bonus Spell ID, 4P Bonus Spell ID}
 	[65161] = {nil,144613},		--> Paladin,Holy,T16
 	[65141] = {nil,123103},		--> Paladin,Holy,T14
@@ -803,9 +1148,6 @@ module.db.spell_dispellsList = {	--Заклинания-диспелы (мгно
 	[115450] = true,
 	[2782] = true,
 	[88423] = true,
-}
-module.db.spell_notInCLEU_fix = {	--Заклинания, которые не отображаются в комбат-логе; выполнять проверку по UNIT_SPELLCAST_SUCCEEDED
-	--[86659] = true,	-- Was fixed in 6.1
 }
 
 module.db.spell_startCDbyAuraFade = {	--Заклинания, кд которых запускается только при спадении ауры
@@ -1032,11 +1374,11 @@ do
 	end
 end
 ExRT.F.table_add2(module.db.itemsToSpells,{
-	[124634] = 187614,
-	[124636] = 187615,
-	[124635] = 187611,
-	[124637] = 187613,
-	[124638] = 187612,
+	[124634] = 187614,	--Legendary Ring
+	[124636] = 187615,	--Legendary Ring
+	[124635] = 187611,	--Legendary Ring
+	[124637] = 187613,	--Legendary Ring
+	[124638] = 187612,	--Legendary Ring
 })
 
 module.db.differentIcons = {	--Другие иконки заклинаниям
@@ -1104,6 +1446,8 @@ module.db.colsDefaults = {
 	textureAlphaTimeLine = 0.8,
 	textureAlphaCooldown = 1,
 	
+	textureSmoothAnimationDuration = 50,
+	
 	textTemplateLeft = "%name%",
 	textTemplateRight = "%time%",
 	textTemplateCenter = "",
@@ -1126,6 +1470,8 @@ module.db.colsInit = {
 	
 	fontOutline = true,
 	fontShadow = false,
+	
+	--textureSmoothAnimation = true,
 }
 
 module.db.status_UnitsToCheck = {}
@@ -1163,7 +1509,7 @@ do
 		VExRT.ExCD2.Top = self:GetTop()
 	end)
 	frame.texture = frame:CreateTexture(nil, "BACKGROUND")
-	frame.texture:SetTexture(0,0,0,0.3)
+	frame.texture:SetColorTexture(0,0,0,0.3)
 	frame.texture:SetAllPoints()
 	module:RegisterHideOnPetBattle(frame)
 	
@@ -1257,8 +1603,16 @@ local function BarAnimation(self)
 	if t > bar.curr_end then
 		bar:Stop()
 	else
-		bar.statusbar:SetValue(t)
-		bar.spark:SetPoint("CENTER",bar.statusbar,"LEFT", (t-bar.curr_start) / bar.curr_dur * bar.statusbar:GetWidth(),0)
+		local width = (t - bar.curr_start) / bar.curr_dur
+		if width > 1 then
+			width = 1
+		elseif width < 0 then
+			width = 0
+		end
+		bar.timeline:SetShown(width ~= 0)
+		bar.timeline:SetWidth(width * bar.timeline.width)
+		
+		bar.spark:SetPoint("CENTER",bar.statusbar,"LEFT", (t-bar.curr_start) / bar.curr_dur * bar.timeline.width,0)
 	end
 	self.c = self.c + 1
 	if self.c > 3 then
@@ -1275,8 +1629,16 @@ local function BarAnimation_Reverse(self)
 	if t > bar.curr_end then
 		bar:Stop()
 	else
-		bar.statusbar:SetValue(bar.curr_end - t + bar.curr_start)
-		bar.spark:SetPoint("CENTER",bar.statusbar,"LEFT", (bar.curr_dur - (t-bar.curr_start)) / bar.curr_dur * bar.statusbar:GetWidth(),0)
+		local width = (bar.curr_end - t) / bar.curr_dur
+		if width > 1 then
+			width = 1
+		elseif width < 0 then
+			width = 0
+		end
+		bar.timeline:SetShown(width ~= 0)
+		bar.timeline:SetWidth(width * bar.timeline.width)
+		
+		bar.spark:SetPoint("CENTER",bar.statusbar,"LEFT", (bar.curr_dur - (t-bar.curr_start)) / bar.curr_dur * bar.timeline.width,0)
 	end
 	self.c = self.c + 1
 	if self.c > 3 then
@@ -1304,8 +1666,6 @@ end
 local function StopBar(self)
   	self.anim:Stop()
   	self.spark:Hide()
- 	self.statusbar:SetMinMaxValues(0,1)
- 	self.statusbar:SetValue(1)
  	self:UpdateStatus()
  	if VExRT.ExCD2.SortByAvailability then
  		SortAllData()
@@ -1329,6 +1689,30 @@ local function UpdateBar(self)
 	if parent.optionIconName then
 		self.textIcon:SetText(data.name)
 	end
+end
+
+local function BarStateAnimation(self)
+	local bar = self.bar
+	local progress = self:GetProgress()
+	local b = bar.curr_anim_b
+	if b then
+		bar.background:SetVertexColor(b.r + bar.curr_anim_b_r*progress,b.g + bar.curr_anim_b_g*progress,b.b + bar.curr_anim_b_b*progress,bar.curr_anim_b_a)
+	end
+	local l = bar.curr_anim_l
+	if l then
+		bar.timeline:SetVertexColor(l.r + bar.curr_anim_l_r*progress,l.g + bar.curr_anim_l_g*progress,l.b + bar.curr_anim_l_b*progress,bar.curr_anim_l_af+bar.curr_anim_l_a*progress)
+	end
+	local t = bar.curr_anim_t
+	if t then
+		bar.textLeft:SetTextColor(t.r + bar.curr_anim_t_r*progress,t.g + bar.curr_anim_t_g*progress,t.b + bar.curr_anim_t_b*progress)
+		bar.textRight:SetTextColor(t.r + bar.curr_anim_t_r*progress,t.g + bar.curr_anim_t_g*progress,t.b + bar.curr_anim_t_b*progress)
+		bar.textCenter:SetTextColor(t.r + bar.curr_anim_t_r*progress,t.g + bar.curr_anim_t_g*progress,t.b + bar.curr_anim_t_b*progress)
+		bar.textIcon:SetTextColor(t.r + bar.curr_anim_t_r*progress,t.g + bar.curr_anim_t_g*progress,t.b + bar.curr_anim_t_b*progress)
+	end
+end
+local function BarStateAnimationFinished(self)
+	self.bar.afterAnimFix = true
+	self.bar:UpdateStatus()
 end
 
 local function UpdateBarStatus(self,isTitle)
@@ -1404,84 +1788,225 @@ local function UpdateBarStatus(self,isTitle)
 		self.curr_start = data.charge
 		self.curr_end = data.charge+data.cd
 		self.curr_dur = data.cd
-	
+		
 		if parent.optionTimeLineAnimation == 1 then
-			self.statusbar:SetMinMaxValues(currTime+50000,currTime+50001)
+			self.timeline:SetShown(false)
 		else
-			self.statusbar:SetMinMaxValues(0,1)
+			self.timeline:SetShown(true)
+			self.timeline:SetWidth(self.timeline.width)
 		end
+		self.timeline.SetWidth = self.timeline.IsShown	--Do I really want this shit?
+		self.timeline.SetShown = self.timeline.IsShown
 		self.spark:Show()
 		self.anim:Play()
 	elseif t then
 		self.curr_start = lastUse
 		self.curr_end = t
 		self.curr_dur = t - lastUse
+		
+		self.timeline.SetWidth = self.timeline._SetWidth
+		self.timeline.SetShown = self.timeline._SetShown
 	
-		self.statusbar:SetMinMaxValues(lastUse,t)
 		self.spark:Show()
 		self.anim:Play()
 	else
 		self.curr_start = 0
 		self.curr_end = 1
 		self.curr_dur = 1
+		
+		self.timeline.SetWidth = self.timeline._SetWidth
+		self.timeline.SetShown = self.timeline._SetShown
 
 	  	self.spark:Hide()
 	  	self.anim:Stop()
 	  	
-	 	self.statusbar:SetMinMaxValues(0,1)
 	  	if isDisabled then
-	  		self.statusbar:SetValue(0)
+	  		self.timeline:Hide()
 	  	else
 	  		if parent.optionTimeLineAnimation == 1 then
-	  			self.statusbar:SetValue(0)
+	  			self.timeline:Hide()
 	  		else
-	 			self.statusbar:SetValue(1)
+	 			self.timeline:SetWidth(self.timeline.width)
+	 			self.timeline:Show()
 	 		end
 	 	end
 	end
 	
-	local colorTable = nil
-	if parent.optionClassColorBackground then
-		colorTable = data.classColor
-	else
-		if isActive then
-			colorTable = parent.optionColorBackgroundActive
-		elseif isCooldown then
-			colorTable = parent.optionColorBackgroundCooldown
+	local doStandartColors = true
+	if parent.optionSmoothAnimation and not self.afterAnimFix then
+		doStandartColors = false
+		if not parent.optionClassColorBackground then
+			local ctFrom, ctTo = nil
+			if isActive then
+				ctTo = parent.optionColorBackgroundActive
+			elseif isCooldown then
+				ctTo = parent.optionColorBackgroundCooldown
+			else
+				ctTo = parent.optionColorBackgroundDefault
+			end
+			
+			if self.curr_anim_state == 1 then
+				ctFrom = parent.optionColorBackgroundActive
+			elseif self.curr_anim_state == 2 then
+				ctFrom = parent.optionColorBackgroundCooldown
+			else
+				ctFrom = parent.optionColorBackgroundDefault
+			end
+			
+			self.curr_anim_b = ctFrom
+			self.curr_anim_b_r = ctTo.r - ctFrom.r
+			self.curr_anim_b_g = ctTo.g - ctFrom.g
+			self.curr_anim_b_b = ctTo.b - ctFrom.b
+			self.curr_anim_b_a = parent.optionAlphaBackground
 		else
-			colorTable = parent.optionColorBackgroundDefault
+			self.curr_anim_b = nil
+			local colorTable = data.classColor
+			self.background:SetVertexColor(colorTable.r,colorTable.g,colorTable.b,parent.optionAlphaBackground)
+		end
+		if not parent.optionClassColorTimeLine then
+			local ctFrom, ctTo = nil
+			if isActive then
+				ctTo = parent.optionColorTimeLineActive
+			elseif isCooldown then
+				ctTo = parent.optionColorTimeLineCooldown
+			else
+				ctTo = parent.optionColorTimeLineDefault
+			end
+			
+			if self.curr_anim_state == 1 then
+				ctFrom = parent.optionColorTimeLineActive
+				self.curr_anim_l_af = 1
+				self.curr_anim_l_a = parent.optionAlphaTimeLine - 1
+			elseif self.curr_anim_state == 2 then
+				ctFrom = parent.optionColorTimeLineCooldown
+				self.curr_anim_l_af = 1
+				self.curr_anim_l_a = parent.optionAlphaTimeLine - 1
+			else
+				ctFrom = parent.optionColorTimeLineDefault
+				self.curr_anim_l_af = 0
+				self.curr_anim_l_a = parent.optionAlphaTimeLine
+			end
+			if not parent.optionAnimation then
+				self.curr_anim_l_af = 0
+				self.curr_anim_l_a = 0
+			end
+			
+			self.curr_anim_l = ctFrom
+			self.curr_anim_l_r = ctTo.r - ctFrom.r
+			self.curr_anim_l_g = ctTo.g - ctFrom.g
+			self.curr_anim_l_b = ctTo.b - ctFrom.b
+		else
+			self.curr_anim_l = data.classColor
+			if self.curr_anim_state == 1 then
+				self.curr_anim_l_af = 1
+				self.curr_anim_l_a = parent.optionAlphaTimeLine - 1
+			elseif self.curr_anim_state == 2 then
+				self.curr_anim_l_af = 1
+				self.curr_anim_l_a = parent.optionAlphaTimeLine - 1
+			else
+				self.curr_anim_l_af = 0
+				self.curr_anim_l_a = parent.optionAlphaTimeLine
+			end
+			if not parent.optionAnimation then
+				self.curr_anim_l_af = 0
+				self.curr_anim_l_a = 0
+			end
+			self.curr_anim_l_r = 0
+			self.curr_anim_l_g = 0
+			self.curr_anim_l_b = 0
+		end
+		if not parent.optionClassColorText then
+			local ctFrom, ctTo = nil
+			if isActive then
+				ctTo = parent.optionColorTextActive
+			elseif isCooldown then
+				ctTo = parent.optionColorTextCooldown
+			else
+				ctTo = parent.optionColorTextDefault
+			end
+			
+			if self.curr_anim_state == 1 then
+				ctFrom = parent.optionColorTextActive
+			elseif self.curr_anim_state == 2 then
+				ctFrom = parent.optionColorTextCooldown
+			else
+				ctFrom = parent.optionColorTextDefault
+			end
+			
+			self.curr_anim_t = ctFrom
+			self.curr_anim_t_r = ctTo.r - ctFrom.r
+			self.curr_anim_t_g = ctTo.g - ctFrom.g
+			self.curr_anim_t_b = ctTo.b - ctFrom.b
+		else
+			self.curr_anim_t = nil
+			local colorTable = data.classColor
+			self.textLeft:SetTextColor(colorTable.r,colorTable.g,colorTable.b)
+			self.textRight:SetTextColor(colorTable.r,colorTable.g,colorTable.b)
+			self.textCenter:SetTextColor(colorTable.r,colorTable.g,colorTable.b)
+			self.textIcon:SetTextColor(colorTable.r,colorTable.g,colorTable.b)
+		end
+		
+		if isActive and self.curr_anim_state ~= 1 then
+			self.curr_anim_state = 1
+			self.anim_state:Stop()
+			self.anim_state:Play()
+		elseif isCooldown and self.curr_anim_state ~= 2 then
+			self.curr_anim_state = 2
+			self.anim_state:Stop()
+			self.anim_state:Play()
+		elseif not isCooldown and not isActive and self.curr_anim_state then
+			self.curr_anim_state = nil
+			self.anim_state:Stop()
+			self.anim_state:Play()
+		else
+			doStandartColors = true
 		end
 	end
-	self.background:SetVertexColor(colorTable.r,colorTable.g,colorTable.b,parent.optionAlphaBackground)
-	
-	if parent.optionClassColorTimeLine then
-		colorTable = data.classColor
-	else
-		if isActive then
-			colorTable = parent.optionColorTimeLineActive
-		elseif isCooldown then
-			colorTable = parent.optionColorTimeLineCooldown
+	if doStandartColors then
+		local colorTable = nil
+		if parent.optionClassColorBackground then
+			colorTable = data.classColor
 		else
-			colorTable = parent.optionColorTimeLineDefault
+			if isActive then
+				colorTable = parent.optionColorBackgroundActive
+			elseif isCooldown then
+				colorTable = parent.optionColorBackgroundCooldown
+			else
+				colorTable = parent.optionColorBackgroundDefault
+			end
 		end
+		self.background:SetVertexColor(colorTable.r,colorTable.g,colorTable.b,parent.optionAlphaBackground)
+		
+		if parent.optionClassColorTimeLine then
+			colorTable = data.classColor
+		else
+			if isActive then
+				colorTable = parent.optionColorTimeLineActive
+			elseif isCooldown then
+				colorTable = parent.optionColorTimeLineCooldown
+			else
+				colorTable = parent.optionColorTimeLineDefault
+			end
+		end
+		self.timeline:SetVertexColor(colorTable.r,colorTable.g,colorTable.b,parent.optionAlphaTimeLine)
+		
+		if parent.optionClassColorText then
+			colorTable = data.classColor
+		else
+			if isActive then
+				colorTable = parent.optionColorTextActive
+			elseif isCooldown then
+				colorTable = parent.optionColorTextCooldown
+			else
+				colorTable = parent.optionColorTextDefault
+			end
+		end	
+		self.textLeft:SetTextColor(colorTable.r,colorTable.g,colorTable.b)
+		self.textRight:SetTextColor(colorTable.r,colorTable.g,colorTable.b)
+		self.textCenter:SetTextColor(colorTable.r,colorTable.g,colorTable.b)
+		self.textIcon:SetTextColor(colorTable.r,colorTable.g,colorTable.b)
 	end
-	self.statusbar:SetStatusBarColor(colorTable.r,colorTable.g,colorTable.b,parent.optionAlphaTimeLine)
-	
-	if parent.optionClassColorText then
-		colorTable = data.classColor
-	else
-		if isActive then
-			colorTable = parent.optionColorTextActive
-		elseif isCooldown then
-			colorTable = parent.optionColorTextCooldown
-		else
-			colorTable = parent.optionColorTextDefault
-		end
-	end	
-	self.textLeft:SetTextColor(colorTable.r,colorTable.g,colorTable.b)
-	self.textRight:SetTextColor(colorTable.r,colorTable.g,colorTable.b)
-	self.textCenter:SetTextColor(colorTable.r,colorTable.g,colorTable.b)
-	self.textIcon:SetTextColor(colorTable.r,colorTable.g,colorTable.b)
+	self.afterAnimFix = nil
 	
 	if parent.optionGray then
 		if isCooldown and not isActive then
@@ -1583,8 +2108,7 @@ local function BarCreateTitle(self)
   	self.spark:Hide()
   	self.anim:Stop()
   	
- 	self.statusbar:SetMinMaxValues(0,1)
-  	self.statusbar:SetValue(0)
+ 	self.timeline:Hide()
   	
   	self.background:SetVertexColor(0,0,0,parent.optionAlphaTimeLine)
   	
@@ -1634,11 +2158,13 @@ local function UpdateBarStyle(self)
 	self.statusbar:ClearAllPoints()	self.statusbar:SetHeight(height)
 					self.spark:SetSize(10,height+10)
 					self.cooldown:SetSize(height,height)
-	
+		
+	local iconSize = height			
 	if parent.optionIconPosition == 3 or parent.optionIconTitles then
 		self.icon:Hide()
 		self.statusbar:SetPoint("LEFT",self,0,0)
 		self.statusbar:SetPoint("RIGHT",self,0,0)
+		iconSize = 0
 	elseif parent.optionIconPosition == 2 then
 		self.icon:Show()
 		self.statusbar:SetPoint("LEFT",self,0,0)
@@ -1650,6 +2176,9 @@ local function UpdateBarStyle(self)
 		self.statusbar:SetPoint("RIGHT",self,0,0)
 		self.icon:SetPoint("LEFT",self,0,0)
 	end
+
+	self.timeline.width = width - iconSize
+	self.timeline:SetSize(width - iconSize,height)
 	
 	if parent.optionIconHideBlizzardEdges then
 		self.iconTexture:SetTexCoord(.1,.9,.1,.9)
@@ -1685,8 +2214,7 @@ local function UpdateBarStyle(self)
 		textureFile = module.db.colsDefaults.textureFile
 		self.background:SetTexture(textureFile)
 	end
-	self.statusbar:SetStatusBarTexture(textureFile)
-	self.statusbar:GetStatusBarTexture():SetDrawLayer("BACKGROUND",0)
+	self.timeline:SetTexture(textureFile)
 	
 	local isValidFont = nil
 	
@@ -1718,7 +2246,7 @@ local function UpdateBarStyle(self)
 	else
 		self.anim:SetScript("OnLoop",BarAnimation_NoAnimation)
 		self.spark:SetTexture("")
-		self.statusbar:SetStatusBarTexture(0,0,0,0)
+		self.timeline:Hide()
 	end
 	
 	if parent.methodsIconTooltip then
@@ -1761,16 +2289,18 @@ local function UpdateBarStyle(self)
 		self.border.right:SetPoint("TOPLEFT",self,"TOPRIGHT",0,0)
 		self.border.right:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT",borderSize,0)
 	
-		self.border.top:SetTexture(parent.textureBorderColorR,parent.textureBorderColorG,parent.textureBorderColorB,parent.textureBorderColorA)
-		self.border.bottom:SetTexture(parent.textureBorderColorR,parent.textureBorderColorG,parent.textureBorderColorB,parent.textureBorderColorA)
-		self.border.left:SetTexture(parent.textureBorderColorR,parent.textureBorderColorG,parent.textureBorderColorB,parent.textureBorderColorA)
-		self.border.right:SetTexture(parent.textureBorderColorR,parent.textureBorderColorG,parent.textureBorderColorB,parent.textureBorderColorA)
+		self.border.top:SetColorTexture(parent.textureBorderColorR,parent.textureBorderColorG,parent.textureBorderColorB,parent.textureBorderColorA)
+		self.border.bottom:SetColorTexture(parent.textureBorderColorR,parent.textureBorderColorG,parent.textureBorderColorB,parent.textureBorderColorA)
+		self.border.left:SetColorTexture(parent.textureBorderColorR,parent.textureBorderColorG,parent.textureBorderColorB,parent.textureBorderColorA)
+		self.border.right:SetColorTexture(parent.textureBorderColorR,parent.textureBorderColorG,parent.textureBorderColorB,parent.textureBorderColorA)
 	
 		self.border.top:Show()
 		self.border.bottom:Show()
 		self.border.left:Show()
 		self.border.right:Show()
 	end
+	
+	self.anim_state.timer:SetDuration(parent.optionSmoothAnimationDuration)
 	
 	if module.db.plugin and type(module.db.plugin.UpdateBarStyle)=="function" then
 		module.db.plugin.UpdateBarStyle(self)
@@ -1787,11 +2317,16 @@ local function CreateBar(parent)
 	statusbar:SetPoint("BOTTOMLEFT")
 	self.statusbar = statusbar
 	
-	local spark = statusbar:CreateTexture(nil, "OVERLAY")
+	local timeline = statusbar:CreateTexture(nil, "BACKGROUND")
+	timeline:SetPoint("LEFT")
+	timeline._SetWidth = timeline.SetWidth
+	timeline._SetShown = timeline.SetShown
+	self.timeline = timeline
+	
+	local spark = statusbar:CreateTexture(nil, "BACKGROUND", nil, 3)
 	spark:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
 	spark:SetBlendMode("ADD")
 	spark:SetPoint("CENTER",statusbar,"RIGHT", 0,0)
-	spark:SetDrawLayer("BACKGROUND", 3)
 	spark:SetAlpha(0.5)
 	spark:Hide()
 	self.spark = spark
@@ -1804,6 +2339,14 @@ local function CreateBar(parent)
 	anim:SetScript("OnLoop",BarAnimation)
 	anim.bar = self
 	self.anim = anim
+	
+	local anim_state = self:CreateAnimationGroup()
+	anim_state.timer = anim_state:CreateAnimation()
+	anim_state.timer:SetDuration(0.5)
+	anim_state:SetScript("OnUpdate",BarStateAnimation)
+	anim_state:SetScript("OnFinished",BarStateAnimationFinished)
+	anim_state.bar = self
+	self.anim_state = anim_state
 	
 	local icon = CreateFrame("Frame",nil,self)
 	icon:SetPoint("TOPLEFT", 0, 0)
@@ -1818,7 +2361,7 @@ local function CreateBar(parent)
 	cooldown:SetPoint("CENTER")
 	self.cooldown = cooldown
 	
-	local background = self:CreateTexture(nil, "BACKGROUND",-7)
+	local background = self:CreateTexture(nil, "BACKGROUND", nil, -7)
 	background:SetAllPoints()
 	self.background = background
 	
@@ -1903,11 +2446,11 @@ for i=1,module.db.maxColumns do
 		VExRT.ExCD2.colSet[i].posY = self:GetTop()
 	end)	
 	columnFrame.texture = columnFrame:CreateTexture(nil, "BACKGROUND")
-	columnFrame.texture:SetTexture(0,0,0,0)
+	columnFrame.texture:SetColorTexture(0,0,0,0)
 	columnFrame.texture:SetAllPoints()
 	
 	columnFrame.lockTexture = columnFrame:CreateTexture(nil, "BACKGROUND")
-	columnFrame.lockTexture:SetTexture(0,0,0,0)
+	columnFrame.lockTexture:SetColorTexture(0,0,0,0)
 	columnFrame.lockTexture:SetAllPoints()
 
 	columnFrame.lines = {}
@@ -2012,6 +2555,9 @@ do
 	local function sort_ar(a,b) return (a.sort or 0) > (b.sort or 0) end
 	local function sort_br(a,b) if a.sorting == b.sorting then return (a.sort or 0) > (b.sort or 0) else return (a.sorting or 0) > (b.sorting or 0) end end
 	
+	local oneSpellPerCol = {} for i=1,maxColumns do oneSpellPerCol[i]={} end
+	local reviewID = 0
+	
 	function SortAllData()
 		local SortByAvailability = VExRT.ExCD2.SortByAvailability
 		if SortByAvailability then
@@ -2066,6 +2612,7 @@ do
 	end
 	
 	function UpdateAllData()
+		reviewID = reviewID + 1
 		--print('UpdateAllData',GetTime())
 		local isTestMode = _db.testMode
 		local CDECol = VExRT.ExCD2.CDECol
@@ -2084,7 +2631,7 @@ do
 			(not spell_isTalent[spellID] or session_gGUIDs[name][spellID]) and 
 			(not spell_isPetAbility[spellID] or session_Pets[name] == spell_isPetAbility[spellID] or (session_Pets[name] and petsAbilities[ session_Pets[name] ] and petsAbilities[ session_Pets[name] ][1] == spell_isPetAbility[spellID])) and
 			(not spell_talentReplaceOther[spellID] or not session_gGUIDs[name][ spell_talentReplaceOther[spellID] ]) and
-			(not data.specialCheck or data.specialCheck())
+			(not data.specialCheck or data.specialCheck(data,currTime))
 			) then 
 				data.vis = true
 				
@@ -2096,7 +2643,7 @@ do
 				end
 				data.column = col
 				
-				local isCharge = spell_charge_fix[ data.db[1] ]
+				local isCharge = spell_charge_fix[ spellID ]
 				if isCharge then
 					if session_gGUIDs[data.fullName][isCharge] then
 						data.isCharge = true
@@ -2109,13 +2656,15 @@ do
 				
 				local columnFrame = columnsTable[col]
 				
-				if columnFrame.optionShownOnCD and not ((isCharge and data.charge and data.charge > currTime) or (not isCharge and (data.lastUse + data.cd) > currTime)) then
+				local isOnCD = not isCharge and (data.lastUse + data.cd) > currTime
+				
+				if columnFrame.optionShownOnCD and not ((isCharge and data.charge and data.charge > currTime) or isOnCD) then
 					data.vis = nil
 				end
 				if columnFrame.methodsHideOwnSpells and data.fullName == playerName then
 					data.vis = nil
 				end
-				
+								
 				local whiteList = columnFrame.WhiteList
 				if whiteList then
 					if not whiteList[data.loweredName] then
@@ -2142,6 +2691,39 @@ do
 					data.outofrange = true
 				else
 					data.outofrange = nil
+				end
+				
+				if columnFrame.methodsOneSpellPerCol and data.vis then
+					local oneSpellPerColCurr = oneSpellPerCol[col][spellID]
+					if not oneSpellPerColCurr then
+						oneSpellPerColCurr = {}
+						oneSpellPerCol[col][spellID] = oneSpellPerColCurr
+					end
+					local isOnCD = isOnCD or data.disabled
+					if oneSpellPerColCurr[1] ~= reviewID then
+						oneSpellPerColCurr[1] = reviewID
+						oneSpellPerColCurr[2] = data
+						oneSpellPerColCurr[3] = isOnCD
+					elseif oneSpellPerColCurr[3] and not isOnCD then
+						oneSpellPerColCurr[2].vis = nil
+						oneSpellPerColCurr[1] = reviewID
+						oneSpellPerColCurr[2] = data
+						oneSpellPerColCurr[3] = isOnCD
+					elseif data.disabled then
+						data.vis = nil
+					elseif oneSpellPerColCurr[3] and isOnCD then
+						local prevData = oneSpellPerColCurr[2]
+						if (prevData.lastUse + prevData.cd) > (data.lastUse + data.cd) then
+							prevData.vis = nil
+							oneSpellPerColCurr[1] = reviewID
+							oneSpellPerColCurr[2] = data
+							oneSpellPerColCurr[3] = isOnCD
+						else
+							data.vis = nil
+						end
+					else
+						data.vis = nil
+					end
 				end
 				
 				local bar = data.bar
@@ -2985,7 +3567,7 @@ function module:Enable()
 
 	module:RegisterSlash()
 	module:RegisterTimer()
-	module:RegisterEvents('SCENARIO_UPDATE','GROUP_ROSTER_UPDATE','COMBAT_LOG_EVENT_UNFILTERED','UNIT_PET','UNIT_SPELLCAST_SUCCEEDED','PLAYER_LOGOUT','ZONE_CHANGED_NEW_AREA','CHALLENGE_MODE_RESET')
+	module:RegisterEvents('SCENARIO_UPDATE','GROUP_ROSTER_UPDATE','COMBAT_LOG_EVENT_UNFILTERED','UNIT_PET','PLAYER_LOGOUT','ZONE_CHANGED_NEW_AREA','CHALLENGE_MODE_RESET')
 end
 
 function module:Disable()
@@ -3000,7 +3582,7 @@ function module:Disable()
 	
 	module:UnregisterSlash()
 	module:UnregisterTimer()
-	module:UnregisterEvents('SCENARIO_UPDATE','GROUP_ROSTER_UPDATE','COMBAT_LOG_EVENT_UNFILTERED','UNIT_PET','UNIT_SPELLCAST_SUCCEEDED','PLAYER_LOGOUT','ZONE_CHANGED_NEW_AREA','CHALLENGE_MODE_RESET')
+	module:UnregisterEvents('SCENARIO_UPDATE','GROUP_ROSTER_UPDATE','COMBAT_LOG_EVENT_UNFILTERED','UNIT_PET','PLAYER_LOGOUT','ZONE_CHANGED_NEW_AREA','CHALLENGE_MODE_RESET')
 end
 
 
@@ -3120,11 +3702,11 @@ function module.main:ADDON_LOADED()
 	globalGUIDs = VExRT.ExCD2.gnGUIDs
 
 	if VExRT.ExCD2.lock then
-		module.frame.texture:SetTexture(0, 0, 0, 0)
+		module.frame.texture:SetColorTexture(0, 0, 0, 0)
 		module.frame:EnableMouse(false)
 		ExRT.lib.AddShadowComment(module.frame,1)
 	else
-		module.frame.texture:SetTexture(0, 0, 0, 0.3)
+		module.frame.texture:SetColorTexture(0, 0, 0, 0.3)
 		module.frame:EnableMouse(true)
 		ExRT.lib.AddShadowComment(module.frame,nil,L.cd2)
 	end
@@ -3214,24 +3796,6 @@ function module.main:UNIT_PET(arg)
 		end
 		if forceUpdateAllData then
 			UpdateAllData()
-		end
-	end
-end
-
-do
-	local spell_notInCLEU_fix = module.db.spell_notInCLEU_fix
-	--Be care about spell with charges here. USS event can be fire more then one time: for raidX, partyX, target, focus, players unitID's
-	function module.main:UNIT_SPELLCAST_SUCCEEDED(unitID,_,_,_,spellID)
-		if spell_notInCLEU_fix[spellID] then
-			local name = UnitCombatlogname(unitID)
-			if name then
-				module.main:COMBAT_LOG_EVENT_UNFILTERED(nil,"SPELL_CAST_SUCCESS",nil,nil,name,nil,nil,nil,nil,nil,nil,spellID)
-			end
-		end
-	end
-	if ExRT.F.table_len(spell_notInCLEU_fix) == 0 then
-		function module.main:UNIT_SPELLCAST_SUCCEEDED()
-			module:UnregisterEvents('UNIT_SPELLCAST_SUCCEEDED')
 		end
 	end
 end
@@ -3549,7 +4113,9 @@ function module.options:Load()
 	loadstring(module.db.AllClassSpellsInText)()
 	module.db.AllClassSpellsInText = nil
 
-	module.options.spellsPerPage = 17
+	local SPELL_LINE_HEIGHT = 32
+	local SPELL_PER_PAGE = 17
+	local SPELL_PAGE_HEIGHT = 528
 
 	self.chkEnable = ELib:Check(self,L.senable,VExRT.ExCD2.enabled):Point(560,-26):Size(18,18):OnClick(function(self) 
 		if self:GetChecked() then
@@ -3588,7 +4154,7 @@ function module.options:Load()
 	self.decorationLine:SetPoint("TOPLEFT",self,-8,-25)
 	self.decorationLine:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",8,-45)
 	self.decorationLine.texture:SetAllPoints()
-	self.decorationLine.texture:SetTexture(1,1,1,1)
+	self.decorationLine.texture:SetColorTexture(1,1,1,1)
 	self.decorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
 
 	self.tab = ELib:Tabs(self,0,L.cd2Spells,L.cd2Appearance,L.cd2History):Point(0,-45):Size(660,570):SetTo(1)
@@ -3665,11 +4231,9 @@ function module.options:Load()
 	self.fastSetupFrame.text:FontSize(11):Color(GameFontNormal:GetTextColor())
 	
 	self.borderList = CreateFrame("Frame",nil,self.tab.tabs[1])
-	self.borderList:SetSize(650,self.spellsPerPage*31+3)
+	self.borderList:SetSize(650,SPELL_PAGE_HEIGHT)
 	self.borderList:SetPoint("TOP", 0, -38)
-	self.borderList:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",edgeFile = ExRT.F.defBorder,tile = false,edgeSize = 8})
-	self.borderList:SetBackdropColor(0,0,0,0.3)
-	self.borderList:SetBackdropBorderColor(.24,.25,.30,1)
+	ELib:Border(self.borderList,2,.24,.25,.30,1)
 	
 	local function SyncUserDB()
 		table.wipe(VExRT.ExCD2.userDB)
@@ -3689,77 +4253,85 @@ function module.options:Load()
 	function module.options:ReloadSpellsPage()
 		local page = module.options
 		local scrollBarValue = page.ScrollBar:GetValue()
-		page.spellsListScrollFrame:SetVerticalScroll(scrollBarValue % 31) 
+		page.spellsListScrollFrame:SetVerticalScroll(scrollBarValue % SPELL_LINE_HEIGHT) 
 
-		local event = floor(scrollBarValue / 31) + 1
+		local pos = floor(scrollBarValue / SPELL_LINE_HEIGHT) + 1
 		page.butSpellsAdd:Hide()
-		page.butSpellsFrame:Hide()	
-		for i=event,event+page.spellsPerPage do
-			local j = i - event + 1
-			if i <= #module.db.spellDB then
-				local spellData = module.db.spellDB[i]
-				local SpellID = spellData[1]
-				local line = module.options.spellsList[j]
-			
-				line.chk:SetChecked(VExRT.ExCD2.CDE[SpellID])
-				local SpellName,_,SpellTexture = GetSpellInfo(SpellID)
-				if module.db.differentIcons[ SpellID ] then
-					SpellTexture = module.db.differentIcons[SpellID]
+		page.butSpellsFrame:Hide()
+		local lineNum,lastLine = 0
+		for i=pos,pos+SPELL_PER_PAGE+1 do
+			lineNum = lineNum + 1
+			if not module.db.spellDB[i] then
+				for j=lineNum,#page.spellsList do
+					page.spellsList[j]:Hide()
 				end
-				if SpellID == 187614 then SpellName = "Legendary DD" end
-				if SpellID == 187612 then SpellName = "Legendary Heal" end
-				if SpellID == 187613 then SpellName = "Legendary Tank" end
-				
-				line.sid = SpellID
-				line.tid = i
-				line.icon:SetTexture(SpellTexture or "Interface\\Icons\\INV_MISC_QUESTIONMARK")
-				line.spellName:SetFormattedText("|cffffffff|Hspell:%d|h%s|h|r",SpellID, SpellName or "?")
-				line.class:SetText(L.classLocalizate[ spellData[2] ] or "?")
-				local cR,cG,cB = ExRT.F.classColorNum(spellData[2])
-				line.class:SetTextColor(cR,cG,cB,1)
-				
-				line.backClassColorR = cR
-				line.backClassColorG = cG
-				line.backClassColorB = cB
-		
-				if not SpellName and spellData.user then
-					line.chk:Disable()
-					line.chk:SetAlpha(0.5)
-				else
-					line.chk:Enable()
-					line.chk:SetAlpha(1)
-				end
-	
-				line:Show()
-	
-				ExRT.lib.ShowOrHide(line.tooltipFrame,not spellData.user)
-				ExRT.lib.ShowOrHide(line.spellName,not spellData.user)
-				ExRT.lib.ShowOrHide(line.class,not spellData.user)
-				ExRT.lib.ShowOrHide(line.userSpellName,spellData.user)
-				ExRT.lib.ShowOrHide(line.userClass,spellData.user)
-				ExRT.lib.ShowOrHide(line.userRemove,spellData.user)
-	
-				line.dropDownPriority:SetText(format("%d",VExRT.ExCD2.Priority[SpellID] or 15))
-	
-				if spellData.user then
-					line.userSpellName:SetText(SpellID or "")
-	
-					line.userClass:SetText("|c"..ExRT.F.classColor(spellData[2])..L.classLocalizate[ spellData[2] ])
-					
-					line.isUserSpell = true
-				else
-					line.isUserSpell = nil
-				end
-				
-				if SpellID == 161642 then
-					line.additionalTooltip = L.cd2ResurrectTooltip
-				else
-					line.additionalTooltip = nil
-				end
-			else
+				page.butSpellsAdd:ClearAllPoints()
+				page.butSpellsAdd:SetPoint("TOPLEFT",lastLine,"BOTTOMLEFT",5,-5)
 				page.butSpellsAdd:Show()
+				page.butSpellsFrame:ClearAllPoints()
+				page.butSpellsFrame:SetPoint("TOPLEFT",lastLine,"BOTTOMLEFT",317,-5)
 				page.butSpellsFrame:Show()
-				page.spellsList[j]:Hide()
+				break
+			end
+			local spellData = module.db.spellDB[i]
+			local SpellID = spellData[1]
+			local line = module.options.spellsList[lineNum]
+			lastLine = line
+		
+			line.chk:SetChecked(VExRT.ExCD2.CDE[SpellID])
+			local SpellName,_,SpellTexture = GetSpellInfo(SpellID)
+			if module.db.differentIcons[ SpellID ] then
+				SpellTexture = module.db.differentIcons[SpellID]
+			end
+			if SpellID == 187614 then SpellName = "Legendary DD" end
+			if SpellID == 187612 then SpellName = "Legendary Heal" end
+			if SpellID == 187613 then SpellName = "Legendary Tank" end
+			
+			line.sid = SpellID
+			line.tid = i
+			line.icon:SetTexture(SpellTexture or "Interface\\Icons\\INV_MISC_QUESTIONMARK")
+			line.spellName:SetFormattedText("|cffffffff|Hspell:%d|h%s|h|r",SpellID, SpellName or "?")
+			line.class:SetText(L.classLocalizate[ spellData[2] ] or "?")
+			local cR,cG,cB = ExRT.F.classColorNum(spellData[2])
+			line.class:SetTextColor(cR,cG,cB,1)
+			
+			line.backClassColorR = cR
+			line.backClassColorG = cG
+			line.backClassColorB = cB
+	
+			if not SpellName and spellData.user then
+				line.chk:Disable()
+				line.chk:SetAlpha(0.5)
+			else
+				line.chk:Enable()
+				line.chk:SetAlpha(1)
+			end
+
+			line:Show()
+
+			ExRT.lib.ShowOrHide(line.tooltipFrame,not spellData.user)
+			ExRT.lib.ShowOrHide(line.spellName,not spellData.user)
+			ExRT.lib.ShowOrHide(line.class,not spellData.user)
+			ExRT.lib.ShowOrHide(line.userSpellName,spellData.user)
+			ExRT.lib.ShowOrHide(line.userClass,spellData.user)
+			ExRT.lib.ShowOrHide(line.userRemove,spellData.user)
+
+			line.dropDownPriority:SetText(format("%d",VExRT.ExCD2.Priority[SpellID] or 15))
+
+			if spellData.user then
+				line.userSpellName:SetText(SpellID or "")
+
+				line.userClass:SetText("|c"..ExRT.F.classColor(spellData[2])..L.classLocalizate[ spellData[2] ])
+				
+				line.isUserSpell = true
+			else
+				line.isUserSpell = nil
+			end
+			
+			if SpellID == 161642 then
+				line.additionalTooltip = L.cd2ResurrectTooltip
+			else
+				line.additionalTooltip = nil
 			end
 		end
 		GameTooltip_Hide()
@@ -3767,17 +4339,17 @@ function module.options:Load()
 		page.ScrollBar:UpdateButtons()
 	end
 	
-	self.ScrollBar = ELib:ScrollBar(self.borderList):Size(16,self.spellsPerPage*31-5):Point("TOPRIGHT",-3,-4):ClickRange(31):Range(1,20):OnChange(module.options.ReloadSpellsPage)
+	self.ScrollBar = ELib:ScrollBar(self.borderList):Size(16,0):Point("TOPRIGHT",-3,-3):Point("BOTTOMRIGHT",-3,3):ClickRange(32):Range(0,20):SetTo(0):OnChange(module.options.ReloadSpellsPage)
 
 	function self.ScrollBar:UpdateRange()
-		self:SetMinMaxValues(1,max((#module.db.spellDB-module.options.spellsPerPage+1)*31-1,1))
+		self:SetMinMaxValues(0,max((#module.db.spellDB+1)*SPELL_LINE_HEIGHT-SPELL_PAGE_HEIGHT,0))
 	end
 	
 	self:SetScript("OnMouseWheel", function(self, delta)
 		delta = -delta
 		local current = module.options.ScrollBar:GetValue()
 		local min_,max_ = module.options.ScrollBar:GetMinMaxValues()
-		current = current + (delta * 31)
+		current = current + (delta * SPELL_LINE_HEIGHT)
 		if current > max_ then
 			current = max_
 		elseif current < min_ then
@@ -3934,7 +4506,7 @@ function module.options:Load()
 		local min_,max_ = module.options.ScrollBar:GetMinMaxValues()
 		module.options.ScrollBar:UpdateRange()
 		
-		local newVal = current == max_ and max(current-31,1) or current
+		local newVal = current == max_ and max(current-SPELL_LINE_HEIGHT,1) or current
 		if newVal ~= current then
 			module.options.ScrollBar:SetValue(newVal)
 		else
@@ -3948,8 +4520,8 @@ function module.options:Load()
 	end
 	
 	self.spellsListScrollFrame = CreateFrame("ScrollFrame", nil, self.borderList)
-	self.spellsListScrollFrame:SetPoint("TOP",0,-3)
-	self.spellsListScrollFrame:SetSize(self.borderList:GetWidth(),self.borderList:GetHeight()-8)
+	self.spellsListScrollFrame:SetPoint("TOPLEFT")
+	self.spellsListScrollFrame:SetPoint("BOTTOMRIGHT")
 	
 	self.spellsListScrollFrameContent = CreateFrame("Frame", nil, self.spellsListScrollFrame)
 	self.spellsListScrollFrameContent:SetPoint("TOPLEFT",0,0)
@@ -3957,19 +4529,20 @@ function module.options:Load()
 	self.spellsListScrollFrame:SetScrollChild(self.spellsListScrollFrameContent)
 	
 	self.spellsList = {}
-	for i=1,(self.spellsPerPage+1) do
+	for i=1,(SPELL_PER_PAGE+2) do
 		local line = CreateFrame("Frame",nil,self.spellsListScrollFrameContent)
 		self.spellsList[i] = line
-		line:SetPoint("TOPLEFT",5,-1-(i-1)*31)
-		line:SetSize(620,31)
+		line:SetPoint("TOPLEFT",0,-(i-1)*SPELL_LINE_HEIGHT)
+		line:SetPoint("RIGHT",-100,0)
+		line:SetHeight(SPELL_LINE_HEIGHT)
 
-		line.chk = ELib:Check(line):Point("LEFT",5,0):OnClick(SpellsListChkOnClick)
+		line.chk = ELib:Check(line):Point("LEFT",10,0):OnClick(SpellsListChkOnClick)
 		line.chk._i = i
 		
 		line.backClassColor = line:CreateTexture(nil, "BACKGROUND")
-		line.backClassColor:SetPoint("TOPLEFT",-3,0)
-		line.backClassColor:SetSize(200,31)
-		line.backClassColor:SetTexture( 1, 1, 1, 1)
+		line.backClassColor:SetPoint("LEFT",0,0)
+		line.backClassColor:SetSize(250,SPELL_LINE_HEIGHT)
+		line.backClassColor:SetColorTexture(1, 1, 1, 1)
 		line.backClassColorR = 0
 		line.backClassColorG = 0
 		line.backClassColorB = 0
@@ -3977,39 +4550,41 @@ function module.options:Load()
 		line:SetScript("OnUpdate",SpellsListOnUpdate)
 	
 		line.icon = line:CreateTexture(nil, "ARTWORK")
-		line.icon:SetSize(30,30)
-		line.icon:SetPoint("TOPLEFT", 30, -1)
+		line.icon:SetSize(28,28)
+		line.icon:SetPoint("LEFT", 35, 0)
+		line.icon:SetTexCoord(.1,.9,.1,.9)
+		ELib:Border(line.icon,1,.12,.13,.15,1)
 	
 		line.tooltipFrame = CreateFrame("Frame",nil,line)
-		line.tooltipFrame:SetSize(150,30) 
-		line.tooltipFrame:SetPoint("TOPLEFT", 66, 0)
+		line.tooltipFrame:SetSize(150,SPELL_LINE_HEIGHT) 
+		line.tooltipFrame:SetPoint("LEFT", 70, 0)
 		line.tooltipFrame._i = i
 		line.tooltipFrame:SetScript("OnEnter", SpellsListTooltipFrameOnEnter)
 		line.tooltipFrame:SetScript("OnLeave", SpellsListTooltipFrameOnLeave)
 
-		line.spellName = ELib:Text(line):Size(155,30):Point(66,0):Font(ExRT.F.defFont,12):Shadow()
+		line.spellName = ELib:Text(line):Size(155,SPELL_LINE_HEIGHT):Point("LEFT",70,0):Font(ExRT.F.defFont,12):Shadow()
 	
-		line.class = ELib:Text(line):Size(180,30):Point(230,0):Font(ExRT.F.defFont,14):Shadow()
+		line.class = ELib:Text(line):Size(180,SPELL_LINE_HEIGHT):Point("LEFT",235,0):Font(ExRT.F.defFont,14):Shadow()
 	
-		line.dropDownPriority = ELib:DropDown(line,100,15):Size(80):Point("LEFT",370,0)
+		line.dropDownPriority = ELib:DropDown(line,100,15):Size(80):Point("LEFT",375,0)
 		line.dropDownPriority._i = i
 		line.dropDownPriority.List = SpellsListDropDownPriorityDataList
 		line.dropDownPriority:SetScript("OnEnter",SpellsListDropDownPriorityOnEnter)
 		line.dropDownPriority:SetScript("OnLeave",ELib.Tooltip.Hide)
 		
-		line.buttonModify = ELib:Button(line,L.cd2ButtonModify):Size(130,20):Point("LEFT",460,0):OnClick(SpellsListButtonModifyOnClick)
+		line.buttonModify = ELib:Button(line,L.cd2ButtonModify):Size(130,20):Point("LEFT",465,0):OnClick(SpellsListButtonModifyOnClick)
 		line.buttonModify._i = i
 
-		line.userSpellName = ELib:Edit(line,6,true):Size(145,20):Point("LEFT",65,0):Tooltip(L.cd2SpellID):OnChange(SpellsListUserSpellNameOnTextChanged)
+		line.userSpellName = ELib:Edit(line,6,true):Size(145,20):Point("LEFT",70,0):Tooltip(L.cd2SpellID):OnChange(SpellsListUserSpellNameOnTextChanged)
 		line.userSpellName._i = i
 		line.userSpellName:SetScript("OnEnter",SpellsListUserSpellNameOnEnter)
 		line.userSpellName:SetScript("OnLeave",ELib.Tooltip.Hide)
 		
-		line.userClass = ELib:DropDown(line,130,12):Size(140):Point("LEFT",220,0):SetText(L.cd2Class)
+		line.userClass = ELib:DropDown(line,130,12):Size(140):Point("LEFT",225,0):SetText(L.cd2Class)
 		line.userClass._i = i
 		line.userClass.List = SpellsListClassDropDownList
 	
-		line.userRemove = ELib:Button(line,"","UIPanelCloseButton"):Size(18,18):Point("LEFT",595,0):OnClick(SpellsListUserRemoveOnClick)
+		line.userRemove = ELib:Button(line,"","UIPanelCloseButton"):Size(18,18):Point("LEFT",600,0):OnClick(SpellsListUserRemoveOnClick)
 		line.userRemove.tooltipText = L.cd2RemoveButton
 		line.userRemove._i = i
 		line.userRemove:SetScript("OnEnter",ELib.Tooltip.Std)
@@ -4019,13 +4594,13 @@ function module.options:Load()
 		line.userRemove:Hide()
 	end
 
-	self.butSpellsAdd = ELib:Button(self.spellsListScrollFrameContent,L.cd2AddSpell):Size(305,20):Point(5,-3-(self.spellsPerPage)*31):OnClick(function(self) 
+	self.butSpellsAdd = ELib:Button(self.spellsListScrollFrameContent,L.cd2AddSpell):Size(305,20):Point(5,-3-SPELL_PER_PAGE*SPELL_LINE_HEIGHT):OnClick(function(self) 
 		module.options:addNewSpell(module.db.classNames[math.random(1,#module.db.classNames)])
 		module.options:CleanUPVariables()
 	end) 
 	self.butSpellsAdd:Hide()
 	
-	self.butSpellsFrame = ELib:Button(self.spellsListScrollFrameContent,L.cd2AddSpellFromList):Size(305,20):Point(317,-3-(self.spellsPerPage)*31):OnClick(function(self) 
+	self.butSpellsFrame = ELib:Button(self.spellsListScrollFrameContent,L.cd2AddSpellFromList):Size(305,20):Point(317,-3-SPELL_PER_PAGE*SPELL_LINE_HEIGHT):OnClick(function(self) 
 		module.options.addSpellFrame:Show()
 	end) 
 	self.butSpellsFrame:Hide()
@@ -4253,13 +4828,13 @@ function module.options:Load()
 	self.addSpellFrame.backClassColor = self.addSpellFrame:CreateTexture(nil, "BORDER",nil,0)
 	self.addSpellFrame.backClassColor:SetPoint("TOP",0,-20)
 	self.addSpellFrame.backClassColor:SetSize(550,40)
-	self.addSpellFrame.backClassColor:SetTexture( 1, 1, 1, 1)
+	self.addSpellFrame.backClassColor:SetColorTexture( 1, 1, 1, 1)
 	self.addSpellFrame.backClassColor:Hide()
 	
 	self.addSpellFrame.backClassColorBottom = self.addSpellFrame:CreateTexture(nil, "BORDER",nil,0)
 	self.addSpellFrame.backClassColorBottom:SetPoint("BOTTOM",0,0)
 	self.addSpellFrame.backClassColorBottom:SetSize(550,15)
-	self.addSpellFrame.backClassColorBottom:SetTexture( 1, 1, 1, 1)
+	self.addSpellFrame.backClassColorBottom:SetColorTexture( 1, 1, 1, 1)
 	self.addSpellFrame.backClassColorBottom:Hide()
 	
 	self.addSpellFrame.sortedClasses = {}
@@ -4566,10 +5141,10 @@ function module.options:Load()
 	
 	self.tab.tabs[1].decorationLine = CreateFrame("Frame",nil,self.tab.tabs[1])
 	self.tab.tabs[1].decorationLine.texture = self.tab.tabs[1].decorationLine:CreateTexture(nil, "BACKGROUND")
-	self.tab.tabs[1].decorationLine:SetPoint("TOPLEFT",self.tab.tabs[1],-6,-8)
+	self.tab.tabs[1].decorationLine:SetPoint("TOPLEFT",self.tab.tabs[1],-8,-8)
 	self.tab.tabs[1].decorationLine:SetPoint("BOTTOMRIGHT",self.tab.tabs[1],"TOPRIGHT",8,-28)
 	self.tab.tabs[1].decorationLine.texture:SetAllPoints()
-	self.tab.tabs[1].decorationLine.texture:SetTexture(1,1,1,1)
+	self.tab.tabs[1].decorationLine.texture:SetColorTexture(1,1,1,1)
 	self.tab.tabs[1].decorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
 	
 	self.tab1tab = ELib:Tabs(self.tab.tabs[1],0,L.cd2Spells,L.cd2Columns):Size(600,100):Point(0,0)
@@ -4596,25 +5171,24 @@ function module.options:Load()
 	end
 	
 	self.colsSpells = CreateFrame("Frame",nil,self.tab.tabs[1])
-	self.colsSpells:SetSize(650,self.spellsPerPage*31+3)
+	self.colsSpells:SetSize(650,SPELL_PAGE_HEIGHT)
 	self.colsSpells:SetPoint("TOP", 0, -38)
-	self.colsSpells:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",edgeFile = ExRT.F.defBorder,tile = false,edgeSize = 8})
-	self.colsSpells:SetBackdropColor(0,0,0,0.3)
-	self.colsSpells:SetBackdropBorderColor(.24,.25,.30,1)
+	ELib:Border(self.colsSpells,2,.24,.25,.30,1)
 	self.colsSpells:Hide()
 	
 	self.colsSpells.ScrollFrame = CreateFrame("ScrollFrame", nil, self.colsSpells)
-	self.colsSpells.ScrollFrame:SetPoint("TOP",0,-3)
-	self.colsSpells.ScrollFrame:SetSize(self.colsSpells:GetWidth(),self.colsSpells:GetHeight()-8)
+	self.colsSpells.ScrollFrame:SetPoint("TOPLEFT")
+	self.colsSpells.ScrollFrame:SetPoint("BOTTOMRIGHT")
 	
 	self.colsSpells.C = CreateFrame("Frame", nil, self.colsSpells) 
-	self.colsSpells.C:SetSize(603-16, self.spellsPerPage*31+100) 
+	self.colsSpells.C:SetSize(650,SPELL_PAGE_HEIGHT+50)
 	self.colsSpells.ScrollFrame:SetScrollChild(self.colsSpells.C)
 	
 	local function ColsSpellsUpdate()
 		local val = self.colsSpells.ScrollBar:GetValue()
-		module.options.colsSpells.ScrollFrame:SetVerticalScroll( (val * 24) % 24 )
-		val = floor( val )
+		self.colsSpells.ScrollBar:UpdateButtons()
+		module.options.colsSpells.ScrollFrame:SetVerticalScroll( val % 24 )
+		val = floor( val / 24 ) + 1
 		local line = 0
 		local count = 0
 		for i=1,#module.db.spellDB do
@@ -4686,14 +5260,14 @@ function module.options:Load()
 			end
 		end
 	
-		self.ScrollBar:SetMinMaxValues(1,max(1,count+1-21))
+		self.ScrollBar:SetMinMaxValues(0,max(0,(count+0.2)*24-SPELL_PAGE_HEIGHT))
 		ColsSpellsUpdate()
 	end)
 	self.colsSpells:SetScript("OnMouseWheel", function(self, delta)
 		delta = -delta
 		local current = module.options.colsSpells.ScrollBar:GetValue()
 		local min_,max_ = module.options.colsSpells.ScrollBar:GetMinMaxValues()
-		current = current + delta
+		current = current + delta * 24
 		if current > max_ then
 			current = max_
 		elseif current < min_ then
@@ -4702,7 +5276,7 @@ function module.options:Load()
 		module.options.colsSpells.ScrollBar:SetValue(current)
 	end)
 	
-	self.colsSpells.ScrollBar = ELib:ScrollBar(self.colsSpells):Size(16,self.spellsPerPage*31-5):Point("TOPRIGHT",-3,-4):Range(1,21):OnChange(ColsSpellsUpdate)
+	self.colsSpells.ScrollBar = ELib:ScrollBar(self.colsSpells):Size(16,0):Point("TOPRIGHT",-3,-3):Point("BOTTOMRIGHT",-3,3):Range(0,SPELL_PAGE_HEIGHT):SetTo(0):OnChange(ColsSpellsUpdate)
 	self.colsSpells.ScrollBar.slider:SetObeyStepOnDrag(true)
 	
 	self.colsSpells.lines = {}
@@ -4729,8 +5303,10 @@ function module.options:Load()
 		frame:SetSize(577,24)
 		
 		frame.icon = frame:CreateTexture(nil, "ARTWORK")
-		frame.icon:SetSize(24,24)
+		frame.icon:SetSize(22,22)
 		frame.icon:SetPoint("TOPLEFT", 2, 0)
+		frame.icon:SetTexCoord(.1,.9,.1,.9)
+		ELib:Border(frame.icon,1,.12,.13,.15,1)
 		
 		frame.tooltipFrame = CreateFrame("Frame",nil,frame)
 		frame.tooltipFrame:SetSize(150,24) 
@@ -4820,10 +5396,12 @@ function module.options:Load()
 			texturePos = texturePos or "Standart"
 			module.options.optColSet.dropDownTexture:SetText(L.cd2OtherSetTexture.." ["..texturePos.."]")
 		end
-		module.options.optColSet.colorPickerBorder.color:SetTexture(VExRT.ExCD2.colSet[i].textureBorderColorR or module.db.colsDefaults.textureBorderColorR,VExRT.ExCD2.colSet[i].textureBorderColorG or module.db.colsDefaults.textureBorderColorG,VExRT.ExCD2.colSet[i].textureBorderColorB or module.db.colsDefaults.textureBorderColorB, VExRT.ExCD2.colSet[i].textureBorderColorA or module.db.colsDefaults.textureBorderColorA)
+		module.options.optColSet.colorPickerBorder.color:SetColorTexture(VExRT.ExCD2.colSet[i].textureBorderColorR or module.db.colsDefaults.textureBorderColorR,VExRT.ExCD2.colSet[i].textureBorderColorG or module.db.colsDefaults.textureBorderColorG,VExRT.ExCD2.colSet[i].textureBorderColorB or module.db.colsDefaults.textureBorderColorB, VExRT.ExCD2.colSet[i].textureBorderColorA or module.db.colsDefaults.textureBorderColorA)
 		module.options.optColSet.sliderBorderSize:SetValue(VExRT.ExCD2.colSet[i].textureBorderSize or module.db.colsDefaults.textureBorderSize)
 		module.options.optColSet.chkAnimation:SetChecked(VExRT.ExCD2.colSet[i].textureAnimation)
 		module.options.optColSet.chkHideSpark:SetChecked(VExRT.ExCD2.colSet[i].textureHideSpark)
+		module.options.optColSet.chkSmoothAnimation:SetChecked(VExRT.ExCD2.colSet[i].textureSmoothAnimation)
+		module.options.optColSet.sliderSmoothAnimationDuration:SetValue(VExRT.ExCD2.colSet[i].textureSmoothAnimationDuration or module.db.colsDefaults.textureSmoothAnimationDuration)
 		module.options.optColSet.chkGeneralColorize:SetChecked(VExRT.ExCD2.colSet[i].textureGeneral)
 		
 		module.options.optColSet.chkGeneralColorize:doAlphas()
@@ -4876,6 +5454,7 @@ function module.options:Load()
 		module.options.optColSet.chkAlphaNotInRange:SetChecked(VExRT.ExCD2.colSet[i].methodsAlphaNotInRange)
 		module.options.optColSet.sliderAlphaNotInRange:SetValue(VExRT.ExCD2.colSet[i].methodsAlphaNotInRangeNum or module.db.colsDefaults.methodsAlphaNotInRangeNum)
 		module.options.optColSet.chkDisableActive:SetChecked(VExRT.ExCD2.colSet[i].methodsDisableActive)
+		module.options.optColSet.chkOneSpellPerCol:SetChecked(VExRT.ExCD2.colSet[i].methodsOneSpellPerCol)
 
 		module.options.optColSet.chkGeneralMethods:doAlphas()
 		
@@ -4925,10 +5504,10 @@ function module.options:Load()
 	
 	self.tab.tabs[2].decorationLine = CreateFrame("Frame",nil,self.tab.tabs[2])
 	self.tab.tabs[2].decorationLine.texture = self.tab.tabs[2].decorationLine:CreateTexture(nil, "BACKGROUND")
-	self.tab.tabs[2].decorationLine:SetPoint("TOPLEFT",self.tab.tabs[2],-6,-28)
+	self.tab.tabs[2].decorationLine:SetPoint("TOPLEFT",self.tab.tabs[2],-8,-28)
 	self.tab.tabs[2].decorationLine:SetPoint("BOTTOMRIGHT",self.tab.tabs[2],"TOPRIGHT",8,-48)
 	self.tab.tabs[2].decorationLine.texture:SetAllPoints()
-	self.tab.tabs[2].decorationLine.texture:SetTexture(1,1,1,1)
+	self.tab.tabs[2].decorationLine.texture:SetColorTexture(1,1,1,1)
 	self.tab.tabs[2].decorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
 
 	 
@@ -5166,7 +5745,7 @@ function module.options:Load()
 			VExRT.ExCD2.colSet[module.options.optColTabs.selected].textureBorderColorA = newA
 			module:ReloadAllSplits()
 			
-			self.color:SetTexture(newR,newG,newB,newA)
+			self.color:SetColorTexture(newR,newG,newB,newA)
 		end
 		ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.cancelFunc = nilFunc, nilFunc, nilFunc
 		ColorPickerFrame.opacity = VExRT.ExCD2.colSet[module.options.optColTabs.selected].textureBorderColorA or module.db.colsDefaults.textureBorderColorA
@@ -5192,11 +5771,30 @@ function module.options:Load()
 		end
 		module:ReloadAllSplits()
 	end)
+	
+	self.optColSet.chkSmoothAnimation = ELib:Check(self.optColSet.superTabFrame.tab[3],L.cd2TextureSmoothAnim):Point(10,-122):OnClick(function(self) 
+		if self:GetChecked() then
+			VExRT.ExCD2.colSet[module.options.optColTabs.selected].textureSmoothAnimation = true
+		else
+			VExRT.ExCD2.colSet[module.options.optColTabs.selected].textureSmoothAnimation = nil
+		end
+		module:ReloadAllSplits()
+	end)
+	
+	self.optColSet.sliderSmoothAnimationDuration = ELib:Slider(self.optColSet.superTabFrame.tab[3],""):Size(140):Point("TOP",self.optColSet.chkSmoothAnimation,0,-2):Point("LEFT",self.optColSet.chkSmoothAnimation.text,"RIGHT",20,0):Range(10,200):OnChange(function(self,event) 
+		event = event - event%1
+		VExRT.ExCD2.colSet[module.options.optColTabs.selected].textureSmoothAnimationDuration = event
+		module:ReloadAllSplits()
+		self.tooltipText = event / 100
+		self:tooltipReload(self)
+	end)
+	self.optColSet.sliderSmoothAnimationDuration.Low:SetText("0.1")
+	self.optColSet.sliderSmoothAnimationDuration.High:SetText("2")
 
 	
 	self.colorSetupFrame = CreateFrame("Frame",nil,self.optColSet.superTabFrame.tab[3])
 	self.colorSetupFrame:SetSize(420,290)
-	self.colorSetupFrame:SetPoint("TOP",0,-110)
+	self.colorSetupFrame:SetPoint("TOP",0,-135)
 		
 	self.colorSetupFrame.backAlpha = ELib:Slider(self.colorSetupFrame,L.cd2OtherSetColorFrameAlpha):Size(400):Point("TOP",0,-163):Range(0,100)
 	self.colorSetupFrame.backCDAlpha = ELib:Slider(self.colorSetupFrame,L.cd2OtherSetColorFrameAlphaCD):Size(400):Point("TOP",0,-198):Range(0,100)
@@ -5220,7 +5818,7 @@ function module.options:Load()
 			VExRT.ExCD2.colSet[module.options.optColTabs.selected][self.inOptName.."B"] = newB
 			module:ReloadAllSplits()
 			
-			self.color:SetTexture(newR,newG,newB,1)
+			self.color:SetColorTexture(newR,newG,newB,1)
 		end
 		ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.cancelFunc = nilFunc, nilFunc, nilFunc
 		ColorPickerFrame:SetColorRGB(VExRT.ExCD2.colSet[module.options.optColTabs.selected][self.inOptName.."R"] or module.db.colsDefaults[self.inOptName.."R"],VExRT.ExCD2.colSet[module.options.optColTabs.selected][self.inOptName.."G"] or module.db.colsDefaults[self.inOptName.."G"],VExRT.ExCD2.colSet[module.options.optColTabs.selected][self.inOptName.."B"] or module.db.colsDefaults[self.inOptName.."B"])
@@ -5317,7 +5915,7 @@ function module.options:Load()
 		for j=1,3 do
 			for i=1,3 do
 				local this = module.options.colorSetupFrame["color"..colorSetupFrameColorsObjectsNames[i]..colorSetupFrameColorsNames[j]]
-				this.color:SetTexture(VExRT.ExCD2.colSet[module.options.optColTabs.selected][this.inOptName.."R"] or module.db.colsDefaults[this.inOptName.."R"],VExRT.ExCD2.colSet[module.options.optColTabs.selected][this.inOptName.."G"] or module.db.colsDefaults[this.inOptName.."G"],VExRT.ExCD2.colSet[module.options.optColTabs.selected][this.inOptName.."B"] or module.db.colsDefaults[this.inOptName.."B"],1)
+				this.color:SetColorTexture(VExRT.ExCD2.colSet[module.options.optColTabs.selected][this.inOptName.."R"] or module.db.colsDefaults[this.inOptName.."R"],VExRT.ExCD2.colSet[module.options.optColTabs.selected][this.inOptName.."G"] or module.db.colsDefaults[this.inOptName.."G"],VExRT.ExCD2.colSet[module.options.optColTabs.selected][this.inOptName.."B"] or module.db.colsDefaults[this.inOptName.."B"],1)
 			end
 		end
 		for i=1,3 do
@@ -5353,7 +5951,7 @@ function module.options:Load()
 	self.optColSet.superTabFrame.tab[4].decorationLine:SetPoint("TOPLEFT",self.optColSet.superTabFrame.tab[4],0,-35)
 	self.optColSet.superTabFrame.tab[4].decorationLine:SetPoint("BOTTOMRIGHT",self.optColSet.superTabFrame.tab[4],"TOPRIGHT",0,-55)
 	self.optColSet.superTabFrame.tab[4].decorationLine.texture:SetAllPoints()
-	self.optColSet.superTabFrame.tab[4].decorationLine.texture:SetTexture(1,1,1,1)
+	self.optColSet.superTabFrame.tab[4].decorationLine.texture:SetColorTexture(1,1,1,1)
 	self.optColSet.superTabFrame.tab[4].decorationLine.texture:SetGradientAlpha("VERTICAL",.24,.25,.30,1,.27,.28,.33,1)
 	
 	self.optColSet.fontsTab = ELib:Tabs(self.optColSet.superTabFrame.tab[4],0,L.cd2ColSetFontPosGeneral,L.cd2ColSetFontPosRight,L.cd2ColSetFontPosCenter,L.cd2ColSetFontPosIcon):Size(455,160):Point(0,-55)
@@ -5686,7 +6284,16 @@ function module.options:Load()
 		end
 		module:ReloadAllSplits()
 	end)
-
+	
+	self.optColSet.chkOneSpellPerCol = ELib:Check(self.optColSet.superTabFrame.tab[6],L.cd2ColSetOneSpellPerCol):Point(10,-305):OnClick(function(self) 
+		if self:GetChecked() then
+			VExRT.ExCD2.colSet[module.options.optColTabs.selected].methodsOneSpellPerCol = true
+		else
+			VExRT.ExCD2.colSet[module.options.optColTabs.selected].methodsOneSpellPerCol = nil
+		end
+		module:ReloadAllSplits()
+	end):Tooltip(L.cd2ColSetOneSpellPerColTooltip)
+	
 	self.optColSet.chkGeneralMethods = ELib:Check(self.optColSet.superTabFrame.tab[6],L.cd2ColSetGeneral):Point("TOPRIGHT",-10,-10):Left():OnClick(function(self) 
 		if self:GetChecked() then
 			VExRT.ExCD2.colSet[module.options.optColTabs.selected].methodsGeneral = true
@@ -5697,10 +6304,10 @@ function module.options:Load()
 		self:doAlphas()
 	end)
 	function self.optColSet.chkGeneralMethods:doAlphas()
-		ExRT.lib.SetAlphas(VExRT.ExCD2.colSet[module.options.optColTabs.selected].methodsGeneral and module.options.optColTabs.selected ~= (module.db.maxColumns + 1) and 0.5 or 1,module.options.optColSet.chkShowOnlyOnCD,module.options.optColSet.chkBotToTop,module.options.optColSet.dropDownStyleAnimation,module.options.optColSet.dropDownTimeLineAnimation,module.options.optColSet.chkIconTooltip,module.options.optColSet.chkLineClick,module.options.optColSet.chkNewSpellNewLine,module.options.optColSet.dropDownSortingRules,module.options.optColSet.textSortingRules,module.options.optColSet.textStyleAnimation,module.options.optColSet.textTimeLineAnimation,module.options.optColSet.chkHideOwnSpells,module.options.optColSet.chkAlphaNotInRange,module.options.optColSet.sliderAlphaNotInRange,module.options.optColSet.chkDisableActive)
+		ExRT.lib.SetAlphas(VExRT.ExCD2.colSet[module.options.optColTabs.selected].methodsGeneral and module.options.optColTabs.selected ~= (module.db.maxColumns + 1) and 0.5 or 1,module.options.optColSet.chkShowOnlyOnCD,module.options.optColSet.chkBotToTop,module.options.optColSet.dropDownStyleAnimation,module.options.optColSet.dropDownTimeLineAnimation,module.options.optColSet.chkIconTooltip,module.options.optColSet.chkLineClick,module.options.optColSet.chkNewSpellNewLine,module.options.optColSet.dropDownSortingRules,module.options.optColSet.textSortingRules,module.options.optColSet.textStyleAnimation,module.options.optColSet.textTimeLineAnimation,module.options.optColSet.chkHideOwnSpells,module.options.optColSet.chkAlphaNotInRange,module.options.optColSet.sliderAlphaNotInRange,module.options.optColSet.chkDisableActive,module.options.optColSet.chkOneSpellPerCol)
 	end
 	
-	self.optColSet.chkSortByAvailability = ELib:Check(self.optColSet.superTabFrame.tab[6],L.cd2SortByAvailability,VExRT.ExCD2.SortByAvailability):Point(10,-305):OnClick(function(self) 
+	self.optColSet.chkSortByAvailability = ELib:Check(self.optColSet.superTabFrame.tab[6],L.cd2SortByAvailability,VExRT.ExCD2.SortByAvailability):Point(10,-330):OnClick(function(self) 
 		if self:GetChecked() then
 			VExRT.ExCD2.SortByAvailability = true
 		else
@@ -6276,12 +6883,12 @@ function module.options:Load()
 		
 		templateFrame:SetScript("OnEnter",function (self)
 			self:SetBackdropBorderColor(1,1,1,0.5)
-			self.backgTexture:SetTexture(1,1,1,0.3)
+			self.backgTexture:SetColorTexture(1,1,1,0.3)
 		end)
 		
 		templateFrame:SetScript("OnLeave",function (self)
 		  	self:SetBackdropBorderColor(1,1,1,0)
-			self.backgTexture:SetTexture(0,0,0,0)
+			self.backgTexture:SetColorTexture(0,0,0,0)
 		end)
 		
 		templateFrame:SetScript("OnClick",function (self)
@@ -6371,6 +6978,8 @@ function module.options:Load()
 		end
 		
 		templateFrame.textureBorderSize = self.optColSet.templateData[i].textureBorderSize or 0
+		
+		templateFrame.optionSmoothAnimationDuration = module.db.colsDefaults.textureSmoothAnimationDuration
 		
 		local DiffSpellData = self.optColSet.templateData[i].DiffSpellData
 		
@@ -6480,9 +7089,9 @@ function module.options:Load()
 	end	
 	
 	--> Other setts
-	self.optSetTab = ELib:OneTab(self.tab.tabs[2],L.cd2OtherSet):Size(660,40):Point("TOP",0,-530)
+	self.optSetTab = ELib:OneTab(self.tab.tabs[2],L.cd2OtherSet):Size(652,34):Point("TOP",0,-532)
 	
-	self.chkSplit = ELib:Check(self.optSetTab,L.cd2split,VExRT.ExCD2.SplitOpt):Point(10,-10):Tooltip(L.cd2splittooltip):OnClick(function(self,event)
+	self.chkSplit = ELib:Check(self.optSetTab,L.cd2split,VExRT.ExCD2.SplitOpt):Point("LEFT",10,0):Tooltip(L.cd2splittooltip):OnClick(function(self,event)
 		if self:GetChecked() then
 			VExRT.ExCD2.SplitOpt = true
 		else
@@ -6492,7 +7101,7 @@ function module.options:Load()
 		module:ReloadAllSplits()
 	end)
 	
-	self.chkNoRaid = ELib:Check(self.optSetTab,L.cd2noraid,VExRT.ExCD2.NoRaid):Point(165,-10):OnClick(function(self,event)
+	self.chkNoRaid = ELib:Check(self.optSetTab,L.cd2noraid,VExRT.ExCD2.NoRaid):Point("LEFT",165,0):OnClick(function(self,event)
 		if self:GetChecked() then
 			VExRT.ExCD2.NoRaid = true
 		else
@@ -6501,7 +7110,7 @@ function module.options:Load()
 		UpdateRoster()
 	end)
 	
-	self.testMode = ELib:Check(self.optSetTab,L.cd2GeneralSetTestMode,module.db.testMode):Point(325,-10):Tooltip(L.cd2HelpTestButton):OnClick(function(self,event)
+	self.testMode = ELib:Check(self.optSetTab,L.cd2GeneralSetTestMode,module.db.testMode):Point("LEFT",325,0):Tooltip(L.cd2HelpTestButton):OnClick(function(self,event)
 		if self:GetChecked() then
 			module.db.testMode = true
 		else
@@ -6511,7 +7120,7 @@ function module.options:Load()
 		UpdateRoster()
 	end)
 
-	self.butResetToDef = ELib:Button(self.optSetTab,L.cd2OtherSetReset):Size(160,20):Point(490,-10):Tooltip(L.cd2HelpButtonDefault):OnClick(function()
+	self.butResetToDef = ELib:Button(self.optSetTab,L.cd2OtherSetReset):Size(160,20):Point("LEFT",480,0):Tooltip(L.cd2HelpButtonDefault):OnClick(function()
 		StaticPopupDialogs["EXRT_EXCD_DEFAULT"] = {
 			text = L.cd2OtherSetReset,
 			button1 = L.YesText,
@@ -6563,7 +7172,7 @@ function module.options:Load()
 		module.options.historyBox.EditBox:SetText(strjoin("\n",unpack(historyBoxUpdateTable)))
 	end
 	
-	self.historyBox = ELib:MultiEdit2(self.tab.tabs[3]):Size(650,528):Point("TOP",0,-36):Hyperlinks()
+	self.historyBox = ELib:MultiEdit2(self.tab.tabs[3]):Size(652,530):Point("TOP",0,-36):Hyperlinks()
 	self.historyBox.EditBox:SetScript("OnShow",function(self)
 		historyBoxUpdate(1)
 		local count = 0
@@ -6777,7 +7386,7 @@ function module:ReloadAllSplits(argScaleFix)
 		end
 		
 		local blackBack = (not VExRT_ColumnOptions[i].frameGeneral and VExRT_ColumnOptions[i].frameBlackBack) or (VExRT_ColumnOptions[i].frameGeneral and VExRT_ColumnOptions[module.db.maxColumns+1].frameBlackBack) or module.db.colsDefaults.frameBlackBack
-		columnFrame.texture:SetTexture(0,0,0,blackBack / 100)
+		columnFrame.texture:SetColorTexture(0,0,0,blackBack / 100)
 		
 		--> View options
 		columnFrame.optionClassColorBackground = (not VExRT_ColumnOptions[i].textureGeneral and VExRT_ColumnOptions[i].textureClassBackground) or (VExRT_ColumnOptions[i].textureGeneral and VExRT_ColumnOptions[module.db.maxColumns+1].textureClassBackground)
@@ -6785,6 +7394,9 @@ function module:ReloadAllSplits(argScaleFix)
 		columnFrame.optionClassColorText = (not VExRT_ColumnOptions[i].textureGeneral and VExRT_ColumnOptions[i].textureClassText) or (VExRT_ColumnOptions[i].textureGeneral and VExRT_ColumnOptions[module.db.maxColumns+1].textureClassText)
 
 		columnFrame.optionAnimation = (not VExRT_ColumnOptions[i].textureGeneral and VExRT_ColumnOptions[i].textureAnimation) or (VExRT_ColumnOptions[i].textureGeneral and VExRT_ColumnOptions[module.db.maxColumns+1].textureAnimation)
+		columnFrame.optionSmoothAnimation = (not VExRT_ColumnOptions[i].textureGeneral and VExRT_ColumnOptions[i].textureSmoothAnimation) or (VExRT_ColumnOptions[i].textureGeneral and VExRT_ColumnOptions[module.db.maxColumns+1].textureSmoothAnimation)
+		columnFrame.optionSmoothAnimationDuration = (not VExRT_ColumnOptions[i].textureGeneral and VExRT_ColumnOptions[i].textureSmoothAnimationDuration) or (VExRT_ColumnOptions[i].textureGeneral and VExRT_ColumnOptions[module.db.maxColumns+1].textureSmoothAnimationDuration) or module.db.colsDefaults.textureSmoothAnimationDuration
+			columnFrame.optionSmoothAnimationDuration = columnFrame.optionSmoothAnimationDuration / 100
 		columnFrame.optionLinesMax = min(linesShown*frameColumns,module.db.maxLinesInCol)
 		columnFrame.optionShownOnCD = (not VExRT_ColumnOptions[i].methodsGeneral and VExRT_ColumnOptions[i].methodsShownOnCD) or (VExRT_ColumnOptions[i].methodsGeneral and VExRT_ColumnOptions[module.db.maxColumns+1].methodsShownOnCD)
 		columnFrame.optionIconPosition = (not VExRT_ColumnOptions[i].iconGeneral and VExRT_ColumnOptions[i].iconPosition) or (VExRT_ColumnOptions[i].iconGeneral and VExRT_ColumnOptions[module.db.maxColumns+1].iconPosition) or module.db.colsDefaults.iconPosition
@@ -6806,6 +7418,7 @@ function module:ReloadAllSplits(argScaleFix)
 		columnFrame.methodsAlphaNotInRangeNum = (not VExRT_ColumnOptions[i].methodsGeneral and VExRT_ColumnOptions[i].methodsAlphaNotInRangeNum) or (VExRT_ColumnOptions[i].methodsGeneral and VExRT_ColumnOptions[module.db.maxColumns+1].methodsAlphaNotInRangeNum) or module.db.colsDefaults.methodsAlphaNotInRangeNum
 			columnFrame.methodsAlphaNotInRangeNum = columnFrame.methodsAlphaNotInRangeNum / 100
 		columnFrame.methodsDisableActive = (not VExRT_ColumnOptions[i].methodsGeneral and VExRT_ColumnOptions[i].methodsDisableActive) or (VExRT_ColumnOptions[i].methodsGeneral and VExRT_ColumnOptions[module.db.maxColumns+1].methodsDisableActive)
+		columnFrame.methodsOneSpellPerCol = (not VExRT_ColumnOptions[i].methodsGeneral and VExRT_ColumnOptions[i].methodsOneSpellPerCol) or (VExRT_ColumnOptions[i].methodsGeneral and VExRT_ColumnOptions[module.db.maxColumns+1].methodsOneSpellPerCol)
 
 		columnFrame.textTemplateLeft = (not VExRT_ColumnOptions[i].textGeneral and VExRT_ColumnOptions[i].textTemplateLeft) or (VExRT_ColumnOptions[i].textGeneral and VExRT_ColumnOptions[module.db.maxColumns+1].textTemplateLeft) or module.db.colsDefaults.textTemplateLeft
 		columnFrame.textTemplateRight = (not VExRT_ColumnOptions[i].textGeneral and VExRT_ColumnOptions[i].textTemplateRight) or (VExRT_ColumnOptions[i].textGeneral and VExRT_ColumnOptions[module.db.maxColumns+1].textTemplateRight) or module.db.colsDefaults.textTemplateRight
@@ -6991,7 +7604,7 @@ function module:slash(arg1,arg2)
 	end
 end
 
-module.db.AllClassSpellsInText = [[
+module.db.AllClassSpellsInText = is6 and [[
 local module = GExRT.A.ExCD2
 module.db.allClassSpells = {
 ["WARRIOR"] = {
@@ -7409,6 +8022,570 @@ module.db.allClassSpells = {
 	{201371,3,	{201371,60,	0},	},	--Judgment of the Naaru
 },
 }
+]] or [[
+--20:31 06.05.2016, Build 21655
+local module = GExRT.A.ExCD2
+module.db.allClassSpells = {
+["WARRIOR"] = {
+	{107574,3,	{107574,90,	0},	nil,			nil,			nil,			},	--Avatar
+	{1719,	3,	{1719,	60,	0},	nil,			nil,			nil,			},	--Battle Cry
+	{18499,	3,	{18499,	60,	0},	nil,			nil,			nil,			},	--Berserker Rage
+	{46924,	3,	nil,			{46924,	60,	0},	{46924,	60,	0},	nil,			},	--Bladestorm
+	{23881,	3,	nil,			nil,			{23881,	4,	0},	nil,			},	--Bloodthirst
+	{845,	3,	nil,			{845,	6,	0},	nil,			nil,			},	--Cleave
+	{167105,3,	nil,			{167105,45,	0},	nil,			nil,			},	--Colossus Smash
+	{97462,	3,	nil,			{97462,	180,	0},	{97462,	180,	0},	nil,			},	--Commanding Shout
+	{197690,3,	nil,			{197690,6,	0},	nil,			nil,			},	--Defensive Stance
+	{1160,	3,	nil,			nil,			nil,			{1160,	90,	0},	},	--Demoralizing Shout
+	{118038,3,	nil,			nil,			{118038,120,	0},	nil,			},	--Die by the Sword
+	{206572,3,	nil,			nil,			nil,			{206572,20,	0},	},	--Dragon Charge
+	{118000,3,	nil,			nil,			{118000,20,	0},	nil,			},	--Dragon Roar
+	{184364,3,	nil,			nil,			{184364,120,	0},	nil,			},	--Enraged Regeneration
+	{57755,	3,	{57755,	6,	0},	nil,			nil,			nil,			},	--Heroic Throw
+	{202168,3,	nil,			nil,			nil,			{202168,30,	0},	},	--Impending Victory
+	{5246,	3,	nil,			{5246,	90,	0},	{5246,	90,	0},	nil,			},	--Intimidating Shout
+	{12975,	3,	nil,			nil,			nil,			{12975,	180,	0},	},	--Last Stand
+	{213915,3,	nil,			nil,			nil,			{213915,30,	0},	},	--Mass Spell Reflection
+	{203524,3,	nil,			nil,			nil,			{203524,45,	0},	},	--Neltharion's Fury
+	{205545,3,	nil,			nil,			{205545,45,	0},	nil,			},	--Odyn's Fury
+	{6552,	3,	{6552,	15,	0},	nil,			nil,			nil,			},	--Pummel
+	{152277,3,	nil,			{152277,60,	0},	nil,			{152277,60,	0},	},	--Ravager
+	{6572,	3,	nil,			nil,			nil,			{6572,	9,	0},	},	--Revenge
+	{23922,	3,	nil,			nil,			nil,			{23922,	9,	0},	},	--Shield Slam
+	{871,	3,	nil,			nil,			nil,			{871,	240,	0},	},	--Shield Wall
+	{46968,	3,	{46968,	40,	0},	nil,			nil,			nil,			},	--Shockwave
+	{23920,	3,	nil,			nil,			nil,			{23920,	25,	0},	},	--Spell Reflection
+	{107570,3,	{107570,30,	0},	nil,			nil,			nil,			},	--Storm Bolt
+	{355,	3,	{355,	8,	0},	nil,			nil,			nil,			},	--Taunt
+	{6343,	3,	nil,			nil,			nil,			{6343,	6,	0},	},	--Thunder Clap
+	{209577,3,	nil,			{209577,60,	0},	nil,			nil,			},	--Warbreaker
+},
+["PALADIN"] = {
+	{204150,3,	nil,			nil,			{204150,300,	0},	nil,			},	--Aegis of Light
+	{31850,	3,	nil,			nil,			{31850,	120,	0},	nil,			},	--Ardent Defender
+	{31821,	3,	nil,			{31821,	180,	0},	nil,			nil,			},	--Aura Mastery
+	{183415,3,	nil,			{183415,180,	0},	nil,			nil,			},	--Aura of Mercy
+	{31935,	3,	nil,			nil,			{31935,	15,	0},	nil,			},	--Avenger's Shield
+	{31884,	3,	nil,			nil,			{31884,	120,	0},	{31884,	120,	0},	},	--Avenging Wrath
+	{31842,	3,	nil,			{31842,	120,	0},	nil,			nil,			},	--Avenging Wrath
+	{204035,3,	nil,			nil,			{204035,180,	0},	nil,			},	--Bastion of Light
+	{156910,3,	nil,			{156910,3,	0},	nil,			nil,			},	--Beacon of Faith
+	{53563,	3,	nil,			{53563,	3,	0},	nil,			nil,			},	--Beacon of Light
+	{197446,3,	nil,			{197446,15,	0},	nil,			nil,			},	--Beacon of the Lightbringer
+	{223306,3,	nil,			{223306,12,	0},	nil,			nil,			},	--Bestow Faith
+	{184575,3,	nil,			nil,			nil,			{184575,12,	0},	},	--Blade of Justice
+	{202270,3,	nil,			nil,			nil,			{202270,8,	0},	},	--Blade of Wrath
+	{204013,3,	nil,			nil,			{204013,60,	0},	nil,			},	--Blessing of Salvation
+	{204018,3,	nil,			nil,			{204018,180,	0},	nil,			},	--Blessing of Spellwarding
+	{115750,3,	{115750,90,	0},	nil,			nil,			nil,			},	--Blinding Light
+	{4987,	3,	nil,			{4987,	8,	0},	nil,			nil,			},	--Cleanse
+	{213644,3,	nil,			nil,			{213644,8,	0},	{213644,8,	0},	},	--Cleanse Toxins
+	{26573,	3,	nil,			{26573,	9,	0},	{26573,	9,	0},	nil,			},	--Consecration
+	{205228,3,	nil,			nil,			nil,			{205228,9,	0},	},	--Consecration
+	{121183,3,	{121183,8,	0},	nil,			nil,			nil,			},	--Contemplation
+	{198034,3,	nil,			nil,			nil,			{198034,8,	0},	},	--Divine Hammer
+	{498,	3,	nil,			{498,	60,	0},	{498,	60,	0},	nil,			},	--Divine Protection
+	{642,	3,	{642,	300,	0},	nil,			nil,			nil,			},	--Divine Shield
+	{221883,3,	{221883,45,	0},	nil,			nil,			nil,			},	--Divine Steed
+	{221887,3,	{221887,45,	0},	nil,			nil,			nil,			},	--Divine Steed
+	{221886,3,	{221886,45,	0},	nil,			nil,			nil,			},	--Divine Steed
+	{221885,3,	{221885,45,	0},	nil,			nil,			nil,			},	--Divine Steed
+	{205656,3,	nil,			{205656,45,	0},	nil,			{205656,45,	0},	},	--Divine Steed
+	{190784,3,	nil,			nil,			{190784,45,	0},	nil,			},	--Divine Steed
+	{210220,3,	nil,			nil,			nil,			{210220,180,	0},	},	--Equality
+	{213757,3,	nil,			nil,			nil,			{213757,20,	0},	},	--Execution Sentence
+	{205191,3,	nil,			nil,			nil,			{205191,60,	0},	},	--Eye for an Eye
+	{209202,3,	nil,			nil,			{209202,60,	0},	nil,			},	--Eye of Tyr
+	{86659,	3,	nil,			nil,			{86659,	300,	0},	nil,			},	--Guardian of Ancient Kings
+	{853,	3,	{853,	60,	0},	nil,			nil,			nil,			},	--Hammer of Justice
+	{183218,3,	nil,			nil,			nil,			{183218,30,	0},	},	--Hand of Hindrance
+	{213652,3,	nil,			nil,			{213652,15,	0},	nil,			},	--Hand of the Protector
+	{105809,3,	nil,			{105809,90,	0},	nil,			nil,			},	--Holy Avenger
+	{114165,3,	nil,			{114165,20,	0},	nil,			nil,			},	--Holy Prism
+	{20473,	3,	nil,			{20473,	9,	0},	nil,			nil,			},	--Holy Shock
+	{20271,	3,	{20271,	12,	0},	nil,			nil,			nil,			},	--Judgment
+	{633,	3,	{633,	600,	0},	nil,			nil,			nil,			},	--Lay on Hands
+	{85222,	3,	nil,			{85222,	10,	0},	nil,			nil,			},	--Light of Dawn
+	{184092,3,	nil,			nil,			{184092,15,	0},	nil,			},	--Light of the Protector
+	{114158,3,	nil,			{114158,60,	0},	nil,			nil,			},	--Light's Hammer
+	{96231,	3,	nil,			nil,			{96231,	15,	0},	{96231,	15,	0},	},	--Rebuke
+	{20066,	3,	{20066,	15,	0},	nil,			nil,			nil,			},	--Repentance
+	{224668,3,	nil,			nil,			nil,			{224668,120,	0},	},	--Sanctified Wrath
+	{152262,3,	nil,			nil,			{152262,30,	0},	nil,			},	--Seraphim
+	{184662,3,	nil,			nil,			nil,			{184662,120,	0},	},	--Shield of Vengeance
+	{215652,3,	nil,			nil,			{215652,25,	0},	nil,			},	--Shield of Virtue
+	{200652,3,	nil,			{200652,90,	0},	nil,			nil,			},	--Tyr's Deliverance
+	{205273,3,	nil,			nil,			nil,			{205273,30,	0},	},	--Wake of Ashes
+},
+["HUNTER"] = {
+	{131894,3,	nil,			{131894,60,	0},	{131894,60,	0},	nil,			},	--A Murder of Crows
+	{206505,3,	nil,			nil,			nil,			{206505,60,	0},	},	--A Murder of Crows
+	{61648,	3,	{61648,	180,	0},	nil,			nil,			nil,			},	--Aspect of the Chameleon
+	{186257,3,	{186257,180,	0},	nil,			nil,			nil,			},	--Aspect of the Cheetah
+	{186289,3,	nil,			nil,			nil,			{186289,120,	0},	},	--Aspect of the Eagle
+	{186265,3,	{186265,180,	0},	nil,			nil,			nil,			},	--Aspect of the Turtle
+	{193530,3,	nil,			{193530,120,	0},	nil,			nil,			},	--Aspect of the Wild
+	{120360,3,	nil,			{120360,20,	0},	{120360,20,	0},	nil,			},	--Barrage
+	{19574,	3,	nil,			{19574,	90,	0},	nil,			nil,			},	--Bestial Wrath
+	{109248,3,	nil,			{109248,45,	0},	{109248,45,	0},	nil,			},	--Binding Shot
+	{194599,3,	nil,			nil,			{194599,15,	0},	nil,			},	--Black Arrow
+	{186387,3,	nil,			nil,			{186387,30,	0},	nil,			},	--Bursting Shot
+	{194277,3,	nil,			nil,			nil,			{194277,15,	0},	},	--Caltrops
+	{199483,3,	nil,			nil,			nil,			{199483,60,	0},	},	--Camouflage
+	{198783,3,	nil,			nil,			{198783,60,	0},	nil,			},	--Camouflage
+	{53209,	3,	nil,			{53209,	9,	0},	nil,			nil,			},	--Chimaera Shot
+	{5116,	3,	nil,			{5116,	5,	0},	{5116,	5,	0},	nil,			},	--Concussive Shot
+	{147362,3,	nil,			{147362,24,	0},	{147362,24,	0},	nil,			},	--Counter Shot
+	{120679,3,	nil,			{120679,12,	0},	nil,			nil,			},	--Dire Beast
+	{217200,3,	nil,			{217200,15,	0},	nil,			nil,			},	--Dire Frenzy
+	{194855,3,	nil,			nil,			nil,			{194855,30,	0},	},	--Dragonsfire Grenade
+	{109304,3,	nil,			{109304,120,	0},	nil,			{109304,120,	0},	},	--Exhilaration
+	{194291,3,	nil,			nil,			{194291,120,	0},	nil,			},	--Exhilaration
+	{212431,3,	nil,			nil,			{212431,30,	0},	nil,			},	--Explosive Shot
+	{191433,3,	nil,			nil,			nil,			{191433,30,	0},	},	--Explosive Trap
+	{6991,	3,	{6991,	10,	0},	nil,			nil,			nil,			},	--Feed Pet
+	{5384,	3,	{5384,	30,	0},	nil,			nil,			nil,			},	--Feign Death
+	{202800,3,	nil,			nil,			nil,			{202800,6,	0},	},	--Flanking Strike
+	{1543,	3,	{1543,	20,	0},	nil,			nil,			nil,			},	--Flare
+	{187650,3,	nil,			nil,			nil,			{187650,30,	0},	},	--Freezing Trap
+	{203415,3,	nil,			nil,			nil,			{203415,45,	0},	},	--Fury of the Eagle
+	{198670,3,	nil,			nil,			{198670,30,	0},	nil,			},	--Head Shot
+	{206817,3,	nil,			nil,			{206817,20,	0},	nil,			},	--Heightened Vulnerability
+	{19577,	3,	nil,			{19577,	60,	0},	nil,			nil,			},	--Intimidation
+	{34026,	3,	nil,			{34026,	7,	0},	nil,			nil,			},	--Kill Command
+	{185855,3,	nil,			nil,			nil,			{185855,10,	0},	},	--Lacerate
+	{136,	3,	{136,	10,	0},	nil,			nil,			nil,			},	--Mend Pet
+	{34477,	3,	nil,			{34477,	30,	0},	{34477,	30,	0},	nil,			},	--Misdirection
+	{187707,3,	nil,			nil,			nil,			{187707,15,	0},	},	--Muzzle
+	{209997,3,	{209997,30,	0},	nil,			nil,			nil,			},	--Play Dead
+	{201078,3,	nil,			nil,			nil,			{201078,60,	0},	},	--Snake Hunter
+	{194407,3,	nil,			nil,			nil,			{194407,60,	0},	},	--Spitting Cobra
+	{201430,3,	nil,			{201430,180,	0},	nil,			nil,			},	--Stampede
+	{162488,3,	nil,			nil,			nil,			{162488,60,	0},	},	--Steel Trap
+	{191241,3,	nil,			nil,			nil,			{191241,30,	0},	},	--Sticky Bomb
+	{187698,3,	nil,			nil,			nil,			{187698,30,	0},	},	--Tar Trap
+	{207068,3,	nil,			{207068,60,	0},	nil,			nil,			},	--Titan's Thunder
+	{193526,3,	nil,			nil,			{193526,180,	0},	nil,			},	--Trueshot
+	{194386,3,	nil,			{194386,6,	0},	{194386,6,	0},	nil,			},	--Volley
+	{210000,3,	{210000,30,	0},	nil,			nil,			nil,			},	--Wake Up
+	{204147,3,	nil,			nil,			{204147,20,	0},	nil,			},	--Windburst
+	{19386,	3,	nil,			{19386,	45,	0},	{19386,	45,	0},	nil,			},	--Wyvern Sting
+},
+["ROGUE"] = {
+	{13750,	3,	nil,			nil,			{13750,	180,	0},	nil,			},	--Adrenaline Rush
+	{199804,3,	nil,			nil,			{199804,20,	0},	nil,			},	--Between the Eyes
+	{13877,	3,	nil,			nil,			{13877,	10,	0},	nil,			},	--Blade Flurry
+	{2094,	3,	nil,			nil,			{2094,	120,	0},	{2094,	120,	0},	},	--Blind
+	{199740,3,	nil,			nil,			{199740,1800,	0},	nil,			},	--Bribe
+	{185767,3,	nil,			nil,			{185767,60,	0},	nil,			},	--Cannonball Barrage
+	{31224,	3,	{31224,	90,	0},	nil,			nil,			nil,			},	--Cloak of Shadows
+	{185311,3,	{185311,30,	0},	nil,			nil,			nil,			},	--Crimson Vial
+	{202665,3,	nil,			nil,			{202665,90,	0},	nil,			},	--Curse of the Dreadblades
+	{152150,3,	{152150,20,	0},	nil,			nil,			nil,			},	--Death from Above
+	{1725,	3,	{1725,	30,	0},	nil,			nil,			nil,			},	--Distract
+	{5277,	3,	nil,			{5277,	120,	0},	nil,			{5277,	120,	0},	},	--Evasion
+	{703,	3,	nil,			{703,	15,	0},	nil,			nil,			},	--Garrote
+	{209782,3,	nil,			nil,			nil,			{209782,60,	0},	},	--Goremaw's Bite
+	{1776,	3,	nil,			nil,			{1776,	10,	0},	nil,			},	--Gouge
+	{195457,3,	nil,			nil,			{195457,30,	0},	nil,			},	--Grappling Hook
+	{1766,	3,	{1766,	15,	0},	nil,			nil,			nil,			},	--Kick
+	{408,	3,	nil,			{408,	20,	0},	nil,			{408,	20,	0},	},	--Kidney Shot
+	{51690,	3,	nil,			nil,			{51690,	120,	0},	nil,			},	--Killing Spree
+	{192759,3,	nil,			{192759,45,	0},	nil,			nil,			},	--Kingsbane
+	{137619,3,	{137619,60,	0},	nil,			nil,			nil,			},	--Marked for Death
+	{199743,3,	nil,			nil,			{199743,20,	0},	nil,			},	--Parley
+	{199754,3,	nil,			nil,			{199754,120,	0},	nil,			},	--Riposte
+	{121471,3,	nil,			nil,			nil,			{121471,180,	0},	},	--Shadow Blades
+	{2983,	3,	{2983,	60,	0},	nil,			nil,			nil,			},	--Sprint
+	{57934,	3,	{57934,	30,	0},	nil,			nil,			nil,			},	--Tricks of the Trade
+	{1856,	3,	{1856,	120,	0},	nil,			nil,			nil,			},	--Vanish
+	{79140,	3,	nil,			{79140,	120,	0},	nil,			nil,			},	--Vendetta
+},
+["PRIEST"] = {
+	{200183,3,	nil,			nil,			{200183,180,	0},	nil,			},	--Apotheosis
+	{214121,3,	nil,			nil,			{214121,10,	0},	nil,			},	--Body and Mind
+	{204883,3,	nil,			nil,			{204883,15,	0},	nil,			},	--Circle of Healing
+	{19236,	3,	nil,			nil,			{19236,	90,	0},	nil,			},	--Desperate Prayer
+	{47585,	3,	nil,			nil,			nil,			{47585,	120,	0},	},	--Dispersion
+	{64843,	3,	nil,			nil,			{64843,	180,	0},	nil,			},	--Divine Hymn
+	{110744,3,	nil,			{110744,15,	0},	{110744,15,	0},	nil,			},	--Divine Star
+	{586,	3,	{586,	30,	0},	nil,			nil,			nil,			},	--Fade
+	{47788,	3,	nil,			nil,			{47788,	240,	0},	nil,			},	--Guardian Spirit
+	{120517,3,	nil,			{120517,40,	0},	{120517,40,	0},	nil,			},	--Halo
+	{14914,	3,	nil,			nil,			{14914,	10,	0},	nil,			},	--Holy Fire
+	{88625,	3,	nil,			nil,			{88625,	60,	0},	nil,			},	--Holy Word: Chastise
+	{34861,	3,	nil,			nil,			{34861,	60,	0},	nil,			},	--Holy Word: Sanctify
+	{2050,	3,	nil,			nil,			{2050,	60,	0},	nil,			},	--Holy Word: Serenity
+	{73325,	3,	nil,			{73325,	90,	0},	{73325,	90,	0},	nil,			},	--Leap of Faith
+	{207946,3,	nil,			{207946,90,	0},	nil,			nil,			},	--Light's Wrath
+	{32375,	3,	{32375,	15,	0},	nil,			nil,			nil,			},	--Mass Dispel
+	{205369,3,	nil,			nil,			nil,			{205369,30,	0},	},	--Mind Bomb
+	{123040,3,	nil,			{123040,60,	0},	nil,			nil,			},	--Mindbender
+	{200174,3,	nil,			nil,			nil,			{200174,60,	0},	},	--Mindbender
+	{33206,	3,	nil,			{33206,	300,	0},	nil,			nil,			},	--Pain Suppression
+	{47540,	3,	nil,			{47540,	9,	0},	nil,			nil,			},	--Penance
+	{10060,	3,	nil,			{10060,	120,	0},	nil,			{10060,	120,	0},	},	--Power Infusion
+	{62618,	3,	nil,			{62618,	180,	0},	nil,			nil,			},	--Power Word: Barrier
+	{17,	3,	nil,			{17,	7,	0},	nil,			{17,	7,	0},	},	--Power Word: Shield
+	{129250,3,	nil,			{129250,12,	0},	nil,			nil,			},	--Power Word: Solace
+	{33076,	3,	nil,			nil,			{33076,	12,	0},	nil,			},	--Prayer of Mending
+	{8122,	3,	nil,			{8122,	60,	0},	nil,			{8122,	60,	0},	},	--Psychic Scream
+	{204197,3,	nil,			{204197,10,	0},	nil,			nil,			},	--Purge the Wicked
+	{527,	3,	nil,			{527,	8,	0},	{527,	8,	0},	nil,			},	--Purify
+	{213634,3,	nil,			nil,			nil,			{213634,8,	0},	},	--Purify Disease
+	{47536,	3,	nil,			{47536,	120,	0},	nil,			nil,			},	--Rapture
+	{214621,3,	nil,			{214621,6,	0},	nil,			nil,			},	--Schism
+	{205385,3,	nil,			nil,			nil,			{205385,30,	0},	},	--Shadow Crash
+	{32379,	3,	nil,			nil,			nil,			{32379,	12,	0},	},	--Shadow Word: Death
+	{34433,	3,	nil,			{34433,	180,	0},	nil,			{34433,	180,	0},	},	--Shadowfiend
+	{204263,3,	nil,			{204263,60,	0},	{204263,60,	0},	nil,			},	--Shining Force
+	{15487,	3,	nil,			nil,			nil,			{15487,	45,	0},	},	--Silence
+	{193223,3,	nil,			nil,			nil,			{193223,600,	0},	},	--Surrender to Madness
+	{64901,	3,	nil,			nil,			{64901,	360,	0},	nil,			},	--Symbol of Hope
+	{15286,	3,	nil,			nil,			nil,			{15286,	180,	0},	},	--Vampiric Embrace
+	{205448,3,	nil,			nil,			nil,			{205448,4,	0},	},	--Void Bolt
+	{205065,3,	nil,			nil,			nil,			{205065,60,	0},	},	--Void Torrent
+},
+["DEATHKNIGHT"] = {
+	{48707,	3,	{48707,	60,	0},	nil,			nil,			nil,			},	--Anti-Magic Shell
+	{220143,3,	nil,			nil,			nil,			{220143,90,	0},	},	--Apocalypse
+	{42650,	3,	nil,			nil,			nil,			{42650,	600,	0},	},	--Army of the Dead
+	{108194,3,	nil,			nil,			nil,			{108194,45,	0},	},	--Asphyxiate
+	{221562,3,	nil,			{221562,45,	0},	nil,			nil,			},	--Asphyxiate
+	{194918,3,	nil,			nil,			nil,			{194918,60,	0},	},	--Blighted Rune Weapon
+	{207167,3,	nil,			nil,			{207167,60,	0},	nil,			},	--Blinding Sleet
+	{206977,3,	nil,			{206977,120,	0},	nil,			nil,			},	--Blood Mirror
+	{194844,3,	nil,			{194844,60,	0},	nil,			nil,			},	--Bonestorm
+	{152279,3,	nil,			nil,			{152279,120,	0},	nil,			},	--Breath of Sindragosa
+	{205223,3,	nil,			{205223,45,	0},	nil,			nil,			},	--Consumption
+	{127344,3,	{127344,15,	0},	nil,			nil,			nil,			},	--Corpse Explosion
+	{207319,3,	nil,			nil,			nil,			{207319,60,	0},	},	--Corpse Shield
+	{49028,	3,	nil,			{49028,	180,	0},	nil,			nil,			},	--Dancing Rune Weapon
+	{207349,3,	nil,			nil,			nil,			{207349,180,	0},	},	--Dark Arbiter
+	{56222,	3,	{56222,	8,	0},	nil,			nil,			nil,			},	--Dark Command
+	{63560,	3,	nil,			nil,			nil,			{63560,	60,	0},	},	--Dark Transformation
+	{50977,	3,	{50977,	60,	0},	nil,			nil,			nil,			},	--Death Gate
+	{43265,	3,	nil,			{43265,	30,	0},	nil,			{43265,	30,	0},	},	--Death and Decay
+	{152280,3,	nil,			nil,			nil,			{152280,30,	0},	},	--Defile
+	{206931,3,	nil,			{206931,30,	0},	nil,			nil,			},	--Exsanguinate
+	{194913,3,	nil,			nil,			{194913,15,	0},	nil,			},	--Glacial Advance
+	{108199,3,	nil,			{108199,180,	0},	nil,			nil,			},	--Gorefiend's Grasp
+	{57330,	3,	nil,			nil,			{57330,	30,	0},	nil,			},	--Horn of Winter
+	{207127,3,	nil,			nil,			{207127,180,	0},	nil,			},	--Hungering Rune Weapon
+	{48792,	3,	nil,			nil,			{48792,	180,	0},	{48792,	180,	0},	},	--Icebound Fortitude
+	{47528,	3,	{47528,	15,	0},	nil,			nil,			nil,			},	--Mind Freeze
+	{207256,3,	nil,			nil,			{207256,90,	0},	nil,			},	--Obliteration
+	{51271,	3,	nil,			nil,			{51271,	60,	0},	nil,			},	--Pillar of Frost
+	{61999,	3,	{61999,	600,	0},	nil,			nil,			nil,			},	--Raise Ally
+	{46584,	3,	nil,			nil,			nil,			{46584,	60,	0},	},	--Raise Dead
+	{196770,3,	nil,			nil,			{196770,20,	0},	nil,			},	--Remorseless Winter
+	{190778,3,	nil,			nil,			{190778,300,	0},	nil,			},	--Sindragosa's Fury
+	{130736,3,	nil,			nil,			nil,			{130736,45,	0},	},	--Soul Reaper
+	{49206,	3,	nil,			nil,			nil,			{49206,	180,	0},	},	--Summon Gargoyle
+	{206970,3,	nil,			{206970,60,	0},	nil,			nil,			},	--Tightening Grasp
+	{219809,3,	nil,			{219809,60,	0},	nil,			nil,			},	--Tombstone
+	{55233,	3,	nil,			{55233,	90,	0},	nil,			nil,			},	--Vampiric Blood
+	{212552,3,	{212552,60,	0},	nil,			nil,			nil,			},	--Wraith Walk
+},
+["SHAMAN"] = {
+	{108281,3,	nil,			{108281,120,	0},	nil,			{108281,120,	0},	},	--Ancestral Guidance
+	{207399,3,	nil,			nil,			nil,			{207399,300,	0},	},	--Ancestral Protection Totem
+	{114052,3,	nil,			nil,			nil,			{114052,180,	0},	},	--Ascendance
+	{114050,3,	nil,			{114050,180,	0},	nil,			nil,			},	--Ascendance
+	{114051,3,	nil,			nil,			{114051,180,	0},	nil,			},	--Ascendance
+	{556,	3,	{556,	600,	0},	nil,			nil,			nil,			},	--Astral Recall
+	{108271,3,	{108271,90,	0},	nil,			nil,			nil,			},	--Astral Shift
+	{2825,	3,	{2825,	300,	0},	nil,			nil,			nil,			},	--Bloodlust
+	{51886,	3,	nil,			{51886,	8,	0},	{51886,	8,	0},	nil,			},	--Cleanse Spirit
+	{157153,3,	nil,			nil,			nil,			{157153,30,	0},	},	--Cloudburst Totem
+	{187874,3,	nil,			nil,			{187874,6,	0},	nil,			},	--Crash Lightning
+	{204945,3,	nil,			nil,			{204945,45,	0},	nil,			},	--Doom Winds
+	{198103,3,	nil,			{198103,120,	0},	nil,			nil,			},	--Earth Elemental
+	{198838,3,	nil,			nil,			nil,			{198838,60,	0},	},	--Earthen Shield Totem
+	{188089,3,	nil,			nil,			{188089,20,	0},	nil,			},	--Earthen Spike
+	{51485,	3,	{51485,	30,	0},	nil,			nil,			nil,			},	--Earthgrab Totem
+	{117014,3,	nil,			{117014,12,	0},	nil,			nil,			},	--Elemental Blast
+	{196884,3,	nil,			nil,			{196884,30,	0},	nil,			},	--Feral Lunge
+	{51533,	3,	nil,			nil,			{51533,	120,	0},	nil,			},	--Feral Spirit
+	{198067,3,	nil,			{198067,300,	0},	nil,			nil,			},	--Fire Elemental
+	{188838,3,	nil,			nil,			nil,			{188838,6,	0},	},	--Flame Shock
+	{193796,3,	nil,			nil,			{193796,12,	0},	nil,			},	--Flametongue
+	{207778,3,	nil,			nil,			nil,			{207778,45,	0},	},	--Gift of the Queen
+	{192063,3,	nil,			{192063,15,	0},	nil,			{192063,15,	0},	},	--Gust of Wind
+	{73920,	3,	nil,			nil,			nil,			{73920,	10,	0},	},	--Healing Rain
+	{108280,3,	nil,			nil,			nil,			{108280,180,	0},	},	--Healing Tide Totem
+	{32182,	3,	{32182,	300,	0},	nil,			nil,			nil,			},	--Heroism
+	{210873,3,	{210873,30,	0},	nil,			nil,			nil,			},	--Hex
+	{51514,	3,	{51514,	30,	0},	nil,			nil,			nil,			},	--Hex
+	{210714,3,	nil,			{210714,30,	0},	nil,			nil,			},	--Icefury
+	{192058,3,	{192058,45,	0},	nil,			nil,			nil,			},	--Lightning Surge Totem
+	{192222,3,	nil,			{192222,60,	0},	nil,			nil,			},	--Liquid Magma Totem
+	{215864,3,	nil,			nil,			{215864,10,	0},	nil,			},	--Rainfall
+	{20608,	3,	{20608,	1800,	0},	nil,			nil,			nil,			},	--Reincarnation
+	{58875,	3,	nil,			nil,			{58875,	60,	0},	nil,			},	--Spirit Walk
+	{79206,	3,	nil,			nil,			nil,			{79206,	120,	0},	},	--Spiritwalker's Grace
+	{192249,3,	nil,			{192249,300,	0},	nil,			nil,			},	--Storm Elemental
+	{205495,3,	nil,			{205495,60,	0},	nil,			nil,			},	--Stormkeeper
+	{17364,	3,	nil,			nil,			{17364,	16,	0},	nil,			},	--Stormstrike
+	{197214,3,	nil,			nil,			{197214,40,	0},	nil,			},	--Sundering
+	{51490,	3,	nil,			{51490,	45,	0},	nil,			nil,			},	--Thunderstorm
+	{210643,3,	nil,			{210643,30,	0},	nil,			nil,			},	--Totem Mastery
+	{196932,3,	{196932,30,	0},	nil,			nil,			nil,			},	--Voodoo Totem
+	{197995,3,	nil,			nil,			nil,			{197995,20,	0},	},	--Wellspring
+	{192077,3,	{192077,120,	0},	nil,			nil,			nil,			},	--Wind Rush Totem
+	{57994,	3,	{57994,	12,	0},	nil,			nil,			nil,			},	--Wind Shear
+	{201898,3,	nil,			nil,			{201898,45,	0},	nil,			},	--Windsong
+},
+["MAGE"] = {
+	{120146,3,	{120146,60,	0},	nil,			nil,			nil,			},	--Ancient Portal: Dalaran
+	{44425,	3,	nil,			{44425,	4,	0},	nil,			nil,			},	--Arcane Barrage
+	{205022,3,	nil,			{205022,60,	0},	nil,			nil,			},	--Arcane Familiar
+	{153626,3,	nil,			{153626,15,	0},	nil,			nil,			},	--Arcane Orb
+	{12042,	3,	nil,			{12042,	90,	0},	nil,			nil,			},	--Arcane Power
+	{157981,3,	nil,			nil,			{157981,25,	0},	nil,			},	--Blast Wave
+	{190356,3,	nil,			nil,			nil,			{190356,8,	0},	},	--Blizzard
+	{205032,3,	nil,			{205032,30,	0},	nil,			nil,			},	--Charged Up
+	{198929,3,	nil,			nil,			{198929,9,	0},	nil,			},	--Cinderstorm
+	{190319,3,	nil,			nil,			{190319,120,	0},	nil,			},	--Combustion
+	{153595,3,	nil,			nil,			nil,			{153595,30,	0},	},	--Comet Storm
+	{120,	3,	nil,			nil,			nil,			{120,	12,	0},	},	--Cone of Cold
+	{2139,	3,	{2139,	24,	0},	nil,			nil,			nil,			},	--Counterspell
+	{195676,3,	nil,			{195676,30,	0},	nil,			nil,			},	--Displacement
+	{31661,	3,	nil,			nil,			{31661,	20,	0},	nil,			},	--Dragon's Breath
+	{214634,3,	nil,			nil,			nil,			{214634,45,	0},	},	--Ebonbolt
+	{205039,3,	nil,			{205039,60,	0},	nil,			nil,			},	--Erosion
+	{12051,	3,	nil,			{12051,	90,	0},	nil,			nil,			},	--Evocation
+	{205029,3,	nil,			nil,			{205029,30,	0},	nil,			},	--Flame On
+	{84714,	3,	nil,			nil,			nil,			{84714,	60,	0},	},	--Frozen Orb
+	{205030,3,	nil,			nil,			nil,			{205030,30,	0},	},	--Frozen Touch
+	{110959,3,	nil,			{110959,120,	0},	nil,			nil,			},	--Greater Invisibility
+	{11426,	3,	{11426,	25,	0},	nil,			nil,			nil,			},	--Ice Barrier
+	{157997,3,	nil,			nil,			nil,			{157997,25,	0},	},	--Ice Nova
+	{12472,	3,	nil,			nil,			nil,			{12472,	180,	0},	},	--Icy Veins
+	{131784,3,	{131784,600,	0},	nil,			nil,			nil,			},	--Illusion
+	{66,	3,	nil,			nil,			{66,	300,	0},	{66,	300,	0},	},	--Invisibility
+	{44457,	3,	nil,			nil,			{44457,	12,	0},	nil,			},	--Living Bomb
+	{210726,3,	{210726,60,	0},	nil,			nil,			nil,			},	--Mark of Aluneth
+	{224968,3,	nil,			{224968,60,	0},	nil,			nil,			},	--Mark of Aluneth
+	{153561,3,	nil,			nil,			{153561,45,	0},	nil,			},	--Meteor
+	{55342,	3,	{55342,	120,	0},	nil,			nil,			nil,			},	--Mirror Image
+	{215773,3,	nil,			nil,			{215773,60,	0},	nil,			},	--Phoenix Reborn
+	{224871,3,	{224871,60,	0},	nil,			nil,			nil,			},	--Portal: Dalaran - Broken Isles
+	{53142,	3,	{53142,	60,	0},	nil,			nil,			nil,			},	--Portal: Dalaran - Northrend
+	{11419,	3,	{11419,	60,	0},	nil,			nil,			nil,			},	--Portal: Darnassus
+	{32266,	3,	{32266,	60,	0},	nil,			nil,			nil,			},	--Portal: Exodar
+	{11416,	3,	{11416,	60,	0},	nil,			nil,			nil,			},	--Portal: Ironforge
+	{11417,	3,	{11417,	60,	0},	nil,			nil,			nil,			},	--Portal: Orgrimmar
+	{35717,	3,	{35717,	60,	0},	nil,			nil,			nil,			},	--Portal: Shattrath
+	{33691,	3,	{33691,	60,	0},	nil,			nil,			nil,			},	--Portal: Shattrath
+	{32267,	3,	{32267,	60,	0},	nil,			nil,			nil,			},	--Portal: Silvermoon
+	{49361,	3,	{49361,	60,	0},	nil,			nil,			nil,			},	--Portal: Stonard
+	{176246,3,	{176246,60,	0},	nil,			nil,			nil,			},	--Portal: Stormshield
+	{10059,	3,	{10059,	60,	0},	nil,			nil,			nil,			},	--Portal: Stormwind
+	{49360,	3,	{49360,	60,	0},	nil,			nil,			nil,			},	--Portal: Theramore
+	{11420,	3,	{11420,	60,	0},	nil,			nil,			nil,			},	--Portal: Thunder Bluff
+	{88345,	3,	{88345,	60,	0},	nil,			nil,			nil,			},	--Portal: Tol Barad
+	{88346,	3,	{88346,	60,	0},	nil,			nil,			nil,			},	--Portal: Tol Barad
+	{11418,	3,	{11418,	60,	0},	nil,			nil,			nil,			},	--Portal: Undercity
+	{132626,3,	{132626,60,	0},	nil,			nil,			nil,			},	--Portal: Vale of Eternal Blossoms
+	{132620,3,	{132620,60,	0},	nil,			nil,			nil,			},	--Portal: Vale of Eternal Blossoms
+	{176244,3,	{176244,60,	0},	nil,			nil,			nil,			},	--Portal: Warspear
+	{205025,3,	nil,			{205025,60,	0},	nil,			nil,			},	--Presence of Mind
+	{205021,3,	nil,			nil,			nil,			{205021,60,	0},	},	--Ray of Frost
+	{113724,3,	{113724,45,	0},	nil,			nil,			nil,			},	--Ring of Frost
+	{116011,3,	{116011,10,	0},	nil,			nil,			nil,			},	--Rune of Power
+	{31687,	3,	nil,			nil,			nil,			{31687,	60,	0},	},	--Summon Water Elemental
+	{157980,3,	nil,			{157980,25,	0},	nil,			nil,			},	--Supernova
+	{193759,3,	{193759,60,	0},	nil,			nil,			nil,			},	--Teleport: Hall of the Guardian
+	{80353,	3,	{80353,	300,	0},	nil,			nil,			nil,			},	--Time Warp
+},
+["WARLOCK"] = {
+	{104316,3,	nil,			nil,			{104316,15,	0},	nil,			},	--Call Dreadstalkers
+	{152108,3,	nil,			nil,			nil,			{152108,60,	0},	},	--Cataclysm
+	{196447,3,	nil,			nil,			nil,			{196447,15,	0},	},	--Channel Demonfire
+	{29893,	3,	{29893,	120,	0},	nil,			nil,			nil,			},	--Create Soulwell
+	{108416,3,	{108416,60,	0},	nil,			nil,			nil,			},	--Dark Pact
+	{111771,3,	{111771,10,	0},	nil,			nil,			nil,			},	--Demonic Gateway
+	{108503,3,	nil,			{108503,30,	0},	nil,			{108503,30,	0},	},	--Grimoire of Sacrifice
+	{108501,3,	{108501,120,	0},	nil,			nil,			nil,			},	--Grimoire of Service
+	{48181,	3,	nil,			{48181,	15,	0},	nil,			nil,			},	--Haunt
+	{80240,	3,	nil,			nil,			nil,			{80240,	20,	0},	},	--Havoc
+	{5484,	3,	nil,			{5484,	40,	0},	nil,			nil,			},	--Howl of Terror
+	{6789,	3,	{6789,	45,	0},	nil,			nil,			nil,			},	--Mortal Coil
+	{205179,3,	nil,			{205179,60,	0},	nil,			nil,			},	--Phantom Singularity
+	{698,	3,	{698,	120,	0},	nil,			nil,			nil,			},	--Ritual of Summoning
+	{30283,	3,	nil,			nil,			{30283,	30,	0},	{30283,	30,	0},	},	--Shadowfury
+	{196098,3,	{196098,120,	0},	nil,			nil,			nil,			},	--Soul Harvest
+	{20707,	3,	{20707,	600,	0},	nil,			nil,			nil,			},	--Soulstone
+	{205180,3,	nil,			nil,			{205180,24,	0},	nil,			},	--Summon Darkglare
+	{18540,	3,	{18540,	180,	0},	nil,			nil,			nil,			},	--Summon Doomguard
+	{1122,	3,	{1122,	180,	0},	nil,			nil,			nil,			},	--Summon Infernal
+	{211714,3,	nil,			nil,			{211714,45,	0},	nil,			},	--Thal'kiel's Consumption
+	{104773,3,	{104773,180,	0},	nil,			nil,			nil,			},	--Unending Resolve
+},
+["MONK"] = {
+	{115399,3,	nil,			{115399,60,	0},	nil,			nil,			},	--Black Ox Brew
+	{100784,3,	{100784,3,	0},	nil,			nil,			nil,			},	--Blackout Kick
+	{205523,3,	nil,			{205523,3,	0},	nil,			nil,			},	--Blackout Strike
+	{115181,3,	nil,			{115181,15,	0},	nil,			nil,			},	--Breath of Fire
+	{123986,3,	{123986,30,	0},	nil,			nil,			nil,			},	--Chi Burst
+	{115098,3,	nil,			{115098,15,	0},	{115098,15,	0},	nil,			},	--Chi Wave
+	{122278,3,	{122278,120,	0},	nil,			nil,			nil,			},	--Dampen Harm
+	{122783,3,	{122783,120,	0},	nil,			nil,			nil,			},	--Diffuse Magic
+	{115288,3,	nil,			nil,			{115288,60,	0},	nil,			},	--Energizing Elixir
+	{214326,3,	nil,			{214326,75,	0},	nil,			nil,			},	--Exploding Keg
+	{113656,3,	nil,			nil,			{113656,24,	0},	nil,			},	--Fists of Fury
+	{101545,3,	nil,			nil,			{101545,25,	0},	nil,			},	--Flying Serpent Kick
+	{115203,3,	nil,			{115203,300,	0},	nil,			nil,			},	--Fortifying Brew
+	{198664,3,	nil,			nil,			nil,			{198664,180,	0},	},	--Invoke Chi-Ji, the Red Crane
+	{132578,3,	nil,			{132578,180,	0},	nil,			nil,			},	--Invoke Niuzao, the Black Ox
+	{123904,3,	nil,			nil,			{123904,180,	0},	nil,			},	--Invoke Xuen, the White Tiger
+	{121253,3,	nil,			{121253,8,	0},	nil,			nil,			},	--Keg Smash
+	{119381,3,	{119381,45,	0},	nil,			nil,			nil,			},	--Leg Sweep
+	{116849,3,	nil,			nil,			nil,			{116849,180,	0},	},	--Life Cocoon
+	{197908,3,	nil,			nil,			nil,			{197908,90,	0},	},	--Mana Tea
+	{115078,3,	{115078,15,	0},	nil,			nil,			nil,			},	--Paralysis
+	{115546,3,	{115546,8,	0},	nil,			nil,			nil,			},	--Provoke
+	{196725,3,	nil,			nil,			nil,			{196725,6,	0},	},	--Refreshing Jade Wind
+	{115151,3,	nil,			nil,			nil,			{115151,8,	0},	},	--Renewing Mist
+	{115310,3,	nil,			nil,			nil,			{115310,180,	0},	},	--Revival
+	{116844,3,	{116844,45,	0},	nil,			nil,			nil,			},	--Ring of Peace
+	{116847,3,	nil,			{116847,6,	0},	{116847,6,	0},	nil,			},	--Rushing Jade Wind
+	{152173,3,	nil,			nil,			{152173,90,	0},	nil,			},	--Serenity
+	{198898,3,	nil,			nil,			nil,			{198898,30,	0},	},	--Song of Chi-Ji
+	{116705,3,	nil,			{116705,15,	0},	{116705,15,	0},	nil,			},	--Spear Hand Strike
+	{205320,3,	nil,			nil,			{205320,40,	0},	nil,			},	--Strike of the Windlord
+	{115315,3,	nil,			{115315,10,	0},	nil,			nil,			},	--Summon Black Ox Statue
+	{115313,3,	nil,			nil,			nil,			{115313,10,	0},	},	--Summon Jade Serpent Statue
+	{116680,3,	nil,			nil,			nil,			{116680,30,	0},	},	--Thunder Focus Tea
+	{116841,3,	{116841,30,	0},	nil,			nil,			nil,			},	--Tiger's Lust
+	{115080,3,	nil,			nil,			{115080,120,	0},	nil,			},	--Touch of Death
+	{122470,3,	nil,			nil,			{122470,90,	0},	nil,			},	--Touch of Karma
+	{101643,3,	{101643,10,	0},	nil,			nil,			nil,			},	--Transcendence
+	{119996,3,	{119996,25,	0},	nil,			nil,			nil,			},	--Transcendence: Transfer
+	{152175,3,	nil,			nil,			{152175,24,	0},	nil,			},	--Whirling Dragon Punch
+	{115176,3,	nil,			{115176,300,	0},	nil,			nil,			},	--Zen Meditation
+	{126892,3,	{126892,60,	0},	nil,			nil,			nil,			},	--Zen Pilgrimage
+	{124081,3,	nil,			nil,			nil,			{124081,15,	0},	},	--Zen Pulse
+},
+["DRUID"] = {
+	{210722,3,	nil,			nil,			{210722,75,	0},	nil,			nil,			},	--Ashamane's Frenzy
+	{202359,3,	nil,			{202359,80,	0},	nil,			nil,			nil,			},	--Astral Communion
+	{22812,	3,	{22812,	60,	0},	nil,			nil,			nil,			nil,			},	--Barkskin
+	{106951,3,	nil,			nil,			{106951,180,	0},	nil,			nil,			},	--Berserk
+	{155835,3,	nil,			nil,			nil,			{155835,40,	0},	nil,			},	--Bristling Fur
+	{194223,3,	nil,			{194223,180,	0},	nil,			nil,			nil,			},	--Celestial Alignment
+	{102351,3,	nil,			nil,			nil,			nil,			{102351,30,	0},	},	--Cenarion Ward
+	{1850,	3,	{1850,	180,	0},	nil,			nil,			nil,			nil,			},	--Dash
+	{102280,3,	{102280,30,	0},	nil,			nil,			nil,			nil,			},	--Displacer Beast
+	{193753,3,	{193753,60,	0},	nil,			nil,			nil,			nil,			},	--Dreamwalk
+	{202060,3,	nil,			nil,			{202060,45,	0},	nil,			nil,			},	--Elune's Guidance
+	{208253,3,	nil,			nil,			nil,			nil,			{208253,90,	0},	},	--Essence of G'Hanir
+	{197721,3,	nil,			nil,			nil,			nil,			{197721,60,	0},	},	--Flourish
+	{205636,3,	nil,			{205636,60,	0},	nil,			nil,			nil,			},	--Force of Nature
+	{202770,3,	nil,			{202770,60,	0},	nil,			nil,			nil,			},	--Fury of Elune
+	{6795,	3,	{6795,	8,	0},	nil,			nil,			nil,			nil,			},	--Growl
+	{99,	3,	nil,			nil,			nil,			{99,	30,	0},	nil,			},	--Incapacitating Roar
+	{102560,3,	nil,			{102560,180,	0},	nil,			nil,			nil,			},	--Incarnation: Chosen of Elune
+	{102558,3,	nil,			nil,			nil,			{102558,180,	0},	nil,			},	--Incarnation: Guardian of Ursoc
+	{102543,3,	nil,			nil,			{102543,180,	0},	nil,			nil,			},	--Incarnation: King of the Jungle
+	{33891,	3,	nil,			nil,			nil,			nil,			{33891,	180,	0},	},	--Incarnation: Tree of Life
+	{29166,	3,	nil,			{29166,	180,	0},	nil,			nil,			{29166,	180,	0},	},	--Innervate
+	{102342,3,	nil,			nil,			nil,			nil,			{102342,90,	0},	},	--Ironbark
+	{204066,3,	nil,			nil,			nil,			{204066,90,	0},	nil,			},	--Lunar Beam
+	{22570,	3,	nil,			nil,			{22570,	10,	0},	nil,			nil,			},	--Maim
+	{33917,	3,	nil,			nil,			nil,			{33917,	6,	0},	nil,			},	--Mangle
+	{102359,3,	{102359,30,	0},	nil,			nil,			nil,			nil,			},	--Mass Entanglement
+	{6807,	3,	nil,			nil,			nil,			{6807,	3,	0},	nil,			},	--Maul
+	{5211,	3,	{5211,	50,	0},	nil,			nil,			nil,			nil,			},	--Mighty Bash
+	{5215,	3,	{5215,	10,	0},	nil,			nil,			nil,			nil,			},	--Prowl
+	{200851,3,	nil,			nil,			nil,			{200851,90,	0},	nil,			},	--Rage of the Sleeper
+	{20484,	3,	{20484,	600,	0},	nil,			nil,			nil,			nil,			},	--Rebirth
+	{2782,	3,	{2782,	8,	0},	nil,			nil,			nil,			nil,			},	--Remove Corruption
+	{108238,3,	{108238,120,	0},	nil,			nil,			nil,			nil,			},	--Renewal
+	{106839,3,	nil,			nil,			{106839,15,	0},	{106839,15,	0},	nil,			},	--Skull Bash
+	{78675,	3,	nil,			{78675,	60,	0},	nil,			nil,			nil,			},	--Solar Beam
+	{106898,3,	nil,			nil,			{106898,120,	0},	{106898,120,	0},	nil,			},	--Stampeding Roar
+	{61336,	3,	nil,			nil,			{61336,	6,	0},	{61336,	6,	0},	nil,			},	--Survival Instincts
+	{77758,	3,	{77758,	6,	0},	nil,			nil,			nil,			nil,			},	--Thrash
+	{5217,	3,	nil,			nil,			{5217,	30,	0},	nil,			nil,			},	--Tiger's Fury
+	{740,	3,	nil,			nil,			nil,			nil,			{740,	180,	0},	},	--Tranquility
+	{132469,3,	{132469,30,	0},	nil,			nil,			nil,			nil,			},	--Typhoon
+	{102793,3,	nil,			nil,			nil,			nil,			{102793,60,	0},	},	--Ursol's Vortex
+	{202425,3,	nil,			{202425,45,	0},	nil,			nil,			nil,			},	--Warrior of Elune
+	{102401,3,	{102401,15,	0},	nil,			nil,			nil,			nil,			},	--Wild Charge
+	{48438,	3,	nil,			nil,			nil,			nil,			{48438,	10,	0},	},	--Wild Growth
+},
+["DEMONHUNTER"] = {
+	{188499,3,	{188499,10,	0},	nil,			nil,			},	--Blade Dance
+	{198589,3,	{198589,60,	0},	nil,			nil,			},	--Blur
+	{218640,3,	nil,			nil,			{218640,60,	0},	},	--Brand of the Hunt
+	{211048,3,	nil,			{211048,120,	0},	nil,			},	--Chaos Blades
+	{179057,3,	{179057,60,	0},	nil,			nil,			},	--Chaos Nova
+	{183752,3,	{183752,20,	0},	nil,			nil,			},	--Consume Magic
+	{196718,3,	{196718,180,	0},	nil,			nil,			},	--Darkness
+	{205629,3,	nil,			nil,			{205629,30,	0},	},	--Demonic Trample
+	{218256,3,	nil,			nil,			{218256,30,	0},	},	--Empower Wards
+	{198013,3,	{198013,45,	0},	nil,			nil,			},	--Eye Beam
+	{212084,3,	nil,			nil,			{212084,60,	0},	},	--Fel Devastation
+	{211881,3,	{211881,35,	0},	nil,			nil,			},	--Fel Eruption
+	{213241,3,	{213241,15,	0},	nil,			nil,			},	--Felblade
+	{204021,3,	nil,			nil,			{204021,60,	0},	},	--Fiery Brand
+	{201467,3,	nil,			{201467,60,	0},	nil,			},	--Fury of the Illidari
+	{220831,3,	{220831,300,	0},	nil,			nil,			},	--Glyph of Fearsome Metamorphosis
+	{205630,3,	nil,			nil,			{205630,30,	0},	},	--Illidan's Grasp
+	{178740,3,	nil,			nil,			{178740,15,	0},	},	--Immolation Aura
+	{217832,3,	{217832,10,	0},	nil,			nil,			},	--Imprison
+	{191427,3,	{191427,300,	0},	nil,			nil,			},	--Metamorphosis
+	{187827,3,	nil,			nil,			{187827,180,	0},	},	--Metamorphosis
+	{206491,3,	nil,			{206491,120,	0},	nil,			},	--Nemesis
+	{207810,3,	nil,			nil,			{207810,120,	0},	},	--Nether Bond
+	{196555,3,	nil,			{196555,90,	0},	nil,			},	--Netherwalk
+	{202138,3,	nil,			nil,			{202138,120,	0},	},	--Sigil of Chains
+	{204596,3,	nil,			nil,			{204596,3,	0},	},	--Sigil of Flame
+	{207684,3,	nil,			nil,			{207684,60,	0},	},	--Sigil of Misery
+	{202137,3,	nil,			nil,			{202137,60,	0},	},	--Sigil of Silence
+	{214743,3,	{214743,60,	0},	nil,			nil,			},	--Soul Carver
+	{207407,3,	nil,			nil,			{207407,60,	0},	},	--Soul Carver
+	{188501,3,	{188501,30,	0},	nil,			nil,			},	--Spectral Sight
+	{185245,3,	nil,			nil,			{185245,8,	0},	},	--Torment
+	{198793,3,	{198793,25,	0},	nil,			nil,			},	--Vengeful Retreat
+},
+["PET"] = {
+
+},
+["RACIAL"] = {
+	{68992,	3,	{68992,	120,	10},	},	--Worgen
+	{20589,	3,	{20589,	60,	0},	},	--Gnome
+	{20594,	3,	{20594,	120,	8},	},	--Dwarf
+	{121093,3,	{121093,180,	5},	},	--Draenei
+	{58984,	3,	{58984,	120,	0},	},	--NightElf
+	{59752,	3,	{59752,	120,	0},	},	--Human
+	{69041,	3,	{69041,	90,	0},	},	--Goblin
+	{69070,	3,	{69070,	90,	0},	},	--Goblin
+	{7744,	3,	{7744,	120,	0},	},	--Undead
+	{20577,	3,	{20577,	120,	10},	},	--Undead
+	{20572,	3,	{20572,	120,	15},	},	--Orc
+	{20549,	3,	{20549,	90,	0},	},	--Tauren
+	{26297,	3,	{26297,	180,	10},	},	--Troll
+	{28730,	3,	{28730,	90,	0},	},	--BloodElf
+	{107079,3,	{107079,120,	4},	},	--Pandaren
+},
+["ITEMS"] = {
+	{67826,	3,	{67826,	3600,	0},	},	--Jeevs
+	{177592,3,	{177592,120,	0},	},	--Candle
+	{176873,3,	{176873,120,	20},	},	--Tank BRF
+	{176875,3,	{176875,120,	20},	},	--Shard of nothing
+	{177597,3,	{177597,120,	20},	},	--Coin
+	{177594,3,	{177594,120,	20},	},	--Couplend
+	{177189,3,	{177189,90,	15},	},	--Kyanos
+	{176460,3,	{176460,120,	20},	},	--Kyb
+	{183929,3,	{183929,90,	15},	},	--Intuition's Gift
+	{184270,3,	{184270,60,	20},	},	--Mirror of the Blademaster
+	{201414,3,	{201414,60,	0},	},	--Purified Shard of the Third Moon
+	{201371,3,	{201371,60,	0},	},	--Judgment of the Naaru
+},
+}
 ]]
 
 
@@ -7704,13 +8881,27 @@ function moduleInspect.main:PLAYER_SPECIALIZATION_CHANGED(arg)
 		VExRT.ExCD2.gnGUIDs[name] = nil		
 		local _,class = UnitClass(name)
 		if module.db.spell_talentsList[class] then
-			for i=1,18 do
-				if type(module.db.spell_talentsList[class][i]) == "table" then
-					for j=1,#module.db.spell_talentsList[class][i] do
-						module.db.session_gGUIDs[name] = -(module.db.spell_talentsList[class][i][j] or 0)
+			if ExRT.is7 then
+				for specID,specTalents in pairs(module.db.spell_talentsList[class]) do
+					for i=1,18 do
+						if type(specTalents[i]) == "table" then
+							for j=1,#specTalents[i] do
+								module.db.session_gGUIDs[name] = -(specTalents[i][j] or 0)
+							end
+						else
+							module.db.session_gGUIDs[name] = -(specTalents[i] or 0)
+						end
 					end
-				else
-					module.db.session_gGUIDs[name] = -(module.db.spell_talentsList[class][i] or 0)
+				end
+			else
+				for i=1,18 do
+					if type(module.db.spell_talentsList[class][i]) == "table" then
+						for j=1,#module.db.spell_talentsList[class][i] do
+							module.db.session_gGUIDs[name] = -(module.db.spell_talentsList[class][i][j] or 0)
+						end
+					else
+						module.db.session_gGUIDs[name] = -(module.db.spell_talentsList[class][i] or 0)
+					end
 				end
 			end
 		end
@@ -7941,35 +9132,40 @@ do
 						data[i] = 0
 					end
 					data.talentsIDs = {}
-					for i=0,20 do
-						local row,col = (i-i%3)/3+1,i%3+1
 					
-						local t_id,_,_,t = GetTalentInfo(row,col,specIndex,true,inspectedName)
-						if t then
-							data[row] = col
-							data.talentsIDs[row] = t_id
-						end
+					local classTalents = module.db.spell_talentsList[class]
+					local specTalents = classTalents and classTalents[data.spec]
+					if specTalents then
+						for i=0,20 do
+							local row,col = (i-i%3)/3+1,i%3+1
 						
-						--------> ExCD2
-						local talentID = module.db.spell_talentsList[class] and module.db.spell_talentsList[class][i+1]
-						if talentID then
-							if type(talentID) == "table" then
-								for j,sID in ipairs(talentID) do
+							local t_id,_,_,t = GetTalentInfo(row,col,specIndex,true,inspectedName)
+							if t then
+								data[row] = col
+								data.talentsIDs[row] = t_id
+							end
+							
+							--------> ExCD2
+							local talentID = specTalents[i+1]
+							if talentID then
+								if type(talentID) == "table" then
+									for j,sID in ipairs(talentID) do
+										if t then
+											module.db.session_gGUIDs[name] = sID
+										else
+											module.db.session_gGUIDs[name] = -sID
+										end
+									end
+								else
 									if t then
-										module.db.session_gGUIDs[name] = sID
+										module.db.session_gGUIDs[name] = talentID
 									else
-										module.db.session_gGUIDs[name] = -sID
+										module.db.session_gGUIDs[name] = -talentID
 									end
 								end
-							else
-								if t then
-									module.db.session_gGUIDs[name] = talentID
-								else
-									module.db.session_gGUIDs[name] = -talentID
-								end
 							end
+							--------> /ExCD2
 						end
-						--------> /ExCD2
 					end
 					for i=0,17 do
 						local row,col = (i-i%3)/3+1,i%3+1

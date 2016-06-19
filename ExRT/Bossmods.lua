@@ -357,7 +357,7 @@ function ShaOfPride:Load()
 
 	ShaOfPride.mainframe.names = {}
 
-	for i=1,25 do
+	for i=1,30 do
 		local name = CreateFrame("Frame",nil,ShaOfPride.mainframe)
 		ShaOfPride.mainframe.names[i] = name
 		name:SetSize(100,12)
@@ -1122,6 +1122,23 @@ function SpoilsOfPandaria:onEvent(event,unitID,_,_,_,spellID)
 	end
 end
 
+if ExRT.is7 then
+	function SpoilsOfPandaria:onEvent(event,unitID,_,_,spellLine)
+		local unitType,_,serverID,instanceID,zoneUID,spellID,spawnID = strsplit("-", spellLine or "")
+		spellID = tonumber(spellID or 0) or 0
+	  	if unitID:find("^raid%d+$") and spellID == 144229 then
+			local name = ExRT.F.UnitCombatlogname(unitID)	
+			if name then
+				local px, py = GetPlayerMapPosition(unitID)
+				local room = SpoilsOfPandaria.findroom2(px, py)
+				local color = ExRT.F.classColorByGUID(UnitGUID(unitID))
+				local ctime_ = ExRT.F.GetEncounterTime() or 0
+				print(format("%d:%02d",ctime_/60,ctime_%60).." |c"..color..name.."|r ".. L.BossmodsSpoilsofPandariaOpensBox .." "..SpoilsOfPandaria.roomNames[room])
+			end
+		end
+	end
+end
+
 function SpoilsOfPandaria:Load()
 	if SpoilsOfPandaria.mainframe then return end
 	SpoilsOfPandaria.mainframe = CreateFrame("Frame","ExRTBossmodsSpoilsOfPandaria",UIParent)
@@ -1757,7 +1774,7 @@ function Thogar:Load()
 
 	Thogar.mainframe.Background = Thogar.mainframe:CreateTexture(nil, "BACKGROUND")
 	--Thogar.mainframe.Background:SetTexture(.4,.4,.4,.7)
-	Thogar.mainframe.Background:SetTexture(1,1,1,1)
+	Thogar.mainframe.Background:SetColorTexture(1,1,1,1)
 	Thogar.mainframe.Background:SetAllPoints()
 	Thogar.mainframe.Background:SetGradientAlpha("VERTICAL", 53/255, 53/255, 53/255, .8, 26/255, 26/255, 26/255, .8)
 	--Thogar.mainframe.Background:SetGradientAlpha("VERTICAL", 0/255, 0/255, 0/255, .7, 63/255, 63/255, 63/255, .7)
@@ -1772,7 +1789,7 @@ function Thogar:Load()
 		Thogar.mainframe.lines[i].time = ELib:Text(Thogar.mainframe.lines[i]):Size(50,20):Point(135,0):Font("Interface\\AddOns\\ExRT\\media\\Glametrix.otf",18):Color(1,1,1):Shadow()
 
 		Thogar.mainframe.lines[i].g = Thogar.mainframe.lines[i]:CreateTexture(nil, "BACKGROUND")
-		Thogar.mainframe.lines[i].g:SetTexture(1,1,1,1)
+		Thogar.mainframe.lines[i].g:SetColorTexture(1,1,1,1)
 		Thogar.mainframe.lines[i].g:SetAllPoints()
 		Thogar.mainframe.lines[i].g:SetGradientAlpha("HORIZONTAL", 255/255, 55/255, 55/255, .8, 255/255, 55/255, 55/255, 0)
 		Thogar.mainframe.lines[i].g:Hide()
@@ -2125,7 +2142,7 @@ function Iskar:Load()
 	end
 	frame.back = frame:CreateTexture(nil, "BACKGROUND",nil,-7)
 	frame.back:SetAllPoints()
-	frame.back:SetTexture(0,0,0,.6)
+	frame.back:SetColorTexture(0,0,0,.6)
 	
 	frame:EnableMouse(true)
 	frame:SetMovable(true)
@@ -2172,7 +2189,7 @@ function Iskar:Load()
 			local eyeOfAnzu = UnitAura(name,buffName_eyeOfAnzu)
 			if eyeOfAnzu then
 				if self.state ~= 20 then
-					self.back:SetTexture(.5,.1,.5,.9)
+					self.back:SetColorTexture(.5,.1,.5,.9)
 					self.state = 20
 				end
 				return
@@ -2180,13 +2197,13 @@ function Iskar:Load()
 			local isWindDebuff = UnitAura(name,debuffName_wind,nil,"HARMFUL")
 			if isWindDebuff then
 				if self.state ~= 30 then
-					self.back:SetTexture(1,1,.5,.9)
+					self.back:SetColorTexture(1,1,.5,.9)
 					self.state = 30
 				end
 				return
 			end
 			if self.state ~= 10 then
-				self.back:SetTexture(.5,1,.5,.9)
+				self.back:SetColorTexture(.5,1,.5,.9)
 				self.state = 10
 			end
 			return
@@ -2195,19 +2212,19 @@ function Iskar:Load()
 			local eyeOfAnzu = UnitAura(name,buffName_eyeOfAnzu)
 			if eyeOfAnzu then
 				if self.state ~= 20 then
-					self.back:SetTexture(.5,.1,.5,.9)
+					self.back:SetColorTexture(.5,.1,.5,.9)
 					self.state = 20
 				end
 				return
 			end
 			if self.isHealer then
 				if self.state ~= 10 then
-					self.back:SetTexture(.5,1,.5,.9)
+					self.back:SetColorTexture(.5,1,.5,.9)
 					self.state = 10
 				end
 			else
 				if self.state ~= 0 then
-					self.back:SetTexture(0,0,0,.5)
+					self.back:SetColorTexture(0,0,0,.5)
 					self.state = 0
 				end
 			end
@@ -2217,19 +2234,19 @@ function Iskar:Load()
 			local eyeOfAnzu = UnitAura(name,buffName_eyeOfAnzu)
 			if eyeOfAnzu then
 				if self.state ~= 20 then
-					self.back:SetTexture(.5,.1,.5,.9)
+					self.back:SetColorTexture(.5,.1,.5,.9)
 					self.state = 20
 				end
 				return
 			end
 			if not self.isHealer then
 				if self.state ~= 10 then
-					self.back:SetTexture(.5,1,.5,.9)
+					self.back:SetColorTexture(.5,1,.5,.9)
 					self.state = 10
 				end
 			else
 				if self.state ~= 0 then
-					self.back:SetTexture(0,0,0,.5)
+					self.back:SetColorTexture(0,0,0,.5)
 					self.state = 0
 				end
 			end
@@ -2239,7 +2256,7 @@ function Iskar:Load()
 			local eyeOfAnzu = UnitAura(name,buffName_eyeOfAnzu)
 			if eyeOfAnzu then
 				if self.state ~= 20 then
-					self.back:SetTexture(.5,.1,.5,.9)
+					self.back:SetColorTexture(.5,.1,.5,.9)
 					self.state = 20
 				end
 				return
@@ -2256,12 +2273,12 @@ function Iskar:Load()
 			end
 			if isCorrupted then
 				if self.state ~= 10 then
-					self.back:SetTexture(.5,1,.5,.9)
+					self.back:SetColorTexture(.5,1,.5,.9)
 					self.state = 10
 				end
 			else
 				if self.state ~= 0 then
-					self.back:SetTexture(0,0,0,.5)
+					self.back:SetColorTexture(0,0,0,.5)
 					self.state = 0
 				end
 			end
@@ -2270,7 +2287,7 @@ function Iskar:Load()
 		local isWindDebuff = UnitAura(name,debuffName_wind,nil,"HARMFUL")
 		if isWindDebuff then
 			if self.state ~= 10 then
-				self.back:SetTexture(.5,1,.5,.9)
+				self.back:SetColorTexture(.5,1,.5,.9)
 				self.state = 10
 			end
 			return
@@ -2278,7 +2295,7 @@ function Iskar:Load()
 		local eyeOfAnzu = UnitAura(name,buffName_eyeOfAnzu)
 		if eyeOfAnzu then
 			if self.state ~= 20 then
-				self.back:SetTexture(.5,.1,.5,.9)
+				self.back:SetColorTexture(.5,.1,.5,.9)
 				self.state = 20
 			end
 			return
@@ -2286,13 +2303,13 @@ function Iskar:Load()
 		local darkBindings = UnitAura(name,debuffName_darkBindings,nil,"HARMFUL")
 		if darkBindings then
 			if self.state ~= 30 then
-				self.back:SetTexture(1,1,.5,.9)
+				self.back:SetColorTexture(1,1,.5,.9)
 				self.state = 30
 			end
 			return
 		end
 		if self.state ~= 0 then
-			self.back:SetTexture(0,0,0,.5)
+			self.back:SetColorTexture(0,0,0,.5)
 			self.state = 0
 		end
 	end
@@ -2350,15 +2367,15 @@ function Iskar:Load()
 			unitFrame.br:SetPoint("BOTTOMLEFT",unitFrame,"BOTTOMRIGHT",-borderSize,borderSize)
 			
 			local cR,cG,cB = ExRT.F.classColorNum(classNames[fastrandom(1,11)])
-			unitFrame.bt:SetTexture(cR,cG,cB,.3)
-			unitFrame.bl:SetTexture(cR,cG,cB,.3)
-			unitFrame.bb:SetTexture(cR,cG,cB,.3)
-			unitFrame.br:SetTexture(cR,cG,cB,.3)
+			unitFrame.bt:SetColorTexture(cR,cG,cB,.3)
+			unitFrame.bl:SetColorTexture(cR,cG,cB,.3)
+			unitFrame.bb:SetColorTexture(cR,cG,cB,.3)
+			unitFrame.br:SetColorTexture(cR,cG,cB,.3)
 			
 			unitFrame.back = unitFrame:CreateTexture(nil, "BACKGROUND")
 			unitFrame.back:SetPoint("TOPLEFT",borderSize,-borderSize)
 			unitFrame.back:SetPoint("BOTTOMRIGHT",-borderSize,borderSize)
-			unitFrame.back:SetTexture(0,0,0,.5)
+			unitFrame.back:SetColorTexture(0,0,0,.5)
 			
 			unitFrame.marker = unitFrame:CreateTexture(nil, "ARTWORK")
 			unitFrame.marker:SetSize(12,12)
@@ -2374,7 +2391,7 @@ function Iskar:Load()
 			unitFrame.stacks = ELib:Text(unitFrame,fastrandom(1,5),10):Size(27,27):Point("TOPRIGHT",-3,-3):Right():Top():Color(1,1,1)
 			
 			if fastrandom(1,100) > 89 then
-				unitFrame.back:SetTexture(.5,1,.5,.9)
+				unitFrame.back:SetColorTexture(.5,1,.5,.9)
 			end
 			
 			if fastrandom(1,100) > 69 then
@@ -2382,7 +2399,7 @@ function Iskar:Load()
 			end
 		end
 	end
-	frame.units[fastrandom(1,30)].back:SetTexture(.5,.1,.5,.9)
+	frame.units[fastrandom(1,30)].back:SetColorTexture(.5,.1,.5,.9)
 	
 	local function Lock(self,isLoad)
 		local parent = self:GetParent()
@@ -2395,13 +2412,13 @@ function Iskar:Load()
 			self.texture:SetTexture("Interface\\AddOns\\ExRT\\media\\un_lock.tga")
 			parent:SetMovable(true)
 			parent:EnableMouse(true)
-			parent.back:SetTexture(0,0,0,.6)
+			parent.back:SetColorTexture(0,0,0,.6)
 		else
 			VExRT.Bossmods.IskarLock = true
 			self.texture:SetTexture("Interface\\AddOns\\ExRT\\media\\lock.tga")
 			parent:SetMovable(false)
 			parent:EnableMouse(false)
-			parent.back:SetTexture(0,0,0,0)
+			parent.back:SetColorTexture(0,0,0,0)
 		end
 	end
 	
@@ -2530,17 +2547,17 @@ function Iskar:Load()
 					if VExRT.Bossmods.IskarDisableClassColors then
 						cR,cG,cB = .1,.1,.1
 					end
-					unitFrame.bt:SetTexture(cR,cG,cB,.3)
-					unitFrame.bl:SetTexture(cR,cG,cB,.3)
-					unitFrame.bb:SetTexture(cR,cG,cB,.3)
-					unitFrame.br:SetTexture(cR,cG,cB,.3)
+					unitFrame.bt:SetColorTexture(cR,cG,cB,.3)
+					unitFrame.bl:SetColorTexture(cR,cG,cB,.3)
+					unitFrame.bb:SetColorTexture(cR,cG,cB,.3)
+					unitFrame.br:SetColorTexture(cR,cG,cB,.3)
 					
 					local stacks = fastrandom(0,5)
 					unitFrame.stacks:SetText(stacks ~= 0 and stacks or "")
 					
-					unitFrame.back:SetTexture(0,0,0,.5)
+					unitFrame.back:SetColorTexture(0,0,0,.5)
 					if fastrandom(1,100) > 89 then
-						unitFrame.back:SetTexture(.5,1,.5,.9)
+						unitFrame.back:SetColorTexture(.5,1,.5,.9)
 					end
 					
 					if fastrandom(1,100) > 69 then
@@ -2575,7 +2592,7 @@ function Iskar:Load()
 					unitFrame:UnregisterAllEvents()
 				end
 			end
-			frame.units[fastrandom(1,30)].back:SetTexture(.5,.1,.5,.9)
+			frame.units[fastrandom(1,30)].back:SetColorTexture(.5,.1,.5,.9)
 			return
 		end
 		local gMax = ExRT.F.GetRaidDiffMaxGroup()
@@ -2603,10 +2620,10 @@ function Iskar:Load()
 						if VExRT.Bossmods.IskarDisableClassColors then
 							cR,cG,cB = .1,.1,.1
 						end
-						unitFrame.bt:SetTexture(cR,cG,cB,.3)
-						unitFrame.bl:SetTexture(cR,cG,cB,.3)
-						unitFrame.bb:SetTexture(cR,cG,cB,.3)
-						unitFrame.br:SetTexture(cR,cG,cB,.3)
+						unitFrame.bt:SetColorTexture(cR,cG,cB,.3)
+						unitFrame.bl:SetColorTexture(cR,cG,cB,.3)
+						unitFrame.bb:SetColorTexture(cR,cG,cB,.3)
+						unitFrame.br:SetColorTexture(cR,cG,cB,.3)
 						OnAuraEvent(unitFrame,nil,name[1])
 						unitFrame:SetAttribute("macrotext", "/target "..ExRT.F.delUnitNameServer(name[1]).."\n/click ExtraActionButton1\n/targetlasttarget")
 						--unitFrame:SetAttribute("macrotext", "/target "..ExRT.F.delUnitNameServer(name[1]).."\n/cast [@target] Восстановление\n/targetlasttarget")
@@ -2827,14 +2844,14 @@ function Iskar:Load()
 			if eyeOfAnzu and not exbf_shown then
 				exbf_shown = true
 				if not VExRT.Bossmods.IskarDisableRedBackground then
-					self.back:SetTexture(1,.1,.1,.4)
+					self.back:SetColorTexture(1,.1,.1,.4)
 				end
 			elseif not eyeOfAnzu and exbf_shown then
 				exbf_shown = false
 				if VExRT.Bossmods.IskarLock then
-					self.back:SetTexture(0,0,0,0)
+					self.back:SetColorTexture(0,0,0,0)
 				else
-					self.back:SetTexture(0,0,0,.6)
+					self.back:SetColorTexture(0,0,0,.6)
 				end
 			end
 			
@@ -3308,7 +3325,7 @@ function Kormrok:Load()
 	local phaseBackground = Kormrok.setupFrame:CreateTexture(nil, "BACKGROUND",nil,2)
 	phaseBackground:SetPoint("TOPLEFT",0,0)
 	phaseBackground:SetPoint("BOTTOMRIGHT",Kormrok.setupFrame,"TOPRIGHT",0,-50)
-	phaseBackground:SetTexture( 1, 1, 1, 1)
+	phaseBackground:SetColorTexture( 1, 1, 1, 1)
 	
 	local phaseOrange = ELib:Icon(Kormrok.setupFrame,"Interface\\Icons\\INV_Bijou_Orange.blp",72,true):Point("CENTER",Kormrok.setupFrame,"BOTTOMLEFT",224,94)
 	phaseOrange.phase = 1
@@ -3991,7 +4008,7 @@ function Archimonde:Load()
 	frame.isEnabled = true
 	
 	frame.back = frame:CreateTexture(nil, "BACKGROUND")
-	frame.back:SetTexture(.7,.7,.7,.4)
+	frame.back:SetColorTexture(.7,.7,.7,.4)
 	frame.back:SetAllPoints()
 	
 	frame.player = frame:CreateTexture(nil, "ARTWORK")
@@ -4551,7 +4568,7 @@ function Archimonde:Load()
 			local countText = 0
 			local isRed = false
 			local onLines = 0
-			self.back:SetTexture(.7,.7,.7,.4)
+			self.back:SetColorTexture(.7,.7,.7,.4)
 
 			local isChains = false
 			
@@ -4648,7 +4665,7 @@ function Archimonde:Load()
 						onLines = onLines + 1
 						if onLines > 0 then
 							isRed = true
-							self.back:SetTexture(1,.7,.7,.4)
+							self.back:SetColorTexture(1,.7,.7,.4)
 						end
 					end
 					
@@ -5648,9 +5665,9 @@ function Gorefiend2:Load()
 				if width > 0 then
 					self.backtimer:SetWidth(width)
 					if barTime > 10 then
-						self.backtimer:SetTexture(1,1,1,.8)
+						self.backtimer:SetColorTexture(1,1,1,.8)
 					else
-						self.backtimer:SetTexture(1,.2,.2,.8)
+						self.backtimer:SetColorTexture(1,.2,.2,.8)
 					end
 					self.backtimer:Show()
 				else
@@ -5736,7 +5753,7 @@ function Gorefiend2:Load()
 	frame:SetMovable(true)
 	frame.texture = frame:CreateTexture(nil, "BACKGROUND")
 	frame.texture:SetAllPoints()
-	frame.texture:SetTexture(0,0,0,.3)
+	frame.texture:SetColorTexture(0,0,0,.3)
 	
 	frame.optionsDropDown = CreateFrame("Frame", "ExRTBossmodsGorefiend2OptionsDropDown", nil, "UIDropDownMenuTemplate")
 	

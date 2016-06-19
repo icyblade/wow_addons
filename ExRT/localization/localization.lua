@@ -197,6 +197,70 @@ for prefix,eID in pairs(zoneEJids) do
 	L[prefix] = EJ_GetInstanceInfo(eID)
 end
 
+local encounterIDtoEJidData = {
+	[1849] = 1706,
+	[1865] = 1725,
+	[1867] = 1731,
+	[1871] = 1751,
+	[1862] = 1762,
+	[1886] = 1761,
+	[1842] = 1713,
+	[1863] = 1732,
+	[1872] = 1743,
+	[1866] = 1737,
+
+	[1853] = 1703,
+	[1841] = 1667,
+	[1873] = 1738,
+	[1854] = 1704,
+	[1876] = 1744,
+	[1877] = 1750,
+	[1864] = 1726,
+
+	[1778] = 1426,
+	[1785] = 1425,
+	[1787] = 1392,
+	[1798] = 1432,
+	[1786] = 1396,
+	[1783] = 1372,
+	[1788] = 1433,
+	[1794] = 1427,
+	[1777] = 1391,
+	[1800] = 1447,
+	[1784] = 1394,
+	[1795] = 1395,
+	[1799] = 1438,
+
+	[1696] = 1202,
+	[1691] = 1161,
+	[1693] = 1155,
+	[1694] = 1122,
+	[1689] = 1123,
+	[1692] = 1147,
+	[1690] = 1154,
+	[1713] = 1162,
+	[1695] = 1203,
+	[1704] = 959,
+
+	[1721] = 1128,
+	[1706] = 971,
+	[1720] = 1196,
+	[1722] = 1195,
+	[1719] = 1148,
+	[1723] = 1153,
+	[1705] = 1197,
+}
+
+local encounterIDtoEJidChache = {
+}
+
+L.bossName = setmetatable({}, {__index=function (t, k)
+	if not encounterIDtoEJidChache[k] then
+		encounterIDtoEJidChache[k] = EJ_GetEncounterInfo(encounterIDtoEJidData[k]) or ""
+	end
+	return encounterIDtoEJidChache[k]
+end})
+
 
 --- Powers names
 L.BossWatcherEnergyType0 = MANA

@@ -2,15 +2,17 @@ local GlobalAddonName, ExRT = ...
 
 ExRT.F.FUNC_FILE_LOADED = true
 
-local UnitName, GetTime = UnitName, GetTime
+local UnitName, GetTime, GetCursorPosition = UnitName, GetTime, GetCursorPosition
 local select, floor, tonumber, tostring, string_sub, string_find, string_len, bit_band, type, unpack, pairs, format, strsplit = select, floor, tonumber, tostring, string.sub, string.find, string.len, bit.band, type, unpack, pairs, format, strsplit
+local string_gsub, string_match = string.gsub, string.match
 local RAID_CLASS_COLORS, COMBATLOG_OBJECT_TYPE_MASK, COMBATLOG_OBJECT_CONTROL_MASK, COMBATLOG_OBJECT_REACTION_MASK, COMBATLOG_OBJECT_AFFILIATION_MASK, COMBATLOG_OBJECT_SPECIAL_MASK = RAID_CLASS_COLORS, COMBATLOG_OBJECT_TYPE_MASK, COMBATLOG_OBJECT_CONTROL_MASK, COMBATLOG_OBJECT_REACTION_MASK, COMBATLOG_OBJECT_AFFILIATION_MASK, COMBATLOG_OBJECT_SPECIAL_MASK
 
 do
 	local antiSpamArr = {}
 	function ExRT.F.AntiSpam(numantispam,addtime)
-		if not antiSpamArr[numantispam] or antiSpamArr[numantispam] < GetTime() then
-			antiSpamArr[numantispam] = GetTime() + addtime
+		local t = GetTime()
+		if not antiSpamArr[numantispam] or antiSpamArr[numantispam] < t then
+			antiSpamArr[numantispam] = t + addtime
 			return true
 		else
 			return false
@@ -54,14 +56,14 @@ end
 
 function ExRT.F.clearTextTag(text,SpellLinksEnabled)
 	if text then
-		text = string.gsub(text,"|c........","")
-		text = string.gsub(text,"|r","")
-		text = string.gsub(text,"|T.-:0|t ","")
-		text = string.gsub(text,"|HExRT:.-|h(.-)|h","%1")
+		text = string_gsub(text,"|c........","")
+		text = string_gsub(text,"|r","")
+		text = string_gsub(text,"|T.-:0|t ","")
+		text = string_gsub(text,"|HExRT:.-|h(.-)|h","%1")
 		if SpellLinksEnabled then
-			text = string.gsub(text,"|H(spell:.-)|h(.-)|h","|cff71d5ff|H%1|h[%2]|h|r")
+			text = string_gsub(text,"|H(spell:.-)|h(.-)|h","|cff71d5ff|H%1|h[%2]|h|r")
 		else
-			text = string.gsub(text,"|H(spell:.-)|h(.-)|h","%2")
+			text = string_gsub(text,"|H(spell:.-)|h(.-)|h","%2")
 		end
 		return text
 	end
@@ -191,11 +193,11 @@ end
 
 function ExRT.F:LockMove(isLocked,touchTexture,dontTouchMouse)
 	if isLocked then
-		if touchTexture then touchTexture:SetTexture(0,0,0,0.3) end
+		if touchTexture then touchTexture:SetColorTexture(0,0,0,0.3) end
 		self:SetMovable(true)
 		if not dontTouchMouse then self:EnableMouse(true) end
 	else
-		if touchTexture then touchTexture:SetTexture(0,0,0,0) end
+		if touchTexture then touchTexture:SetColorTexture(0,0,0,0) end
 		self:SetMovable(false)
 		if not dontTouchMouse then self:EnableMouse(false) end
 	end
@@ -241,10 +243,7 @@ function ExRT.F.NumberInRange(i,mi,mx,incMi,incMx)
 end
 
 function ExRT.F.delUnitNameServer(unitName)
-	local dashPos = string_find(unitName,"%-") 
-	if dashPos then 
-		unitName = string_sub(unitName,1,dashPos-1) 
-	end
+	unitName = strsplit("-",unitName)
 	return unitName
 end
 
@@ -269,7 +268,7 @@ do
 	}
 	function ExRT.F.GetUnitTypeByGUID(guid)
 		if guid then
-			local _type = guid:match("^([A-z]+)%-")
+			local _type = string_match(guid,"^([A-z]+)%-")
 			if _type then
 				return old_types[_type]
 			end
@@ -404,12 +403,8 @@ function ExRT.F.classIconInText(class,size)
 end
 
 function ExRT.F.GUIDtoID(guid)
-	if not guid then 
-		return 0 
-	else
-		local id = guid:match("[^%-]+%-%d+%-%d+%-%d+%-%d+%-(%d+)%-%w+")
-		return tonumber(id or 0)
-	end
+	local type,_,serverID,instanceID,zoneUID,id,spawnID = strsplit("-", guid or "")
+	return tonumber(id or 0)
 end
 
 function ExRT.F.table_copy(table1,table2)
@@ -528,29 +523,15 @@ end
 
 function ExRT.F.IsBonusOnItem(link,bonus)
 	if link then 
-		local bonuses = link:match("item:%d+:[0-9%-]+:[0-9%-]+:[0-9%-]+:[0-9%-]+:[0-9%-]+:[0-9%-]+:[0-9%-]+:[0-9%-]+:[0-9%-]+:[0-9%-]+:[0-9%-]+:[0-9%-]+:([0-9:]+)")
-		if bonuses then
+		local _,itemID,enchant,gem1,gem2,gem3,gem4,suffixID,uniqueID,level,specializationID,upgradeType,instanceDifficultyID,numBonusIDs,restLink = strsplit(":",link,15)
+		if restLink then
+			local bonuses = {strsplit(":",strsplit("|h",restLink),nil)}
+			numBonusIDs = tonumber(numBonusIDs) or 0
 			local isTable = type(bonus) == "table"
-			for bonusID in string.gmatch(bonuses, "%d+") do
-				bonusID = tonumber(bonusID or 0)
+			for i = 1, numBonusIDs do
+				local bonusID = tonumber(bonuses[i]) or -999
 				if (isTable and bonus[bonusID]) or (not isTable and bonusID == bonus) then
 					return true
-				end
-			end
-		end
-	end
-end
-if ExRT.is7 then
-	function ExRT.F.IsBonusOnItem(link,bonus)
-		if link then 
-			local bonuses = link:match("item:%d+:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:([0-9:]*)")
-			if bonuses then
-				local isTable = type(bonus) == "table"
-				for bonusID in string.gmatch(bonuses, "%d+") do
-					bonusID = tonumber(bonusID or 0)
-					if (isTable and bonus[bonusID]) or (not isTable and bonusID == bonus) then
-						return true
-					end
 				end
 			end
 		end
@@ -769,7 +750,8 @@ do
 	local activeName = ""
 	local UpdateLines = nil
 	local function CreateChatWindow()
-		chatWindow = CreateFrame("Frame","ExRTToChatWindow",UIParent,"ExRTDialogModernTemplate")
+		chatWindow = ELib:Template("ExRTDialogModernTemplate",UIParent)
+		_G["ExRTToChatWindow"] = chatWindow
 		chatWindow:SetSize(400,300)
 		chatWindow:SetPoint("CENTER")
 		chatWindow:SetFrameStrata("DIALOG")

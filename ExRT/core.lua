@@ -1,6 +1,22 @@
---	18:17 24.03.2016
+--	20:56 24.05.2016
 
 --[[
+3660
+This version works on both clients: Live (6.2.4) and Beta (7.0.3)
+New mini module: Who pulled (only for bosses)
+Note: added dropdown for autoload note on boss
+Note: added option "Save received notes" (but no support if note was sended by player with older ExRT version)
+Note: UI changes. All options moved to another tab
+Raid cooldowns: added option "Smooth color change"
+Raid cooldowns: added option "One spell per column"
+Raid cooldowns: smooth bars animations
+Encounters: sorted by instance
+Encounters: tolal time spend on boss instead longest wipe column
+Encounters: added raid avg ilvl tracking (for new records)
+Minor UI improvements
+Minor updates
+Minor fixes
+
 3640
 Invite tools: update for 6.2.4 (fixed invite via bnet whisper)
 Raid Attendance: added filter "only this char"
@@ -40,7 +56,7 @@ dpt for marks bar
 ]]
 local GlobalAddonName, ExRT = ...
 
-ExRT.V = 3640
+ExRT.V = 3660
 ExRT.T = "R"
 ExRT.is7 = false		--> Legion (7.x) Client
 

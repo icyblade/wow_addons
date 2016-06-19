@@ -635,9 +635,9 @@ function module.options:Load()
 		end
 	end)
 	
-	self.TabViewOptions = ELib:OneTab(self):Size(650,115):Point("TOP",0,-130)
+	self.TabViewOptions = ELib:OneTab(self):Size(648,105):Point("TOP",0,-135)
 	
-	self.chkEnable1 = ELib:Check(self.TabViewOptions,L.marksbarshowmarks,VExRT.MarksBar.Show[1]):Point(10,-10):OnClick(function(self)
+	self.chkEnable1 = ELib:Check(self.TabViewOptions,L.marksbarshowmarks,VExRT.MarksBar.Show[1]):Point(5,-5):OnClick(function(self)
 		if self:GetChecked() then
 			VExRT.MarksBar.Show[1]=true
 		else
@@ -646,7 +646,7 @@ function module.options:Load()
 		modifymarkbars()
 	end)
 	
-	self.reverseMarksOrderChk = ELib:Check(self.TabViewOptions,L.MarksBarReverse,VExRT.MarksBar.MarksReverse):Point(300,-10):OnClick(function(self)
+	self.reverseMarksOrderChk = ELib:Check(self.TabViewOptions,L.MarksBarReverse,VExRT.MarksBar.MarksReverse):Point(300,-5):OnClick(function(self)
 		if self:GetChecked() then
 			VExRT.MarksBar.MarksReverse = true
 		else
@@ -655,7 +655,7 @@ function module.options:Load()
 		modifymarkbars()
 	end)
 	
-	self.chkEnable2 = ELib:Check(self.TabViewOptions,L.marksbarshowpermarks,VExRT.MarksBar.Show[2]):Point(10,-35):OnClick(function(self)
+	self.chkEnable2 = ELib:Check(self.TabViewOptions,L.marksbarshowpermarks,VExRT.MarksBar.Show[2]):Point(5,-30):OnClick(function(self)
 		if self:GetChecked() then
 			VExRT.MarksBar.Show[2]=true
 		else
@@ -664,7 +664,7 @@ function module.options:Load()
 		modifymarkbars()
 	end)
 	
-	self.chkEnable3 = ELib:Check(self.TabViewOptions,L.marksbarshowfloor,VExRT.MarksBar.Show[3]):Point(10,-60):OnClick(function(self)
+	self.chkEnable3 = ELib:Check(self.TabViewOptions,L.marksbarshowfloor,VExRT.MarksBar.Show[3]):Point(5,-55):OnClick(function(self)
 		if self:GetChecked() then
 			VExRT.MarksBar.Show[3]=true
 		else
@@ -674,23 +674,23 @@ function module.options:Load()
 	end)
 	
 	
-	self.chkEnable3kindhtml = ELib:Text(self.TabViewOptions,L.marksbarWMView,11):Size(100,20):Point(300,-60)
+	self.chkEnable3kindhtml = ELib:Text(self.TabViewOptions,L.marksbarWMView,11):Size(100,20):Point(300,-55)
 	
-	self.chkEnable3kind1 = ELib:Radio(self.TabViewOptions,"1",VExRT.MarksBar.wmKind):Point(380,-63):OnClick(function(self) 
+	self.chkEnable3kind1 = ELib:Radio(self.TabViewOptions,"1",VExRT.MarksBar.wmKind):Point(380,-63+5):OnClick(function(self) 
 		self:SetChecked(true)
 		module.options.chkEnable3kind2:SetChecked(false)
 		VExRT.MarksBar.wmKind = true
 		modifymarkbars()
 	end)
 	
-	self.chkEnable3kind2 = ELib:Radio(self.TabViewOptions,"2",not VExRT.MarksBar.wmKind):Point(420,-63):OnClick(function(self) 
+	self.chkEnable3kind2 = ELib:Radio(self.TabViewOptions,"2",not VExRT.MarksBar.wmKind):Point(420,-63+5):OnClick(function(self) 
 		self:SetChecked(true)
 		module.options.chkEnable3kind1:SetChecked(false)
 		VExRT.MarksBar.wmKind = nil
 		modifymarkbars()
 	end)
 	
-	self.reverseWMMarksOrderChk = ELib:Check(self.TabViewOptions,L.MarksBarReverse,VExRT.MarksBar.MarksReverse):Point(480,-60):OnClick(function(self)
+	self.reverseWMMarksOrderChk = ELib:Check(self.TabViewOptions,L.MarksBarReverse,VExRT.MarksBar.MarksReverse):Point(480,-55):OnClick(function(self)
 		if self:GetChecked() then
 			VExRT.MarksBar.WMarksReverse = true
 		else
@@ -699,7 +699,7 @@ function module.options:Load()
 		modifymarkbars()
 	end)
 	
-	self.chkEnable4 = ELib:Check(self.TabViewOptions,L.marksbarshowrcpull,VExRT.MarksBar.Show[4]):Point(10,-85):OnClick(function(self)
+	self.chkEnable4 = ELib:Check(self.TabViewOptions,L.marksbarshowrcpull,VExRT.MarksBar.Show[4]):Point(5,-80):OnClick(function(self)
 		if self:GetChecked() then
 			VExRT.MarksBar.Show[4]=true
 		else

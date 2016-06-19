@@ -3,11 +3,10 @@
 ## Author: ykiigor
 ## Notes: Exorsus Raid Tools
 ## SavedVariables: VExRT
-## Version: 3630
+## Version: 3660
 core.lua
 Functions.lua
 embeds.xml
-Templates.xml
 ExLib.lua
 localization\localization.ru.lua
 localization\localization.en.lua
@@ -32,6 +31,7 @@ Coins.lua
 RaidAttendance.lua
 Bossmods.lua
 Encounter.lua
+WhoPulled.lua
 Pets.lua
 Arrow.lua
 AutoLogging.lua

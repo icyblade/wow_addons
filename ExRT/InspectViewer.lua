@@ -366,7 +366,7 @@ function module.options:Load()
 		end},
 	}
 	
-	self.chkItemsTrack = CreateFrame("Frame",nil,self,"ExRTTrackingButtonModernTemplate")  
+	self.chkItemsTrack = ELib:Template("ExRTTrackingButtonModernTemplate",self)  
 	self.chkItemsTrack:SetPoint("TOPLEFT", 130, -28)
 	self.chkItemsTrack:SetScale(.8)
 	self.chkItemsTrack.Button:SetScript("OnClick",function (this)
@@ -496,11 +496,9 @@ function module.options:Load()
 	
 		
 	self.borderList = CreateFrame("Frame",nil,self)
-	self.borderList:SetSize(650,module.db.perPage*30+2)
+	self.borderList:SetSize(648,module.db.perPage*30)
 	self.borderList:SetPoint("TOP", 0, -50)
-	self.borderList:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",edgeFile = ExRT.F.defBorder,tile = false,edgeSize = 8})
-	self.borderList:SetBackdropColor(0,0,0,0.3)
-	self.borderList:SetBackdropBorderColor(.24,.25,.30,1)
+	ELib:Border(self.borderList,2,.24,.25,.30,1)
 	
 	self.borderList:SetScript("OnMouseWheel",function (self,delta)
 		if delta > 0 then
@@ -510,7 +508,7 @@ function module.options:Load()
 		end
 	end)
 	
-	self.ScrollBar = ELib:ScrollBar(self.borderList):Size(16,module.db.perPage*30-7):Point("TOPRIGHT",-4,-4):Range(1,20)
+	self.ScrollBar = ELib:ScrollBar(self.borderList):Size(16,0):Point("TOPRIGHT",-3,-3):Point("BOTTOMRIGHT",-3,3):Range(1,20)
 	
 	local function IsItemHasNotGem(link)
 		if link then
@@ -982,7 +980,7 @@ function module.options:Load()
 		local line = CreateFrame("Frame",nil,self.borderList)
 		self.lines[i] = line
 		line:SetSize(625,30)
-		line:SetPoint("TOPLEFT",0,-(i-1)*30-1)
+		line:SetPoint("TOPLEFT",0,-(i-1)*30)
 		
 		line.name = ELib:Text(line,"Name",11):Color():Point(5,0):Size(94,30):Shadow()
 		
@@ -996,18 +994,32 @@ function module.options:Load()
 		
 		line.items = {}
 		for j=1,16 do
-			local item = ELib:Icon(line,nil,22,true):Point(210+(24*(j-1)),-4)
+			local item = ELib:Icon(line,nil,21,true):Point("LEFT",210+(24*(j-1)),0)
 			line.items[j] = item
 			item:SetScript("OnEnter",Lines_ItemIcon_OnEnter)
 			item:SetScript("OnLeave",Lines_ItemIcon_OnLeave)
 			item:SetScript("OnClick",Lines_ItemIcon_OnClick)
 			
+			--[[
 			item.border = CreateFrame("Frame",nil,item)
 			item.border:SetPoint("CENTER",0,0)
 			item.border:SetSize(22+8,22+8)
 			item.border:SetBackdrop(IconBackDrop)
 			item.border:SetBackdropColor(1,0,0,.4)
 			item.border:SetBackdropBorderColor(1,0,0,1)
+			]]
+			
+			item.texture:SetTexCoord(.1,.9,.1,.9)
+
+			item.border = CreateFrame("Frame",nil,item)
+			item.border:SetPoint("TOPLEFT")
+			item.border:SetPoint("BOTTOMRIGHT")			
+			
+			ELib:Border(item.border,1,.12,.13,.15,1)
+			
+			item.border.background = item.border:CreateTexture(nil,"OVERLAY")
+			item.border.background:SetPoint("TOPLEFT")
+			item.border.background:SetPoint("BOTTOMRIGHT")
 			
 			item.border:Hide()
 		end
@@ -1028,10 +1040,10 @@ function module.options:Load()
 		line.otherInfoTooltipFrame:SetScript("OnEnter",otherInfoHover)
 		line.otherInfoTooltipFrame:SetScript("OnLeave",GameTooltip_Hide)
 		
-		line.back = line:CreateTexture(nil, "BACKGROUND")
-		line.back:SetPoint("TOPLEFT",2,-1)
+		line.back = line:CreateTexture(nil, "BACKGROUND", nil, -3)
+		line.back:SetPoint("TOPLEFT",0,0)
 		line.back:SetPoint("BOTTOMRIGHT",0,0)
-		line.back:SetTexture( 1, 1, 1, 1)
+		line.back:SetColorTexture(1, 1, 1, 1)
 		line.back:SetGradientAlpha("HORIZONTAL", 0, 0, 0, 1, 0, 0, 0, 0)
 	end
 	self.raidItemLevel = ELib:Text(self,"",12):Size(500,20):Point("TOPLEFT",self.borderList,"BOTTOMLEFT",3,-2):Shadow():Color()
@@ -1046,12 +1058,19 @@ function module.options:Load()
 		if color < 0 then
 			color = 0
 		end
+		local colorR = color / 1.5
 		for i=1,module.db.perPage do
 			for j=1,16 do
 				local frame = self.lines[i].items[j].border
 				if frame:IsVisible() then
-					frame:SetBackdropBorderColor(1,color,color,1)
-					frame:SetBackdropColor(1,color,color,1)
+					--frame:SetBackdropBorderColor(1,color,color,1)
+					--frame:SetBackdropColor(1,color,color,1)
+					frame.background:SetColorTexture(1,color,color,.4)
+					
+					frame.border_top:SetColorTexture(.7,colorR,colorR,1)
+					frame.border_bottom:SetColorTexture(.7,colorR,colorR,1)
+					frame.border_left:SetColorTexture(.7,colorR,colorR,1)
+					frame.border_right:SetColorTexture(.7,colorR,colorR,1)
 				end
 			end
 		end
@@ -1060,7 +1079,7 @@ function module.options:Load()
 		end
 	end)
 	
-	self.moreInfoButton = ELib:Button(self,L.InspectViewerMoreInfo):Size(150,20):Point("TOPRIGHT",self.borderList,"BOTTOMRIGHT",0,-1):OnClick(function() module.options.moreInfoWindow:Show() end)
+	self.moreInfoButton = ELib:Button(self,L.InspectViewerMoreInfo):Size(150,20):Point("TOPRIGHT",self.borderList,"BOTTOMRIGHT",2,-4):OnClick(function() module.options.moreInfoWindow:Show() end)
 	
 	self.moreInfoWindow = ELib:Popup(L.InspectViewerMoreInfo):Size(250,170)
 	self.moreInfoWindow:SetScript("OnShow",function (self)
@@ -1153,8 +1172,51 @@ function module.options:Load()
 	self:showPage()
 end
 
+function ExRT.F:RaidItemLevel()
+	local n = GetNumGroupMembers() or 0
+	if GetNumGroupMembers() == 0 then
+		local name = UnitName('player')
+		if module.db.inspectDB[name] and module.db.inspectDB[name].ilvl and module.db.inspectDB[name].ilvl >= 1 then
+			return module.db.inspectDB[name].ilvl
+		end
+		return 0
+	end
+	local isRaid = IsInRaid()
+	local gMax = ExRT.F.GetRaidDiffMaxGroup()
+	local ilvl = 0
+	local countPeople = 0
+	if not isRaid then
+		for i=1,n do
+			local unit = "party"..i
+			if i==n then unit = "player" end
+			local name = UnitName(unit)
+			if name then
+				if module.db.inspectDB[name] and module.db.inspectDB[name].ilvl and module.db.inspectDB[name].ilvl >= 1 then
+					countPeople = countPeople + 1
+					ilvl = ilvl + module.db.inspectDB[name].ilvl
+				end
+			end
+		end
+	else
+		for i=1,n do
+			local name,_,subgroup = GetRaidRosterInfo(i)
+			if name and subgroup <= gMax then
+				if module.db.inspectDB[name] and module.db.inspectDB[name].ilvl and module.db.inspectDB[name].ilvl >= 1 then
+					countPeople = countPeople + 1
+					ilvl = ilvl + module.db.inspectDB[name].ilvl
+				end
+			end
+		end
+	end
+	if countPeople == 0 then
+		return 0
+	end
+	return ilvl / countPeople
+end
+
 function module:slash(arg)
 	if arg == "raid" then
 		ExRT.Options:Open(module.options)
 	end
 end
+
