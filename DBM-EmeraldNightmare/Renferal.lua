@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1744, "DBM-EmeraldNightmare", nil, 768)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 15011 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15012 $"):sub(12, -3))
 mod:SetCreatureID(106087)
 mod:SetEncounterID(1876)
 mod:SetZone()
@@ -131,7 +131,7 @@ local function findDebuff(self, spellName)
 		end
 	end
 	if found == 0 and scanTime < 6 then--Scan for 3 sec, not forever.
-		self:Schedule(0.5, findDebuff, spellName)--Check again if we didn't find any yet
+		self:Schedule(0.5, findDebuff, self, spellName)--Check again if we didn't find any yet
 	end
 end
 
