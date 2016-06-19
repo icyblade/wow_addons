@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [5.4.0] - 2016-06-19
+### update ExRT
+### add GatherMate2
+
 ## [5.3.3] - 2016-06-18
 ### update for raid test
 
