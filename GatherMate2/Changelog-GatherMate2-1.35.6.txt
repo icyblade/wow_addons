@@ -1,0 +1,13 @@
+tag 1.35.6
+27334c9a4ee9cfec4a39299d2f75c5e15b705921
+Hendrik Leppkes <h.leppkes@gmail.com>
+2016-03-07 15:32:43 +0100
+
+Tag as 1.35.6
+
+
+--------------------
+
+Hendrik Leppkes:
+	- Add Mixed Ocean School
+	Fixes issue 135
