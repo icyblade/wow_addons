@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [5.4.1] - 2016-06-19
+### update DBM
+
 ## [5.4.0] - 2016-06-19
 ### update ExRT
 ### add GatherMate2
