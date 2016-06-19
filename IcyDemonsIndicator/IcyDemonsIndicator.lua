@@ -17,7 +17,7 @@ WarlockDemons.settings = {
     relativeFrame = 'UIParent',
     relativePoint = 'TOPLEFT',
     ofsx = 0,
-    ofsy = -40,
+    ofsy = -80,
     color = {r=1, g=0, b=0, a=1},
     grow = 'DOWN', -- UP not supported yet
 }
