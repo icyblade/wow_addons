@@ -194,7 +194,7 @@ local channelingTicks = {
 	[GetSpellInfo(5740)] = 6, -- rain of fire
 	-- druid
 	[GetSpellInfo(740)] = 4, -- Tranquility
-	[GetSpellInfo(16914)] = 10, -- Hurricane
+	-- [GetSpellInfo(16914)] = 10, -- Hurricane -- ICY: removed
 	-- [GetSpellInfo(106996)] = 10, -- Astral Storm
 	-- priest
 	[GetSpellInfo(15407)] = 3, -- mind flay
