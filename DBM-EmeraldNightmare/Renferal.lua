@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1744, "DBM-EmeraldNightmare", nil, 768)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 15012 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15037 $"):sub(12, -3))
 mod:SetCreatureID(106087)
 mod:SetEncounterID(1876)
 mod:SetZone()
@@ -10,27 +10,23 @@ mod:SetUsedIcons(1)
 
 mod:RegisterCombat("combat")
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 212707 210948 210547 215288 210308 210326",
+	"SPELL_CAST_START 212707 210948 210547 215288 210308 210326 215582",
 	"SPELL_CAST_SUCCESS 210864 215443 218630",
-	"SPELL_AURA_APPLIED 212514 210850 215449 218831 218144 218629",
-	"SPELL_AURA_APPLIED_DOSE 212512",
+	"SPELL_AURA_APPLIED 212514 210850 215449 218831 218144 218629 215582",
+	"SPELL_AURA_APPLIED_DOSE 212512 215582",
 	"SPELL_AURA_REMOVED 210850 218144 218629",
 	"SPELL_PERIODIC_DAMAGE 213124",
 	"SPELL_PERIODIC_MISSED 213124",
 	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
---"<8.27 16:55:29> [CLEU] SPELL_AURA_APPLIED##nil#Player-970-00081245#Sharik#215307#Web of Pain#DEBUFF#nil", -- [258]
---"<8.27 16:55:29> [CLEU] SPELL_AURA_APPLIED##nil#Player-970-00015E78#Kabrdr#215300#Web of Pain#DEBUFF#nil", -- [259]
---"<8.27 16:55:29> [CLEU] SPELL_AURA_APPLIED##nil#Player-970-00058E86#Dissconnect#215307#Web of Pain#DEBUFF#nil", -- [260]
---"<8.27 16:55:29> [CLEU] SPELL_AURA_APPLIED##nil#Player-970-000864D0#Ilneval#215300#Web of Pain#DEBUFF#nil", -- [261]
---TODO: Does web of pain actually need to annouce target. It's only cast a single time entire fight
 --TODO: Does raking talons need anything?
 --TODO: See if debuff scan works to compensate for necrotic venom targetting not showing in combat log. When/if fixed, add range frame and SAY
 --TODO, Figure out real razorwing timer, right now it's screwed up because most people avoided boss during roc phase (boss doesn't cast it if no one near by)
 --TODO, Shimering Feather (212993) also missing from combat log. Will add tracking for this when blizzard revises fight when/if they fix it. If they don't, UNIT_AURA it is!
---TODO, is violent winds timer.
---TODO, tangled webs warnings/timers?
+--TODO, is violent winds timer if I get any roc logs
+--TODO, tangled webs warnings/timers if I can find any way to detect it, right now i can't.
+--TODO, see if spider form is still detectable
 --Spider Form
 local warnSpiderForm				= mod:NewSpellAnnounce(210326, 2)
 local warnFeedingTime				= mod:NewSpellAnnounce(212364, 3)
@@ -51,8 +47,6 @@ local specWarnWebWrap				= mod:NewSpecialWarningStack(212512, nil, 5)
 local specWarnNecroticVenom			= mod:NewSpecialWarningMoveAway(218831, nil, nil, nil, 1, 2)
 local yellNecroticVenom				= mod:NewFadesYell(218831)
 local yellViolentWinds				= mod:NewYell(218144)
---local specWarnWebOfPain			= mod:NewSpecialWarningDefensive(215288, nil, nil, nil, 1, 2)
---local specWarnWebOfPainOther		= mod:NewSpecialWarningTaunt(215288, nil, nil, nil, 1, 2)
 --Roc Form
 local specWarnGatheringClouds		= mod:NewSpecialWarningSpell(212707, nil, nil, nil, 1, 2)
 local specWarnDarkStorm				= mod:NewSpecialWarningMoveTo(210948, nil, DBM_CORE_AUTO_SPEC_WARN_OPTIONS.spell:format(210948), nil, 1, 2)
@@ -60,36 +54,38 @@ local specWarnTwistingShadows		= mod:NewSpecialWarningMoveAway(210864, nil, nil,
 local specWarnTwistingShadowsMove	= mod:NewSpecialWarningMove(210864, nil, nil, nil, 1, 2)--For expires. visual is WAY off from debuff, if you wait for visual you'll die to this
 local yellTwistingShadows			= mod:NewFadesYell(210864)
 local specWarnRazorWing				= mod:NewSpecialWarningDodge(210547, nil, nil, nil, 3, 2)
+local specWarnRakingTalon			= mod:NewSpecialWarningDefensive(215582, nil, nil, nil, 1, 2)
+local specWarnRakingTalonOther		= mod:NewSpecialWarningTaunt(215582, nil, nil, nil, 1, 2)
 ----Mythic
 local specViolentWinds				= mod:NewSpecialWarningYou(218144, nil, nil, nil, 3, 2)
 local specWarnViolentWindsOther		= mod:NewSpecialWarningTaunt(218144, nil, nil, nil, 1, 2)
 
 --Spider Form
 mod:AddTimerLine(GetSpellInfo(210326))
-local timerSpiderFormCD				= mod:NewNextTimer(70, 210326, nil, nil, nil, 6)
-local timerFeedingTimeCD			= mod:NewNextTimer(15.5, 212364, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
-local timerNecroticVenomCD			= mod:NewNextTimer(26.5, 215443, nil, nil, nil, 3)--This only targets ranged, but melee/tanks need to be sure to also move away from them
+local timerSpiderFormCD				= mod:NewNextTimer(127, 210326, nil, nil, nil, 6)
+local timerFeedingTimeCD			= mod:NewNextCountTimer(50, 212364, nil, nil, nil, 1, nil, DBM_CORE_DAMAGE_ICON)
+local timerNecroticVenomCD			= mod:NewNextCountTimer(21.9, 215443, nil, nil, nil, 3)--This only targets ranged, but melee/tanks need to be sure to also move away from them
 local timerNightmareSpawnCD			= mod:NewNextTimer(10, 218630, nil, nil, nil, 1, nil, DBM_CORE_HEROIC_ICON)
 --Roc Form
 mod:AddTimerLine(GetSpellInfo(210308))
 local timerRocFormCD				= mod:NewNextTimer(47, 210308, nil, nil, nil, 6)
-local timerGatheringCloudsCD		= mod:NewNextTimer(6, 212707, nil, nil, nil, 2)
-local timerDarkStormCD				= mod:NewNextTimer(16, 210948, nil, nil, nil, 2)
+local timerGatheringCloudsCD		= mod:NewNextTimer(16, 212707, nil, nil, nil, 2)
+local timerDarkStormCD				= mod:NewNextTimer(26, 210948, nil, nil, nil, 2)
 local timerTwistingShadowsCD		= mod:NewNextCountTimer(21.5, 210864, nil, nil, nil, 3)
-local timerRazorWingCD				= mod:NewCDTimer(17, 210547, nil, nil, nil, 3)--Needs more timer data when fight done properly
+local timerRazorWingCD				= mod:NewNextTimer(32.5, 210547, nil, nil, nil, 3)--Needs more timer data when fight done properly
+local timerRakingTalonsCD			= mod:NewCDCountTimer(32, 215582, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)
 --local timerViolentWindsCD			= mod:NewAITimer(6, 218144, nil, nil, nil, 5, nil, DBM_CORE_HEROIC_ICON..DBM_CORE_TANK_ICON)
 
 local berserkTimer					= mod:NewBerserkTimer(540)
 
 local countdownPhase				= mod:NewCountdown(30, 155005)
 --Spider Form
-local countdownNecroticVenom		= mod:NewCountdown("AltTwo26", 215443)
+local countdownNecroticVenom		= mod:NewCountdown("AltTwo21", 215443)
 --Roc Form
 
 --Spider Form
 local voiceFeedingTime				= mod:NewVoice(212364, "-Healer")--killmob
 local voiceNecroticVenom			= mod:NewVoice(218831)--runout
---local voiceWebOfPain				= mod:NewVoice(215288)--defensive/tauntboss
 local voiceVenomousPool				= mod:NewVoice(213124)--runaway
 --Roc Form
 local voiceTwistingShadows			= mod:NewVoice(210864)--runout/runaway
@@ -97,12 +93,17 @@ local voiceGatheringClouds			= mod:NewVoice(212707)--aesoon
 local voiceDarkStorm				= mod:NewVoice(212707)--findshelter
 local voiceRazorWing				= mod:NewVoice(210547)--carefly
 local voiceViolentWinds				= mod:NewVoice(218144)--justrun/keepmove/tauntboss
+local voiceRakingTalon				= mod:NewVoice(215582)--defensive/tauntboss
 
 --mod:AddRangeFrameOption("5")--Add range frame to Necrotic Debuff if detecting it actually works with FindDebuff()
 mod:AddSetIconOption("SetIconOnWinds", 218144)
 --mod:AddHudMapOption("HudMapOnMC", 163472)
 
+mod.vb.feedingTimeCast = 0
+mod.vb.venomCast = 0
 mod.vb.twistedCast = 0
+mod.vb.talonsCast = 0
+mod.vb.razorWingCast = 0
 local eyeOfStorm = GetSpellInfo(211127)
 local scanTime = 0
 
@@ -112,20 +113,19 @@ local function findDebuff(self, spellName)
 	for uId in DBM:GetGroupMembers() do
 		local name = DBM:GetUnitFullName(uId)
 		if UnitDebuff(uId, spellName) then
+			found = found + 1
 			warnNecroticVenom:CombinedShow(0.2, name)
 			if name == UnitName("player") then
 				specWarnNecroticVenom:Show()
 				voiceNecroticVenom:Play("runout")
-				if self:IsMythic() then--Assumed, but if heroic is 10 seconds, one must assume all lesser difficulties also 10 seconds. Leaving ONLY mythic to be 5
-					yellNecroticVenom:Yell(5)
-					yellNecroticVenom:Schedule(4, 1)
-					yellNecroticVenom:Schedule(3, 2)
-					yellNecroticVenom:Schedule(2, 3)
-				else
-					yellNecroticVenom:Yell(10)
-					yellNecroticVenom:Schedule(9, 1)
-					yellNecroticVenom:Schedule(8, 2)
-					yellNecroticVenom:Schedule(7, 3)
+				local _, _, _, _, _, _, expires = UnitDebuff("Player", spellName)
+				local debuffTime = expires - GetTime()
+				if debuffTime then
+					local roundedTime = math.floor(debuffTime+0.5)
+					yellNecroticVenom:Yell(roundedTime)
+					yellNecroticVenom:Schedule(debuffTime - 1, 1)
+					yellNecroticVenom:Schedule(debuffTime - 2, 2)
+					yellNecroticVenom:Schedule(debuffTime - 3, 3)
 				end
 			end
 		end
@@ -136,11 +136,13 @@ local function findDebuff(self, spellName)
 end
 
 function mod:OnCombatStart(delay)
-	timerFeedingTimeCD:Start(-delay)
-	timerNecroticVenomCD:Start(26.5-delay)
-	countdownNecroticVenom:Start()
-	timerRocFormCD:Start(45-delay)
-	countdownPhase:Start(45-delay)
+	self.vb.venomCast = 0
+	self.vb.feedingTimeCast = 0
+	timerNecroticVenomCD:Start(12.2-delay, 1)
+	countdownNecroticVenom:Start(12.2)
+	timerFeedingTimeCD:Start(15.5-delay, 1)
+	timerRocFormCD:Start(90-delay)
+	countdownPhase:Start(90-delay)
 	berserkTimer:Start(-delay)--540 heroic, other difficulties not confirmed
 end
 
@@ -162,35 +164,27 @@ function mod:SPELL_CAST_START(args)
 		specWarnDarkStorm:Show(eyeOfStorm)
 		voiceDarkStorm:Play("findshelter")
 	elseif spellId == 210547 then
+		self.vb.razorWingCast = self.vb.razorWingCast + 1
 		specWarnRazorWing:Show()
 		voiceRazorWing:Play("carefly")
-		timerRazorWingCD:Start()
---[[	elseif spellId == 215288 then
+		if self.vb.razorWingCast < 3 then
+			timerRazorWingCD:Start(nil, self.vb.razorWingCast+1)
+		end
+	elseif spellId == 215582 then
+		self.vb.talonsCast = self.vb.talonsCast + 1
 		local targetName, uId, bossuid = self:GetBossTarget(106087, true)
 		local tanking, status = UnitDetailedThreatSituation("player", bossuid)
 		if tanking or (status == 3) then--Player is current target
-			specWarnWebOfPain:Show()
-			voiceWebOfPain:Play("defensive")
-		else
-			specWarnWebOfPainOther:Schedule(1.4, targetName)
-			voiceWebOfPain:Schedule(1.4, "tauntboss")
-		end--]]
+			specWarnRakingTalon:Show()
+			voiceRakingTalon:Play("defensive")
+		end
+		if self.vb.talonsCast < 3 then
+			timerRakingTalonsCD:Start(nil, self.vb.talonsCast+1)
+		end
 	elseif spellId == 210326 then--Spider Form
-		timerRazorWingCD:Stop()
-		warnSpiderForm:Show()
-		timerFeedingTimeCD:Start()
-		timerNecroticVenomCD:Start()
-		countdownNecroticVenom:Start()
-		timerRocFormCD:Start()
-		countdownPhase:Start(47)
+		DBM:Debug("CLEU: Spider Form Cast")
 	elseif spellId == 210308 then--Roc Form
-		self.vb.twistedCast = 0
-		warnRocForm:Show()
-		timerGatheringCloudsCD:Start()
-		timerDarkStormCD:Start()
-		timerTwistingShadowsCD:Start(42, 1)
-		timerSpiderFormCD:Start()
-		countdownPhase:Start(70)
+		DBM:Debug("CLEU: Roc Form Cast")
 	end
 end
 
@@ -198,12 +192,21 @@ function mod:SPELL_CAST_SUCCESS(args)
 	local spellId = args.spellId
 	if spellId == 210864 then
 		self.vb.twistedCast = self.vb.twistedCast + 1
-		if self.vb.twistedCast == 1 then--Only cast twice per roc form
-			timerTwistingShadowsCD:Start(21.5, 2)
+		--Only cast 4x per roc form (used to be 3, but roc form is 127 seconds now, up from like 97)
+		if self.vb.twistedCast == 1 then
+			timerTwistingShadowsCD:Start(40, 2)
+		elseif self.vb.twistedCast == 2 then
+			timerTwistingShadowsCD:Start(21.5, 3)
+		elseif self.vb.twistedCast == 3 then
+			timerTwistingShadowsCD:Start(32.5, 4)
 		end
 	elseif spellId == 215443 then
 		scanTime = 0
-		self:Schedule(0.1, findDebuff, self, args.spellName)
+		self.vb.venomCast = self.vb.venomCast + 1
+		self:Schedule(0.5, findDebuff, self, args.spellName)
+		if self.vb.venomCast < 4 then--Cast 4x per spider form
+			timerNecroticVenomCD:Start(nil, self.vb.venomCast+1)
+		end
 	elseif spellId == 218630 then
 		warnNightmareSpawn:Show()
 		timerNightmareSpawnCD:Start()
@@ -243,6 +246,11 @@ function mod:SPELL_AURA_APPLIED(args)
 		end
 		if self.Options.SetIconOnWinds then
 			self:SetIcon(args.destName, 1)
+		end
+	elseif spellId == 215582 then
+		if not args:IsPlayer() then--Player is not current target
+			specWarnRakingTalonOther:Show(args.destName)
+			voiceRakingTalon:Play("tauntboss")
 		end
 	elseif spellId == 218629 then--Plausable nightmare spawn enable
 		
@@ -285,15 +293,34 @@ mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
 	if spellId == 212364 then--Feeding Time
-		specWarnFeedingTime:Show()
+		self.vb.feedingTimeCast = self.vb.feedingTimeCast + 1
+		specWarnFeedingTime:Show(self.vb.feedingTimeCast)
 		voiceFeedingTime:Play("killmob")
---	elseif spellId == 218073 then--Venomous Spiderling Summoned Spider Spawn
-
---	elseif spellId == 215505 then--Summon Skittering Spiderling
-		--Likely primary scrip tand best one to use for announce
---	elseif spellId == 215507 then--Summon Skittering Spiderling
-		--Spawns actual mob
---	elseif spellId == 215508 then--Summon Skittering Spiderling
-		--Trigger missle triggered by 215505
+		if self.vb.feedingTimeCast < 2 then
+			timerFeedingTimeCD:Start(nil, 2)
+		end
+	elseif spellId == 226039 then--Bird Transform
+		DBM:Debug("Bird Transform Cast")
+		self.vb.twistedCast = 0
+		self.vb.talonsCast = 0
+		self.vb.razorWingCast = 0
+		warnRocForm:Show()
+		timerTwistingShadowsCD:Start(7, 1)
+		timerGatheringCloudsCD:Start()--16
+		timerDarkStormCD:Start()--26
+		timerRakingTalonsCD:Start(52, 1)
+		timerRazorWingCD:Start(59, 1)
+		timerSpiderFormCD:Start()--No longer known. No long enough pull. At least 90
+		countdownPhase:Start(127)
+	elseif spellId == 226055 then--Spider Transform
+		self.vb.venomCast = 0
+		self.vb.feedingTimeCast = 0
+		timerRazorWingCD:Stop()
+		warnSpiderForm:Show()
+		timerNecroticVenomCD:Start(12.2, 1)
+		countdownNecroticVenom:Start(12.2)
+		timerFeedingTimeCD:Start(15.5, 1)
+		timerRocFormCD:Start(92)
+		countdownPhase:Start(92)
 	end
 end

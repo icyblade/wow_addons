@@ -1,6 +1,7 @@
 -- *********************************************************
 -- **               Deadly Boss Mods - Core               **
 -- **            http://www.deadlybossmods.com            **
+-- **        https://www.patreon.com/deadlybossmods       **
 -- *********************************************************
 --
 -- This addon is written and copyrighted by:
@@ -40,7 +41,7 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 15012 $"):sub(12, -3)),
+	Revision = tonumber(("$Revision: 15038 $"):sub(12, -3)),
 	DisplayVersion = "6.2.24 alpha", -- the string that is shown as version
 	ReleaseRevision = 14998 -- the revision of the latest stable version that is available
 }

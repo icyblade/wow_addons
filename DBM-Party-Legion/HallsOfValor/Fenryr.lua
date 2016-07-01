@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1487, "DBM-Party-Legion", 4, 721)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14975 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15031 $"):sub(12, -3))
 mod:SetCreatureID(95674, 99868)
 mod:SetEncounterID(1807)
 mod:DisableEEKillDetection()
@@ -140,7 +140,7 @@ end
 
 function mod:ENCOUNTER_START(encounterID)
 	--Re-engaged, kill scans and long wipe time
-	if encounterID == 1807 and self:IsIncombat() then
+	if encounterID == 1807 and self:IsInCombat() then
 --		self:SetWipeTime(5)
 --		self:UnregisterShortTermEvents()
 		warnPhase2:Show()

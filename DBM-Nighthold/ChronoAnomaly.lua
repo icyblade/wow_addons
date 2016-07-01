@@ -1,12 +1,13 @@
 local mod	= DBM:NewMod(1725, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14948 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15034 $"):sub(12, -3))
 mod:SetCreatureID(104415)--104731 (Depleted Time Particle). 104676 (Waning Time Particle). 104491 (Accelerated Time particle). 104492 (Slow Time Particle)
 mod:SetEncounterID(1865)
 mod:SetZone()
 --mod:SetUsedIcons(5, 4, 3, 2, 1)--sometimes it was 5 targets, sometimes it was whole raid. even post nerf. have to see
 --mod:SetHotfixNoticeRev(12324)
+mod.respawnTime = 29
 
 mod:RegisterCombat("combat")
 
@@ -36,7 +37,7 @@ local specWarnWarp					= mod:NewSpecialWarningInterrupt(207228, "HasInterrupt", 
 local specWarnBigAdd				= mod:NewSpecialWarningSwitch(206700, "-Healer", nil, nil, 1, 2)--Switch to waning time particle when section info known
 local specWarnSmallAdd				= mod:NewSpecialWarningSwitch(206699, "Tank", nil, nil, 1, 2)
 
-local timerTemporalOrbsCD			= mod:NewNextTimer(30, 219815, nil, nil, nil, 2)
+local timerTemporalOrbsCD			= mod:NewNextCountTimer(30, 219815, nil, nil, nil, 2)
 local timerPowerOverwhelmingCD		= mod:NewNextTimer(60, 211927, nil, nil, nil, 4, nil, DBM_CORE_INTERRUPT_ICON)
 local timerTimeBomb					= mod:NewBuffFadesTimer(30, 206617, nil, nil, nil, 5)
 local timerTimeBombCD				= mod:NewNextCountTimer(30, 206617, nil, nil, nil, 3)
@@ -57,24 +58,30 @@ local voiceBigAdd					= mod:NewVoice(206700, "-Healer")
 local voiceSmallAdd					= mod:NewVoice(206699, "Tank")
 
 mod:AddRangeFrameOption(10, 206617)
+mod:AddInfoFrameOption(206617)
 --mod:AddSetIconOption("SetIconOnTimeRelease", 206610, true)
 
 mod.vb.OPActive = false
 mod.vb.normCount = 0
 mod.vb.fastCount = 0
 mod.vb.slowCount = 0
+mod.vb.timeBombDebuffCount = 0
 
 function mod:OnCombatStart(delay)
 	self.vb.OPActive = false
 	self.vb.normCount = 0
 	self.vb.fastCount = 0
 	self.vb.slowCount = 0
+	self.vb.timeBombDebuffCount = 0
 	--No timers here, started by speed events
 end
 
 function mod:OnCombatEnd()
 	if self.Options.RangeFrame then
 		DBM.RangeCheck:Hide()
+	end
+	if self.Options.InfoFrame then
+		DBM.InfoFrame:Hide()
 	end
 end
 
@@ -100,6 +107,7 @@ end
 function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
 	if spellId == 206617 then
+		self.vb.timeBombDebuffCount = self.vb.timeBombDebuffCount + 1
 		warnTimeBomb:CombinedShow(0.5, args.destName)
 		if args:IsPlayer() then
 			local _, _, _, _, _, duration, expires, _, _ = UnitDebuff("player", args.spellName)
@@ -116,6 +124,10 @@ function mod:SPELL_AURA_APPLIED(args)
 					DBM.RangeCheck:Show(10)
 				end
 			end
+		end
+		if self.Options.InfoFrame and not DBM.InfoFrame:IsShown() then
+			DBM.InfoFrame:SetHeader(args.spellName)
+			DBM.InfoFrame:Show(10, "playerdebuffremaining", args.spellName)
 		end
 	elseif spellId == 206609 or spellId == 207052 or spellId == 207051 then--207051 and 207052 didn't appear on heroic
 		warnTimeRelease:CombinedShow(0.5, args.destName)
@@ -135,6 +147,7 @@ mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
 function mod:SPELL_AURA_REMOVED(args)
 	local spellId = args.spellId
 	if spellId == 206617 then
+		self.vb.timeBombDebuffCount = self.vb.timeBombDebuffCount - 1
 		if args:IsPlayer() then
 			specWarnTimeBomb:Cancel()
 			voiceTimeBomb:Cancel()
@@ -144,6 +157,9 @@ function mod:SPELL_AURA_REMOVED(args)
 			if self.Options.RangeFrame then
 				DBM.RangeCheck:Hide()
 			end
+		end
+		if self.Options.InfoFrame and self.vb.timeBombDebuffCount == 0 then
+			DBM.InfoFrame:Hide()
 		end
 	elseif spellId == 206609 or spellId == 207052 or spellId == 207051 then--207051 and 207052 didn't appear on heroic
 --		if self.Options.SetIconOnTimeRelease then
@@ -163,6 +179,9 @@ end
 local function delayedTimeBomb(self, time, count)
 	timerTimeBombCD:Start(time, count)
 end
+local function delayedOrbs(self, time, count)
+	timerTemporalOrbsCD:Start(time, count)
+end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
@@ -172,90 +191,185 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 	if spellId == 207012 then--Speed: Normal
 		self.vb.normCount = self.vb.normCount + 1
 		if self.vb.normCount == 1 then
-			timerTimeReleaseCD:Start(5, 1)
-			timerBurstofTimeCD:Start(10, 1)
-			timerSmallAddCD:Start(10)
-			self:Schedule(5, delayedTimeRelease, self, 15, 2)--20
-			timerBigAddCD:Start(25)
-			countdownBigAdd:Start(25)
-			timerTimeBombCD:Start(35)
-			self:Schedule(10, delayedBurst, self, 25, 2)--35
-			timerTemporalOrbsCD:Start(40)
-			self:Schedule(20, delayedTimeRelease, self, 25, 3)--45
-			self:Schedule(35, delayedBurst, self, 20, 3)--55
-			timerPowerOverwhelmingCD:Start(60)
+			if self:IsMythic() then
+				timerTimeBombCD:Start(5, 1)
+				timerTimeReleaseCD:Start(10, 1)
+				timerBurstofTimeCD:Start(15, 1)
+				self:Schedule(15, delayedBurst, self, 10, 2)--25
+				self:Schedule(10, delayedTimeRelease, self, 20, 2)--30
+				self:Schedule(25, delayedBurst, self, 10, 3)--35
+			else
+				timerTimeReleaseCD:Start(5, 1)
+				timerBurstofTimeCD:Start(10, 1)
+				timerSmallAddCD:Start(10)
+				self:Schedule(5, delayedTimeRelease, self, 15, 2)--20
+				timerBigAddCD:Start(25)
+				countdownBigAdd:Start(25)
+				timerTimeBombCD:Start(35, 1)
+				self:Schedule(10, delayedBurst, self, 25, 2)--35
+				timerTemporalOrbsCD:Start(40, 1)
+				self:Schedule(20, delayedTimeRelease, self, 25, 3)--45
+				self:Schedule(35, delayedBurst, self, 20, 3)--55
+				timerPowerOverwhelmingCD:Start(60)
+			end
 		elseif self.vb.normCount == 2 then
-			timerTimeBombCD:Start(5)
-			timerTimeReleaseCD:Start(10, 1)
-			timerBurstofTimeCD:Start(20, 1)
-			self:Schedule(10, delayedTimeRelease, self, 15, 2)--25
-			self:Schedule(5, delayedTimeBomb, self, 25, 2)--30
-			self:Schedule(25, delayedTimeRelease, self, 10, 3)--35
-			timerBigAddCD:Start(45)
-			countdownBigAdd:Start(45)
-			timerTemporalOrbsCD:Start(55)
-			timerPowerOverwhelmingCD:Start(60)
-			--There may be some missing timers here based on duration of power overwhelming clipping some other timers
-			self:Schedule(35, delayedTimeRelease, self, 50, 4)--85
+			if self:IsMythic() then
+				timerTimeReleaseCD:Start(5, 1)
+				timerTemporalOrbsCD:Start(10, 1)
+				timerTimeBombCD:Start(15, 1)
+				timerPowerOverwhelmingCD:Start(25)
+				--Notes. This phase is 48 seconds. Depending on how fast OP is interrupted you'll see another burst of time and time bomb
+				--Burst of time will be exactly 10 seconds after interrupt of OP and time bomb 5 seconds after burst.
+				--TODO, some complicated mess of code to activate special "additional ability" timers when boss is interrupted during OP
+				--For now, timers are below here with less accuracy
+				timerBurstofTimeCD:Start(35, 1)
+				self:Schedule(15, delayedTimeBomb, self, 25, 2)--40
+				timerBigAddCD:Start(45)--Could be 48, but I suspect that was just delayed by a slow interrupt of OP
+				countdownBigAdd:Start(45)
+			else
+				timerTimeBombCD:Start(5, 1)
+				timerTimeReleaseCD:Start(10, 1)
+				timerBurstofTimeCD:Start(20, 1)
+				self:Schedule(10, delayedTimeRelease, self, 15, 2)--25
+				self:Schedule(5, delayedTimeBomb, self, 25, 2)--30
+				self:Schedule(25, delayedTimeRelease, self, 10, 3)--35
+				timerBigAddCD:Start(45)
+				countdownBigAdd:Start(45)
+				timerTemporalOrbsCD:Start(55, 1)
+				timerPowerOverwhelmingCD:Start(60)
+				--There may be some missing timers here based on duration of power overwhelming clipping some other timers
+				self:Schedule(35, delayedTimeRelease, self, 50, 4)--85
+			end
 		else
-			DBM:AddMsg("There is no timer data going this far into the fight. Please submit transcriptor log to improve this mod")
+			if self:IsMythic() then
+				DBM:AddMsg("There is no timer data going this far into the fight. Please submit transcriptor log to improve this mod")
+			else
+				DBM:AddMsg("There is no timer data going this far into the fight. Please submit transcriptor log to improve this mod")
+			end
 		end
 	elseif spellId == 207011 then--Speed: Slow
 		self.vb.slowCount = self.vb.slowCount + 1
 		if self.vb.slowCount == 1 then
-			timerTimeReleaseCD:Start(5, 1)
-			timerTimeBombCD:Start(20, 1)
-			timerBurstofTimeCD:Start(20, 1)
-			timerSmallAddCD:Start(25)
-			timerTemporalOrbsCD:Start(30)
-			self:Schedule(20, delayedBurst, self, 10, 2)--30
-			self:Schedule(5, delayedTimeRelease, self, 30, 2)--35
-			self:Schedule(20, delayedTimeBomb, self, 20, 2)--40
-			timerBigAddCD:Start(45)
-			countdownBigAdd:Start(45)
-			self:Schedule(30, delayedBurst, self, 20, 3)--50
-			timerPowerOverwhelmingCD:Start(60)
+			if self:IsMythic() then
+				timerTemporalOrbsCD:Start(5, 1)
+				timerBurstofTimeCD:Start(15, 1)
+				timerTimeBombCD:Start(18, 1)--Odd, the only non 5s timer in like all of this bosses tables.
+				timerTimeReleaseCD:Start(20, 1)
+				timerPowerOverwhelmingCD:Start(25)
+			else
+				timerTimeReleaseCD:Start(5, 1)
+				timerTimeBombCD:Start(20, 1)
+				timerBurstofTimeCD:Start(20, 1)
+				timerSmallAddCD:Start(25)
+				timerTemporalOrbsCD:Start(30, 1)
+				self:Schedule(20, delayedBurst, self, 10, 2)--30
+				self:Schedule(5, delayedTimeRelease, self, 30, 2)--35
+				self:Schedule(20, delayedTimeBomb, self, 20, 2)--40
+				timerBigAddCD:Start(45)
+				countdownBigAdd:Start(45)
+				self:Schedule(30, delayedBurst, self, 20, 3)--50
+				timerPowerOverwhelmingCD:Start(60)
+			end
 		elseif self.vb.slowCount == 2 then
-			timerTimeReleaseCD:Start(5, 1)
-			timerTemporalOrbsCD:Start(15)
-			timerBurstofTimeCD:Start(20, 1)
-			timerBigAddCD:Start(25)
-			countdownBigAdd:Start(25)
-			self:Schedule(20, delayedBurst, self, 10, 2)--30
-			self:Schedule(30, delayedBurst, self, 5, 3)--35
-			timerPowerOverwhelmingCD:Start(40)
-			self:Schedule(35, delayedBurst, self, 10, 4)--45
-			self:Schedule(45, delayedBurst, self, 5, 5)--50
-			--This may be incomplete.
+			if self:IsMythic() then
+				timerBurstofTimeCD:Start(5, 1)
+				timerTimeReleaseCD:Start(15, 1)
+				self:Schedule(5, delayedBurst, self, 20, 2)--25
+				self:Schedule(25, delayedBurst, self, 5, 3)--30
+				self:Schedule(15, delayedTimeRelease, self, 20, 2)--35
+				self:Schedule(25, delayedBurst, self, 20, 4)--45
+				timerTemporalOrbsCD:Start(50, 1)
+				timerPowerOverwhelmingCD:Start(60)
+			else
+				timerTimeReleaseCD:Start(5, 1)
+				timerTemporalOrbsCD:Start(15, 1)
+				timerBurstofTimeCD:Start(20, 1)
+				timerBigAddCD:Start(25)
+				countdownBigAdd:Start(25)
+				self:Schedule(20, delayedBurst, self, 10, 2)--30
+				self:Schedule(30, delayedBurst, self, 5, 3)--35
+				timerPowerOverwhelmingCD:Start(40)
+				self:Schedule(35, delayedBurst, self, 10, 4)--45
+				self:Schedule(45, delayedBurst, self, 5, 5)--50
+				--This may be incomplete.
+				DBM:AddMsg("There is incomplete timer data beyond 50 second mark of Slow-2 phase. Please submit transcriptor log to improve this mod")
+			end
 		else
-			DBM:AddMsg("There is no timer data going this far into the fight. Please submit transcriptor log to improve this mod")
+			if self:IsMythic() then
+				DBM:AddMsg("There is no timer data going this far into the fight. Please submit transcriptor log to improve this mod")
+			else
+				DBM:AddMsg("There is no timer data going this far into the fight. Please submit transcriptor log to improve this mod")
+			end
 		end
 	elseif spellId == 207013 then--Speed: Fast
 		self.vb.fastCount = self.vb.fastCount + 1
 		if self.vb.fastCount == 1 then
-			timerTimeReleaseCD:Start(5, 1)
-			timerSmallAddCD:Start(10)
-			self:Schedule(5, delayedTimeRelease, self, 5, 2)--10
-			timerBurstofTimeCD:Start(15, 1)
-			timerTimeBombCD:Start(25, 1)
-			self:Schedule(10, delayedTimeRelease, self, 20, 3)--30
-			timerBigAddCD:Start(35)
-			countdownBigAdd:Start(35)
-			self:Schedule(30, delayedTimeRelease, self, 10, 4)--40
-			timerTemporalOrbsCD:Start(50)
-			timerPowerOverwhelmingCD:Start(60)
+			if self:IsMythic() then
+				timerTimeReleaseCD:Start(5, 1)
+				timerBigAddCD:Start(10)
+				countdownBigAdd:Start(10)
+				timerBurstofTimeCD:Start(15, 1)
+				timerTemporalOrbsCD:Start(25, 1)
+				timerPowerOverwhelmingCD:Start(30)
+			else
+				timerTimeReleaseCD:Start(5, 1)
+				timerSmallAddCD:Start(10)
+				self:Schedule(5, delayedTimeRelease, self, 5, 2)--10
+				timerBurstofTimeCD:Start(15, 1)
+				timerTimeBombCD:Start(25, 1)
+				self:Schedule(10, delayedTimeRelease, self, 20, 3)--30
+				timerBigAddCD:Start(35)
+				countdownBigAdd:Start(35)
+				self:Schedule(30, delayedTimeRelease, self, 10, 4)--40
+				timerTemporalOrbsCD:Start(50, 1)
+				timerPowerOverwhelmingCD:Start(60)
+			end
 		elseif self.vb.fastCount == 2 then
-			timerBurstofTimeCD:Start(5, 1)
-			self:Schedule(5, delayedBurst, self, 5, 2)--10
-			self:Schedule(10, delayedBurst, self, 5, 3)--15
-			timerTemporalOrbsCD:Start(20)
-			self:Schedule(15, delayedBurst, self, 10, 4)--25
-			timerTimeBombCD:Start(30, 1)
-			timerTimeReleaseCD:Start(40, 1)
-			timerSmallAddCD:Start(45)
-			self:Schedule(25, delayedBurst, self, 25, 5)--50
+			if self:IsMythic() then
+				timerBurstofTimeCD:Start(5, 1)
+				timerBurstofTimeCD:Start(8, 2)
+				timerTemporalOrbsCD:Start(13, 1)
+				timerTimeReleaseCD:Start(23, 1)
+				self:Schedule(8, delayedBurst, self, 17, 3)--25
+				timerTimeBombCD:Start(30, 1)
+				self:Schedule(23, delayedTimeRelease, self, 12, 2)--35
+				self:Schedule(35, delayedTimeRelease, self, 5, 3)--40
+				self:Schedule(25, delayedBurst, self, 20, 4)--45
+				self:Schedule(13, delayedOrbs, self, 37, 2)--50
+				timerBigAddCD:Start(55)
+				countdownBigAdd:Start(55)
+				timerPowerOverwhelmingCD:Start(60)
+			else
+				timerBurstofTimeCD:Start(5, 1)
+				self:Schedule(5, delayedBurst, self, 5, 2)--10
+				self:Schedule(10, delayedBurst, self, 5, 3)--15
+				timerTemporalOrbsCD:Start(20, 1)
+				self:Schedule(15, delayedBurst, self, 10, 4)--25
+				timerTimeBombCD:Start(30, 1)
+				timerTimeReleaseCD:Start(40, 1)
+				timerSmallAddCD:Start(45)
+				self:Schedule(25, delayedBurst, self, 25, 5)--50
+			end
+		elseif self.vb.fastCount == 3 then
+			if self:IsMythic() then
+				timerTimeReleaseCD:Start(5, 1)
+				timerBurstofTimeCD:Start(10, 1)
+				self:Schedule(10, delayedBurst, self, 5, 2)--15
+				self:Schedule(5, delayedTimeRelease, self, 15, 2)--20
+				self:Schedule(15, delayedBurst, self, 10, 3)--25
+				self:Schedule(20, delayedTimeRelease, self, 10, 3)--30
+				self:Schedule(30, delayedTimeRelease, self, 5, 4)--35
+				self:Schedule(35, delayedTimeRelease, self, 5, 5)--40
+				DBM:AddMsg("There is incomplete timer data beyond 40 second mark of Fast-3 phase. Please submit transcriptor log to improve this mod")
+			else
+				DBM:AddMsg("There is no timer data going this far into the fight. Please submit transcriptor log to improve this mod")
+			end
 		else
-			DBM:AddMsg("There is no timer data going this far into the fight. Please submit transcriptor log to improve this mod")
+			if self:IsMythic() then
+				DBM:AddMsg("There is no timer data going this far into the fight. Please submit transcriptor log to improve this mod")
+			else
+				DBM:AddMsg("There is no timer data going this far into the fight. Please submit transcriptor log to improve this mod")
+			end
 		end
 	elseif spellId == 206699 then--Summon Haste Add (Small Adds)
 		specWarnSmallAdd:Show()
