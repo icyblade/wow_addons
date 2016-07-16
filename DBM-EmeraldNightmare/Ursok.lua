@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1667, "DBM-EmeraldNightmare", nil, 768)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14938 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15045 $"):sub(12, -3))
 mod:SetCreatureID(100497)
 mod:SetEncounterID(1841)
 mod:SetZone()
@@ -29,8 +29,8 @@ local specWarnFocusedGazeOther		= mod:NewSpecialWarningMoveTo(198006, nil, nil, 
 local yellFocusedGaze				= mod:NewPosYell(198006)
 local specWarnRoaringCacophony		= mod:NewSpecialWarningCount(197969, nil, nil, nil, 2, 2)--Don't know what voice to give it yet, aesoon used for now
 local specWarnMiasma				= mod:NewSpecialWarningMove(205611, nil, nil, nil, 1, 2)
-local specWarnRendFlesh				= mod:NewSpecialWarningDefensive(198006, "Tank", nil, nil, 3, 2)
-local specWarnOverwhelm				= mod:NewSpecialWarningTaunt(197943, "Tank", nil, nil, 1, 2)
+local specWarnRendFlesh				= mod:NewSpecialWarningDefensive(197942, "Tank", nil, nil, 3, 2)
+local specWarnOverwhelmOther		= mod:NewSpecialWarningTaunt(197943, nil, nil, nil, 1, 2)
 
 local timerFocusedGazeCD			= mod:NewNextCountTimer(40, 198006, nil, nil, nil, 3)
 local timerRendFleshCD				= mod:NewNextTimer(20, 197942, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)
@@ -63,7 +63,7 @@ mod.vb.tankCount = 2
 --(Tanks are welcome to help of course but it doesn't assign them because it's difficult to tell which ones are busy, tanks will make that call themselves.
 --This of course means auto assigning will fail to assign enough if too many soaked last one by accident
 --However, This is smartest way to do it anyways, it'll automatically use two different groups by this logic. It won't assign people who went last time.
---Reasoning: If I simply assign half raid to one and other half to other it doesn't factor in the fact boss doesn't care which soak group you are assigned when he makes YOU the target
+--Reasoning: If I simply assign half raid to one and other half to other it doesn't factor in someone that got hit by ome they shouldn't have.
 --This way, it'll ensure it assigns enough available soakers when possible, even when names shift groups as fight progresses. (Deaths/battle rezes, boss targetting)
 local GenerateSoakAssignment
 do
@@ -79,7 +79,7 @@ do
 		local soakerHalf = math.floor(soakerCount/2)--A half a person can't soak so we floor half for odd sized raids
 		DBM:Debug("Raid size: "..raidCount..". Soakers: "..soakerCount..". Soaker Half: "..soakerHalf)
 		for i = 1, raidCount do
-			local unitID = 'raid'..i
+			local unitID = "raid"..i
 			if not UnitDebuff(unitID, unbalancedName) and not UnitDebuff(unitID, focusedGazeName) and not self:IsTanking(unitID) then
 				soakers = soakers + 1
 				soakTable[#soakTable+1] = DBM:GetUnitFullName(unitID)
@@ -99,7 +99,7 @@ do
 						voiceFocusedGaze:Play("shareone")
 					end
 				end
-				if #soakers == soakerHalf then break end--Got enough soakers, stop
+				if soakers == soakerHalf then break end--Got enough soakers, stop
 			end
 		end
 		if self.Options.SpecWarn198006moveto then
@@ -148,10 +148,15 @@ function mod:SPELL_CAST_START(args)
 		self.vb.roarCount = self.vb.roarCount + 1
 		specWarnRoaringCacophony:Show(self.vb.roarCount)
 		voiceRoaringCacophony:Play("aesoon")
-		if self.vb.roarCount % 2 == 0 then
-			timerRoaringCacophonyCD:Start(30, self.vb.roarCount + 1)
+		if self:IsFaceroll() then
+			--No echos, just every 40 seconds from boss only
+			timerRoaringCacophonyCD:Start(40, self.vb.roarCount + 1)
 		else
-			timerRoaringCacophonyCD:Start(10, self.vb.roarCount + 1)
+			if self.vb.roarCount % 2 == 0 then
+				timerRoaringCacophonyCD:Start(30, self.vb.roarCount + 1)
+			else
+				timerRoaringCacophonyCD:Start(10, self.vb.roarCount + 1)
+			end
 		end
 	end
 end
@@ -173,7 +178,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		local icon = 0
 		local secondCount
 		--Icons 6/4 used to ensure no conflict with BW.
-		if (self.vb.chargeCount % 2) then
+		if self.vb.chargeCount % 2 == 0 then
 			icon = 6
 			secondCount = 2
 		else
@@ -198,8 +203,10 @@ function mod:SPELL_AURA_APPLIED(args)
 			end
 		end
 	elseif spellId == 197943 then
-		if not args:IsPlayer() then
-			specWarnOverwhelm:Show(args.destName)
+		--Overwhelm just applied to osmeone else and you still have rend flesh
+		--Taunting is safe now because rend flesh will vanish before next overwhelm
+		if not args:IsPlayer() and UnitDebuff("player", GetSpellInfo(204859)) then
+			specWarnOverwhelmOther:Show(args.destName)
 			voiceOverwhelm:Play("tauntboss")
 		end
 	elseif spellId == 198388 then

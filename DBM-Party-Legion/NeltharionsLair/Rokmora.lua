@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1662, "DBM-Party-Legion", 5, 767)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14980 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15043 $"):sub(12, -3))
 mod:SetCreatureID(91003)
 mod:SetEncounterID(1790)
 mod:SetZone()
@@ -17,7 +17,7 @@ mod:RegisterEventsInCombat(
 --TODO, is razorshards 29 seconds now?
 local warnShatter					= mod:NewSpellAnnounce(188114, 2)
 
-local specWarnRazorShards			= mod:NewSpecialWarningSpell(188961, "Tank", nil, nil, 1, 2)
+local specWarnRazorShards			= mod:NewSpecialWarningSpell(188169, "Tank", nil, nil, 1, 2)
 local specWarnGas					= mod:NewSpecialWarningMove(192800, nil, nil, nil, 1, 2)
 
 local timerShatterCD				= mod:NewCDTimer(24.3, 188169, nil, nil, nil, 2)

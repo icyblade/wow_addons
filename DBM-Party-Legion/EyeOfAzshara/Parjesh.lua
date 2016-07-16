@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1480, "DBM-Party-Legion", 3, 716)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14979 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15043 $"):sub(12, -3))
 mod:SetCreatureID(91784)
 mod:SetEncounterID(1810)
 mod:SetZone()
@@ -22,14 +22,14 @@ local specWarnReinforcements		= mod:NewSpecialWarningSwitch(196563, "Tank", nil,
 local specWarnImpalingSpear			= mod:NewSpecialWarningMoveTo(192094, nil, DBM_CORE_AUTO_SPEC_WARN_OPTIONS.you:format(192094), nil, 3)
 local yellImpalingSpear				= mod:NewYell(192094)
 
-local timerHatecoilCD				= mod:NewNextTimer(30, 192072, nil, nil, nil, 1)
-local timerSpearCD					= mod:NewCDTimer(29, 192094, nil, nil, nil, 3)
+local timerHatecoilCD				= mod:NewCDTimer(28, 192072, nil, nil, nil, 1)
+local timerSpearCD					= mod:NewCDTimer(28, 192094, nil, nil, nil, 3)
 
 local voiceReinforcements			= mod:NewVoice(196563)--bigmobsoon
 
 function mod:OnCombatStart(delay)
 	timerHatecoilCD:Start(3-delay)
-	timerSpearCD:Start(35-delay)
+	timerSpearCD:Start(28-delay)
 end
 
 function mod:SPELL_AURA_APPLIED(args)

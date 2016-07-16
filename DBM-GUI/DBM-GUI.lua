@@ -43,7 +43,7 @@
 --
 
 
-local revision =("$Revision: 15010 $"):sub(12, -3)
+local revision =("$Revision: 15054 $"):sub(12, -3)
 local FrameTitle = "DBM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 
 local PanelPrototype = {}
@@ -3466,17 +3466,6 @@ local function CreateOptionsMenu()
 		local CRT_Enabled	= generaltimeroptions:CreateCheckButton(L.CRT_Enabled, true, nil, "CRT_Enabled")
 		local RespawnTimer	= generaltimeroptions:CreateCheckButton(L.ShowRespawn, true, nil, "ShowRespawn")
 		local QueueTimer	= generaltimeroptions:CreateCheckButton(L.ShowQueuePop, true, nil, "ShowQueuePop")
-
-		local challengeTimers = {
-			{	text	= L.Disable,				value	= "None" },
-			{	text	= L.ChallengeTimerPersonal,	value 	= "Personal"},
-			{	text	= L.ChallengeTimerGuild,	value 	= "Guild"},
-			{	text	= L.ChallengeTimerRealm,	value 	= "Realm"},
-		}
-		local ChallengeTimerDropDown = generaltimeroptions:CreateDropdown(L.ChallengeTimerOptions, challengeTimers, "DBM", "ChallengeBest", function(value)
-			DBM.Options.ChallengeBest = value
-		end)
-		ChallengeTimerDropDown:SetPoint("TOPLEFT", generaltimeroptions.frame, "TOPLEFT", 0, -125)
 
 		local bossLoggingArea		= extraFeaturesPanel:CreateArea(L.Area_AutoLogging, nil, 100, true)
 		local AutologBosses			= bossLoggingArea:CreateCheckButton(L.AutologBosses, true, nil, "AutologBosses")

@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1744, "DBM-EmeraldNightmare", nil, 768)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 15037 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15039 $"):sub(12, -3))
 mod:SetCreatureID(106087)
 mod:SetEncounterID(1876)
 mod:SetZone()
@@ -217,7 +217,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	local spellId = args.spellId
 	if spellId == 212514 then
 		warnWebWrap:Show(args.destName)
-	elseif spellId == 210850 then
+	elseif spellId == 210850 and args:IsDestTypePlayer() then
 		warnTwistingShadows:CombinedShow(0.5, self.vb.twistedCast, args.destName)
 		if args:IsPlayer() then
 			specWarnTwistingShadows:Show()

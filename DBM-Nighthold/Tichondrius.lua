@@ -1,13 +1,13 @@
 local mod	= DBM:NewMod(1762, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14899 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15044 $"):sub(12, -3))
 mod:SetCreatureID(103685)
 mod:SetEncounterID(1862)
 mod:SetZone()
 mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)--Unknown carrions
 --mod:SetHotfixNoticeRev(12324)
-mod.respawnTime = 29--guessed
+mod.respawnTime = 30
 
 mod:RegisterCombat("combat")
 
