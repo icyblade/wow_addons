@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [5.5.0] - 2016-07-17
+### update DBM
+### merge issue #1
+
 ## [5.4.2] - 2016-07-01
 ### update
 ### hurricane removal
