@@ -41,9 +41,9 @@
 --  Globals/Default Options  --
 -------------------------------
 DBM = {
-	Revision = tonumber(("$Revision: 15057 $"):sub(12, -3)),
-	DisplayVersion = "6.2.24 alpha", -- the string that is shown as version
-	ReleaseRevision = 14998 -- the revision of the latest stable version that is available
+	Revision = tonumber(("$Revision: 15067 $"):sub(12, -3)),
+	DisplayVersion = "7.0.1 alpha", -- the string that is shown as version
+	ReleaseRevision = 15061 -- the revision of the latest stable version that is available
 }
 DBM.HighestRelease = DBM.ReleaseRevision --Updated if newer version is detected, used by update nags to reflect critical fixes user is missing on boss pulls
 
@@ -386,7 +386,6 @@ local fireEvent
 local playerName = UnitName("player")
 local playerLevel = UnitLevel("player")
 local playerRealm = GetRealmName()
-local gladStance = GetSpellInfo(156291)
 local connectedServers = GetAutoCompleteRealms()
 local LastInstanceMapID = -1
 local LastGroupSize = 0
@@ -424,7 +423,7 @@ local statusWhisperDisabled = false
 local wowTOC = select(4, GetBuildInfo())
 local dbmToc = 0
 
-local fakeBWRevision = 13712
+local fakeBWRevision = 13784
 
 local enableIcons = true -- set to false when a raid leader or a promoted player has a newer version of DBM
 local guiRequested = false
@@ -1278,13 +1277,10 @@ do
 				"UPDATE_BATTLEFIELD_STATUS",
 				"CINEMATIC_START",
 				"PLAYER_LEVEL_UP",
-				--"CHALLENGE_MODE_START",
-				--"CHALLENGE_MODE_RESET",
-				--"CHALLENGE_MODE_END",
+				"CHALLENGE_MODE_START",
+				"CHALLENGE_MODE_RESET",
+				"CHALLENGE_MODE_END",
 				"ACTIVE_TALENT_GROUP_CHANGED",
-				--REMOVE IN LEGION
-				"UPDATE_SHAPESHIFT_FORM",
-				--REMOVE IN LEGION
 				"PARTY_INVITE_REQUEST",
 				"LOADING_SCREEN_DISABLED",
 				"SCENARIO_CRITERIA_UPDATE"
@@ -3055,7 +3051,7 @@ function DBM:LoadModOptions(modId, inCombat, first)
 	end
 	_G[savedVarsName][fullname] = savedOptions
 	if profileNum > 0 then
-		_G[savedVarsName][fullname]["talent"..profileNum] = profileNum == 3 and (gladStance or "Glad Stance Temp") or currentSpecName
+		_G[savedVarsName][fullname]["talent"..profileNum] = currentSpecName
 		self:Debug("LoadModOptions: Finished loading "..(_G[savedVarsName][fullname]["talent"..profileNum] or DBM_CORE_UNKNOWN))
 	end
 	_G[savedStatsName] = savedStats
@@ -3450,14 +3446,6 @@ function DBM:ACTIVE_TALENT_GROUP_CHANGED()
 		end
 	end
 end
-
---REMOVE IN LEGION
-function DBM:UPDATE_SHAPESHIFT_FORM()
-	if class == "WARRIOR" and self:AntiSpam(0.5, "STANCE") then--check for stance changes for prot warriors that might be specced into Gladiator Stance
-		self:ACTIVE_TALENT_GROUP_CHANGED()
-	end
-end
---REMOVE IN LEGION
 
 do
 	local function AcceptPartyInvite()
@@ -6064,14 +6052,9 @@ do
 end
 
 function DBM:SetCurrentSpecInfo()
-	if gladStance and UnitBuff("player", gladStance) then 
-		currentSpecGroup = 3 -- give 3rd spec option only for glad stance.
-		currentSpecID = 74 -- temp id for glad warrior, bliz not uses it
-	else
-		currentSpecGroup = GetActiveSpecGroup()
-		currentSpecID, currentSpecName = GetSpecializationInfo(GetSpecialization() or 1)--give temp first spec id for non-specialization char. no one should use dbm with no specialization, below level 10, should not need dbm.
-		currentSpecID = tonumber(currentSpecID)
-	end
+	currentSpecGroup = GetActiveSpecGroup()
+	currentSpecID, currentSpecName = GetSpecializationInfo(GetSpecialization() or 1)--give temp first spec id for non-specialization char. no one should use dbm with no specialization, below level 10, should not need dbm.
+	currentSpecID = tonumber(currentSpecID)
 end
 
 function DBM:GetCurrentInstanceDifficulty()
@@ -6735,15 +6718,8 @@ function DBM:RoleCheck(ignoreLoot)
 	local specID = GetLootSpecialization()
 	local _, _, _, _, _, lootrole = GetSpecializationInfoByID(specID)
 	if not InCombatLockdown() and ((IsPartyLFG() and (difficultyIndex == 14 or difficultyIndex == 15)) or not IsPartyLFG()) then
-		local tempRole--Use temp role because we still want Role to be "tank" for loot check comparison at bottom (gladiators still use tank gear)
-		if gladStance and role == "TANK" and UnitBuff("player", gladStance) then--Special handling for gladiator stance
-			currentSpecGroup = 3 -- give 3rd spec option only for glad stance.
-			currentSpecID = 74 -- temp id for glad warrior, bliz not uses it
-			tempRole = "DAMAGER"
-		end
-		local whatToCheck = tempRole or role
-		if UnitGroupRolesAssigned("player") ~= whatToCheck then
-			UnitSetRole("player", whatToCheck)
+		if UnitGroupRolesAssigned("player") ~= role then
+			UnitSetRole("player", role)
 		end
 	end
 	--Loot reminder even if spec isn't known or we are in LFR where we have a valid for role without us being ones that set us.
@@ -7673,13 +7649,6 @@ do
 		[73] = {	--Protection Warrior
 			["Tank"] = true,
 			["Melee"] = true,
-			["Physical"] = true,
-			["HasInterrupt"] = true,
-		},
-		[74] = {	--Gladiator Warrior --REMOVE IN LEGION
-			["Dps"] = true,
-			["Melee"] = true,
-			["MeleeDps"] = true,
 			["Physical"] = true,
 			["HasInterrupt"] = true,
 		},
@@ -10337,7 +10306,7 @@ do
 
 	function bossModPrototype:NewCombatTimer(timer, text, barText, barIcon)
 		timer = timer or 10
-		local bar = self:NewTimer(timer, barText or DBM_CORE_GENERIC_TIMER_COMBAT, barIcon or 2457, nil, "timer_combat")
+		local bar = self:NewTimer(timer, barText or DBM_CORE_GENERIC_TIMER_COMBAT, barIcon or "Interface\\Icons\\ability_warrior_offensivestance", nil, "timer_combat")
 		local countdown = self:NewCountdown(0, 0, nil, false, nil, true)
 		local obj = setmetatable(
 			{
