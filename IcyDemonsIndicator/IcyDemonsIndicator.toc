@@ -1,7 +1,7 @@
 ## Interface: 70000
 ## Title: IcyDemonsIndicator
 ## Notes: Indicate demon expire time for demonology warlock
-## Version: 0.1.1
+## Version: 0.1.2
 ## Author: Icyblade
 ## SavedVariables: IDI_SETTINGS
 
