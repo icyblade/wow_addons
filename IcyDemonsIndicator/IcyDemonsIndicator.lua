@@ -9,23 +9,25 @@ WarlockDemons.validDemonsDB = {
     [103673] = {icon=GetSpellTexture(205180), duration=12}, -- Darkglare
 }
 
-WarlockDemons.settings = {
-    texture = 'Glaze2',
-    width = 200,
-    height = 20,
-    point = 'TOPLEFT',
-    relativeFrame = 'UIParent',
-    relativePoint = 'TOPLEFT',
-    ofsx = 0,
-    ofsy = -80,
-    color = {r=1, g=0, b=0, a=1},
-    grow = 'DOWN', -- UP not supported yet
-}
+if IDI_SETTINGS == nil then
+    IDI_SETTINGS = {
+        texture = 'Glaze2',
+        width = 200,
+        height = 20,
+        point = 'TOPLEFT',
+        relativeFrame = 'UIParent',
+        relativePoint = 'TOPLEFT',
+        ofsx = 0,
+        ofsy = -80,
+        color = {r=1, g=0, b=0, a=1},
+        grow = 'DOWN', -- UP not supported yet
+    }
+end
 
 WarlockDemons.BarPool = {}
 
 function WarlockDemons:CreateBar(icon, duration, note)
-    local s = WarlockDemons.settings
+    local s = IDI_SETTINGS
     local texture = media:Fetch('statusbar', s.texture)
     local bar = candy:New(texture, s.width, s.height)
     local cnt = #WarlockDemons.BarPool
@@ -40,7 +42,7 @@ end
 
 function WarlockDemons:RemoveBar(bar)
     local _, _, _, _, removed_y = bar:GetPoint()
-    local s = WarlockDemons.settings
+    local s = IDI_SETTINGS
     for k, b in pairs(WarlockDemons.BarPool) do
         if b.note == bar.note then
             WarlockDemons.BarPool[k] = 'removed' -- mark removal, safe for iteration
@@ -64,7 +66,11 @@ function check_status()
     local specialization = GetSpecialization()
     if player_class == 'WARLOCK' and specialization == 2 then -- Demonology only
         WarlockDemons:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
-        DEFAULT_CHAT_FRAME:AddMessage('Demonology warlock detected, launching nuclear weapon...|cff00FF00DONE|r')
+        if (GetLocale() == 'zhCN') then
+            DEFAULT_CHAT_FRAME:AddMessage('检测到恶魔术，正在启用核武器...|cff00FF00完成|r')
+        else
+            DEFAULT_CHAT_FRAME:AddMessage('Demonology warlock detected, launching nuclear weapon...|cff00FF00DONE|r')
+        end
     end
 end
 
@@ -102,6 +108,37 @@ function WarlockDemons:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
                     b:Stop()
                 end
             end
+        end
+    end
+end
+
+-- slash command for accessing config
+SLASH_ICYDEMONSINDICATOR1, SLASH_ICYDEMONSINDICATOR2 = '/idi', '/icydemonsindicator'
+function SlashCmdList.ICYDEMONSINDICATOR(msg)
+    action, param = msg:match('([^ ]+) ([^ ]+)')
+    if action == 'width' then
+        IDI_SETTINGS.width = tonumber(param)
+    elseif action == 'height' then
+        IDI_SETTINGS.height = tonumber(param)
+    elseif action == 'x' then
+        IDI_SETTINGS.ofsx = tonumber(param)
+    elseif action == 'y' then
+        IDI_SETTINGS.ofsy = tonumber(param)
+    else
+        if (GetLocale() == 'zhCN') then
+            DEFAULT_CHAT_FRAME:AddMessage('|cff00FF00IcyDemonsIndicator|r 帮助文档')
+            DEFAULT_CHAT_FRAME:AddMessage('命令行：/idi 或 /icydemonsindicator')
+            DEFAULT_CHAT_FRAME:AddMessage('/idi width 200: 调整计量条宽度为200（默认200）')
+            DEFAULT_CHAT_FRAME:AddMessage('/idi height 20: 调整计量条高度为20（默认20）')
+            DEFAULT_CHAT_FRAME:AddMessage('/idi x 0: 调整横坐标位置为0（默认0）')
+            DEFAULT_CHAT_FRAME:AddMessage('/idi y -80: 调整纵坐标位置为-80（默认-80）')
+        else
+            DEFAULT_CHAT_FRAME:AddMessage('|cff00FF00IcyDemonsIndicator|r manuals')
+            DEFAULT_CHAT_FRAME:AddMessage('Console: /idi or /icydemonsindicator')
+            DEFAULT_CHAT_FRAME:AddMessage('/idi width 200: set bar width to 200(default 200)')
+            DEFAULT_CHAT_FRAME:AddMessage('/idi height 20: set bar height to 20(default 20)')
+            DEFAULT_CHAT_FRAME:AddMessage('/idi x 0: set x coordinate to 0(default 0)')
+            DEFAULT_CHAT_FRAME:AddMessage('/idi y -80: set y coordinate to -80(default -80)')
         end
     end
 end
