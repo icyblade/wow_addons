@@ -1,7 +1,8 @@
 local addonName, addon = ...
 local _G = _G
 
--- GLOBALS: GameTooltip InterfaceOptionsFrame_OpenToCategory GetSortBagsRightToLeft SetSortBagsRightToLeft
+-- GLOBALS: GameTooltip InterfaceOptionsFrame_OpenToCategory
+-- GLOBALS: GetSortBagsRightToLeft SetSortBagsRightToLeft GetInsertItemsLeftToRight SetInsertItemsLeftToRight
 -- GLOBALS: UIDropDownMenu_AddButton UIDropDownMenu_CreateInfo UIDropDownMenu_SetSelectedValue
 -- GLOBALS: SLASH_AIO1
 
@@ -11,6 +12,9 @@ AIO:SetAllPoints()
 AIO.name = addonName
 
 -- Some wrapper functions
+-------------
+-- Checkbox
+-------------
 local function checkboxGetCVar(self) return GetCVarBool(self.cvar) end
 local function checkboxSetChecked(self) self:SetChecked(self:GetValue()) end
 local function checkboxSetCVar(self, checked) SetCVar(self.cvar, checked) end
@@ -38,6 +42,50 @@ local function newCheckbox(parent, cvar, getValue, setValue)
 	return check
 end
 
+
+-----------
+-- Slider
+-----------
+local function sliderGetCVar(self) return GetCVar(self.cvar) end
+local function sliderRefresh(self) self:SetValue(self:GetCVarValue()) end
+local function sliderSetCVar(self, checked) SetCVar(self.cvar, checked) end
+
+local function newSlider(parent, cvar, minRange, maxRange, stepSize, getValue, setValue)
+	--local cvarTable = addon.hiddenOptions[cvar]
+	--local label = cvarTable['prettyName'] or cvar
+	--local description = cvarTable['description'] or 'No description'
+	local slider = CreateFrame('Slider', 'AIOSlider' .. cvar, parent, 'OptionsSliderTemplate')
+
+	slider.cvar = cvar
+	slider.GetCVarValue = getValue or sliderGetCVar
+	slider.SetCVarValue = setValue or sliderSetCVar
+	slider:SetScript('OnShow', sliderRefresh)
+	slider:SetValueStep(stepSize or 1)
+	slider:SetObeyStepOnDrag(true)
+
+	slider:SetMinMaxValues(minRange, maxRange)
+	slider.minText = _G[slider:GetName() .. 'Low']
+	slider.maxText = _G[slider:GetName() .. 'High']
+	slider.minText:SetText(minRange)
+	slider.maxText:SetText(maxRange)
+	_G[slider:GetName() .. 'Text']:SetText(cvar)
+
+	local valueText = slider:CreateFontString(nil, nil, 'GameFontHighlight')
+	valueText:SetPoint('TOP', slider, 'BOTTOM', 0, -5)
+	slider.valueText = valueText
+	slider:HookScript('OnValueChanged', function(self, value)
+		valueText:SetText(value)
+	end)
+
+	--slider:SetValue(slider:GetCVarValue())
+	slider:HookScript('OnValueChanged', slider.SetCVarValue)
+
+	--slider.label:SetText(label)
+	--slider.tooltipText = label
+	--slider.tooltipRequirement = description
+	return slider
+end
+
 local title = AIO:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 title:SetPoint("TOPLEFT", 16, -16)
 title:SetText(AIO.name)
@@ -56,12 +104,10 @@ local playerGuilds = newCheckbox(AIO, 'UnitNamePlayerGuild')
 local playerGuildTitles = newCheckbox(AIO, 'UnitNameGuildTitle')
 local stopAutoAttack = newCheckbox(AIO, 'stopAutoAttackOnTargetChange')
 local attackOnAssist = newCheckbox(AIO, 'assistAttack')
-local autoSelfCast = newCheckbox(AIO, 'autoSelfCast')
 local castOnKeyDown = newCheckbox(AIO, 'ActionButtonUseKeyDown')
 local fadeMap = newCheckbox(AIO, 'mapFade')
 local secureToggle = newCheckbox(AIO, 'secureAbilityToggle')
 local luaErrors = newCheckbox(AIO, 'scriptErrors')
-local lootUnderMouse = newCheckbox(AIO, 'lootUnderMouse')
 local targetDebuffFilter = newCheckbox(AIO, 'noBuffDebuffFilterOnTarget')
 local reverseCleanupBags = newCheckbox(AIO, 'reverseCleanupBags',
 	-- Get Value
@@ -73,10 +119,20 @@ local reverseCleanupBags = newCheckbox(AIO, 'reverseCleanupBags',
 		SetSortBagsRightToLeft(checked)
 	end
 )
-
+local lootLeftmostBag = newCheckbox(AIO, 'lootLeftmostBag',
+	-- Get Value
+	function(self)
+		return GetInsertItemsLeftToRight()
+	end,
+	-- Set Value
+	function(self, checked)
+		SetInsertItemsLeftToRight(checked)
+	end
+)
+local enableWoWMouse = newCheckbox(AIO, 'enableWoWMouse')
 
 local questSortingLabel = AIO:CreateFontString(nil, 'ARTWORK', 'GameFontHighlightSmall')
-questSortingLabel:SetPoint('TOPLEFT', reverseCleanupBags, 'BOTTOMLEFT', 0, 0)
+questSortingLabel:SetPoint('TOPLEFT', enableWoWMouse, 'BOTTOMLEFT', 0, 0)
 questSortingLabel:SetText('Select quest sorting mode:')
 
 local questSortingDropdown = CreateFrame("Frame", "AIOQuestSorting", AIO, "UIDropDownMenuTemplate")
@@ -96,6 +152,13 @@ questSortingDropdown.initialize = function(dropdown)
 	UIDropDownMenu_SetSelectedValue(dropdown, (GetCVarInfo("trackQuestSorting")))
 end
 questSortingDropdown:HookScript("OnShow", questSortingDropdown.initialize)
+questSortingDropdown:HookScript("OnEnter", function(self)
+	if not self.isDisabled then
+		GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+		GameTooltip:SetText(_G["OPTION_TOOLTIP_TRACK_QUEST_"..strupper(self.selectedValue)], nil, nil, nil, nil, true)
+	end
+end)
+questSortingDropdown:HookScript("OnLeave", GameTooltip_Hide)
 
 local actionCamModeLabel = AIO:CreateFontString(nil, 'ARTWORK', 'GameFontHighlightSmall')
 actionCamModeLabel:SetPoint('TOPLEFT', questSortingDropdown, 'BOTTOMLEFT', 16, 0)
@@ -124,14 +187,14 @@ playerGuilds:SetPoint("TOPLEFT", playerTitles, "BOTTOMLEFT", 0, -4)
 playerGuildTitles:SetPoint("TOPLEFT", playerGuilds, "BOTTOMLEFT", 0, -4)
 stopAutoAttack:SetPoint("TOPLEFT", playerGuildTitles, "BOTTOMLEFT", 0, -4)
 attackOnAssist:SetPoint("TOPLEFT", stopAutoAttack, "BOTTOMLEFT", 0, -4)
-autoSelfCast:SetPoint("TOPLEFT", attackOnAssist, "BOTTOMLEFT", 0, -4)
-castOnKeyDown:SetPoint("TOPLEFT", autoSelfCast, "BOTTOMLEFT", 0, -4)
+castOnKeyDown:SetPoint("TOPLEFT", attackOnAssist, "BOTTOMLEFT", 0, -4)
 fadeMap:SetPoint("TOPLEFT", castOnKeyDown, "BOTTOMLEFT", 0, -4)
 secureToggle:SetPoint("TOPLEFT", fadeMap, "BOTTOMLEFT", 0, -4)
 luaErrors:SetPoint("TOPLEFT", secureToggle, "BOTTOMLEFT", 0, -4)
-lootUnderMouse:SetPoint("TOPLEFT", luaErrors, "BOTTOMLEFT", 0, -4)
-targetDebuffFilter:SetPoint("TOPLEFT", lootUnderMouse, "BOTTOMLEFT", 0, -4)
+targetDebuffFilter:SetPoint("TOPLEFT", luaErrors, "BOTTOMLEFT", 0, -4)
 reverseCleanupBags:SetPoint("TOPLEFT", targetDebuffFilter, "BOTTOMLEFT", 0, -4)
+lootLeftmostBag:SetPoint("TOPLEFT", reverseCleanupBags, "BOTTOMLEFT", 0, -4)
+enableWoWMouse:SetPoint("TOPLEFT", lootLeftmostBag, "BOTTOMLEFT", 0, -4)
 
 -- TODO reducedLagTolerance maxSpellStartRecoveryOffset
 
@@ -158,32 +221,10 @@ SubText_Chat:SetPoint('TOPLEFT', Title_Chat, 'BOTTOMLEFT', 0, -8)
 SubText_Chat:SetPoint('RIGHT', -32, 0)
 SubText_Chat:SetText('These options allow you to modify chat settings.') -- TODO
 
-local chatStyleLabel = AIO_Chat:CreateFontString(nil, 'ARTWORK', 'GameFontHighlightSmall')
-chatStyleLabel:SetPoint('TOPLEFT', SubText_Chat, 'BOTTOMLEFT', 0, -12)
-chatStyleLabel:SetText('Select chat style:')
-
 local chatMouseScroll = newCheckbox(AIO_Chat, 'chatMouseScroll')
 local chatDelay = newCheckbox(AIO_Chat, 'removeChatDelay')
-local chatStyleDropdown = CreateFrame("Frame", "AIO_chatStyle", AIO_Chat, "UIDropDownMenuTemplate")
 
-chatStyleDropdown:SetPoint("TOPLEFT", chatStyleLabel, "BOTTOMLEFT", -16, -10)
-chatStyleDropdown.initialize = function(dropdown)
-	local chatStyle = { "im", "classic" }
-	for i, mode in next, chatStyle do
-		local info = UIDropDownMenu_CreateInfo()
-		info.text = chatStyle[i]
-		info.value = chatStyle[i]
-		info.func = function(self)
-			SetCVar("chatStyle", self.value)
-			UIDropDownMenu_SetSelectedValue(dropdown, self.value)
-		end
-		UIDropDownMenu_AddButton(info)
-	end
-	UIDropDownMenu_SetSelectedValue(dropdown, GetCVarInfo("chatStyle"))
-end
-chatStyleDropdown:HookScript("OnShow", chatStyleDropdown.initialize)
-
-chatDelay:SetPoint('TOPLEFT', chatStyleDropdown, 'BOTTOMLEFT', 16, -12)
+chatDelay:SetPoint('TOPLEFT', SubText_Chat, 'BOTTOMLEFT', 0, -8)
 chatMouseScroll:SetPoint('TOPLEFT', chatDelay, 'BOTTOMLEFT', 0, -4)
 
 
@@ -243,10 +284,13 @@ local fctHealing = newCheckbox(AIO_FCT, 'floatingCombatTextCombatHealing')
 local fctAbsorbSelf = newCheckbox(AIO_FCT, 'floatingCombatTextCombatHealingAbsorbSelf')
 local fctAbsorbTarget = newCheckbox(AIO_FCT, 'floatingCombatTextCombatHealingAbsorbTarget')
 local fctDirectionalScale = newCheckbox(AIO_FCT, 'floatingCombatTextCombatDamageDirectionalScale')
+local fctLowHPMana = newCheckbox(AIO_FCT, 'floatingCombatTextLowManaHealth')
+local fctDots = newCheckbox(AIO_FCT, 'floatingCombatTextCombatLogPeriodicSpells')
 
 fctEnergyGains:SetPoint("TOPLEFT", fctfloatmodeDropdown, "BOTTOMLEFT", 16, -12)
 fctAuras:SetPoint("TOPLEFT", fctEnergyGains, "BOTTOMLEFT", 0, -4)
-fctHonorGains:SetPoint("TOPLEFT", fctAuras, "BOTTOMLEFT", 0, -4)
+fctReactives:SetPoint("TOPLEFT", fctAuras, "BOTTOMLEFT", 0, -4)
+fctHonorGains:SetPoint("TOPLEFT", fctReactives, "BOTTOMLEFT", 0, -4)
 fctRepChanges:SetPoint("TOPLEFT", fctHonorGains, "BOTTOMLEFT", 0, -4)
 fctComboPoints:SetPoint("TOPLEFT", fctRepChanges, "BOTTOMLEFT", 0, -4)
 fctCombatState:SetPoint("TOPLEFT", fctComboPoints, "BOTTOMLEFT", 0, -4)
@@ -255,7 +299,12 @@ fctHealing:SetPoint("TOPLEFT", fctSpellMechanics, "BOTTOMLEFT", 0, -4)
 fctAbsorbSelf:SetPoint("TOPLEFT", fctHealing, "BOTTOMLEFT", 0, -4)
 fctAbsorbTarget:SetPoint("TOPLEFT", fctAbsorbSelf, "BOTTOMLEFT", 0, -4)
 fctDirectionalScale:SetPoint("TOPLEFT", fctAbsorbTarget, "BOTTOMLEFT", 0, -4)
+fctLowHPMana:SetPoint("TOPLEFT", fctDirectionalScale, "BOTTOMLEFT", 0, -4)
+fctDots:SetPoint("TOPLEFT", fctLowHPMana, "BOTTOMLEFT", 0, -4)
 
+-- REMOVE
+-- local testSlider = newSlider(AIO_FCT, 'CameraOverShoulder', -10, 10)
+-- testSlider:SetPoint('TOPLEFT', fctDirectionalScale, 'BOTTOMLEFT', 0, -14)
 
 -- Hook up options to addon panel
 InterfaceOptions_AddCategory(AIO, addonName)
