@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(1751, "DBM-Nighthold", nil, 786)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 14949 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 15070 $"):sub(12, -3))
 mod:SetCreatureID(104881)
 mod:SetEncounterID(1871)
 mod:SetZone()
@@ -12,7 +12,7 @@ mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 213853 213567 213564 213852 212735 213275 213390 213083 212492",
-	"SPELL_AURA_APPLIED 213864 216389 213867 213869 212531 213148 213569",
+	"SPELL_AURA_APPLIED 213864 216389 213867 213869 212531 213148 213569 212587",
 	"SPELL_AURA_REMOVED 213569 212531 213148",
 	"SPELL_PERIODIC_DAMAGE 212736 213278 213504",
 	"SPELL_PERIODIC_MISSED 212736 213278 213504",
@@ -38,7 +38,8 @@ local warnArmageddon				= mod:NewAddsLeftAnnounce(213568, 2)
 local specWarnAnnihilate			= mod:NewSpecialWarningCount(212492, "Tank", nil, nil, 3, 2)
 local specWarnAnnihilateOther		= mod:NewSpecialWarningTaunt(212492, nil, nil, nil, 1, 2)
 --Debuffs
-local specWarnMarkOfFrost			= mod:NewSpecialWarningMoveAway(212531, nil, nil, nil, 1, 2)
+local specWarnMarkOfFrost			= mod:NewSpecialWarningYou(212531, nil, nil, nil, 1, 2)
+local yellMarkofFrost				= mod:NewYell(212531)
 local specWarnSearingBrand			= mod:NewSpecialWarningMoveAway(213148, nil, nil, nil, 1, 2)
 local specWarnSearingBrandDodge		= mod:NewSpecialWarningDodge(213148, nil, nil, nil, 2, 6)
 local specWarnArcaneOrb				= mod:NewSpecialWarningDodge(213519, nil, nil, nil, 2, 2)
@@ -171,7 +172,6 @@ function mod:SPELL_CAST_START(args)
 	if spellId == 213853 then--Mark of Frost (Animate)
 		specWarnAnimateFrost:Show()
 		voiceAnimateFrost:Play("mobsoon")--using this trigger, mobsoon
-		DBM:AddMsg("If you see this message it means blizzard fixed Animate frost combat log trigger. Report this to DBM authors to improve mod. You may recieve double warnings on this spell until mod is updated.")
 	elseif spellId == 213567 then--Animate: Searing Brand
 		specWarnAnimateFire:Show()
 		voiceAnimateFire:Play("mobsoon")
@@ -231,9 +231,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnFrostPhase:Show()
 		voicePhaseChange:Play("phasechange")
 		timerMarkOfFrostCD:Start(18)
-		timerMarkOfFrostRepCD:Start(28)
-		timerMarkOfFrostDetonateCD:Start(48)
-		timerAnimateFrostCD:Start(65)--Timer is for cast start, which is hidden at moment, so DBM will trigger warning 3 seconds after timer ends (cast finish) right now
+		timerMarkOfFrostRepCD:Start(38)
+		timerMarkOfFrostDetonateCD:Start(68)
+		timerAnimateFrostCD:Start(75)--Timer is for cast start, which is hidden at moment, so DBM will trigger warning 3 seconds after timer ends (cast finish) right now
 		if self.Options.RangeFrame then
 			DBM.RangeCheck:Show(8, debuffFilter)
 		end
@@ -263,9 +263,15 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnMarkOfFrostChosen:CombinedShow(0.5, args.destName)
 		if args:IsPlayer() then
 			specWarnMarkOfFrost:Show()
-			voiceMarkOfFrost:Play("scatter")
+			voiceMarkOfFrost:Play("targetyou")
 			countdownMarkOfFrost:Start(5)
+			self:AntiSpam(7, args.destName)
+			yellMarkofFrost:Yell()
 		end
+	elseif spellId == 212587 and args:IsPlayer() and self:AntiSpam(7, args.destName) then
+		specWarnMarkOfFrost:Show()
+		voiceMarkOfFrost:Play("targetyou")
+		yellMarkofFrost:Yell()
 	elseif spellId == 213148 then--Searing Brand (5sec Targetting Debuff)
 		warnSearingBrandChosen:CombinedShow(0.3, args.destName)
 		if args:IsPlayer() then
@@ -347,8 +353,8 @@ end
 function mod:UNIT_SPELLCAST_SUCCEEDED(uId, _, _, spellGUID)
 	local spellId = tonumber(select(5, strsplit("-", spellGUID)), 10)
 	if spellId == 213853 then--Animate Mark of Frost. Not currently incombat log
-		specWarnAnimateFrost:Show()
-		voiceAnimateFrost:Play("mobkill")--using this trigger, mobkill
+--		specWarnAnimateFrost:Show()
+--		voiceAnimateFrost:Play("mobkill")--using this trigger, mobkill
 --		timerAnimateFrostCD:Start()
 	elseif spellId == 215455 then--Arcane Orb
 		specWarnArcaneOrb:Show()
