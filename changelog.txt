@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [5.6.0] - 2016-07-25
+### add tidyplates 6.18.Beta5
+### fix zhCN encoding for IcyDemonsIndicator
+### update DBM, AdvancedInterfaceOptions, ExRT
+
 ## [5.5.1] - 2016-07-22
 ### add commmands for IcyDemonsIndicator
 ### update AdvancedInterfaceOptions
