@@ -1,4 +1,4 @@
--- ÏÔÊ¾¶ñÄ§Êõ¶ñÄ§´æ»îÊ±¼ä
+-- æ˜¾ç¤ºæ¶é­”æœ¯æ¶é­”å­˜æ´»æ—¶é—´
 WarlockDemons = LibStub('AceAddon-3.0'):NewAddon('WarlockDemons', 'AceEvent-3.0', 'AceHook-3.0')
 local candy = LibStub("LibCandyBar-3.0")
 local media = LibStub("LibSharedMedia-3.0")
@@ -67,7 +67,7 @@ function check_status()
     if player_class == 'WARLOCK' and specialization == 2 then -- Demonology only
         WarlockDemons:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
         if (GetLocale() == 'zhCN') then
-            DEFAULT_CHAT_FRAME:AddMessage('¼ì²âµ½¶ñÄ§Êõ£¬ÕıÔÚÆôÓÃºËÎäÆ÷...|cff00FF00Íê³É|r')
+            DEFAULT_CHAT_FRAME:AddMessage('æ£€æµ‹åˆ°æ¶é­”æœ¯ï¼Œæ­£åœ¨å¯ç”¨æ ¸æ­¦å™¨...|cff00FF00å®Œæˆ|r')
         else
             DEFAULT_CHAT_FRAME:AddMessage('Demonology warlock detected, launching nuclear weapon...|cff00FF00DONE|r')
         end
@@ -126,12 +126,12 @@ function SlashCmdList.ICYDEMONSINDICATOR(msg)
         IDI_SETTINGS.ofsy = tonumber(param)
     else
         if (GetLocale() == 'zhCN') then
-            DEFAULT_CHAT_FRAME:AddMessage('|cff00FF00IcyDemonsIndicator|r °ïÖúÎÄµµ')
-            DEFAULT_CHAT_FRAME:AddMessage('ÃüÁîĞĞ£º/idi »ò /icydemonsindicator')
-            DEFAULT_CHAT_FRAME:AddMessage('/idi width 200: µ÷Õû¼ÆÁ¿Ìõ¿í¶ÈÎª200£¨Ä¬ÈÏ200£©')
-            DEFAULT_CHAT_FRAME:AddMessage('/idi height 20: µ÷Õû¼ÆÁ¿Ìõ¸ß¶ÈÎª20£¨Ä¬ÈÏ20£©')
-            DEFAULT_CHAT_FRAME:AddMessage('/idi x 0: µ÷Õûºá×ø±êÎ»ÖÃÎª0£¨Ä¬ÈÏ0£©')
-            DEFAULT_CHAT_FRAME:AddMessage('/idi y -80: µ÷Õû×İ×ø±êÎ»ÖÃÎª-80£¨Ä¬ÈÏ-80£©')
+            DEFAULT_CHAT_FRAME:AddMessage('|cff00FF00IcyDemonsIndicator|r å¸®åŠ©æ–‡æ¡£')
+            DEFAULT_CHAT_FRAME:AddMessage('å‘½ä»¤è¡Œï¼š/idi æˆ– /icydemonsindicator')
+            DEFAULT_CHAT_FRAME:AddMessage('/idi width 200: è°ƒæ•´è®¡é‡æ¡å®½åº¦ä¸º200ï¼ˆé»˜è®¤200ï¼‰')
+            DEFAULT_CHAT_FRAME:AddMessage('/idi height 20: è°ƒæ•´è®¡é‡æ¡é«˜åº¦ä¸º20ï¼ˆé»˜è®¤20ï¼‰')
+            DEFAULT_CHAT_FRAME:AddMessage('/idi x 0: è°ƒæ•´æ¨ªåæ ‡ä½ç½®ä¸º0ï¼ˆé»˜è®¤0ï¼‰')
+            DEFAULT_CHAT_FRAME:AddMessage('/idi y -80: è°ƒæ•´çºµåæ ‡ä½ç½®ä¸º-80ï¼ˆé»˜è®¤-80ï¼‰')
         else
             DEFAULT_CHAT_FRAME:AddMessage('|cff00FF00IcyDemonsIndicator|r manuals')
             DEFAULT_CHAT_FRAME:AddMessage('Console: /idi or /icydemonsindicator')
