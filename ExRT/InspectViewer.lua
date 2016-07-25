@@ -17,6 +17,8 @@ module.db.itemsSlotTable = parentModule.db.itemsSlotTable
 module.db.classIDs = ExRT.GDB.ClassID
 module.db.glyphsIDs = ExRT.is7 and {8,9,10,11,12,13} or {9,11,13,10,8,12}
 
+module.db.artifactDB = parentModule.db.artifactDB
+
 module.db.statsList = {'intellect','agility','strength','spirit','haste','mastery','crit','spellpower','multistrike','versatility','armor','leech','avoidance','speed'}
 module.db.statsListName = {L.InspectViewerInt,L.InspectViewerAgi,L.InspectViewerStr,L.InspectViewerSpirit,L.InspectViewerHaste,L.InspectViewerMastery,L.InspectViewerCrit,L.InspectViewerSpd, L.InspectViewerMS, L.InspectViewerVer, L.InspectViewerBonusArmor, L.InspectViewerLeech, L.InspectViewerAvoidance, L.InspectViewerSpeed}
 
@@ -101,9 +103,44 @@ module.db.socketsBonusIDs = {
 	[564]=true,
 	[565]=true,
 	[572]=true,
+	[1808]=true,
 }
 
-module.db.topEnchGems = {
+module.db.topEnchGems = (ExRT.is7 and ExRT.isLegionContent) and {
+	[5427]="Ring:Crit:200",
+	[5428]="Ring:Haste:200",
+	[5429]="Ring:Mastery:200",
+	[5430]="Ring:Vers:200",
+	
+	[5434]="Cloak:Str:200",
+	[5435]="Cloak:Agi:200",
+	[5436]="Cloak:Int:200",
+
+	[5467]="Cloak:Str:200",
+	[5468]="Cloak:Agi:200",
+	[5469]="Cloak:Int:200",
+
+	[5437]="Neck:",
+	[5438]="Neck:",
+	[5439]="Neck:",
+	[5889]="Neck:",
+	[5890]="Neck:",
+	[5891]="Neck:",
+	
+	[5463]="Gem:Crit:250",
+	[5464]="Gem:Haste:250",
+	[5465]="Gem:Mastery:250",
+	[5466]="Gem:Vers:250",
+	
+	[130219]="Gem:Crit:250",
+	[130220]="Gem:Haste:250",
+	[130222]="Gem:Mastery:250",
+	[130221]="Gem:Vers:250",
+	
+	[130246]="Gem:Str:200",
+	[130247]="Gem:Agi:200",
+	[130248]="Gem:Int:200",
+} or {
 	[5306]="Ring:Vers",
 	[5324]="Ring:Crit",
 	[5325]="Ring:Haste",
@@ -150,9 +187,51 @@ module.db.topEnchGems = {
 	[5416]="Gem:MS",
 	[5417]="Gem:Vers",
 	[5418]="Gem:Stamina",
+	
+	[127760]="Gem:Crit",
+	[127761]="Gem:Haste",
+	[127762]="Gem:Mastery",
+	[127763]="Gem:MS",
+	[127764]="Gem:Vers",
+	[127765]="Gem:Stamina",
 }
 
-module.db.achievementsList = {
+module.db.achievementsList = ExRT.is7 and {
+	{	--Nightmare
+		L.S_ZoneT19Nightmare,
+		10818,10819,10820,10821,10822,10823,10824,10825,10826,10827,
+	
+	},{	--Legion 5ppl
+		EXPANSION_NAME6..": "..DUNGEONS,
+		11164,10800,10806,10816,10785,10782,10789,10809,10797,10813,10803,11183,11184,11185,11162,
+	
+	},{	--Legion Questing & Artifact
+		EXPANSION_NAME6..": "..QUESTS_LABEL,
+		10617,11124,10877,10852,10746,
+	
+	},{	--HFC
+		L.RaidLootT18HC..":"..L.sencounterWODMythic,		
+		10027,10032,10033,10034,10035,10253,10037,10040,10041,10038,10039,10042,10043,	
+	},{
+		L.RaidLootT18HC,
+		10023,10024,10025,10020,10019,10044,
+	},{	--BRF
+		L.RaidLootT17BF..":"..L.sencounterWODMythic,		
+		8966,8967,8970,8968,8932,8971,8956,8969,8972,8973,
+	},{
+		L.RaidLootT17BF,
+		8989,8990,8991,8992,9444,
+	},{	--H
+		L.RaidLootT17Highmaul..":"..L.sencounterWODMythic,		
+		8949,8960,8962,8961,8963,8964,8965,
+	},{
+		L.RaidLootT17Highmaul,
+		8986,8987,8988,9441,
+	},{	--Old curves
+		EXPANSION_NAME4,
+		6954,7485,8246,7486,8248,7487,8249,8238,8260,8398,8400,8399,8401
+	},
+} or {
 	{	--HFC
 		L.RaidLootT18HC..":"..L.sencounterWODMythic,		
 		10027,10032,10033,10034,10035,10253,10037,10040,10041,10038,10039,10042,10043,	
@@ -176,7 +255,35 @@ module.db.achievementsList = {
 		6954,7485,8246,7486,8248,7487,8249,8238,8260,8398,8400,8399,8401
 	},
 }
-module.db.achievementsList_statistic = {
+module.db.achievementsList_statistic = ExRT.is7 and {
+	{	--Nightmare
+		0,0,0,{10911,10912,10913,10914},{10920,10921,10922,10923},{10924,10925,10926,10927},{10915,10916,10917,10918},{10928,10929,10930,10931},{10932,10933,10934,10935},{10936,10937,10938,10939},
+	},{	--Legion 5ppl
+		{10981,10982},{10890,10891,10892,10893,10894,10895},{10899,10900,10901},{10910},{10881,10882,10883},{10878,10879,10880},{10887,10888,10889},{10902,10903,10904},
+		{10884,10885,10886},{10907},{10896,10897,10898},nil,nil,nil,nil,
+	
+	},{	--Legion Questing & Artifact
+		nil,nil,nil,nil,nil,
+	
+	},{	--HFC
+		{10201,10202,10203,10204},{10205,10206,10207,10208},{10209,10210,10211,10212},{10213,10214,10215,10216},{10217,10218,10219,10220},{10221,10222,10223,10224},{10225,10226,10227,10228},
+		{10229,10230,10231,10232},{10241,10242,10243,10244},{10233,10234,10235,10236},{10237,10238,10239,10240},{10245,10246,10247,10248},{10249,10250,10251,10252},
+	},{
+		{-10201,-10202,-10203,-10205,-10206,-10207,-10209,-10210,-10211},{-10213,-10214,-10215,-10217,-10218,-10219,-10221,-10222,-10223},
+		{-10225,-10226,-10227,-10229,-10230,-10231,-10241,-10242,-10243},{-10233,-10234,-10235,-10237,-10238,-10239,-10245,-10246,-10247},{-10249,-10250,-10251},{-10251,-10252},
+	},{	--BRF
+		{9316,9317,9318,9319},{9320,9321,9322,9323},{9343,9349,9351,9353},{9324,9327,9328,9329},{9330,9331,9332,9333},
+		{9354,9355,9356,9357},{9334,9336,9337,9338},{9339,9340,9341,9342},{9358,9359,9360,9361},{9362,9363,9364,9365},
+	},{
+		{-9316,-9317,-9318,-9320,-9321,-9322,-9343,-9349,-9351},{-9324,-9327,-9328,-9330,-9331,-9332,-9354,-9355,-9356},{-9334,-9336,-9337,-9339,-9340,-9341,-9358,-9359,-9360},{-9362,-9363,-9364},{-9364,-9365},
+	},{	--H
+		{9280,9282,9284,9285},{9286,9287,9288,9289},{9295,9297,9298,9300},{9290,9292,9293,9294},{9301,9302,9303,9304},{9306,9308,9310,9311},{9312,9313,9314,9315},
+	},{
+		{-9280,-9282,-9284,-9286,-9287,-9288,-9295,-9297,-9298},{-9290,-9292,-9293,-9301,-9302,-9303,-9306,-9308,-9310},{-9312,-9313,-9314},{-9314,-9315},
+	},{	--Old curves
+		{6799,7926},{6800,7927},{6811,7963},{6812,7964},{6819,7971},{6820,7972},{8199,8200},{8202,8201},{8203,8256},{8635},{8637},{8636},{8638},
+	},
+} or {
 	{	--HFC
 		{10201,10202,10203,10204},{10205,10206,10207,10208},{10209,10210,10211,10212},{10213,10214,10215,10216},{10217,10218,10219,10220},{10221,10222,10223,10224},{10225,10226,10227,10228},
 		{10229,10230,10231,10232},{10241,10242,10243,10244},{10233,10234,10235,10236},{10237,10238,10239,10240},{10245,10246,10247,10248},{10249,10250,10251,10252},
@@ -201,13 +308,14 @@ do
 	local array = parentModule.db.acivementsIDs
 	for i=1,#module.db.achievementsList do
 		local from = module.db.achievementsList[i]
-		for j=2,#from do
+		local size = #from
+		for j=2,size do
 			array[#array + 1] = from[j]
 		end
 		
 		local from = module.db.achievementsList_statistic[i]
-		for j=1,#from do
-			if from[j] then
+		for j=1,size-1 do
+			if from[j] and from[j]~=0 then
 				for k=1,#from[j] do
 					local id = from[j][k]
 					if id > 0 then
@@ -274,27 +382,19 @@ function module.options:Load()
 
 	local function reloadChks(self)
 		local clickID = self.id
-		self:SetChecked(true)
 		module.options.achievementsDropDown:Hide()
 		module.options.filterDropDown:Show()
 		module.options.chkAchivs.text:Show()
-		if clickID == 1 then
-			module.options.chkTalents:SetChecked(false)
-			module.options.chkInfo:SetChecked(false)
-			module.options.chkAchivs:SetChecked(false)
-		elseif clickID == 2 then
-			module.options.chkItems:SetChecked(false)
-			module.options.chkInfo:SetChecked(false)
-			module.options.chkAchivs:SetChecked(false)
-		elseif clickID == 3 then
-			module.options.chkItems:SetChecked(false)
-			module.options.chkTalents:SetChecked(false)
-			module.options.chkAchivs:SetChecked(false)
-		elseif clickID == 4 then
-			module.options.chkItems:SetChecked(false)
-			module.options.chkTalents:SetChecked(false)
-			module.options.chkInfo:SetChecked(false)
-
+		
+		module.options.chkItems:SetChecked(false)
+		module.options.chkTalents:SetChecked(false)
+		module.options.chkInfo:SetChecked(false)
+		module.options.chkAchivs:SetChecked(false)
+		module.options.chkArtifact:SetChecked(false)
+		
+		self:SetChecked(true)
+		
+		if clickID == 4 then
 			module.options.achievementsDropDown:Show()
 			module.options.filterDropDown:Hide()
 			module.options.chkAchivs.text:Hide()
@@ -314,6 +414,12 @@ function module.options:Load()
 
 	self.chkAchivs = ELib:Radio(self,ACHIEVEMENTS):Point(385,-28):OnClick(reloadChks)
 	self.chkAchivs.id = 4
+	
+	self.chkArtifact = ELib:Radio(self,ARTIFACT_POWER):Point(385,-28+25):OnClick(reloadChks)
+	self.chkArtifact.id = 5
+	if not ExRT.is7 then
+		self.chkArtifact:Hide()
+	end
 	
 	local function ItemsTrackDropDownClick(self)
 		local f = self.checkButton:GetScript("OnClick")
@@ -513,7 +619,7 @@ function module.options:Load()
 	local function IsItemHasNotGem(link)
 		if link then
 			local gem = link:match("item:%d+:[0-9%-]*:([0-9%-]*):")
-			if gem == "0" then
+			if gem == "0" or gem == "" then
 				return true
 			end
 		end
@@ -524,13 +630,13 @@ function module.options:Load()
 			local ench,gem = link:match("item:%d+:([0-9%-]*):([0-9%-]*):")
 			if ench and gem then
 				local isTop = true
-				if ench ~= "0" then
+				if ench ~= "0" and ench ~= "" then
 					ench = tonumber(ench)
 					if not module.db.topEnchGems[ench] then
 						isTop = false
 					end
 				end
-				if gem ~= "0" then
+				if gem ~= "0" and gem ~= "" then
 					gem = tonumber(gem)
 					if not module.db.topEnchGems[gem] then
 						isTop = false
@@ -544,18 +650,20 @@ function module.options:Load()
 	local function IsValorUpgraded(link)
 		if link then
 			local isUpgraded = true
-			local upgradeType,linkRest = link:match("item:%d+:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:[0-9%-]*:([0-9%-]*):[0-9%-]*:([%d:]+)")
-			if upgradeType and linkRest then --linkRest contains (a variable amount of) bonus IDs and the upgrade ID at the end
-				if upgradeType == "4" then -- this item can be upgraded with valor points
-					local upgradeID = linkRest:match(":(%d+)$")
-					if upgradeID ~= "531" then -- 529 is 0/2, 530 is 1/2, 531 is 2/2
-						isUpgraded = false
-					end
+			
+			local _,itemID,enchant,gem1,gem2,gem3,gem4,suffixID,uniqueID,level,specializationID,upgradeType,instanceDifficultyID,numBonusIDs,restLink = strsplit(":",link,15)
+			
+			if upgradeType == "4" and restLink then
+				local upgradeID = select((tonumber(numBonusIDs or "0") or 0) + 1,strsplit(":",restLink))
+				if upgradeID ~= "531" then -- 529 is 0/2, 530 is 1/2, 531 is 2/2
+					isUpgraded = false
 				end
 			end
 			return isUpgraded
 		end
 	end
+	
+	local RefreshArtifactCache = {}
 
 	function module.options.ReloadPage()
 		local nowDB = {}
@@ -610,11 +718,21 @@ function module.options:Load()
 						line.spec.texture:SetTexture("Interface\\Icons\\INV_MISC_QUESTIONMARK")
 						line.spec.id = nil
 					end
-					
+
 					line.ilvl:SetText(format("%.2f",data.ilvl or 0))
 					
 					line.linkSpecID = spec
 					line.linkClassID = module.db.classIDs[class or "?"]
+					
+					line.refreshArtifact:Hide()
+					line.updateAP:Hide()
+					
+					line.apinfo:SetText("")
+					for _,item in pairs(line.items) do
+						item:Hide()
+						item.text:SetText("")
+						item.border:Hide()
+					end
 					
 					if module.db.page == 1 then
 						for j=1,16 do
@@ -639,7 +757,7 @@ function module.options:Load()
 									local _,_,_,_,_,_,_,_,_,itemTexture = GetItemInfo(item)
 									line.items[j].texture:SetTexture(itemTexture)
 									line.items[j].link = item
-									if (enchantID == 0 and (slotID == 2 or slotID == 15 or slotID == 11 or slotID == 12 or slotID == 16 or (module.db.specHasOffhand[spec or 0] and slotID == 17)) and module.db.colorizeNoEnch) or
+									if (enchantID == 0 and (slotID == 2 or slotID == 15 or slotID == 11 or slotID == 12 or (not ExRT.isLegionContent and (slotID == 16 or (module.db.specHasOffhand[spec or 0] and slotID == 17)))) and module.db.colorizeNoEnch) or
 										(items_ilvl[slotID] and items_ilvl[slotID] > 0 and items_ilvl[slotID] < 630 and module.db.colorizeLowIlvl) or
 										(module.db.colorizeNoGems and ExRT.F.IsBonusOnItem(item,module.db.socketsBonusIDs) and IsItemHasNotGem(item)) or 
 										(module.db.colorizeNoTopEnchGems and not IsTopEnchAndGems(item)) or
@@ -702,10 +820,6 @@ function module.options:Load()
 							end
 						end
 					elseif module.db.page == 3 then
-						for j=1,16 do
-							line.items[j]:Hide()
-							line.items[j].border:Hide()
-						end
 						line.time:Show()
 						line.time:SetText(date("%H:%M:%S",data.time))
 						
@@ -817,6 +931,59 @@ function module.options:Load()
 							end
 							line.otherInfo:SetText(L.BossWatcherDamageSwitchTabInfoNoInfo)
 							line.otherInfo:Show()
+						end
+					elseif module.db.page == 5 then
+						line.time:Hide()
+						line.otherInfo:Hide()
+						line.otherInfoTooltipFrame:Hide()
+						
+						local db
+						for long_name,DB in pairs(module.db.artifactDB) do
+							if ExRT.F.delUnitNameServer(long_name) == name then
+								db = DB
+								break
+							end						
+						end
+						
+						line.class.texture:SetTexture("")
+						line.spec.texture:SetTexture("")
+						line.ilvl:SetText("")
+					
+						if not db then
+							if not RefreshArtifactCache[ name ] then
+								line.refreshArtifact:Show()
+							else
+								line.otherInfo:SetText(L.BossWatcherDamageSwitchTabInfoNoInfo)
+								line.otherInfo:Show()
+							end
+						else
+							local dateStr = date("%d/%m/%Y",db.time)
+							if dateStr == date("%d/%m/%Y") then
+								dateStr = date("%H:%M:%S",db.time)
+							end
+						
+							line.apinfo:SetText("Level: "..db.Level.."|nKnowlege: "..db.KnowledgeLevel.."|n"..dateStr)
+							line.updateAP:Show()
+						
+							local it = 0
+							for j=1,#db do
+								local spellID = C_ArtifactUI.GetPowerInfo(db[j][1])
+								
+								local spellTexture = GetSpellTexture(spellID)
+								
+								local icon = line.items[it]
+								if not icon then
+									break
+								end
+								
+								icon.texture:SetTexture(spellTexture)
+								icon.link = "spell:"..spellID
+								icon.sid = nil
+								icon.text:SetText(db[j][2].."/"..db[j][3])
+								icon:Show()
+								
+								it = it + 1
+							end
 						end
 					end
 					
@@ -972,6 +1139,18 @@ function module.options:Load()
 			module.options:showPage()
 		end
 	end	
+	
+	local function Lines_RefreshArtifactButton_OnClick(self)
+		local unit = self:GetParent().unit
+		if unit then
+			parentModule:ArtifactAddToQueue(unit)
+			self:Hide()
+			C_Timer.NewTimer(1.5,function()
+				module.options:showPage()
+			end)
+			RefreshArtifactCache[ unit ] = true
+		end
+	end	
 		
 	local IconBackDrop = {bgFile = "Interface/Tooltips/UI-Tooltip-Background", edgeFile = "Interface/Tooltips/UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 4, right = 4, top = 4, bottom = 4 }}
 	
@@ -990,15 +1169,19 @@ function module.options:Load()
 		line.spec:SetScript("OnEnter",Lines_SpecIcon_OnEnter)
 		line.spec:SetScript("OnLeave",GameTooltip_Hide)
 		
+		line.apinfo = ELib:Text(line,"",9):Color():Point("LEFT",100,0):Shadow()
+		
 		line.ilvl = ELib:Text(line,"630.52",11):Color():Point(160,0):Size(50,30):Shadow()
 		
 		line.items = {}
-		for j=1,16 do
+		for j=0,18 do
 			local item = ELib:Icon(line,nil,21,true):Point("LEFT",210+(24*(j-1)),0)
 			line.items[j] = item
 			item:SetScript("OnEnter",Lines_ItemIcon_OnEnter)
 			item:SetScript("OnLeave",Lines_ItemIcon_OnLeave)
 			item:SetScript("OnClick",Lines_ItemIcon_OnClick)
+			
+			item.text = ELib:Text(item,"",8):Color():Point("BOTTOMRIGHT",2,0):Outline()
 			
 			--[[
 			item.border = CreateFrame("Frame",nil,item)
@@ -1032,6 +1215,14 @@ function module.options:Load()
 		line.updateButton:SetScript("OnClick",Lines_UpdateButton_OnClick)
 		line.updateButton:Hide()
 		
+		line.updateAP = ELib:Icon(line,[[Interface\AddOns\ExRT\media\DiesalGUIcons16x256x128]],18,true):Point("RIGHT",line.items[0],"LEFT",-2,0)
+		line.updateAP.texture:SetTexCoord(0.125,0.1875,0.5,0.625)
+		line.updateAP.texture:SetVertexColor(1,1,1,0.7)
+		line.updateAP:SetScript("OnEnter",Lines_UpdateButton_OnEnter)
+		line.updateAP:SetScript("OnLeave",Lines_UpdateButton_OnLeave)
+		line.updateAP:SetScript("OnClick",Lines_RefreshArtifactButton_OnClick)
+		line.updateAP:Hide()
+		
 		line.time = ELib:Text(line,date("%H:%M:%S",time()),11):Color():Point(205,0):Size(80,30):Shadow():Center()
 		line.otherInfo = ELib:Text(line,"",10):Color():Point(285,0):Size(335,30):Shadow()
 		
@@ -1045,6 +1236,9 @@ function module.options:Load()
 		line.back:SetPoint("BOTTOMRIGHT",0,0)
 		line.back:SetColorTexture(1, 1, 1, 1)
 		line.back:SetGradientAlpha("HORIZONTAL", 0, 0, 0, 1, 0, 0, 0, 0)
+		
+		line.refreshArtifact = ELib:Button(line,REFRESH):Point("LEFT",220,0):Size(100,20):OnClick(Lines_RefreshArtifactButton_OnClick)
+		line.refreshArtifact:Hide()
 	end
 	self.raidItemLevel = ELib:Text(self,"",12):Size(500,20):Point("TOPLEFT",self.borderList,"BOTTOMLEFT",3,-2):Shadow():Color()
 	
@@ -1189,7 +1383,10 @@ function ExRT.F:RaidItemLevel()
 		for i=1,n do
 			local unit = "party"..i
 			if i==n then unit = "player" end
-			local name = UnitName(unit)
+			local name,realm = UnitName(unit)
+			if name and realm and realm ~= "" then
+				name = name.."-"..realm
+			end
 			if name then
 				if module.db.inspectDB[name] and module.db.inspectDB[name].ilvl and module.db.inspectDB[name].ilvl >= 1 then
 					countPeople = countPeople + 1

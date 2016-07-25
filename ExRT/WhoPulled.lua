@@ -6,6 +6,7 @@ local ELib,L = ExRT.lib,ExRT.L
 module.db.lastPull = nil
 module.db.lastBossName = nil
 module.db.whoPulled = nil
+module.db.isPet = nil
 
 function module.options:Load()
 	self:CreateTilte()
@@ -16,7 +17,11 @@ function module.options:Load()
 			pull = date("%d/%m/%Y %H:%M:%S",module.db.lastPull).." "..(module.db.lastBossName or "")
 		end
 	  	self.lastPull:SetText(L.WhoPulledlastPull..": "..pull)
-	  	self.name:SetText(module.db.whoPulled or "")
+	  	if module.db.isPet then
+	  		self.name:SetText((module.db.whoPulled or "").." ("..PET.." "..module.db.isPet..")")
+	  	else
+	  		self.name:SetText(module.db.whoPulled or "")
+	  	end
 	end
 	
 	self.lastPull = ELib:Text(self,"",12):Point("TOP",0,-50):Top():Color()
@@ -41,9 +46,16 @@ end
 
 function module.main:ENCOUNTER_START(encounterID, encounterName, difficultyID, groupSize)
 	module.db.whoPulled = nil
+	module.db.isPet = nil
 	module.db.lastPull = time()
 	module.db.lastBossName = encounterName
 	for boss,_ in pairs(bossUnits) do
+		local tGUID = UnitGUID(boss.."target")
+		if tGUID and ExRT.F.Pets:getOwnerNameByGUID(tGUID) then
+			module.db.isPet = UnitName(boss.."target")
+			module.db.whoPulled = ExRT.F.Pets:getOwnerNameByGUID(tGUID)
+			return
+		end
 		local tname = UnitName(boss.."target")
 		if tname then
 			module.db.whoPulled = tname
@@ -56,6 +68,13 @@ end
 
 function module.main:UNIT_TARGET(unit)
 	if unit and bossUnits[unit] then
+		local tGUID = UnitGUID(unit.."target")
+		if tGUID and ExRT.F.Pets:getOwnerNameByGUID(tGUID) then
+			module.db.isPet = UnitName(unit.."target")
+			module.db.whoPulled = ExRT.F.Pets:getOwnerNameByGUID(tGUID)
+			module:UnregisterEvents('UNIT_TARGET')
+			return
+		end
 		local tname = UnitName(unit.."target")
 		if tname then
 			module.db.whoPulled = tname

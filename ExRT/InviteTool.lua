@@ -59,7 +59,7 @@ local function InviteBut()
 	for i=1,gplayers do
 		local name,_,rankIndex,level,_,_,_,_,online,_,_,_,_,isMobile = GetGuildRosterInfo(i)
 		local sName = ExRT.F.delUnitNameServer(name)
-		if name and rankIndex < VExRT.InviteTool.Rank and online and level >= 100 and not isMobile and not CheckUnitInRaid(name,sName) and sName ~= module.db.playerFullName then
+		if name and rankIndex < VExRT.InviteTool.Rank and online and (ExRT.SDB.charLevel == 110 and level == 110 or level >= 100) and not isMobile and not CheckUnitInRaid(name,sName) and sName ~= module.db.playerFullName then
 			if inRaid then
 				InviteUnit(name)
 			elseif nowinvnum < 5 then

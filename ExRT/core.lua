@@ -1,62 +1,22 @@
---	20:56 24.05.2016
+--	14:15 22.07.2016
 
 --[[
-3660
-This version works on both clients: Live (6.2.4) and Beta (7.0.3)
-New mini module: Who pulled (only for bosses)
-Note: added dropdown for autoload note on boss
-Note: added option "Save received notes" (but no support if note was sended by player with older ExRT version)
-Note: UI changes. All options moved to another tab
-Raid cooldowns: added option "Smooth color change"
-Raid cooldowns: added option "One spell per column"
-Raid cooldowns: smooth bars animations
-Encounters: sorted by instance
-Encounters: tolal time spend on boss instead longest wipe column
-Encounters: added raid avg ilvl tracking (for new records)
-Minor UI improvements
-Minor updates
-Minor fixes
+3705
+* Fixed blinking textures for archimonde radar
+* Fixed health value for souls on gorefiend
+* Fixed health value for infernals on archimonde
+* Raid Cooldowns: "fast setup" lists updated for 7.0 spells
+* Bonus loot: fixed recording
+* Raid check: fixed food report
+* Inspeci Viewer: fixed a lot bugs
 
-3640
-Invite tools: update for 6.2.4 (fixed invite via bnet whisper)
-Raid Attendance: added filter "only this char"
-Raid Attendance: added editing (right click on line with report)
-Raid Attendance: added option for sorting attendance by column (1 col for overall att, 2 for att on bosses)
-Raid Attendance: added button "Save current roster"
-Fight Log: minor updates
-Arrow: added GExRT.F.ArrowTextMapCoord(X,Y) function for map coords
-Marks Bar: added option for selecting strata
-Marks Bar: added option for reverse World Marks buttons
-
-
-3630
-New module: Raid Attendance
-Fight Log: added graphs to damage & healing pages
-Fight Log: added boss hp on timeline tooltips
-Fight Log: visuals for spells page
-Fight Log: added phases to timelime
-Fight Log: added tracking page (exact time of damage taken for some abilities)
-Fight Log: Positions tab: added distance earned info
-Timers: added Dynamic pull timer (/rt dpt) by tigerlolol
-Legendary Ring: removed delay if sended by rl
-Arrow: added button "Find arrow"
-Timers: added option for selecting strata
-Bonus Loot: added "Export" button
-Statistics bosses: added "Export" button
-Modules "Classes" and "Raid loot" were removed
-Raid cooldowns: major CPU usage optimization
-Minor fixes
-
-TODO:
-Loot log
-Legion Alpha: Add 1 parameter for UnitAura in BossWatcher.lua (15 - nameplateShowAll)
-GetPlayerMapAreaID ???
-dpt for marks bar
+3700
+7.0 Legion Update
 
 ]]
 local GlobalAddonName, ExRT = ...
 
-ExRT.V = 3660
+ExRT.V = 3705
 ExRT.T = "R"
 ExRT.is7 = false		--> Legion (7.x) Client
 
@@ -640,6 +600,10 @@ function ExRT.F.SendExMsg(prefix, msg, tochat, touser, addonPrefix)
 		SendAddonMessage(addonPrefix, prefix .. "\t" .. msg, tochat,touser)
 	else
 		local chat_type, playerName = ExRT.F.chatType()
+		if ExRT.is7 and chat_type == "WHISPER" and playerName == ExRT.SDB.charName then
+			ExRT.F.GetExMsg(ExRT.SDB.charName, prefix, strsplit("\t", msg))
+			return
+		end
 		SendAddonMessage(addonPrefix, prefix .. "\t" .. msg, chat_type, playerName)
 	end
 end

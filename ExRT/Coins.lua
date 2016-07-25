@@ -8,6 +8,73 @@ local VExRT = nil
 local strsplit = strsplit
 
 module.db.spellsCoins = {
+	[221037] = true, --7.0 Raid Nightmare Bonus Roll Loot - Boss 01
+	[221039] = true, --7.0 Raid Nightmare Bonus Roll Loot - Boss 02
+	[221040] = true, --7.0 Raid Nightmare Bonus Roll Loot - Boss 03
+	[221041] = true, --7.0 Raid Nightmare Bonus Roll Loot - Boss 04
+	[221042] = true, --7.0 Raid Nightmare Bonus Roll Loot - Boss 05
+	[221044] = true, --7.0 Raid Nightmare Bonus Roll Loot - Boss 06
+	[221045] = true, --7.0 Raid Nightmare Bonus Roll Loot - Boss 07
+	
+	[226523] = true, --7.0 Dungeon - Darkheart Thicket - Bonus Roll Loot - Boss 01
+	[226524] = true, --7.0 Dungeon - Darkheart Thicket - Bonus Roll Loot - Boss 02
+	[226525] = true, --7.0 Dungeon - Darkheart Thicket - Bonus Roll Loot - Boss 03
+	[226526] = true, --7.0 Dungeon - Darkheart Thicket - Bonus Roll Loot - Boss 04
+	[226533] = true, --7.0 Dungeon - Black Rook Hold - Bonus Roll Loot - Boss 01
+	[226535] = true, --7.0 Dungeon - Black Rook Hold - Bonus Roll Loot - Boss 02
+	[226536] = true, --7.0 Dungeon - Black Rook Hold - Bonus Roll Loot - Boss 03
+	[226538] = true, --7.0 Dungeon - Black Rook Hold - Bonus Roll Loot - Boss 04
+	[226550] = true, --7.0 Dungeon - Court of Stars - Bonus Roll Loot - Boss 01
+	[226552] = true, --7.0 Dungeon - Court of Stars - Bonus Roll Loot - Boss 02
+	[226553] = true, --7.0 Dungeon - Court of Stars - Bonus Roll Loot - Boss 03
+	[226555] = true, --7.0 Dungeon - Eye of Azshara - Bonus Roll Loot - Boss 05
+	[226557] = true, --7.0 Dungeon - Eye of Azshara - Bonus Roll Loot - Boss 02
+	[226558] = true, --7.0 Dungeon - Eye of Azshara - Bonus Roll Loot - Boss 03
+	[226560] = true, --7.0 Dungeon - Eye of Azshara - Bonus Roll Loot - Boss 04
+	[226564] = true, --7.0 Dungeon - Eye of Azshara - Bonus Roll Loot - Boss 01
+	[226565] = true, --7.0 Dungeon - Halls of Valor - Bonus Roll Loot - Boss 01
+	[226566] = true, --7.0 Dungeon - Halls of Valor - Bonus Roll Loot - Boss 02
+	[226567] = true, --7.0 Dungeon - Halls of Valor - Bonus Roll Loot - Boss 03
+	[226568] = true, --7.0 Dungeon - Halls of Valor - Bonus Roll Loot - Boss 04
+	[226569] = true, --7.0 Dungeon - Halls of Valor - Bonus Roll Loot - Boss 05
+	[226570] = true, --7.0 Dungeon - Maw of Souls - Bonus Roll Loot - Boss 01
+	[226571] = true, --7.0 Dungeon - Maw of Souls - Bonus Roll Loot - Boss 02
+	[226572] = true, --7.0 Dungeon - Maw of Souls - Bonus Roll Loot - Boss 03
+	[226573] = true, --7.0 Dungeon - Neltharion's Lair - Bonus Roll Loot - Boss 01
+	[226574] = true, --7.0 Dungeon - Neltharion's Lair - Bonus Roll Loot - Boss 02
+	[226575] = true, --7.0 Dungeon - Neltharion's Lair - Bonus Roll Loot - Boss 03
+	[226576] = true, --7.0 Dungeon - Neltharion's Lair - Bonus Roll Loot - Boss 04
+	[226577] = true, --7.0 Dungeon - The Arcway - Bonus Roll Loot - Boss 01
+	[226578] = true, --7.0 Dungeon - The Arcway - Bonus Roll Loot - Boss 02
+	[226579] = true, --7.0 Dungeon - The Arcway - Bonus Roll Loot - Boss 03
+	[226580] = true, --7.0 Dungeon - The Arcway - Bonus Roll Loot - Boss 04
+	[226581] = true, --7.0 Dungeon - The Arcway - Bonus Roll Loot - Boss 05
+	[226582] = true, --7.0 Dungeon - Vault of the Wardens - Bonus Roll Loot - Boss 01
+	[226583] = true, --7.0 Dungeon - Vault of the Wardens - Bonus Roll Loot - Boss 02
+	[226584] = true, --7.0 Dungeon - Vault of the Wardens - Bonus Roll Loot - Boss 03
+	[226585] = true, --7.0 Dungeon - Vault of the Wardens - Bonus Roll Loot - Boss 04
+	[226586] = true, --7.0 Dungeon - Vault of the Wardens - Bonus Roll Loot - Boss 05
+	[226587] = true, --7.0 Dungeon - Violet Hold - Bonus Roll Loot - Boss 01
+	[226588] = true, --7.0 Dungeon - Violet Hold - Bonus Roll Loot - Boss 02
+	[226589] = true, --7.0 Dungeon - Violet Hold - Bonus Roll Loot - Boss 03
+	[226590] = true, --7.0 Dungeon - Violet Hold - Bonus Roll Loot - Boss 04
+	[226591] = true, --7.0 Dungeon - Violet Hold - Bonus Roll Loot - Boss 05
+	[226592] = true, --7.0 Dungeon - Violet Hold - Bonus Roll Loot - Boss 06
+	[226593] = true, --7.0 Dungeon - Violet Hold - Bonus Roll Loot - Boss 07
+	[226594] = true, --7.0 Dungeon - Violet Hold - Bonus Roll Loot - Boss 08
+	
+	[227117] = true, --7.0 Raid World Boss Bonus Roll
+	[227118] = true, --7.0 Raid World Boss Bonus Roll
+	[227119] = true, --7.0 Raid World Boss Bonus Roll
+	[227120] = true, --7.0 Raid World Boss Bonus Roll
+	[227121] = true, --7.0 Raid World Boss Bonus Roll
+	[227122] = true, --7.0 Raid World Boss Bonus Roll
+	[227123] = true, --7.0 Raid World Boss Bonus Roll
+	[227124] = true, --7.0 Raid World Boss Bonus Roll
+	[227125] = true, --7.0 Raid World Boss Bonus Roll
+	[227126] = true, --7.0 Raid World Boss Bonus Roll
+	[227127] = true, --7.0 Raid World Boss Bonus Roll
+
 	[188958] = L.RaidLootT18HCBoss1,	-- T18x1
 	[188959] = L.RaidLootT18HCBoss2,	-- T18x2
 	[188960] = L.RaidLootT18HCBoss3,	-- T18x3
@@ -21,6 +88,8 @@ module.db.spellsCoins = {
 	[188968] = L.RaidLootT18HCBoss11,	-- T18x11
 	[188969] = L.RaidLootT18HCBoss12,	-- T18x12
 	[188970] = L.RaidLootT18HCBoss13,	-- T18x13
+
+	[188971] = L.bossName[1801],		-- World Boss
 
 	[177510] = L.RaidLootBFBoss1,	-- T17x2x1
 	[177511] = L.RaidLootBFBoss2,	-- T17x2x2
@@ -122,7 +191,7 @@ function module.main:ADDON_LOADED()
 	VExRT.Coins = VExRT.Coins or {}
 	VExRT.Coins.list = VExRT.Coins.list or {}
 	
-	module:RegisterEvents('ENCOUNTER_END','ENCOUNTER_START')
+	module:RegisterEvents('ENCOUNTER_END','ENCOUNTER_START','BOSS_KILL')
 	
 	module.db.bonusLootChat = deformat(LOOT_ITEM_BONUS_ROLL)
 	module.db.bonusLootChatSelf = deformat(LOOT_ITEM_BONUS_ROLL_SELF)
@@ -133,6 +202,7 @@ do
 		module.db.endCoinTimer = nil
 		module:UnregisterEvents('UNIT_SPELLCAST_SUCCEEDED','CHAT_MSG_LOOT')
 	end
+	local BossKillTimer = nil
 	function module.main:ENCOUNTER_END(encounterID,encounterName,difficultyID,groupSize,success)
 		if success == 1 then
 			module:RegisterEvents('CHAT_MSG_LOOT','UNIT_SPELLCAST_SUCCEEDED')
@@ -142,6 +212,9 @@ do
 			module:UnregisterEvents('CHAT_MSG_MONSTER_YELL')
 		end	
 	end
+	function module.main:BOSS_KILL(encounterID)
+		ExRT.F.Timer(module.main.ENCOUNTER_END, .5, module.main, encounterID, 0, 0, 0, 1, true)
+	end
 end
 
 function module.main:CHAT_MSG_LOOT(msg, ...)
@@ -149,10 +222,10 @@ function module.main:CHAT_MSG_LOOT(msg, ...)
 		local unitName = UnitName("player")
 		local itemID = msg:match("|Hitem:(%d+)")
 		local class = select(3,UnitClass("player"))
-		local affixes = ""
-		local affixesFind = msg:match("item:%d+:%d+:%d+:%d+:%d+:%d+:%d+:%d+:%d+:%d+:%d+:%d+(:[^|]+)|")
-		if affixesFind then
-			affixes = affixesFind
+		local itemLink = msg:match("|Hitem:[^|]+|")
+		local affixes,numAffixes = ExRT.F.GetItemBonuses(itemLink)
+		if numAffixes > 0 then
+			affixes = ":"..numAffixes..":"..affixes
 		end
 		if itemID then
 			VExRT.Coins.list[#VExRT.Coins.list + 1] = "!"..ExRT.F.tohex(class or 0,1)..itemID..unitName..time()..affixes
@@ -165,10 +238,10 @@ function module.main:CHAT_MSG_LOOT(msg, ...)
 			if UnitName(unitName) then
 				class = select(3,UnitClass(unitName))
 			end
-			local affixes = ""
-			local affixesFind = msg:match("item:%d+:%d+:%d+:%d+:%d+:%d+:%d+:%d+:%d+:%d+:%d+:%d+(:[^|]+)|")
-			if affixesFind then
-				affixes = affixesFind
+			local itemLink = msg:match("|Hitem:[^|]+|")
+			local affixes,numAffixes = ExRT.F.GetItemBonuses(itemLink)
+			if numAffixes > 0 then
+				affixes = ":"..numAffixes..":"..affixes
 			end
 			VExRT.Coins.list[#VExRT.Coins.list + 1] = "!"..ExRT.F.tohex(class or 0,1)..itemID..unitName..time()..affixes
 		end
@@ -199,24 +272,6 @@ do
 				if VExRT.Coins.ShowMessage then
 					local msg = L.CoinsMessage
 					print( msg:format( "|c"..ExRT.F.classColor( className or "?" )..name.."|r" ) )
-				end
-			end
-		end
-	end
-	if ExRT.is7 then
-		function module.main:UNIT_SPELLCAST_SUCCEEDED(unitID,_,_,spellLine)
-			local unitType,_,serverID,instanceID,zoneUID,spellID,spawnID = strsplit("-", spellLine or "")
-			spellID = tonumber(spellID or 0) or 0
-			if module_db_spellsCoins[spellID] and unitID:find("^raid%d+$") then
-				local name = ExRT.F.UnitCombatlogname(unitID)
-				if name then
-					local _,className,class = UnitClass(unitID)
-					VExRT.Coins.list[#VExRT.Coins.list + 1] = ExRT.F.tohex(class or 0,1)..spellID..name..time()
-					
-					if VExRT.Coins.ShowMessage then
-						local msg = L.CoinsMessage
-						print( msg:format( "|c"..ExRT.F.classColor( className or "?" )..name.."|r" ) )
-					end
 				end
 			end
 		end

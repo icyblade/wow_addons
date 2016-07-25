@@ -20,12 +20,16 @@ module.db.tableFood = {
 
 [188534]=125, --new food
 
-										[225597]=600,	[225598]=600,	[225599]=600,			[225600]=600,			[225601]=600,
-										[225602]=750,	[225603]=750,	[225604]=750,			[225605]=750,			[225606]=750,
+--Legion
+--Haste		Mastery		Crit		Versa		Fire dmg
+[201330]=225,	[201332]=225,	[201223]=225,	[201334]=225,	[201336]=225,
+[225598]=300,	[225599]=300,	[225597]=300,	[225600]=300,	[225601]=300,
+[225603]=375,	[225604]=375,	[225602]=375,	[225604]=375,	[225606]=375,
+
 }
 module.db.StaminaFood = {[160600]=true,[175784]=true,[160883]=true,[165802]=true,[180747]=true}
 
-module.db.tableFood_headers = ExRT.isLegionContent and {0,600,750} or {0,50,75,100,125}
+module.db.tableFood_headers = ExRT.isLegionContent and {0,225,300,375} or {0,50,75,100,125}
 module.db.tableFlask = {
 	--Stamina,	Spirit,		Int,		Agi,		Str 
 	[156077]=200,			[156070]=200,	[156073]=200,	[156071]=200,
@@ -44,13 +48,18 @@ module.db.tablePotion = {
 	[105698]=true,	[156430]=true,	[188029]=true,	--Armor
 	[105704]=true,	[156455]=true,	[188018]=true,	--Health + Mana [alchim]	
 	[125282]=true,					--Kafa Boost
+	
+	[188028]=true,	--Potion of the Old War
+	[188027]=true,	--Potion of Deadly Grace
+	[188020]=true,	--Sylvan Elixir
+	[188021]=true,	--Avalanche Elixir
 }
 module.db.hsSpells = {
 	[6262] = true,
 	[105708] = true,
 	[156438] = true,
 	[188016] = true,
-	[188018] = true,
+	--[188018] = true,
 }
 module.db.potionList = {}
 module.db.hsList = {}
@@ -65,7 +74,18 @@ module.db.tableRunes = {
 	[175456]=true,	--Agi
 	[175457]=true,	--Int
 	[175439]=true,	--Str
+	
+	[224001]=true,	--Legion
 }
+
+module.db.minFoodLevelToActual = ExRT.isLegionContent and {
+	[100] = 300,
+	[125] = 375,
+} or {
+	[100] = 100,
+	[125] = 125,
+}
+
 
 module.db.buffsList = {"STAMINA","STATS","MASTERY","CRIT","HASTE","MS","VERSA","SPD","AP"}
 module.db.buffsNames = {
@@ -325,7 +345,7 @@ local function GetFood(checkType)
 			for i=1,40 do
 				local _,spellId,stats
 				if ExRT.is7 then
-					_,_,_,_,_,_,_,_,_,_,spellId,_,_,_,_,stats = UnitAura(name, i,"HELPFUL")
+					_,_,_,_,_,_,_,_,_,_,spellId,_,_,_,_,_,stats = UnitAura(name, i,"HELPFUL")
 				else
 					_,_,_,_,_,_,_,_,_,_,spellId,_,_,_,stats = UnitAura(name, i,"HELPFUL")
 				end
@@ -379,7 +399,7 @@ local function GetFood(checkType)
 		local counter,counterResult = 0,0
 		local badStats = {}
 		for statsNum,data in pairs(f) do
-			if ((VExRT.RaidCheck.FoodMinLevel and statsNum < VExRT.RaidCheck.FoodMinLevel) or (not VExRT.RaidCheck.FoodMinLevel and statsNum == 0)) and #data > 0 then
+			if ((VExRT.RaidCheck.FoodMinLevel and statsNum < (module.db.minFoodLevelToActual[VExRT.RaidCheck.FoodMinLevel] or 375)) or (not VExRT.RaidCheck.FoodMinLevel and statsNum == 0)) and #data > 0 then
 				badStats[#badStats + 1] = statsNum
 				counter = counter + #data
 			end
@@ -581,13 +601,23 @@ function module.options:Load()
 	self.runesToChat = ELib:Button(self,L.RaidCheckRunesChat):Size(230,20):Point("LEFT",self.runes,"RIGHT",71,0):OnClick(function() GetRunes(1) end)
 	self.runesToChat.txt = ELib:Text(self,"/rt check runeschat",11):Size(100,22):Point("LEFT",self.runesToChat,"RIGHT",5,0)
 	
-	self.buffs = ELib:Button(self,L.RaidCheckBuffs):Size(230,20):Point(5,-105):OnClick(function() GetRaidBuffs() end)
-	self.buffs.txt = ELib:Text(self,"/rt check buffs",11):Size(60,22):Point("LEFT",self.buffs,"RIGHT",5,0)
+	if not ExRT.is7 then
+		self.buffs = ELib:Button(self,L.RaidCheckBuffs):Size(230,20):Point(5,-105):OnClick(function() GetRaidBuffs() end)
+		self.buffs.txt = ELib:Text(self,"/rt check buffs",11):Size(60,22):Point("LEFT",self.buffs,"RIGHT",5,0)
 	
-	self.buffsToChat = ELib:Button(self,L.RaidCheckBuffsToChat):Size(230,20):Point("LEFT",self.buffs,"RIGHT",71,0):OnClick(function() GetRaidBuffs(1) end)
-	self.buffsToChat.txt = ELib:Text(self,"/rt check buffschat",11):Size(100,22):Point("LEFT",self.buffsToChat,"RIGHT",5,0)
+		self.buffsToChat = ELib:Button(self,L.RaidCheckBuffsToChat):Size(230,20):Point("LEFT",self.buffs,"RIGHT",71,0):OnClick(function() GetRaidBuffs(1) end)
+		self.buffsToChat.txt = ELib:Text(self,"/rt check buffschat",11):Size(100,22):Point("LEFT",self.buffsToChat,"RIGHT",5,0)
+	end
+	
+	self.level2optLine = CreateFrame("Frame",nil,self)
+	self.level2optLine:SetPoint("TOPLEFT",0,-130)
+	self.level2optLine:SetSize(1,1)
+	if ExRT.is7 then
+		self.level2optLine:SetPoint("TOPLEFT",0,-105)
+	end
+	
 
-	self.chkSlak = ELib:Check(self,L.raidcheckslak,VExRT.RaidCheck.ReadyCheck):Point(7,-130):OnClick(function(self) 
+	self.chkSlak = ELib:Check(self,L.raidcheckslak,VExRT.RaidCheck.ReadyCheck):Point("TOPLEFT",self.level2optLine,7,0):OnClick(function(self) 
 		if self:GetChecked() then
 			VExRT.RaidCheck.ReadyCheck = true
 			module:RegisterEvents('READY_CHECK')
@@ -623,7 +653,7 @@ function module.options:Load()
 		end
 	end)
 	
-	self.chkRunes = ELib:Check(self,L.RaidCheckRunesEnable,VExRT.RaidCheck.RunesCheck):Point(7,-230):OnClick(function(self) 
+	self.chkRunes = ELib:Check(self,L.RaidCheckRunesEnable,VExRT.RaidCheck.RunesCheck):Point("TOPLEFT",self.level2optLine,7,-100):OnClick(function(self) 
 		if self:GetChecked() then
 			VExRT.RaidCheck.RunesCheck = true
 		else
@@ -631,7 +661,7 @@ function module.options:Load()
 		end
 	end)
 	
-	self.chkBuffs = ELib:Check(self,L.RaidCheckBuffsEnable,VExRT.RaidCheck.BuffsCheck):Point(7,-255):OnClick(function(self) 
+	self.chkBuffs = ELib:Check(self,L.RaidCheckBuffsEnable,VExRT.RaidCheck.BuffsCheck):Point("TOPLEFT",self.chkRunes,0,-25):OnClick(function(self) 
 		if self:GetChecked() then
 			VExRT.RaidCheck.BuffsCheck = true
 		else
@@ -649,14 +679,14 @@ function module.options:Load()
 	end)
 
 	
-	self.minFoodLevel100 = ELib:Radio(self,"100",VExRT.RaidCheck.FoodMinLevel == 100):Point("LEFT",self.minFoodLevelAny,"RIGHT", 75, 0):OnClick(function(self) 
+	self.minFoodLevel100 = ELib:Radio(self,ExRT.isLegionContent and "300" or "100",VExRT.RaidCheck.FoodMinLevel == 100):Point("LEFT",self.minFoodLevelAny,"RIGHT", 75, 0):OnClick(function(self) 
 		self:SetChecked(true)
 		module.options.minFoodLevelAny:SetChecked(false)
 		module.options.minFoodLevel125:SetChecked(false)
 		VExRT.RaidCheck.FoodMinLevel = 100
 	end)
 	
-	self.minFoodLevel125 = ELib:Radio(self,"125",VExRT.RaidCheck.FoodMinLevel == 125):Point("LEFT",self.minFoodLevel100,"RIGHT", 75, 0):OnClick(function(self) 
+	self.minFoodLevel125 = ELib:Radio(self,ExRT.isLegionContent and "375" or "125",VExRT.RaidCheck.FoodMinLevel == 125):Point("LEFT",self.minFoodLevel100,"RIGHT", 75, 0):OnClick(function(self) 
 		self:SetChecked(true)
 		module.options.minFoodLevelAny:SetChecked(false)
 		module.options.minFoodLevel100:SetChecked(false)
@@ -688,7 +718,7 @@ function module.options:Load()
 	end)
 
 	
-	self.chkPotion = ELib:Check(self,L.raidcheckPotionCheck,VExRT.RaidCheck.PotionCheck):Point(7,-325):OnClick(function(self) 
+	self.chkPotion = ELib:Check(self,L.raidcheckPotionCheck,VExRT.RaidCheck.PotionCheck):Point("TOPLEFT",self.level2optLine,7,-195):OnClick(function(self) 
 		if self:GetChecked() then
 			VExRT.RaidCheck.PotionCheck = true
 			module.options.potionToChat:Enable()
@@ -721,6 +751,9 @@ function module.options:Load()
 	self.optReadyCheckFrame:SetBackdropBorderColor(.24,.25,.30,0)
 	ELib:Border(self.optReadyCheckFrame,2,.24,.25,.30,1)
 	self.optReadyCheckFrame:SetPoint("TOP",0,-430)
+	if ExRT.is7 then
+		self.optReadyCheckFrame:SetPoint("TOP",0,-405)
+	end
 
 	self.optReadyCheckFrameHeader = ELib:Text(self.optReadyCheckFrame,L.raidcheckReadyCheck):Size(550,20):Point("BOTTOMLEFT",self.optReadyCheckFrame,"TOPLEFT",10,1):Bottom()
 
@@ -848,10 +881,6 @@ function module:slash(arg)
 		GetRunes()
 	elseif arg == "check runeschat" then
 		GetRunes(1)
-	elseif arg == "check buffs" then
-		GetRaidBuffs()
-	elseif arg == "check buffschat" then
-		GetRaidBuffs(1)
 	end
 end
 

@@ -926,6 +926,10 @@ function module:addonMessage(sender, prefix, ...)
 			
 			module.options.lastUpdate:SetText( L.NoteLastUpdate..": "..VExRT.Note.LastUpdateName.." ("..date("%H:%M:%S %d.%m.%Y",VExRT.Note.LastUpdateTime)..")" )
 		end
+		VExRT.Note.AutoLoad[0] = nil
+		if module.options.UpdatePageAfterGettingNote then
+			module.options.UpdatePageAfterGettingNote()
+		end
 	elseif prefix == "multiline_add" then
 		if VExRT.Note.OnlyPromoted and IsInRaid() and not ExRT.F.IsPlayerRLorOfficer(sender) then
 			return
@@ -958,7 +962,6 @@ function module:addonMessage(sender, prefix, ...)
 				VExRT.Note.BlackNames[newIndex] = noteName
 				if module.options.NotesListUpdateNames then
 					module.options.NotesListUpdateNames()
-					
 				end
 			end
 		end 
@@ -1183,28 +1186,14 @@ do
 				break
 			end
 		end
-		local p1 = false
-		for i=1,limit do
-			local text = VExRT.Note.Black[i]
-			if text:find("^{[eEеЕ]:"..encounterID.."}") or (encounterName and (text:lower()):find("^{[eе]:"..(encounterName:lower()).."}")) then
+		for i=0,limit do
+			if VExRT.Note.AutoLoad[i] == encounterID then
 				ExRT.F.Timer(SendNoteByEncounter, 1, i)
-				p1 = true
 				break
 			end
 			if i == limit then
 				IsUpdateNoteByEncounterFromMe = nil
-			end
-		end
-		if not p1 then
-			for i=0,limit do
-				if VExRT.Note.AutoLoad[i] == encounterID then
-					ExRT.F.Timer(SendNoteByEncounter, 1, i)
-					break
-				end
-				if i == limit then
-					IsUpdateNoteByEncounterFromMe = nil
-					return
-				end
+				return
 			end
 		end
 		IsUpdateNoteByEncounterFromMe = true

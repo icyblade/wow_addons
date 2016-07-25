@@ -34,7 +34,7 @@ function module.options:Load()
 	end)
 	
 	if ExRT.is7 then
-		self.enable5ppLegion = ELib:Check(self,"5ppl: Legion",VExRT.Logging.enable5ppLegion):Point("TOPLEFT",self.disableLFR,0,-25):OnClick(function(self) 
+		self.enable5ppLegion = ELib:Check(self,DUNGEONS..": "..EXPANSION_NAME6,VExRT.Logging.enable5ppLegion):Point("TOPLEFT",self.disableLFR,0,-25):OnClick(function(self) 
 			if self:GetChecked() then
 				VExRT.Logging.enable5ppLegion = true
 			else

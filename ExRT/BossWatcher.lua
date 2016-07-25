@@ -70,6 +70,7 @@ local damageTakenLog = {}
 module.db.damageTakenLog = damageTakenLog
 
 local spellFix_LotM = {}
+local spellFix_SM = {}
 
 module.db.buffsFilters = {
 [1] = {[-1]=L.BossWatcherFilterOnlyBuffs,}, --> Only buffs
@@ -101,40 +102,38 @@ module.db.buffsFilters = {
 	[-1]=L.BossWatcherFilterPandaria,
 	[-2]={148010,146194,146198,146200,137593,137596,137590,137288,137323,137326,137247,137331},
 },
-[11] = {
-	[-1]=L.BossWatcherFilterTier16,
-	[-2]={143524,143460,143459,143198,143434,143023,143840,143564,143959,146022,144452,144351,144358,146594,144359,144364,145215,144574,144683,144684,144636,146822,147029,147068,146899,
-		144467,144459,146325,144330,144089,143494,143638,143480,143882,143589,143594,143593,143536,142990,143919,142913,143385,144236,143856,144466,145987,145747,143442,143411,143445,
-		143791,146589,142534,142532,142533,142671,142948,143337,143701,143735,145213,147235,147209,144762,148994,148983,144817,145171,145065,147324},
-},
-[12] = {
-	[-1]=L.RaidLootT17Highmaul,
-	[-2]={
-		159178,159113,159947,158986,
-		156151,156152,156160,
-		162346,162475,
-		163242,159280,163663,159253,159426,
-		158241,159709,155569,167200,163372,163297,158200,157943,
-		162184,162186,172813,161345,162185,161242,156803,160734,
-		157763,156225,164004,164005,164006,164176,164178,
-	},
-},
-[13] = {
-	[-1]=L.RaidLootT17BF,
-	[-2]={
-		-- Gruul: ???
-		173471,155900,156834,
-		155236,154960,155061,154981,
-		154952,154932,
-		-- Hans'gar and Franzok: ???
-		159481,
-		155196,155225,155192,174716,
-		157059,161923,161839,
-		156006,
-		156653,156096,
-	}
-},
 }
+if ExRT.is7 then
+
+else
+	tinsert(module.db.buffsFilters,{
+		[-1]=L.RaidLootT17Highmaul,
+		[-2]={
+			159178,159113,159947,158986,
+			156151,156152,156160,
+			162346,162475,
+			163242,159280,163663,159253,159426,
+			158241,159709,155569,167200,163372,163297,158200,157943,
+			162184,162186,172813,161345,162185,161242,156803,160734,
+			157763,156225,164004,164005,164006,164176,164178,
+		},
+	})
+	tinsert(module.db.buffsFilters,{
+		[-1]=L.RaidLootT17BF,
+		[-2]={
+			-- Gruul: ???
+			173471,155900,156834,
+			155236,154960,155061,154981,
+			154952,154932,
+			-- Hans'gar and Franzok: ???
+			159481,
+			155196,155225,155192,174716,
+			157059,161923,161839,
+			156006,
+			156653,156096,
+		}
+	})
+end
 module.db.buffsFilterStatus = {}
 
 module.db.autoSegmentEvents = {"UNIT_SPELLCAST_SUCCEEDED","SPELL_AURA_REMOVED","SPELL_AURA_APPLIED","UNIT_DIED","CHAT_MSG_RAID_BOSS_EMOTE"}
@@ -257,7 +256,72 @@ local ReductionAurasFunctions = {
 	feintCheck = 3,
 	dampenHarmCheck = 4,
 }
-module.db.reductionAuras = {
+module.db.reductionAuras = ExRT.is7 and {
+	--Warrior
+	[871] = 0.6,		--Shield Wall
+	[23920] = {0.7,ReductionAurasFunctions.magic},	--Spell Reflect
+	[118038] = {0.7,nil,function(_,_,auraVar) return (100+auraVar)/100 end},	--Die by the Sword
+	[197690] = 0.8,		--Defensive Stance
+	[184364] = 0.7,		--Enraged Regeneration
+
+	--Paladin
+	[210320] = {0.8,nil,function(_,auraVar) return (100+auraVar)/100 end},	--Devotion Aura
+	[498] = 0.8,		--Divine Protection
+	[211422] = {0.8,nil,function(_,auraVar) return (100+auraVar)/100 end},	--Holy: Artifact: Judge
+	[86659] = 0.5,		--Guardian of Ancient Kings
+	[31850] = 0.8,		--Ardent Defender
+	[132403] = {1,function(_,auraVar) return (100+auraVar)/100 end},	--Shield of the Righteous
+	[205191] = 0.65,	--Eye for an eye
+	
+	--Hunter
+	[186265] = {0.7,nil,function(_,_,_,_,auraVar) return (100+auraVar)/100 end},	--Aspect of the Turtle
+
+	--Rouge
+	[1966] = {1,nil,function(_,_,auraVar) return (100+auraVar)/100 end},		--Feint
+	[45182] = 0.15,									--Cheating Death
+
+	--Priest
+	[45242] = 0.7,		--Focused Will
+	[33206] = 0.6,		--Pain Suppression
+	[81782] = 0.75,		--Power Word: Barrier
+	[47585] = 0.4,		--Dispersion
+
+	--DK
+	[48792] = {0.8,nil,function(_,_,_,auraVar) return (100+auraVar)/100 end},		--Icebound Fortitude
+	[195181] = 0.8,		--Bone Shield
+	[194679] = 0.75,	--Rune Tap
+
+	--Shaman
+	[108271] = 0.6,		--Astral Shift
+
+	--Mage
+	[113862] = 0.4,		--Greater Invisibility
+
+	--Warlock
+	[104773] = {0.6,nil,function(_,_,_,auraVar) return (100+auraVar)/100 end},		--Unending Resolve
+
+	--Monk
+	[122278] = {0.7,ReductionAurasFunctions.dampenHarmCheck},	--Dampen Harm		Note: for HP ~363k (700 gear); may work incorrect: hit for 56k will be reducted to 28k and doesn't counting, so only big hits will be recorded
+	[122783] = {0.4,ReductionAurasFunctions.magic,function(_,auraVar) return (100+auraVar)/100,ReductionAurasFunctions.magic end},		--Diffuse Magic
+	--[115176] = 0.4,		--Zen Meditation	No aura
+	[120954] = {0.8,nil,function(_,_,auraVar) return (100+auraVar)/100 end},		--Fortifying Brew
+
+	--Druid
+	[22812] = {0.8,nil,function(_,_,auraVar) return (100+auraVar)/100 end},		--Barkskin
+	[102342] = {0.8,nil,function(_,auraVar) return (100+auraVar)/100 end},		--Ironbark
+	[61336] = 0.5,		--Survival Instincts
+	[192083] = {0.7,ReductionAurasFunctions.magic},					--Mark of Ursol
+	[158792] = 0.92,	--Pulverize
+	--Druid affinity
+	
+	--DH
+	[212800] = {0.65,nil,function(_,_,_,auraVar) return (100+auraVar)/100 end},		--Blur
+	[218256] = {0.7,ReductionAurasFunctions.magic},			--Empower Wards
+	[203720] = {0.8,ReductionAurasFunctions.physical,function(_,_,auraVar) return (100+auraVar)/100,ReductionAurasFunctions.physical end},	--Demon Spikes	
+
+	--Other
+	[65116] = {0.9,ReductionAurasFunctions.physical},	--Stoneform
+} or {
 	--Paladin
 	[115668] = 0.9,		--Glyph of Templar's Verdict
 	[6940] = 0.7,		--Hand of Sacrifice
@@ -326,7 +390,15 @@ module.db.reductionAuras = {
 	[65116] = {0.9,ReductionAurasFunctions.physical},	--Stoneform
 	[185103] = {0.94,nil,function(auraVar) return (100+auraVar)/100 end},	--Priest Archimonde trinket
 }
-module.db.reductionBySpec = {
+if not ExRT.is7 then
+	--Direct fix new val in aura return, so not work in 6.x
+	module.db.reductionAuras = {}
+end
+module.db.reductionBySpec = ExRT.is7 and {
+	[63] = {30482,	0.94,	ReductionAurasFunctions.physical,	0x4},	--Mage fire;  16% with artifact trait, 6% without
+	[104] = {16931,	0.9},		--Druid bear
+	[581] = {203513,0.9,	ReductionAurasFunctions.magic}			--Demonic Wards
+} or {
 	[63] = {16931,	0.94,	ReductionAurasFunctions.physical,	0x4},	--Mage fire
 	[66] = {105805,	0.9},		--Paladin prot
 	[104] = {16931,	0.9},		--Druid bear
@@ -336,7 +408,9 @@ module.db.reductionBySpec = {
 module.db.reductionCurrent = {}
 module.db.reductionPowerWordBarrierCaster = nil
 
-module.db.reductionIsNotAoe = {	--Spells list from BRF,HC that isnot aoe (Rouge Feint check)
+module.db.reductionIsNotAoe = ExRT.isLegionContent and {
+
+} or {	--Spells list from BRF,HC that isnot aoe (Rouge Feint check)
 	-- Note: I'm so lazy to update this after creating: too much work for func that is super rare usable
 	[6603]=true, 	[156888]=true, 	[156203]=true,	[156879]=true,	[175020]=true,	[163284]=true,
 	[155314]=true,	[162322]=true,	[156772]=true,	[155611]=true,	[155657]=true,	[162498]=true,
@@ -365,7 +439,18 @@ module.db.reductionIsNotAoe = {	--Spells list from BRF,HC that isnot aoe (Rouge 
 	[190049]=true,	[187047]=true,	[189891]=true,	[187255]=true,	[183864]=true,	[188796]=true,
 }
 
-module.db.def_trackingDamageSpells = {
+module.db.def_trackingDamageSpells = ExRT.isLegionContent and {
+	[209471]=1873,	--Il'gynoth: Nightmare Explosion
+	[198099]=1841,	--Ursoc: Barreling Momentum
+	[199237]=1841,	--Ursoc: Barreling Momentum > Crushing Impact
+	[211073]=1877,	--Cenarius: Desiccating Stomp
+	[210619]=1877,	--Cenarius: Destructive Nightmares
+	
+	[210074]=1849,	--Crystal Scorpion: Shockwave
+	[204733]=1849,	--Crystal Scorpion: Volatile Chitin
+
+	--[2812]=true,	--Test
+} or {
 	[181913]=1788,	--Shadow-Lord Iskar: Focused Blast
 	[190194]=1800,	--Xhul'horac: Empowered Chains of Fel
 	[186549]=1800,	--Xhul'horac: Singularity
@@ -376,14 +461,6 @@ module.db.def_trackingDamageSpells = {
 	[182011]=1795,	--Mannoroth: Empowered Mannoroth's Gaze
 	[185008]=1799,	--Archimonde: Unleashed Torment
 	[190399]=1799,	--Archimonde: Mark of the Legion
-	--[2812]=true,	--Test
-	[198099]=1841,	--Ursoc: Barreling Momentum
-	[199237]=1841,	--Ursoc: Barreling Momentum > Crushing Impact
-	[210074]=1849,	--Crystal Scorpion: Shockwave
-	[204733]=1849,	--Crystal Scorpion: Volatile Chitin
-	[211073]=1877,	--Cenarius: Desiccating Stomp
-	[210619]=1877,	--Cenarius: Destructive Nightmares
-	[209471]=1873,	--Il'gynoth: Nightmare Explosion
 }
 
 local var_reductionAuras,var_reductionCurrent = module.db.reductionAuras,module.db.reductionCurrent
@@ -878,8 +955,8 @@ local function addDamage(_,timestamp,sourceGUID,sourceName,sourceFlags,sourceFla
 				isCheck = module.db.reductionIsNotAoe[spellID]
 			elseif isCheck == 4 then --dampenHarmCheck
 				local unitHealthMax = UnitHealthMax(destName or "?")
-				unitHealthMax = unitHealthMax == 0 and 363000 or unitHealthMax
-				isCheck = (amount2 / unitHealthMax) > 0.1499 
+				unitHealthMax = unitHealthMax == 0 and 1400000 or unitHealthMax
+				isCheck = (amount2 / unitHealthMax) >= 0.15
 			end		
 			
 			if isCheck then
@@ -964,6 +1041,17 @@ local function addDamage(_,timestamp,sourceGUID,sourceName,sourceFlags,sourceFla
 				if lotmData[4] then
 					spellTable.crit = spellTable.crit - damageTaken
 				end
+			end
+		end
+	elseif spellID == 186439 then	-- Shadow Mend
+		local spellTable = spellFix_SM[destGUID]
+		if spellTable then
+			local damageTaken = amount + overkill + (absorbed or 0)
+			local amount = spellTable.amount
+			if amount < damageTaken then
+				spellTable.amount = 0
+			else
+				spellTable.amount = amount - damageTaken
 			end
 		end
 	end
@@ -1198,6 +1286,8 @@ local function addHeal(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,
 		lotmData[3] = spellTable
 		lotmData[4] = critical
 		lotmData[5] = timestamp
+	elseif spellID == 186263 then	--Shadow Mend: effective healing fix, remove damage from debuff
+		spellFix_SM[destGUID] = spellTable
 	end
 end
 
@@ -1353,7 +1443,6 @@ local function addAura(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,
 		if spellID == 81782 then
 			sourceGUID = module.db.reductionPowerWordBarrierCaster or sourceGUID
 		end
-		if spellID == 114030 and sourceGUID == destGUID then return end	--Vigilance fix
 	
 		local destData = var_reductionCurrent[ destGUID ]
 		if not destData then
@@ -1370,28 +1459,10 @@ local function addAura(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,
 			reduction = reduction[1]
 		end
 		
-		if spellID == 1966 then		--Feint additional talent 30%
-			local _,_,_,_,_,_,_,_,_,_,_,_,_,_,val1,val2,val3,val4,val5 = UnitAura(destName or "?",spellName or "?")
-			if val2 == -30 then
-				local from = 1
-				for i=1,destCount do
-					from = from * destData[i].r
-				end
-				local feintAdditionalReduction = 1 / (1 - (from - from * 0.7))
-				destData[destCount + 1] = {
-					s = spellID,
-					r = 0.7,
-					c = (feintAdditionalReduction - 1),
-					g = sourceGUID,
-				}
-				destCount = destCount + 1
-			end
-		end
-
 		if funcAura then
-			local _,_,_,_,_,_,_,_,_,_,_,_,_,_,val1,val2,val3,val4,val5 = UnitAura(destName or "?",spellName or "?")
+			local _,_,_,_,_,_,_,_,_,_,_,_,_,_,_,val1,val2,val3,val4,val5 = UnitAura(destName or "?",spellName or "?")
 			if val1 then
-				reduction, func = funcAura(val1,val2,val3,val4,val5)
+				reduction, func = funcAura(val1 or 0,val2 or 0,val3 or 0,val4 or 0,val5 or 0)
 				if not reduction then
 					reduction = reductionTable[1]
 					func = reductionTable[2]
@@ -1400,95 +1471,6 @@ local function addAura(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGUID,
 				--ExRT.F.dprint(format("%s > %s: %s [%d%%]",sourceName,destName,spellName,(reduction or 0)*100))
 			else
 				funcAura = nil
-			end
-		end
-		
-		--Second check: some spells doesn't return number of reduction in aura (ex. Shamanistic Rage,Rune Tap)
-		
-		if not funcAura and (spellID == 498 or spellID == 48792 or spellID == 171049 or spellID == 51755 or spellID == 104773 or spellID == 120954 or spellID == 586 or spellID == 30823 or spellID == 871 or spellID == 71 or spellID == 768) then
-			local inspectData = ExRT.A.ExCD2 and ExRT.A.ExCD2.db and ExRT.A.ExCD2.db.inspectDB
-			if inspectData then
-				for name,nameData in pairs(inspectData) do
-					if nameData.GUID == sourceGUID then
-						if spellID == 498 then	--Divine Protection
-							for i=8,13 do
-								if nameData[i] == 54924 then
-									func = nil
-									reduction = 0.8
-									break
-								end
-							end
-						elseif spellID == 48792 then	--Icebound Fortitude
-							if nameData.spec == 250 then
-								reduction = 0.5
-							end
-						elseif spellID == 171049 then	--Rune Tap
-							for i=8,13 do
-								if nameData[i] == 159428 then
-									reduction = 0.8
-									break
-								end
-							end
-						elseif spellID == 51755 then	--Camouflage
-							for i=8,13 do
-								if nameData[i] == 148475 then
-									reduction = 0.9
-									break
-								end
-							end
-						elseif spellID == 104773 then	--Unending Resolve
-							for i=8,13 do
-								if nameData[i] == 146964 then
-									reduction = 0.8
-									break
-								end
-							end
-						elseif spellID == 120954 then	--Fortifying Brew
-							for i=8,13 do
-								if nameData[i] == 124997 then
-									reduction = 0.75
-									break
-								end
-							end
-						elseif spellID == 586 then		--Fade
-							for i=8,13 do
-								if nameData[i] == 55684 then
-									reduction = 0.9
-									break
-								end
-							end
-						elseif spellID == 30823 then	--Shamanistic Rage
-							for i=8,13 do
-								if nameData[i] == 159648 then
-									reduction = 0.4
-									break
-								end
-							end
-						elseif spellID == 871 then		--Shield Wall
-							for i=8,13 do
-								if nameData[i] == 63329 then
-									reduction = 0.4
-									break
-								end
-							end
-						elseif spellID == 71 then		--Defensive Stance
-							if nameData.spec == 73 then
-								reduction = reduction - 0.05 --Improved Defensive Stance
-							end
-							if nameData[7] == 3 then
-								reduction = reduction - 0.05 --Gladiator's Resolve
-							end
-						elseif spellID == 768 then		--Cat Form
-							for i=8,13 do
-								if nameData[i] == 159444 then
-									reduction = 0.9
-									break
-								end
-							end
-						end
-						break
-					end
-				end
 			end
 		end
 		
@@ -1587,6 +1569,12 @@ local function removeAura(_,timestamp,sourceGUID,sourceName,sourceFlags,_,destGU
 		end
 		
 		--debug_CurrentReductionToChat(destData)
+	end
+	
+	
+	--------------> Other
+	if spellID == 187464 then	--Shadow Mend
+		spellFix_SM[destGUID] = nil
 	end
 end
 
@@ -1731,32 +1719,16 @@ local function addReductionOnPull(unit,destGUID)
 		spellsSchool[ reductionSpec[1] ] = reductionSpec[4] or 0x1
 	end
 	
-	-- Note: warlocks & hunters must have not passive reduction cuz it will be overwritten
-	if unitInspectData and unitInspectData.class == "WARLOCK" then
-		for i=8,13 do
-			if unitInspectData[i] == 148683 then
-				var_reductionCurrent[ destGUID ] = {
-					{
-						s = 148688,
-						r = 0.9,
-						c = (1 / 0.9 - 1),
-						g = destGUID,
-					}
-				}
-				spellsSchool[ 148688 ] = 0x20
-			end
-		end
-	elseif unitInspectData and unitInspectData.class == "HUNTER" then
-		if unitInspectData[3] == 2 then
+	if unitInspectData and unitInspectData.class == "DRUID" and specID ~= 104 then
+		if (unitInspectData[3] == 2 and specID ~= 105) or (unitInspectData[3] == 3 and specID == 105) then
 			var_reductionCurrent[ destGUID ] = {
 				{
-					s = 109260,
+					s = 16931,
 					r = 0.9,
 					c = (1 / 0.9 - 1),
 					g = destGUID,
 				}
 			}
-			spellsSchool[ 109260 ] = 0x8
 		end
 	end
 	
@@ -1764,7 +1736,7 @@ local function addReductionOnPull(unit,destGUID)
 	
 	--------------> Add active reductions from current auras
 	for i=1,40 do
-		local _,_,_,stacksCount,_,_,_,casterUnit,_,_,spellID,_,_,_,val1,val2,val3,val4,val5 = UnitAura(unit,i)
+		local _,_,_,stacksCount,_,_,_,casterUnit,_,_,spellID,_,_,_,_,val1,val2,val3,val4,val5 = UnitAura(unit,i)
 		
 		if not spellID then
 			return
@@ -1779,165 +1751,66 @@ local function addReductionOnPull(unit,destGUID)
 			end
 			sourceGUID = sourceGUID or ""
 		
-			if not (spellID == 114030 and sourceGUID == destGUID) then --Vigilance fix
-				local destData = var_reductionCurrent[ destGUID ]
-				if not destData then
-					destData = {}
-					var_reductionCurrent[ destGUID ] = destData
-				end
-				local destCount = #destData
-				
-				local func,funcAura,reductionTable = nil
-				if type(reduction)=="table" then
-					reductionTable = reduction
-					funcAura = reduction[3]
-					func = reduction[2]
-					reduction = reduction[1]
-				end
-				
-				if spellID == 1966 and val2 == -30 then		--Feint additional talent 30%
-					local from = 1
-					for i=1,destCount do
-						from = from * destData[i].r
-					end
-					local feintAdditionalReduction = 1 / (1 - (from - from * 0.7))
-					destData[destCount + 1] = {
-						s = spellID,
-						r = 0.7,
-						c = (feintAdditionalReduction - 1),
-						g = sourceGUID,
-					}
-					destCount = destCount + 1
-				end
-		
-				if funcAura then
-					if val1 then
-						reduction, func = funcAura(val1,val2,val3,val4,val5)
-						if not reduction then
-							reduction = reductionTable[1]
-							func = reductionTable[2]
-							funcAura = nil
-						end
-						--ExRT.F.dprint(format("%s > %s: %s [%d%%]",sourceName,destName,spellName,(reduction or 0)*100))
-					else
+			local destData = var_reductionCurrent[ destGUID ]
+			if not destData then
+				destData = {}
+				var_reductionCurrent[ destGUID ] = destData
+			end
+			local destCount = #destData
+			
+			local func,funcAura,reductionTable = nil
+			if type(reduction)=="table" then
+				reductionTable = reduction
+				funcAura = reduction[3]
+				func = reduction[2]
+				reduction = reduction[1]
+			end
+			
+			if funcAura then
+				if val1 then
+					reduction, func = funcAura(val1 or 0,val2 or 0,val3 or 0,val4 or 0,val5 or 0)
+					if not reduction then
+						reduction = reductionTable[1]
+						func = reductionTable[2]
 						funcAura = nil
 					end
+					--ExRT.F.dprint(format("%s > %s: %s [%d%%]",sourceName,destName,spellName,(reduction or 0)*100))
+				else
+					funcAura = nil
 				end
-				
-				--Second check: some spells doesn't return number of reduction in aura (ex. Shamanistic Rage,Rune Tap)
-				
-				if unitInspectData and not funcAura and (spellID == 498 or spellID == 48792 or spellID == 171049 or spellID == 51755 or spellID == 104773 or spellID == 120954 or spellID == 586 or spellID == 30823 or spellID == 871 or spellID == 71 or spellID == 768) then
-					local nameData = unitInspectData
-					if spellID == 498 then	--Divine Protection
-						for i=8,13 do
-							if nameData[i] == 54924 then
-								func = nil
-								reduction = 0.8
-								break
-							end
-						end
-					elseif spellID == 48792 then	--Icebound Fortitude
-						if nameData.spec == 250 then
-							reduction = 0.5
-						end
-					elseif spellID == 171049 then	--Rune Tap
-						for i=8,13 do
-							if nameData[i] == 159428 then
-								reduction = 0.8
-								break
-							end
-						end
-					elseif spellID == 51755 then	--Camouflage
-						for i=8,13 do
-							if nameData[i] == 148475 then
-								reduction = 0.9
-								break
-							end
-						end
-					elseif spellID == 104773 then	--Unending Resolve
-						for i=8,13 do
-							if nameData[i] == 146964 then
-								reduction = 0.8
-								break
-							end
-						end
-					elseif spellID == 120954 then	--Fortifying Brew
-						for i=8,13 do
-							if nameData[i] == 124997 then
-								reduction = 0.75
-								break
-							end
-						end
-					elseif spellID == 586 then		--Fade
-						for i=8,13 do
-							if nameData[i] == 55684 then
-								reduction = 0.9
-								break
-							end
-						end
-					elseif spellID == 30823 then	--Shamanistic Rage
-						for i=8,13 do
-							if nameData[i] == 159648 then
-								reduction = 0.4
-								break
-							end
-						end
-					elseif spellID == 871 then		--Shield Wall
-						for i=8,13 do
-							if nameData[i] == 63329 then
-								reduction = 0.4
-								break
-							end
-						end
-					elseif spellID == 71 then		--Defensive Stance
-						if nameData.spec == 73 then
-							reduction = reduction - 0.05 --Improved Defensive Stance
-						end
-						if nameData[7] == 3 then
-							reduction = reduction - 0.05 --Gladiator's Resolve
-						end
-					elseif spellID == 768 then		--Cat Form
-						for i=8,13 do
-							if nameData[i] == 159444 then
-								reduction = 0.9
-								break
-							end
-						end
-					end
-				end
-				
-				if reduction ~= 1 then
-					local from = 1
-					if func == ReductionAurasFunctions.magic then
-						for i=1,destCount do
-							if destData[i].f ~= ReductionAurasFunctions.physical then
-								from = from * destData[i].r
-							end
-						end
-					elseif func == ReductionAurasFunctions.physical then
-						for i=1,destCount do
-							if destData[i].f ~= ReductionAurasFunctions.magic then
-								from = from * destData[i].r
-							end
-						end
-					else
-						for i=1,destCount do
+			end
+							
+			if reduction ~= 1 then
+				local from = 1
+				if func == ReductionAurasFunctions.magic then
+					for i=1,destCount do
+						if destData[i].f ~= ReductionAurasFunctions.physical then
 							from = from * destData[i].r
 						end
 					end
-				
-					local currReduction = 1 / (1 - (from - from * reduction))
-					destData[destCount + 1] = {
-						s = spellID,
-						r = reduction,
-						c = (currReduction - 1),
-						g = sourceGUID,
-						f = func,
-					}
-					
-					if not spellsSchool[spellID] then
-						spellsSchool[spellID] = 0x1
+				elseif func == ReductionAurasFunctions.physical then
+					for i=1,destCount do
+						if destData[i].f ~= ReductionAurasFunctions.magic then
+							from = from * destData[i].r
+						end
 					end
+				else
+					for i=1,destCount do
+						from = from * destData[i].r
+					end
+				end
+			
+				local currReduction = 1 / (1 - (from - from * reduction))
+				destData[destCount + 1] = {
+					s = spellID,
+					r = reduction,
+					c = (currReduction - 1),
+					g = sourceGUID,
+					f = func,
+				}
+				
+				if not spellsSchool[spellID] then
+					spellsSchool[spellID] = 0x1
 				end
 			end
 		end
@@ -3319,6 +3192,7 @@ function BWInterfaceFrameLoad()
 		BWInterfaceFrame.tab.tabs[i].button.Right:SetWidth(9)
 	end
 	
+	BWInterfaceFrame.tab:Hide()
 	
 	---- Settings tab-button
 	BWInterfaceFrame.tab.tabs[12]:SetScript("OnShow",function (self)
@@ -12045,6 +11919,32 @@ function BWInterfaceFrameLoad()
 				{-84.807403564453,-2869.9997558594,-489.19299316406,-3139.5903320313,"HellfireRaid",8},
 				{-1900,4275.0014648438,-2493.75,3879.1682128906,"HellfireRaid",9},
 			},
+			[1520] = { type = "raid", content = 7,
+				{1675.0100097656,2091.6733398438,1024.9899902344,1658.3266601563,"NightmareRaid",1},
+				{1695.0100097656,2075.0017089844,1070,1658.3283691406,"NightmareRaid",2},
+				{11637.80078125,11680.06640625,10978.59765625,11257.06640625,"NightmareRaid",3},
+				{12535.42578125,-12679.200195313,12066.67578125,-12991.700195313,"NightmareRaid",4},
+				{-12552.07421875,862.5,-13295.825195313,366.66598510742,"NightmareRaid",5},
+				{9097.080078125,-1124.6999511719,3330.4099121094,-4968.4501953125,"NightmareRaid",6},
+				{4925.0600585938,-2066.6000976563,1075.0600585938,-4633.2700195313,"NightmareRaid",7},
+				{2600.0239257813,-2216.6899414063,-99.978996276855,-4016.7199707031,"NightmareRaid",8},
+				{3708.2700195313,-3533.330078125,-3241.7299804688,-8166.66015625,"NightmareRaid",9},
+				{-12729.200195313,-12037.5,-13506.299804688,-12556.299804688,"NightmareRaid",10},
+				{-12443.75,11481.299804688,-12943.849609375,11147.900390625,"NightmareRaid",11},
+				{-4916.6499023438,-2833.3500976563,-5216.6499023438,-3033.3500976563,"NightmareRaid",12},
+				{8200.0048828125,-2154.830078125,7999.9951171875,-2288.169921875,"NightmareRaid",13},
+			},
+			[1530] = { type = "raid", content = 7,
+				{3837.5,625,2562.5,-225,"SuramarRaid",1},
+				{3684.5314941406,706.0419921875,2985.4685058594,240,"SuramarRaid",2},
+				{3643.75,650,2556.25,-75,"SuramarRaid",3},
+				{3232.5,880,2467.5,370,"SuramarRaid",4},
+				{3510,375,3165,145,"SuramarRaid",5},
+				{3368.1298828125,675.21002197266,2880,349.79000854492,"SuramarRaid",6},
+				{3266.25,375.25,3003,199.75,"SuramarRaid",7},
+				{3274.9606933594,340,3033.7893066406,179.21899414063,"SuramarRaid",8},
+				{3268.75,374.58334350586,3000,195.41667175293,"SuramarRaid",9},
+			},
 		},
 		SelectedDot = nil,
 		DebuffsBlackList = {
@@ -12061,7 +11961,7 @@ function BWInterfaceFrameLoad()
 			end
 			local mapName = GetMapInfo()
 			local _,MxL,MyT,MxR,MyB = GetCurrentMapZone()
-			local numLevels,firstLevel = GetNumDungeonMapLevels()
+			local Levels = {GetNumDungeonMapLevels()}
 			local mapNameLevelFix = 0
 			local terrainMapID = GetAreaMapInfo(mapID)
 			JJBox(format("[%d] = {",terrainMapID or -1))
@@ -12070,9 +11970,9 @@ function BWInterfaceFrameLoad()
 				JJBox("},")
 				return
 			end
-			if numLevels and firstLevel then
-				for i=firstLevel,numLevels do
-					SetDungeonMapLevel(i)
+			if Levels and #Levels > 0 then
+				for i=1,#Levels do
+					SetDungeonMapLevel(Levels[i])
 					local num,xR,yB,xL,yT = GetCurrentMapDungeonLevel()
 					if DungeonUsesTerrainMap() then
 						num = num - 1
@@ -12086,6 +11986,7 @@ function BWInterfaceFrameLoad()
 				end
 			end
 			JJBox("},")
+			JJShow()
 		end
 	]]
 	
@@ -12123,24 +12024,24 @@ function BWInterfaceFrameLoad()
 		[1795] = PositionsTab_Variables.Maps[1448][9],	--"Mannoroth"
 		[1799] = PositionsTab_Variables.Maps[1448][10],	--"Archimonde"
 		
-		[1841] = nil,	--"Ursoc"
-		[1853] = nil,	--"Plague Dragon": <Nythendra>
-		[1873] = nil,	--"Il'gynoth, The Heart of Corruption"
-		[1854] = nil,	--"Dragons of Nightmare"
-		[1864] = nil,	--"Xavius"
-		[1876] = nil,	--"Elerethe Renferal"
-		[1877] = nil,	--"Cenarius"
+		[1853] = PositionsTab_Variables.Maps[1520][1],	--"Plague Dragon": <Nythendra>
+		[1876] = PositionsTab_Variables.Maps[1520][3],	--"Elerethe Renferal"
+		[1873] = PositionsTab_Variables.Maps[1520][4],	--"Il'gynoth, The Heart of Corruption"
+		[1841] = PositionsTab_Variables.Maps[1520][10],	--"Ursoc"
+		[1854] = PositionsTab_Variables.Maps[1520][5],	--"Dragons of Nightmare"
+		[1864] = PositionsTab_Variables.Maps[1520][11],	--"Xavius"
+		[1877] = PositionsTab_Variables.Maps[1520][12],	--"Cenarius"
 		
-		[1849] = nil,	--"Skorpyron"
-		[1865] = nil,	--"Anomaly"
-		[1867] = nil,	--"Trilliax"
-		[1842] = nil,	--"Krosus"
-		[1862] = nil,	--"Tichondrius"
-		[1871] = nil,	--"Spellblade Aluriel"
-		[1886] = nil,	--"High Botanist Tel'arn"
-		[1863] = nil,	--"Star Augur Etraeus"
-		[1872] = nil,	--"Grand Magistrix Elisande"
-		[1866] = nil,	--"Gul'dan"
+		[1849] = PositionsTab_Variables.Maps[1530][1],	--"Skorpyron"
+		[1865] = PositionsTab_Variables.Maps[1530][1],	--"Anomaly"
+		[1867] = PositionsTab_Variables.Maps[1530][1],	--"Trilliax"
+		[1842] = PositionsTab_Variables.Maps[1530][3],	--"Krosus"
+		[1862] = PositionsTab_Variables.Maps[1530][5],	--"Tichondrius"
+		[1871] = PositionsTab_Variables.Maps[1530][3],	--"Spellblade Aluriel"
+		[1886] = PositionsTab_Variables.Maps[1530][4],	--"High Botanist Tel'arn"
+		[1863] = PositionsTab_Variables.Maps[1530][6],	--"Star Augur Etraeus"
+		[1872] = PositionsTab_Variables.Maps[1530][7],	--"Grand Magistrix Elisande"
+		[1866] = PositionsTab_Variables.Maps[1530][9],	--"Gul'dan"
 	}
 	
 	local function PositionsTab_UpdatePositions(segment)
@@ -12393,7 +12294,8 @@ function BWInterfaceFrameLoad()
 			[4] = "Cataclysm",
 			[5] = "MoP",
 			[6] = "WoD",
-			[7] = "Brave new world",
+			[7] = "Legion",
+			[8] = "Brave new world",
 		}
 	
 		tab.SelectMapDropDown.List[1] = {text = "Raids", subMenu = {}, Lines = 15}
@@ -12935,5 +12837,6 @@ function BWInterfaceFrameLoad()
 			BWInterfaceFrame.tab.tabs[10].SelectMapDropDown:Show()
 		end
 	end)
-
+	
+	BWInterfaceFrame:GetScript("OnShow")(BWInterfaceFrame)
 end

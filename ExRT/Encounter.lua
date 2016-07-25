@@ -752,15 +752,17 @@ function module.options:Load()
 	self.exportButton = ELib:Button(self,L.Export):Size(100,20):Point("RIGHT",self.clearButton,"LEFT",-5,0):OnClick(function() 
 		local allData = {}
 		for _,encounterData in pairs(module.db.chachedDB) do
-			for i=1,#encounterData.pullTable do
-				local pull = encounterData.pullTable[i]
-				
-				local resultString = date("%d.%m.%Y %H:%M:%S",pull.t).."\t"..encounterData.name.."\t"..(pull.d > 0 and date("%M:%S",pull.d) or "").."\t"..(pull.k and "Kill" or "").."\t"..(pull.fb or "")
-				
-				allData[#allData + 1] = {
-					t = pull.t,
-					s = resultString,
-				}
+			if encounterData.pullTable then
+				for i=1,#encounterData.pullTable do
+					local pull = encounterData.pullTable[i]
+					
+					local resultString = date("%d.%m.%Y %H:%M:%S",pull.t).."\t"..encounterData.name.."\t"..(pull.d > 0 and date("%M:%S",pull.d) or "").."\t"..(pull.k and "Kill" or "").."\t"..(pull.fb or "")
+					
+					allData[#allData + 1] = {
+						t = pull.t,
+						s = resultString,
+					}
+				end
 			end
 		end
 		sort(allData,function(a,b) return a.t<b.t end)

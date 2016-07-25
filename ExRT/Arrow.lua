@@ -73,14 +73,9 @@ local arrow = frame:CreateTexture(nil, "OVERLAY")
 arrow:SetTexture(textureArrow)
 arrow:SetAllPoints(frame)
 
-local txtrng
-if ExRT.is7 then
-	txtrng = frame:CreateFontString(nil,"OVERLAY","GameFontNormal")
-else
-	txtrng = frame:CreateFontString(nil,"OVERLAY")
-end
-txtrng:SetSize(44,18)
-txtrng:SetPoint("BOTTOMRIGHT",10,5)
+local txtrng = frame:CreateFontString(nil,"OVERLAY")
+txtrng:SetSize(0,18)
+txtrng:SetPoint("BOTTOM",frame,"BOTTOMRIGHT",0,5)
 txtrng:SetFont("Interface\\AddOns\\ExRT\\media\\ariblk.ttf", 14, "OUTLINE")
 txtrng:SetJustifyH("RIGHT")
 txtrng:SetJustifyV("BOTTOM")
@@ -507,7 +502,7 @@ function module.main:ADDON_LOADED()
 	if VExRT.Arrow.PointX and VExRT.Arrow.PointY and VExRT.Arrow.Point1 and VExRT.Arrow.Point2 then
 		arrowFrame:LoadPosition(VExRT.Arrow.Point1,UIParent,VExRT.Arrow.Point2,VExRT.Arrow.PointX,VExRT.Arrow.PointY)
 	else
-		arrowFrame:LoadPosition("TOP",UIParent,"TOP",0,-30)
+		arrowFrame:LoadPosition("TOP",UIParent,"TOP",0,-100)
 	end
 	
 	if VExRT.Arrow.Fix then
@@ -638,7 +633,6 @@ function module:addonMessage(sender, prefix, ...)
 			runAway = (runAway == "true" or runAway == "1") and true or false
 			distance = tonumber(distance)
 			time = tonumber(time)
-			world = (world == "true" or world == "1") and true or false
 			hide = (hide == "true" or hide == "1") and true or false
 			show(runAway, toPlayer, distance, time, nil, true, hide)
 		end

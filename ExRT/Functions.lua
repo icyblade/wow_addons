@@ -538,6 +538,24 @@ function ExRT.F.IsBonusOnItem(link,bonus)
 	end
 end
 
+function ExRT.F.GetItemBonuses(link)
+	if link then 
+		local _,itemID,enchant,gem1,gem2,gem3,gem4,suffixID,uniqueID,level,specializationID,upgradeType,instanceDifficultyID,numBonusIDs,restLink = strsplit(":",link,15)
+		numBonusIDs = tonumber(numBonusIDs or "?") or 0
+		local bonusStr = ""
+		for i=1,numBonusIDs do
+			local bonus = select(i,strsplit(":",restLink))
+			if bonus then
+				bonusStr = bonusStr .. bonus .. ":"
+			end
+		end
+		bonusStr = strtrim(bonusStr,":")
+		return bonusStr,numBonusIDs
+	end
+	return "",0
+end
+--/dump GExRT.F.GetItemBonuses(select(2,GameTooltip:GetItem()))
+
 function ExRT.F.IsPlayerRLorOfficer(unitName)
 	local shortName = ExRT.F.delUnitNameServer(unitName)
 	for i=1,GetNumGroupMembers() do

@@ -2327,7 +2327,7 @@ do
 		return self
 	end
 	local function Widget_SetTo(self,activeTabNum)
-		TabFrame_SelectTab(self.tabs[activeTabNum or 1].button)
+		TabFrameButtonClick(self.tabs[activeTabNum or 1].button)
 		return self
 	end
 	
@@ -4477,6 +4477,22 @@ do
 			end
 		end
 	end
+	local function GraphOnUpdate_Zoom(self,elapsed)
+		local x = ExRT.F.GetCursorPos(self)
+		local width = x - self.mouseDowned
+		if width > 0 then
+			width = min(width,self:GetWidth()-self.mouseDowned)
+			self.selectingTexture:SetWidth(width)
+			self.selectingTexture:SetPoint("TOPLEFT",self,"TOPLEFT", self.mouseDowned ,0)
+		elseif width < 0 then
+			width = -width
+			width = min(width,self.mouseDowned)
+			self.selectingTexture:SetWidth(width)
+			self.selectingTexture:SetPoint("TOPLEFT",self,"TOPLEFT", self.mouseDowned-width,0)
+		else
+			self.selectingTexture:SetWidth(1)
+		end
+	end
 	local function GraphOnMouseDown(self)
 		if not self.range or not self.range.maxX then
 			return
@@ -4485,11 +4501,13 @@ do
 		self.selectingTexture:SetPoint("TOPLEFT",self,"TOPLEFT", self.mouseDowned ,0)
 		self.selectingTexture:SetWidth(1)
 		self.selectingTexture:Show()
+		self:SetScript("OnUpdate",GraphOnUpdate_Zoom)
 	end
 	local function GraphOnMouseUp(self,isLeave)
 		if isLeave == "LEAVE" then
 			if self.selectingTexture then
-				self.selectingTexture:Hide()
+				return
+				--self.selectingTexture:Hide()
 			end
 			self.mouseDowned = nil
 			return
@@ -4497,6 +4515,8 @@ do
 		if not self.mouseDowned then
 			return
 		end
+		self:SetScript("OnUpdate",nil)
+		
 		local x = GetCursorPos(self)
 		if x < self.mouseDowned then
 			x , self.mouseDowned = self.mouseDowned , x
