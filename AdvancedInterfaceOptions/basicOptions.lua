@@ -1,10 +1,11 @@
 local addonName, addon = ...
+local E = addon:Eve()
 local _G = _G
 
 -- GLOBALS: GameTooltip InterfaceOptionsFrame_OpenToCategory
 -- GLOBALS: GetSortBagsRightToLeft SetSortBagsRightToLeft GetInsertItemsLeftToRight SetInsertItemsLeftToRight
 -- GLOBALS: UIDropDownMenu_AddButton UIDropDownMenu_CreateInfo UIDropDownMenu_SetSelectedValue
--- GLOBALS: SLASH_AIO1
+-- GLOBALS: SLASH_AIO1 InterfaceOptionsFrame DEFAULT_CHAT_FRAME
 
 local AIO = CreateFrame('Frame', nil, InterfaceOptionsFramePanelContainer)
 AIO:Hide()
@@ -12,6 +13,7 @@ AIO:SetAllPoints()
 AIO.name = addonName
 
 -- Some wrapper functions
+
 -------------
 -- Checkbox
 -------------
@@ -42,7 +44,6 @@ local function newCheckbox(parent, cvar, getValue, setValue)
 	return check
 end
 
-
 -----------
 -- Slider
 -----------
@@ -51,9 +52,9 @@ local function sliderRefresh(self) self:SetValue(self:GetCVarValue()) end
 local function sliderSetCVar(self, checked) SetCVar(self.cvar, checked) end
 
 local function newSlider(parent, cvar, minRange, maxRange, stepSize, getValue, setValue)
-	--local cvarTable = addon.hiddenOptions[cvar]
-	--local label = cvarTable['prettyName'] or cvar
-	--local description = cvarTable['description'] or 'No description'
+	local cvarTable = addon.hiddenOptions[cvar]
+	local label = cvarTable['prettyName'] or cvar
+	local description = cvarTable['description'] or 'No description'
 	local slider = CreateFrame('Slider', 'AIOSlider' .. cvar, parent, 'OptionsSliderTemplate')
 
 	slider.cvar = cvar
@@ -68,7 +69,7 @@ local function newSlider(parent, cvar, minRange, maxRange, stepSize, getValue, s
 	slider.maxText = _G[slider:GetName() .. 'High']
 	slider.minText:SetText(minRange)
 	slider.maxText:SetText(maxRange)
-	_G[slider:GetName() .. 'Text']:SetText(cvar)
+	_G[slider:GetName() .. 'Text']:SetText(label)
 
 	local valueText = slider:CreateFontString(nil, nil, 'GameFontHighlight')
 	valueText:SetPoint('TOP', slider, 'BOTTOM', 0, -5)
@@ -77,12 +78,10 @@ local function newSlider(parent, cvar, minRange, maxRange, stepSize, getValue, s
 		valueText:SetText(value)
 	end)
 
-	--slider:SetValue(slider:GetCVarValue())
 	slider:HookScript('OnValueChanged', slider.SetCVarValue)
 
-	--slider.label:SetText(label)
-	--slider.tooltipText = label
-	--slider.tooltipRequirement = description
+	slider.tooltipText = label
+	slider.tooltipRequirement = description
 	return slider
 end
 
@@ -302,20 +301,62 @@ fctDirectionalScale:SetPoint("TOPLEFT", fctAbsorbTarget, "BOTTOMLEFT", 0, -4)
 fctLowHPMana:SetPoint("TOPLEFT", fctDirectionalScale, "BOTTOMLEFT", 0, -4)
 fctDots:SetPoint("TOPLEFT", fctLowHPMana, "BOTTOMLEFT", 0, -4)
 
--- REMOVE
--- local testSlider = newSlider(AIO_FCT, 'CameraOverShoulder', -10, 10)
--- testSlider:SetPoint('TOPLEFT', fctDirectionalScale, 'BOTTOMLEFT', 0, -14)
+-- Nameplate settings
+local AIO_NP = CreateFrame('Frame', nil, InterfaceOptionsFramePanelContainer)
+AIO_NP:Hide()
+AIO_NP:SetAllPoints()
+AIO_NP.name = "Nameplates"
+AIO_NP.parent = addonName
+
+local Title_NP = AIO_NP:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLarge')
+Title_NP:SetJustifyV('TOP')
+Title_NP:SetJustifyH('LEFT')
+Title_NP:SetPoint('TOPLEFT', 16, -16)
+Title_NP:SetText(AIO_NP.name)
+
+local SubText_NP = AIO_NP:CreateFontString(nil, 'ARTWORK', 'GameFontHighlightSmall')
+SubText_NP:SetMaxLines(3)
+SubText_NP:SetNonSpaceWrap(true)
+SubText_NP:SetJustifyV('TOP')
+SubText_NP:SetJustifyH('LEFT')
+SubText_NP:SetPoint('TOPLEFT', Title_NP, 'BOTTOMLEFT', 0, -8)
+SubText_NP:SetPoint('RIGHT', -32, 0)
+SubText_NP:SetText('These options allow you to modify Nameplate Options.')
+
+local nameplateDistance = newSlider(AIO_NP, 'nameplateMaxDistance', 10, 60)
+nameplateDistance:SetPoint('TOPLEFT', SubText_NP, 'BOTTOMLEFT', 0, -20)
+
+local nameplateAtBase = newCheckbox(AIO_NP, 'nameplateOtherAtBase')
+nameplateAtBase:SetPoint("TOPLEFT", nameplateDistance, "BOTTOMLEFT", 0, -16)
+nameplateAtBase:SetScript('OnClick', function(self)
+	local checked = self:GetChecked()
+	PlaySound(checked and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
+	self:SetValue(checked and 2 or 0)
+end)
+
 
 -- Hook up options to addon panel
 InterfaceOptions_AddCategory(AIO, addonName)
 InterfaceOptions_AddCategory(AIO_Chat, addonName)
 InterfaceOptions_AddCategory(AIO_FCT, addonName)
+InterfaceOptions_AddCategory(AIO_NP, addonName)
 
+
+function E:PLAYER_REGEN_DISABLED()
+	if AIO:IsVisible() then
+		--InterfaceOptionsFrame_Show()
+		InterfaceOptionsFrame:Hide()
+	end
+end
 
 -- Slash handler
 SlashCmdList.AIO = function(msg)
 	--msg = msg:lower()
-	InterfaceOptionsFrame_OpenToCategory(addonName)
-	InterfaceOptionsFrame_OpenToCategory(addonName)
+	if not InCombatLockdown() then
+		InterfaceOptionsFrame_OpenToCategory(addonName)
+		InterfaceOptionsFrame_OpenToCategory(addonName)
+	else
+		DEFAULT_CHAT_FRAME:AddMessage(format("%s: Can't modify interface options in combat", addonName))
+	end
 end
 SLASH_AIO1 = "/aio"
