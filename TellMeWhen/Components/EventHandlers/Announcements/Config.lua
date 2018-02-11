@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -32,7 +32,6 @@ local Announcements = EVENTS:GetEventHandler("Announcements")
 Announcements.handlerName = L["ANN_TAB"]
 Announcements.handlerDesc = L["ANN_TAB_DESC"]
 
-
 TMW:RegisterCallback("TMW_OPTIONS_LOADED", function(event)
 	TMW:ConvertContainerToScrollFrame(Announcements.ConfigContainer.ConfigFrames)
 
@@ -44,7 +43,7 @@ end)
 
 
 ---------- Events ----------
-function Announcements:SetupEventDisplay(eventID)
+function Announcements:GetEventDisplayText(eventID)
 	if not eventID then return end
 
 	local EventSettings = EVENTS:GetEventSettings(eventID)
@@ -52,15 +51,17 @@ function Announcements:SetupEventDisplay(eventID)
 
 	if subHandlerData then
 		local chanName = subHandlerData.text
+		
 		local data = EventSettings.Text
 		if data == "" then
 			data = "|cff808080" .. L["ANN_NOTEXT"] .. "|r"
 		elseif chanName == NONE then
 			data = "|cff808080" .. chanName .. "|r"
 		end
-		EVENTS.EventHandlerFrames[eventID].DataText:SetText("|cffcccccc" .. self.handlerName .. ":|r " .. data)
+
+		return ("|cffcccccc" .. self.handlerName .. ":|r " .. data)
 	else
-		EVENTS.EventHandlerFrames[eventID].DataText:SetText("|cffcccccc" .. self.handlerName .. ":|r UNKNOWN: " .. (subHandlerIdentifier or "?"))
+		return ("|cffcccccc" .. self.handlerName .. ":|r UNKNOWN: " .. (subHandlerIdentifier or "?"))
 	end
 end
 
@@ -76,14 +77,6 @@ end)
 
 
 ---------- Interface ----------
-
-TMW:NewClass("Config_EditBox_Event_DogTags", "Config_Base_Event", "Config_EditBox_DogTags"){
-	METHOD_EXTENSIONS = {
-		SaveSetting = function(self, button)
-			EVENTS:LoadConfig()
-		end,
-	},
-}
 
 function Announcements:Location_DropDown()
 	local channelData = Announcements.currentSubHandlerData

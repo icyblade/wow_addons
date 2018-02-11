@@ -50,15 +50,17 @@ DogTag:AddTag("Stats", "Haste", {
 	category = L["Enhancements"],
 })
 
--- ICY: multistrike has been removed
---[[DogTag:AddTag("Stats", "Multistrike", {
+
+if GetMultistrike then
+DogTag:AddTag("Stats", "Multistrike", {
 	code = GetMultistrike,
 	ret = "number",
 	events = "MULTISTRIKE_UPDATE",
 	doc = L["Returns your Multistrike percentage"],
 	example = '[Multistrike:Round(1)] => "17.2"; [Multistrike:Round(1):Percent] => "17.2%"',
 	category = L["Enhancements"],
-})]]
+})
+end
 
 DogTag:AddTag("Stats", "Leech", {
 	code = GetLifesteal,

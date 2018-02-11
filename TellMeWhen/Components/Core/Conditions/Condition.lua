@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -47,10 +47,21 @@ function Condition:OnNewInstance(category, order, identifier)
 	self.identifier = identifier
 	self.order = order
 
+
 	if self.texttable and not self.formatter then
 		self.formatter = TMW.C.Formatter:New(self.texttable)
 		self.texttable = nil
-	elseif not self.formatter then
+	end
+	
+	if self.bool then
+		self.min = 0
+		self.max = 1
+		self.formatter = self.formatter or TMW.C.Formatter.BOOL
+		self.nooperator = true
+		self.levelChecks = true
+	end
+
+	if not self.formatter then
 		self.formatter = TMW.C.Formatter.COMMANUMBER
 	end
 
@@ -68,6 +79,10 @@ function Condition:OnNewInstance(category, order, identifier)
 		self.nooperator = true
 		self.noslide = true
 	end
+
+	if not self.noslide and not self.range and not self.max then
+		error("max must be specified if range is not for condition " .. identifier)
+	end	
 
 	CNDT.ConditionsByType[identifier] = self
 end

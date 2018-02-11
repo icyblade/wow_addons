@@ -1,15 +1,11 @@
-## Interface: 60200
+## Interface: 70300
 ## Title: WowLua
-## Version: v60200-1.0.0 
+## Version: v70300-1.0.1
 ## Author: Cladhaire
 ## Notes: Interactive Lua interpreter and scratchpad
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Slash: /wowlua, /lua, /wowluarun, /luarun
 ## SavedVariables: WowLua_DB
-## X-Curse-Packaged-Version: v60200-1.0.0
-## X-Curse-Project-Name: WowLua
-## X-Curse-Project-ID: wowlua
-## X-Curse-Repository-ID: wow/wowlua/mainline
 
 Localization.enUS.lua
 

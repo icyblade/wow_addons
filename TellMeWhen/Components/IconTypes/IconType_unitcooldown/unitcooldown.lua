@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -46,12 +46,15 @@ Type.DurationSyntax = 1
 Type.unitType = "unitid"
 Type.canControlGroup = true
 
+local STATE_USABLE = TMW.CONST.STATE.DEFAULT_SHOW
+local STATE_USABLE_ALL = 10
+local STATE_UNUSABLE = TMW.CONST.STATE.DEFAULT_HIDE
 
 -- AUTOMATICALLY GENERATED: UsesAttributes
+Type:UsesAttributes("state")
 Type:UsesAttributes("spell")
-Type:UsesAttributes("unit, GUID")
 Type:UsesAttributes("start, duration")
-Type:UsesAttributes("alpha")
+Type:UsesAttributes("unit, GUID")
 Type:UsesAttributes("texture")
 -- END AUTOMATICALLY GENERATED: UsesAttributes
 
@@ -79,42 +82,56 @@ Type:RegisterConfigPanel_XMLTemplate(105, "TellMeWhen_Unit", {
 	implementsConditions = true,
 })
 
-Type:RegisterConfigPanel_XMLTemplate(165, "TellMeWhen_WhenChecks", {
-	text = L["ICONMENU_SHOWWHEN"],
-	[0x2] = { text = "|cFF00FF00" .. L["ICONMENU_USABLE"], 			},
-	[0x1] = { text = "|cFFFF0000" .. L["ICONMENU_UNUSABLE"], 		},
+Type:RegisterConfigPanel_XMLTemplate(165, "TellMeWhen_IconStates", {
+	[STATE_USABLE_ALL] = { text = "|cFF00FF00" .. L["ICONMENU_ALLSPELLS"], tooltipText = L["ICONMENU_ALLSPELLS_DESC"], order = 1},
+	[STATE_USABLE] =     { text = "|cFF00FF00" .. L["ICONMENU_ANYSPELLS"], tooltipText = L["ICONMENU_ANYSPELLS_DESC"], order = 2},
+	[STATE_UNUSABLE] =   { text = "|cFFFF0000" .. L["ICONMENU_UNUSABLE"],  tooltipText = L["ICONMENU_UNUSABLE_DESC"], order = 3},
 })
 
 Type:RegisterConfigPanel_ConstructorFunc(150, "TellMeWhen_UnitCooldownSettings", function(self)
-	self.Header:SetText(L["ICONMENU_ONLYSEEN_HEADER"])
-	TMW.IE:BuildSimpleCheckSettingFrame(self, {
+	self:SetTitle(L["ICONMENU_ONLYSEEN_HEADER"])
+	self:BuildSimpleCheckSettingFrame({
 		numPerRow = 2,
-		{
-			setting = "OnlySeen",
-			value = false,
-			title = L["ICONMENU_ONLYSEEN_ALL"],
-			tooltip = L["ICONMENU_ONLYSEEN_ALL_DESC"],
-		},
-		{
-			setting = "OnlySeen",
-			value = true,
-			title = L["ICONMENU_ONLYSEEN"],
-			tooltip = L["ICONMENU_ONLYSEEN_DESC"],
-		},
-		{
-			setting = "OnlySeen",
-			value = "class",
-			title = L["ICONMENU_ONLYSEEN_CLASS"],
-			tooltip = L["ICONMENU_ONLYSEEN_CLASS_DESC"],
-		},
+		function(check)
+			check:SetTexts(L["ICONMENU_ONLYSEEN_ALL"], L["ICONMENU_ONLYSEEN_ALL_DESC"])
+			check:SetSetting("OnlySeen", false)
+		end,
+		function(check)
+			check:SetTexts(L["ICONMENU_ONLYSEEN"], L["ICONMENU_ONLYSEEN_DESC"])
+			check:SetSetting("OnlySeen", true)
+		end,
+		function(check)
+			check:SetTexts(L["ICONMENU_ONLYSEEN_CLASS"], L["ICONMENU_ONLYSEEN_CLASS_DESC"])
+			check:SetSetting("OnlySeen", "class")
+		end,
 	})
 end)
 
-Type:RegisterConfigPanel_XMLTemplate(170, "TellMeWhen_SortSettings", {
-	hidden = function(self)
-		return TMW.CI.icon:IsGroupController()
-	end,
-})
+Type:RegisterConfigPanel_ConstructorFunc(170, "TellMeWhen_UCDSortSettings", function(self)
+	self:SetTitle(TMW.L["SORTBY"])
+
+	self:BuildSimpleCheckSettingFrame({
+		numPerRow = 3,
+		function(check)
+			check:SetTexts(TMW.L["SORTBYNONE"], TMW.L["SORTBYNONE_DESC"])
+			check:SetSetting("Sort", false)
+		end,
+		function(check)
+			check:SetTexts(TMW.L["ICONMENU_SORTASC"], TMW.L["ICONMENU_SORTASC_DESC"])
+			check:SetSetting("Sort", -1)
+		end,
+		function(check)
+			check:SetTexts(TMW.L["ICONMENU_SORTDESC"], TMW.L["ICONMENU_SORTDESC_DESC"])
+			check:SetSetting("Sort", 1)
+		end,
+	})
+
+	self:CScriptAdd("PanelSetup", function()
+		if TMW.CI.icon:IsGroupController() then
+			self:Hide()
+		end
+	end)
+end)
 
 
 
@@ -387,8 +404,11 @@ local BLANKTABLE = {}
 local function UnitCooldown_OnUpdate(icon, time)
 
 	-- Upvalue things that will be referenced a lot in our loops.
-	local Alpha, NameArray, OnlySeen, Sort, Durations, Units =
-	icon.Alpha, icon.Spells.Array, icon.OnlySeen, icon.Sort, icon.Spells.Durations, icon.Units
+	local NameArray, OnlySeen, Sort, Durations, Units =
+	icon.Spells.Array, icon.OnlySeen, icon.Sort, icon.Spells.Durations, icon.Units
+	
+	local usableAlpha = icon.States[STATE_USABLE].Alpha
+	local usableAllAlpha = icon.States[STATE_USABLE_ALL].Alpha
 
 	-- These variables will hold all the attributes that we pass to SetInfo().
 	local unstart, unname, unduration, usename, dobreak, useUnit, unUnit
@@ -428,7 +448,8 @@ local function UnitCooldown_OnUpdate(icon, time)
 				elseif OnlySeen == "class" then
 					local _, class = UnitClass(unit)
 
-					if classSpellNameCache[class][baseName] then
+					-- we allow (not classSpellNameCache[class]) because of ticket 1144
+					if not classSpellNameCache[class] or classSpellNameCache[class][baseName] then
 						start = cooldowns[iName] or 0
 					end
 				else
@@ -468,7 +489,7 @@ local function UnitCooldown_OnUpdate(icon, time)
 							unUnit = unit
 
 							-- We DONT care about usable cooldowns, so stop looking
-							if Alpha == 0 then 
+							if usableAlpha == 0 and usableAllAlpha == 0 then 
 								dobreak = 1
 								break
 							end
@@ -477,8 +498,8 @@ local function UnitCooldown_OnUpdate(icon, time)
 							usename = iName
 							useUnit = unit
 
-							-- We care about usable cooldowns, so stop looking
-							if Alpha ~= 0 then 
+							-- We care about usable cooldowns (but not all of them), so stop looking
+							if usableAlpha > 0 and usableAllAlpha == 0 then 
 								dobreak = 1
 								break
 							end
@@ -492,9 +513,18 @@ local function UnitCooldown_OnUpdate(icon, time)
 		end
 	end
 	
-	if usename and Alpha > 0 then
-		icon:SetInfo("alpha; texture; start, duration; spell; unit, GUID",
-			icon.Alpha,
+	if usename and usableAllAlpha > 0 and not unname then
+		icon:SetInfo("state; texture; start, duration; spell; unit, GUID",
+			STATE_USABLE_ALL,
+			GetSpellTexture(usename) or "Interface\\Icons\\INV_Misc_PocketWatch_01",
+			0, 0,
+			usename,
+			useUnit, nil
+		)
+
+	elseif usename and usableAlpha > 0 then
+		icon:SetInfo("state; texture; start, duration; spell; unit, GUID",
+			STATE_USABLE,
 			GetSpellTexture(usename) or "Interface\\Icons\\INV_Misc_PocketWatch_01",
 			0, 0,
 			usename,
@@ -502,8 +532,8 @@ local function UnitCooldown_OnUpdate(icon, time)
 		)
 
 	elseif unname then
-		icon:SetInfo("alpha; texture; start, duration; spell; unit, GUID",
-			icon.UnAlpha,
+		icon:SetInfo("state; texture; start, duration; spell; unit, GUID",
+			STATE_UNUSABLE,
 			GetSpellTexture(unname),
 			unstart, unduration,
 			unname,
@@ -511,16 +541,19 @@ local function UnitCooldown_OnUpdate(icon, time)
 		)
 
 	else
-		icon:SetInfo("alpha", 0)
+		icon:SetInfo("state", 0)
 	end
 end
 
 local function UnitCooldown_OnUpdate_Controller(icon, time)
 
 	-- Upvalue things that will be referenced a lot in our loops.
-	local Alpha, UnAlpha, NameArray, OnlySeen, Durations, Units =
-	icon.Alpha, icon.UnAlpha, icon.Spells.Array, icon.OnlySeen, icon.Spells.Durations, icon.Units
-		
+	local NameArray, OnlySeen, Durations, Units =
+	icon.Spells.Array, icon.OnlySeen, icon.Spells.Durations, icon.Units
+	
+	local usableAlpha = icon.States[STATE_USABLE].Alpha
+	local unusableAlpha = icon.States[STATE_UNUSABLE].Alpha
+
 	for u = 1, #Units do
 		local unit = Units[u]
 		local GUID = UnitGUID(unit)
@@ -565,13 +598,13 @@ local function UnitCooldown_OnUpdate_Controller(icon, time)
 					if remaining < 0 then remaining = 0 end
 
 					if remaining ~= 0 then
-						if UnAlpha > 0 and not icon:YieldInfo(true, iName, start, duration, unit, GUID, UnAlpha) then
+						if unusableAlpha > 0 and not icon:YieldInfo(true, iName, start, duration, unit, GUID, STATE_UNUSABLE) then
 							-- YieldInfo returns true if we need to keep harvesting data. Otherwise, it returns false.
 							return
 						end
 
 					else
-						if Alpha > 0 and not icon:YieldInfo(true, iName, 0, 0, unit, GUID, Alpha) then
+						if usableAlpha > 0 and not icon:YieldInfo(true, iName, 0, 0, unit, GUID, STATE_USABLE) then
 							-- YieldInfo returns true if we need to keep harvesting data. Otherwise, it returns false.
 							return
 						end
@@ -584,17 +617,17 @@ local function UnitCooldown_OnUpdate_Controller(icon, time)
 	-- Signal the group controller that we are at the end of our data harvesting.
 	icon:YieldInfo(false)
 end
-function Type:HandleYieldedInfo(icon, iconToSet, name, start, duration, unit, GUID, alpha)
+function Type:HandleYieldedInfo(icon, iconToSet, name, start, duration, unit, GUID, state)
 	if name then
-		iconToSet:SetInfo("alpha; texture; start, duration; spell; unit, GUID",
-			alpha,
+		iconToSet:SetInfo("state; texture; start, duration; spell; unit, GUID",
+			state,
 			GetSpellTexture(name) or "Interface\\Icons\\INV_Misc_PocketWatch_01",
 			start, duration,
 			name,
 			unit, GUID
 		)
 	else
-		iconToSet:SetInfo("alpha", 0)
+		iconToSet:SetInfo("state", 0)
 	end
 
 end
@@ -622,10 +655,6 @@ function Type:Setup(icon)
 	if icon.UnitSet.allUnitsChangeOnEvent then
 		icon:SetUpdateMethod("manual")
 		ManualIconsManager:UpdateTable_Register(icon)
-		
-		for event in pairs(icon.UnitSet.updateEvents) do
-			icon:RegisterSimpleUpdateEvent(event)
-		end
 		
 		TMW:RegisterCallback("TMW_UNITSET_UPDATED", UnitCooldown_OnEvent, icon)
 	end

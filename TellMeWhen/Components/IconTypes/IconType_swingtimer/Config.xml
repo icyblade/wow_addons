@@ -1,4 +1,4 @@
-﻿<Ui>
+<Ui>
 	
 	<Frame name="TellMeWhen_AutoshootSwingTimerTip" inherits="TellMeWhen_OptionsModuleContainer" virtual="true">
 		<Size y="50"/>
@@ -31,7 +31,7 @@
 						ics.Type = "cooldown"
 						ics.Name = 75
 						
-						TMW.IE:Load(1)
+						TMW.IE:LoadIcon(1)
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -40,7 +40,9 @@
 
 		<Scripts>
 			<OnLoad>
-				self.Header:SetText(GetSpellInfo(75))
+				TMW:CInit(self)
+				
+				self:SetTitle(GetSpellInfo(75))
 				self.Text:SetText(TMW.L["ICONTYPE_SWINGTIMER_TIP"])
 				
 				self.Text:SetWidth(self:GetWidth() - 15)

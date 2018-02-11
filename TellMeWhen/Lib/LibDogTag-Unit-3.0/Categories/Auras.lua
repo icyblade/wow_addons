@@ -1,5 +1,5 @@
 local MAJOR_VERSION = "LibDogTag-Unit-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Revision: 262 $"):match("%d+")) or 0
+local MINOR_VERSION = 90000 + (tonumber(("@file-date-integer@"):match("%d+")) or 33333333333333)
 
 if MINOR_VERSION > _G.DogTag_Unit_MINOR_VERSION then
 	_G.DogTag_Unit_MINOR_VERSION = MINOR_VERSION
@@ -24,6 +24,7 @@ local currentAuras, currentDebuffTypes, currentAuraTimes, currentNumDebuffs
 
 -- Parnic: support for cataclysm; Divine Intervention was removed
 local wow_400 = select(4, GetBuildInfo()) >= 40000
+local wow_700 = select(4, GetBuildInfo()) >= 70000
 
 local mt = {__index=function(self, unit)
 	local auras = newList()
@@ -354,9 +355,9 @@ DogTag:AddTag("Unit", "AuraDuration", {
 	example = '[AuraDuration("Renew")] => "10.135123"',
 	category = L["Auras"],
 })
--- ICY: shadow form has been removed
---[[
+
 local SHADOWFORM = GetSpellInfo(15473)
+if not wow_700 then
 DogTag:AddTag("Unit", "IsShadowform", {
 	alias = ("HasAura(aura=%q, unit=unit)"):format(SHADOWFORM),
 	arg = {
@@ -365,13 +366,14 @@ DogTag:AddTag("Unit", "IsShadowform", {
 	doc = L["Return True if the unit has the shadowform buff"],
 	example = ('[IsShadowform] => %q; [IsShadowform] => ""'):format(L["True"]),
 	category = L["Auras"],
-})]]
+})
+end
 
 local STEALTH = GetSpellInfo(1784)
-local SHADOWFORM = GetSpellInfo(58984)
+local SHADOWMELD = GetSpellInfo(58984)
 local PROWL = GetSpellInfo(5215)
 DogTag:AddTag("Unit", "IsStealthed", {
-	alias = ("HasAura(aura=%q, unit=unit) or HasAura(aura=%q, unit=unit) or HasAura(aura=%q, unit=unit)"):format(STEALTH, SHADOWFORM, PROWL),
+	alias = ("HasAura(aura=%q, unit=unit) or HasAura(aura=%q, unit=unit) or HasAura(aura=%q, unit=unit)"):format(STEALTH, SHADOWMELD, PROWL),
 	arg = {
 		'unit', 'string;undef', 'player'
 	},

@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -36,13 +36,15 @@ Type.usePocketWatch = 1
 Type.hasNoGCD = true
 Type.canControlGroup = true
 
+local INCONTROL = 1
+local CONTROLLOST = 2
 
 -- AUTOMATICALLY GENERATED: UsesAttributes
+Type:UsesAttributes("state")
 Type:UsesAttributes("spell")
 Type:UsesAttributes("reverse")
-Type:UsesAttributes("locCategory")
 Type:UsesAttributes("start, duration")
-Type:UsesAttributes("alpha")
+Type:UsesAttributes("locCategory")
 Type:UsesAttributes("texture")
 -- END AUTOMATICALLY GENERATED: UsesAttributes
 
@@ -62,7 +64,7 @@ TMW:RegisterUpgrade(71038, {
 	icon = function(self, ics)
 		-- Fix the misspelled setting name "LoseContolTypes" to "LoseControlTypes"
 		if ics.LoseContolTypes then
-			TMW:CopyTableInPlaceWithMeta(ics.LoseContolTypes, ics.LoseControlTypes)
+			TMW:CopyTableInPlaceUsingDestinationMeta(ics.LoseContolTypes, ics.LoseControlTypes)
 		end
 		ics.LoseContolTypes = nil
 	end,
@@ -71,10 +73,9 @@ TMW:RegisterUpgrade(71038, {
 
 Type:RegisterConfigPanel_XMLTemplate(105, "TellMeWhen_LoseControlTypes")
 
-Type:RegisterConfigPanel_XMLTemplate(165, "TellMeWhen_WhenChecks", {
-	text = L["ICONMENU_SHOWWHEN"],
-	[0x1] = { text = "|cFF00FF00" .. L["LOSECONTROL_INCONTROL"],		},
-	[0x2] = { text = "|cFFFF0000" .. L["LOSECONTROL_CONTROLLOST"],		},
+Type:RegisterConfigPanel_XMLTemplate(165, "TellMeWhen_IconStates", {
+	[INCONTROL] =   { text = "|cFF00FF00" .. L["LOSECONTROL_INCONTROL"],   },
+	[CONTROLLOST] = { text = "|cFFFF0000" .. L["LOSECONTROL_CONTROLLOST"], },
 })
 
 
@@ -117,16 +118,16 @@ end
 
 function Type:HandleYieldedInfo(icon, iconToSet, category, texture, start, duration, spellID)
 	if category then
-		iconToSet:SetInfo("alpha; texture; start, duration; spell; locCategory",
-			icon.Alpha,
+		iconToSet:SetInfo("state; texture; start, duration; spell; locCategory",
+			INCONTROL,
 			texture,
 			start, duration,
 			spellID,
 			category
 		)
 	else
-		iconToSet:SetInfo("alpha; start, duration; spell; locCategory",
-			icon.UnAlpha,
+		iconToSet:SetInfo("state; start, duration; spell; locCategory",
+			CONTROLLOST,
 			0, 0,
 			nil,
 			nil
@@ -152,7 +153,7 @@ function Type:Setup(icon)
 	icon:Update()
 end
 
-Type:Register(102)
+Type:Register(103)
 
 
 

@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -26,19 +26,17 @@ Type.name = L["ICONMENU_META"]
 Type.desc = L["ICONMENU_META_DESC"]
 Type.menuIcon = "Interface\\Icons\\LevelUpIcon-LFD"
 Type.AllowNoName = true
-Type.NoColorSettings = true
 Type.canControlGroup = true
 
 -- AUTOMATICALLY GENERATED: UsesAttributes
-Type:UsesAttributes("alpha_metaChild")
-Type:UsesAttributes("alpha")
+Type:UsesAttributes("state_metaChild")
+Type:UsesAttributes("start, duration")
 Type:UsesAttributes("texture")
 -- END AUTOMATICALLY GENERATED: UsesAttributes
 
 
 -- Not automatically generated. We need these declared so that the meta icon will
 -- still have things like stack and duration min/max settings.
-Type:UsesAttributes("start, duration")
 Type:UsesAttributes("spell")
 Type:UsesAttributes("unit, GUID")
 Type:UsesAttributes("stack, stackText")
@@ -68,14 +66,6 @@ Type:RegisterIconDefaults{
 	},   
 }
 
-Type:RegisterConfigPanel_XMLTemplate(150, "TellMeWhen_MetaIconOptions")
-
-Type:RegisterConfigPanel_XMLTemplate(170, "TellMeWhen_MetaSortSettings", {
-	hidden = function(self)
-		return TMW.CI.icon:IsGroupController()
-	end,
-})
-
 
 TMW:RegisterUpgrade(70042, {
 	icon = function(self, ics)
@@ -101,13 +91,13 @@ TMW:RegisterUpgrade(24100, {
 
 
 
--- IDP that works with TMW's alpha manager to inherit the real alpha of the icon that it is replicating.
-local Processor = TMW.Classes.IconDataProcessor:New("ALPHA_METACHILD", "alpha_metaChild")
+-- IDP that works with TMW's state arbitrator to inherit the state of the icon that it is replicating.
+local Processor = TMW.Classes.IconDataProcessor:New("STATE_METACHILD", "state_metaChild")
 Processor.dontInherit = true
-TMW.IconAlphaManager:AddHandler(50, "ALPHA_METACHILD", true)
+Processor:RegisterAsStateArbitrator(50, nil, true)
 
 Processor:PostHookMethod("OnUnimplementFromIcon", function(self, icon)
-	icon:SetInfo("alpha_metaChild", nil)
+	icon:SetInfo("state_metaChild", nil)
 end)
 
 
@@ -139,7 +129,7 @@ TMW:RegisterCallback("TMW_GLOBAL_UPDATE_POST", function()
 		if err and err:find("stack overflow") then
 			local err = format("Meta icon recursion was detected in %s - there is an endless loop between the icon and its sub icons.", CCI_icon:GetName())
 			TMW:Error(err)
-			TMW.Warn(err)
+			TMW:Warn(err)
 		end
 	end
 end)
@@ -188,35 +178,33 @@ TMW:RegisterCallback("TMW_ICON_UPDATED", function(event, icon)
 	for i = 1, #Icons do
 		local icon_meta = Icons[i]
 
-		if icon_meta == icon or (not icon_meta:IsControlled() and icon_meta.IconsLookup[GUID]) then
+		-- Table lookup is faster than function call. Put it first for short circuiting.
+		-- We check that icon_meta.IconsLookup exists because after turning off the group controller setting
+		-- on a meta icon, there will be some icons in Type.Icons that aren't really meta icons,
+		-- but are still reporting as not being controlled since that has already been disabled.
+		if icon_meta == icon or (icon_meta.IconsLookup and icon_meta.IconsLookup[GUID] and not icon_meta:IsControlled()) then
 			icon_meta.metaUpdateQueued = true
 		end
 	end
 end)
 
--- Performs a type setup on a meta icon when an icon it's checking is setup.
-TMW:RegisterCallback("TMW_ICON_SETUP_POST", function(event, icon)
+
+-- Performs a type setup on a meta icon when an icon/group it's checking is setup.
+local function SETUP_POST(event, iconOrGroup)
+	local GUID = iconOrGroup:GetGUID()
+
 	local Icons = Type.Icons
 	for i = 1, #Icons do
 		local icon_meta = Icons[i]
 
-		if (not icon_meta:IsControlled() and icon_meta.IconsLookup[icon:GetGUID()]) then
+		-- Table lookup is faster than function call. Put it first for short circuiting.
+		if (icon_meta.IconsLookup and icon_meta.IconsLookup[GUID] and not icon_meta:IsControlled()) then
 			Type:Setup(icon_meta)
 		end
 	end
-end)
-
--- Performs a type setup on a meta icon when an group it's checking is setup.
-TMW:RegisterCallback("TMW_GROUP_SETUP_POST", function(event, group)
-	local Icons = Type.Icons
-	for i = 1, #Icons do
-		local icon_meta = Icons[i]
-
-		if (not icon_meta:IsControlled() and icon_meta.IconsLookup[group:GetGUID()]) then
-			Type:Setup(icon_meta)
-		end
-	end
-end)
+end	
+TMW:RegisterCallback("TMW_ICON_SETUP_POST", SETUP_POST)
+TMW:RegisterCallback("TMW_GROUP_SETUP_POST", SETUP_POST)
 
 
 
@@ -320,16 +308,19 @@ function Type:HandleYieldedInfo(icon, iconToSet, icToUse)
 		dataSource.__lastMetaCheck = TMW.time
 
 		if needUpdate or icon.metaUpdateQueued then
-
 			-- Inherit the alpha of the icon. Don't SetInfo_INTERNAL here because the
 			-- call to :InheritDataFromIcon might not call TMW_ICON_UPDATED
-			iconToSet:SetInfo("alpha_metaChild", dataSource.attributes.realAlpha)
+			iconToSet:SetInfo("state_metaChild", dataSource.attributes.calculatedState)
 
 			iconToSet:InheritDataFromIcon(dataSource)
 		end
 
 	elseif iconToSet.attributes.realAlpha ~= 0 and icon.metaUpdateQueued then
-		iconToSet:SetInfo("alpha; alpha_metaChild", 0, nil)
+		iconToSet:SetInfo("state; state_metaChild; start, duration",
+			0,
+			nil,
+			0, 0
+		)
 	end
 end
 
@@ -455,15 +446,16 @@ function Type:Setup(icon)
 		end
 	end]]
 
-	icon:SetInfo("texture", "Interface\\Icons\\LevelUpIcon-LFD")
+	icon:SetInfo("state; texture", 
+		0, 
+		"Interface\\Icons\\LevelUpIcon-LFD"
+	)
 	
 	-- DONT DO THIS! (manual updates) ive tried for many hours to get it working,
 	-- but there is no possible way because meta icons update
 	-- the icons they are checking from within them to check for changes,
 	-- so everything will be delayed by at least one update cycle if we do manual updating.
 	-- icon:SetUpdateMethod("manual") 
-	
-	icon:SetInfo("alpha", 0)
 
 	if icon:IsGroupController() then
 		icon.Sort = false

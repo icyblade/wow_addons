@@ -21,47 +21,20 @@ local print = TMW.print
 
 
 
-local DD = TMW:NewClass("Config_DropDownMenu", "Config_Frame"){
-	noResize = 1,
+local DD = TMW:NewClass("Config_DropDownMenu_NoFrame"){
+	FORCE_SCALE = nil,
 
-	OnNewInstance_DropDownMenu = function(self, data)
-		self.Button:SetMotionScriptsWhileDisabled(false)
-		self.wrapTooltips = true
-
-		if data.func then
-			self:SetFunction(data.func)
-		end
-		if data.title then
-			self:SetText(data.title)
-		end
+	ForceScale = function(self, scale)
+		self.FORCE_SCALE = scale
 	end,
-
-	SetUIDropdownText = function(self, value, tbl, text)
-		self.selectedValue = value
-
-		if tbl then
-			for k, v in pairs(tbl) do
-				if v.value == value then
-					self:SetText(v.text)
-					return v
-				end
-			end
-		end
-		self:SetText(text or value)
-	end,
-
+	
 	SetFunction = function(self, func)
 		self.initialize = func
 	end,
 
-	METHOD_EXTENSIONS = {
-		OnEnable = function(self)
-			self.Button:Enable()
-		end,
-		OnDisable = function(self)
-			self.Button:Disable()
-		end,
-	}
+	OnNewInstance_DropDownMenu_NoFrame = function(self)
+		self.wrapTooltips = true
+	end,
 }
 
 
@@ -75,7 +48,7 @@ DD.MINBUTTONS = 0;
 DD.MAXBUTTONS = 0;
 DD.MAXLEVELS = 0;
 DD.BUTTON_HEIGHT = 16;
-DD.BORDER_HEIGHT = 15;
+DD.BORDER_HEIGHT = 7;
 DD.MAX_HEIGHT = 400;
 -- The current open menu
 DD.OPEN_MENU = nil;
@@ -88,8 +61,11 @@ DD.MENU_VALUE = nil;
 -- Time to wait to hide the menu
 DD.SHOW_TIME = 2;
 
-DD.LISTS = CreateFrame("Frame", "TMWDropDowns")
+DD.LISTS = CreateFrame("Frame", "TMWDropDowns", UIParent)
 
+hooksecurefunc("CloseMenus", function()
+	DD:CloseDropDownMenus()
+end)
 
 local function fixself(self)
 	if self == DD then
@@ -138,27 +114,15 @@ function DD:Initialize(initFunction, displayMode, level, menuList)
 	if(level == nil) then
 		level = 1;
 	end
-	DD.LISTS[level].dropdown = self;
 
-	-- Change appearance based on the displayMode
-	if ( displayMode == "MENU" ) then
-		local name = self:GetName();
-		self.Left:Hide();
-		self.Middle:Hide();
-		self.Right:Hide();
-		self.Button:GetNormalTexture():SetTexture("");
-		self.Button:GetDisabledTexture():SetTexture("");
-		self.Button:GetPushedTexture():SetTexture("");
-		self.Button:GetHighlightTexture():SetTexture("");
-		self.Button:ClearAllPoints();
-		self.Button:SetPoint("LEFT", name.."Text", "LEFT", -9, 0);
-		self.Button:SetPoint("RIGHT", name.."Text", "RIGHT", 6, 0);
-		self.displayMode = "MENU";
-	end
+	self.LISTS[level].dropdown = self;
 end
 
 -- Start the countdown on a frame
 function DD.StartCounting(self)
+	if self == DD then
+		self = DD.LISTS[1]
+	end
 	if ( self.parent ) then
 		DD.StartCounting(self.parent);
 	else
@@ -169,6 +133,9 @@ end
 
 -- Stop the countdown on a frame
 function DD.StopCounting(self)
+	if self == DD then
+		self = DD.LISTS[1]
+	end
 	if ( self.parent ) then
 		DD.StopCounting(self.parent);
 	else
@@ -188,16 +155,6 @@ info.isTitle = [nil, true]  --  If it's a title the button is disabled and the f
 info.disabled = [nil, true]  --  Disable the button and show an invisible button that still traps the mouseover event so menu doesn't time out
 info.tooltipWhileDisabled = [nil, 1] -- Show the tooltip, even when the button is disabled.
 info.hasArrow = [nil, true]  --  Show the expand arrow for multilevel menus
-info.hasColorSwatch = [nil, true]  --  Show color swatch or not, for color selection
-info.r = [1 - 255]  --  Red color value of the color swatch
-info.g = [1 - 255]  --  Green color value of the color swatch
-info.b = [1 - 255]  --  Blue color value of the color swatch
-info.colorCode = [STRING] -- "|cAARRGGBB" embedded hex value of the button text color. Only used when button is enabled
-info.swatchFunc = [function()]  --  Function called by the color picker on color change
-info.hasOpacity = [nil, 1]  --  Show the opacity slider on the colorpicker frame
-info.opacity = [0.0 - 1.0]  --  Percentatge of the opacity, 1.0 is fully shown, 0 is transparent
-info.opacityFunc = [function()]  --  Function called by the opacity slider when you change its value
-info.cancelFunc = [function(previousValues)] -- Function called by the colorpicker when you click the cancel button (it takes the previous values as its argument)
 info.notClickable = [nil, 1]  --  Disable the button and color the font white
 info.notCheckable = [nil, 1]  --  Shrink the size of the buttons and don't display a check box
 info.owner = [Frame]  --  Dropdown frame that "owns" the current dropdownlist
@@ -208,11 +165,8 @@ info.tooltipWrap = [nil, BOOLEAN] -- Set whether the tooltip text should wrap or
 info.justifyH = [nil, "CENTER"] -- Justify button text
 info.arg1 = [ANYTHING] -- This is the first argument used by info.func
 info.arg2 = [ANYTHING] -- This is the second argument used by info.func
-info.fontObject = [FONT] -- font object replacement for Normal and Highlight
-info.menuTable = [TABLE] -- This contains an array of info tables to be displayed as a child menu
-info.noClickSound = [nil, 1]  --  Set to 1 to suppress the sound when clicking the button. The sound only plays if .func is set.
+info.font = [STRING] -- font file replacement
 info.padding = [nil, NUMBER] -- Number of pixels to pad the text on the right side
-info.leftPadding = [nil, NUMBER] -- Number of pixels to pad the button on the left side
 info.minWidth = [nil, NUMBER] -- Minimum width for this line
 ]]
 
@@ -304,42 +258,37 @@ function DD:AddButton(info, level)
 	if ( info.disabled ) then
 		button:Disable();
 		invisibleButton:Show();
-		info.colorCode = nil;
-	end
-	
-	-- If there is a color for a disabled line, set it
-	if( info.disablecolor ) then
-		info.colorCode = info.disablecolor;
 	end
 
 	-- Configure button
 	if ( info.text ) then
-		-- look for inline color code this is only if the button is enabled
-		if ( info.colorCode ) then
-			button:SetText(info.colorCode..info.text.."|r");
-		else
-			button:SetText(info.text);
-		end
+		button:SetText(info.text);
+
 		-- Determine the width of the button
-		width = normalText:GetWidth() + 40;
-		-- Add padding if has and expand arrow or color swatch
-		if ( info.hasArrow or info.hasColorSwatch ) then
-			width = width + 10;
+		width = normalText:GetWidth() + 35;
+		-- Add padding if has and expand arrow
+		if ( info.hasArrow ) then
+			width = width + 17;
 		end
 		if ( info.notCheckable ) then
 			width = width - 30;
 		end
 		-- Set icon
-		if ( info.icon ) then
-			icon:SetTexture(info.icon);
-			icon:ClearAllPoints();
-			icon:SetPoint("RIGHT");
+		if ( info.icon or info.atlas ) then
+			if info.icon then
+				icon:SetTexture(info.icon);
 
+			elseif info.atlas then
+				icon:SetAtlas(info.atlas);
+			end
+			
 			if ( info.tCoordLeft ) then
 				icon:SetTexCoord(info.tCoordLeft, info.tCoordRight, info.tCoordTop, info.tCoordBottom);
 			else
 				icon:SetTexCoord(0, 1, 0, 1);
 			end
+			icon:ClearAllPoints();
+			icon:SetPoint("RIGHT");
 			icon:Show();
 			-- Add padding for the icon
 			width = width + 10;
@@ -354,51 +303,38 @@ function DD:AddButton(info, level)
 		if ( width > listFrame.maxWidth ) then
 			listFrame.maxWidth = width;
 		end
+
 		-- Check to see if there is a replacement font
-		if ( info.fontObject ) then
-			button:SetNormalFontObject(info.fontObject);
-			button:SetHighlightFontObject(info.fontObject);
-		else
-			button:SetNormalFontObject(GameFontHighlightSmallLeft);
-			button:SetHighlightFontObject(GameFontHighlightSmallLeft);
+		local font, size, flags = GameFontHighlightSmallLeft:GetFont()
+		button:GetFontString():SetFont(font, size, flags);
+		if ( info.font ) then
+			button:GetFontString():SetFont(info.font, size, flags);
 		end
 	else
 		button:SetText("");
 		icon:Hide();
 	end
+
+	if info.texture then
+		if not button.texture then
+			button.texture = button:CreateTexture(nil, "BACKGROUND")
+			button.texture:SetPoint("TOP", 0, -1)
+			button.texture:SetPoint("BOTTOM", 0, 1)
+			button.texture:SetPoint("RIGHT")
+			button.texture:SetPoint("LEFT", button:GetFontString(), "LEFT", -3, 0)
+		end
+		button.texture:Show()
+		button.texture:SetTexture(info.texture)
+	elseif button.texture then
+		button.texture:Hide()
+	end
 	
-	button.iconOnly = nil;
 	button.icon = nil;
 	button.iconInfo = nil;
-	if (info.iconOnly and info.icon) then
-		button.iconOnly = true;
-		button.icon = info.icon;
-		button.iconInfo = info.iconInfo;
-
-		self:SetIconImage(icon, info.icon, info.iconInfo);
-		icon:ClearAllPoints();
-		icon:SetPoint("LEFT");
-
-		width = icon:GetWidth();
-		if ( info.hasArrow or info.hasColorSwatch ) then
-			width = width + 50 - 30;
-		end
-		if ( info.notCheckable ) then
-			width = width - 30;
-		end
-		if ( width > listFrame.maxWidth ) then
-			listFrame.maxWidth = width;
-		end
-	end
 
 	-- Pass through attributes
 	button.func = info.func;
 	button.owner = info.owner;
-	button.hasOpacity = info.hasOpacity;
-	button.opacity = info.opacity;
-	button.opacityFunc = info.opacityFunc;
-	button.cancelFunc = info.cancelFunc;
-	button.swatchFunc = info.swatchFunc;
 	button.keepShownOnClick = info.keepShownOnClick;
 	button.tooltipTitle = info.tooltipTitle;
 	button.tooltipText = info.tooltipText;
@@ -406,11 +342,9 @@ function DD:AddButton(info, level)
 	button.arg1 = info.arg1;
 	button.arg2 = info.arg2;
 	button.hasArrow = info.hasArrow;
-	button.hasColorSwatch = info.hasColorSwatch;
 	button.notCheckable = info.notCheckable;
 	button.menuList = info.menuList;
 	button.tooltipWhileDisabled = info.tooltipWhileDisabled;
-	button.noClickSound = info.noClickSound;
 	button.padding = info.padding;
 	
 	if ( info.value ) then
@@ -430,12 +364,9 @@ function DD:AddButton(info, level)
 	button.hasArrow = info.hasArrow;
 	
 	-- If not checkable move everything over to the left to fill in the gap where the check would be
-	local xPos = 5;
-	local yPos = -((button:GetID() - 1) * DD.BUTTON_HEIGHT) -- - DD.BORDER_HEIGHT;
+	local xPos = 0;
+	local yPos = -((button:GetID() - 1) * self.BUTTON_HEIGHT) -- - DD.BORDER_HEIGHT;
 	local displayInfo = normalText;
-	if (info.iconOnly) then
-		displayInfo = icon;
-	end
 	
 	displayInfo:ClearAllPoints();
 	if ( info.notCheckable ) then
@@ -444,23 +375,14 @@ function DD:AddButton(info, level)
 		else
 			displayInfo:SetPoint("LEFT", button, "LEFT", 0, 0);
 		end
-		xPos = xPos + 10;
+		xPos = xPos + 6;
 		
 	else
-		xPos = xPos + 12;
+		xPos = xPos + 7;
 		displayInfo:SetPoint("LEFT", button, "LEFT", 20, 0);
 	end
-
-	-- Adjust offset if displayMode is menu
-	if ( self and self.displayMode == "MENU" ) then
-		if ( not info.notCheckable ) then
-			xPos = xPos - 6;
-		end
-	end
 	
-	if ( info.leftPadding ) then
-		xPos = xPos + info.leftPadding;
-	end
+	button:SetHeight(self.BUTTON_HEIGHT)
 	button:SetPoint("TOPLEFT", button:GetParent(), "TOPLEFT", xPos, yPos);
 
 
@@ -495,18 +417,6 @@ function DD:AddButton(info, level)
 	end	
 	button.checked = info.checked;
 
-	-- If has a colorswatch, show it and vertex color it
-	local colorSwatch = button.ColorSwatch;
-	if ( info.hasColorSwatch ) then
-		colorSwatch:GetNormalTexture():SetVertexColor(info.r, info.g, info.b);
-		button.r = info.r;
-		button.g = info.g;
-		button.b = info.b;
-		colorSwatch:Show();
-	else
-		colorSwatch:Hide();
-	end
-
 	local height = (index * self.BUTTON_HEIGHT) + (self.BORDER_HEIGHT * 2)
 	if height > self.MAX_HEIGHT and self:GetScrollable() then
 		height = self.MAX_HEIGHT
@@ -514,6 +424,7 @@ function DD:AddButton(info, level)
 	else
 		listFrame.shouldScroll = false
 	end
+
 	listFrame:SetHeight(height);
 
 	button:Show();
@@ -528,113 +439,6 @@ function DD:AddSpacer()
 	self:AddButton(spacerInfo)
 end
 
-
-
-function DD:Refresh(useValue, dropdownLevel)
-	local button, checked, checkImage, uncheckImage, normalText, width;
-	local maxWidth = 0;
-	local somethingChecked = nil; 
-	if ( not dropdownLevel ) then
-		dropdownLevel = DD.MENU_LEVEL;
-	end
-
-	local listFrame = DD.LISTS[dropdownLevel];
-	listFrame.numButtons = listFrame.numButtons or 0;
-	-- Just redraws the existing menu
-	for i=1, DD.MAXBUTTONS do
-		button = listFrame[i];
-		checked = nil;
-
-		if (button.checked and type(button.checked) == "function") then
-			checked = button.checked(button);
-		end
-
-		if not button.notCheckable and button:IsShown() then	
-			-- If checked show check image
-			checkImage = button.Check;
-			uncheckImage = button.UnCheck;
-			if ( checked ) then
-				somethingChecked = true;
-				local icon = self.Icon;
-				if (button.iconOnly and icon and button.icon) then
-					DD:SetIconImage(icon, button.icon, button.iconInfo);
-				elseif ( useValue ) then
-					DD.SetText(self, button.value);
-					icon:Hide();
-				else
-					DD.SetText(self, button:GetText());
-					icon:Hide();
-				end
-				button:LockHighlight();
-				checkImage:Show();
-				uncheckImage:Hide();
-			else
-				button:UnlockHighlight();
-				checkImage:Hide();
-				uncheckImage:Show();
-			end
-		end
-
-		if ( button:IsShown() ) then
-			if ( button.iconOnly ) then
-				local icon = self.Icon;
-				width = icon:GetWidth();
-			else
-				normalText = button:GetFontString();
-				width = normalText:GetWidth() + 40;
-			end
-			-- Add padding if has and expand arrow or color swatch
-			if ( button.hasArrow or button.hasColorSwatch ) then
-				width = width + 10;
-			end
-			if ( button.notCheckable ) then
-				width = width - 30;
-			end
-			if ( button.padding ) then
-				width = width + button.padding;
-			end
-			if ( width > maxWidth ) then
-				maxWidth = width;
-			end
-		end
-	end
-
-	if(somethingChecked == nil) then
-		self:SetText(VIDEO_QUALITY_LABEL6);
-	end
-
-end
-
-function DD:RefreshAll(useValue)
-	for dropdownLevel = DD.MENU_LEVEL, 2, -1 do
-		local listFrame = DD.LISTS[dropdownLevel]
-		if ( listFrame:IsShown() ) then
-			self:Refresh(nil, dropdownLevel);
-		end
-	end
-	-- useValue is the text on the dropdown, only needs to be set once
-	self:Refresh(useValue, 1);
-end
-
-function DD:SetIconImage(icon, texture, info)
-	icon:SetTexture(texture);
-	if ( info.tCoordLeft ) then
-		icon:SetTexCoord(info.tCoordLeft, info.tCoordRight, info.tCoordTop, info.tCoordBottom);
-	else
-		icon:SetTexCoord(0, 1, 0, 1);
-	end
-	if ( info.tSizeX ) then
-		icon:SetWidth(info.tSizeX);
-	else
-		icon:SetWidth(16);
-	end
-	if ( info.tSizeY ) then
-		icon:SetHeight(info.tSizeY);
-	else
-		icon:SetHeight(16);
-	end
-	icon:Show();
-end
 
 
 function DD.Button_OnClick(self)
@@ -664,22 +468,12 @@ function DD.Button_OnClick(self)
 		self.checked = checked;
 	end
 
-	-- saving this here because func might use a dropdown, changing this self's attributes
-	local playSound = true;
-	if ( self.noClickSound ) then
-		playSound = false;
-	end
-
 	local func = self.func;
 	if ( func ) then
 		func(self, self.arg1, self.arg2, checked);
-	else
-		return;
+		PlaySound(SOUNDKIT and SOUNDKIT.U_CHAT_SCROLL_BUTTON or "UChatScrollButton") -- SOUNDKIT is patch 7.3 compat
 	end
 
-	if ( playSound ) then
-		PlaySound("UChatScrollButton");
-	end
 end
 
 function DD:HideDropDownMenu(level)
@@ -700,33 +494,24 @@ function DD:Toggle(level, value, anchorName, xOffset, yOffset, menuList, button,
 	DD.MENU_VALUE = value;
 	local listFrame = DD.LISTS[level]
 
-	local tempFrame;
 	local point, relativePoint, relativeTo;
-	if ( not dropDownFrame ) then
-		tempFrame = button:GetParent();
-	else
-		tempFrame = dropDownFrame;
-	end
-	if ( listFrame:IsShown() and (DD.OPEN_MENU == tempFrame) ) then
+
+	if ( listFrame:IsShown() and (DD.OPEN_MENU == (dropDownFrame or button:GetParent())) ) then
 		listFrame:Hide();
 	else
 		-- Set the dropdownframe scale
 		local uiScale;
 		local uiParentScale = UIParent:GetScale();
-		--if ( tempFrame ~= WorldMapContinentDropDown and tempFrame ~= WorldMapZoneDropDown ) then
-			if ( GetCVar("useUIScale") == "1" ) then
-				uiScale = tonumber(GetCVar("uiscale"));
-				if ( uiParentScale < uiScale ) then
-					uiScale = uiParentScale;
-				end
-			else
+
+		if ( GetCVar("useUIScale") == "1" ) then
+			uiScale = tonumber(GetCVar("uiscale"));
+			if ( uiParentScale < uiScale ) then
 				uiScale = uiParentScale;
 			end
-		--else
-		--	uiScale = 1;
-		--end
-		listFrame:SetScale(uiScale);
-		
+		else
+			uiScale = uiParentScale;
+		end
+
 		-- Hide the listframe anyways since it is redrawn OnShow() 
 		listFrame:Hide();
 		
@@ -737,6 +522,17 @@ function DD:Toggle(level, value, anchorName, xOffset, yOffset, menuList, button,
 		-- Level specific stuff
 		if ( level == 1 ) then	
 			DD.OPEN_MENU = dropDownFrame
+			if self.FORCE_SCALE then
+				TMWDropDowns:SetScale(self.FORCE_SCALE)
+			else
+				TMWDropDowns:SetScale(1)
+				for _, frame in TMW:Vararg(dropDownFrame, anchorName) do
+					if type(frame) == "table" and frame.GetEffectiveScale then
+						TMWDropDowns:SetScale(frame:GetEffectiveScale() / TMWDropDowns:GetParent():GetScale())
+						break
+					end
+				end
+			end
 
 			listFrame:ClearAllPoints();
 			-- If there's no specified anchorName then use left side of the dropdown menu
@@ -754,7 +550,7 @@ function DD:Toggle(level, value, anchorName, xOffset, yOffset, menuList, button,
 				if ( dropDownFrame.relativeTo ) then
 					relativeTo = dropDownFrame.relativeTo;
 				else
-					relativeTo = DD.OPEN_MENU.Left;
+					relativeTo = DD.OPEN_MENU;
 				end
 				if ( dropDownFrame.relativePoint ) then
 					relativePoint = dropDownFrame.relativePoint;
@@ -762,8 +558,8 @@ function DD:Toggle(level, value, anchorName, xOffset, yOffset, menuList, button,
 			elseif ( anchorName == "cursor" ) then
 				relativeTo = nil;
 				local cursorX, cursorY = GetCursorPosition();
-				cursorX = cursorX/uiScale;
-				cursorY =  cursorY/uiScale;
+				cursorX = cursorX/TMWDropDowns:GetScale();
+				cursorY = cursorY/TMWDropDowns:GetScale();
 
 				if ( not xOffset ) then
 					xOffset = 0;
@@ -794,8 +590,8 @@ function DD:Toggle(level, value, anchorName, xOffset, yOffset, menuList, button,
 				end
 			end
 			if ( not xOffset or not yOffset ) then
-				xOffset = 8;
-				yOffset = 22;
+				xOffset = 2;
+				yOffset = 0;
 			end
 			if ( not point ) then
 				point = "TOPLEFT";
@@ -809,26 +605,13 @@ function DD:Toggle(level, value, anchorName, xOffset, yOffset, menuList, button,
 				dropDownFrame = DD.OPEN_MENU;
 			end
 			listFrame:ClearAllPoints();
-			-- If this is a dropdown button, not the arrow anchor it to itself
-			local bParent = button:GetParent()
-			if DD.LISTS[bParent:GetID()] == bParent then
-				anchorFrame = button;
-			else
-				anchorFrame = button:GetParent();
-			end
+			anchorFrame = button;
 			point = "TOPLEFT";
 			relativePoint = "TOPRIGHT";
 			listFrame:SetPoint(point, anchorFrame, relativePoint, 0, 0);
 		end
 		
-		-- Change list box appearance depending on display mode
-		if ( dropDownFrame and dropDownFrame.displayMode == "MENU" ) then
-			listFrame.Backdrop:Hide();
-			listFrame.MenuBackdrop:Show();
-		else
-			listFrame.Backdrop:Show();
-			listFrame.MenuBackdrop:Hide();
-		end
+
 		dropDownFrame.menuList = menuList;
 		DD.Initialize(dropDownFrame, dropDownFrame.initialize, nil, level, menuList);
 		-- If no items in the drop down don't show it
@@ -850,11 +633,13 @@ function DD:Toggle(level, value, anchorName, xOffset, yOffset, menuList, button,
 		
 		
 		--  We just move level 1 enough to keep it on the screen. We don't necessarily change the anchors.
-		if ( level == 1 ) then
-			local offLeft = listFrame:GetLeft()/uiScale;
-			local offRight = (GetScreenWidth() - listFrame:GetRight())/uiScale;
-			local offTop = (GetScreenHeight() - listFrame:GetTop())/uiScale;
-			local offBottom = listFrame:GetBottom()/uiScale;
+		if level == 1 then
+			local scale = TMWDropDowns:GetScale()
+
+			local offLeft = listFrame:GetLeft() -- / scale
+			local offRight = (GetScreenWidth() - listFrame:GetRight() * scale) / scale
+			local offTop = (GetScreenHeight() - listFrame:GetTop() * scale) / scale
+			local offBottom = listFrame:GetBottom() -- * scale
 			
 			local xAddOffset, yAddOffset = 0, 0;
 			if ( offLeft < 0 ) then
@@ -870,40 +655,30 @@ function DD:Toggle(level, value, anchorName, xOffset, yOffset, menuList, button,
 			end
 			
 			listFrame:ClearAllPoints();
-			if ( anchorName == "cursor" ) then
-				listFrame:SetPoint(point, relativeTo, relativePoint, xOffset + xAddOffset, yOffset + yAddOffset);
-			else
-				listFrame:SetPoint(point, relativeTo, relativePoint, xOffset + xAddOffset, yOffset + yAddOffset);
-			end
+			listFrame:SetPoint(point, relativeTo, relativePoint, xOffset + xAddOffset, yOffset + yAddOffset);
 		else
 			-- Determine whether the menu is off the screen or not
 			local offscreenY, offscreenX;
-			if ( (y - listFrame:GetHeight()/2) < 0 ) then
-				offscreenY = 1;
+			if (y - listFrame:GetHeight()/2) < 0 then
+				offscreenY = true;
 			end
-			if ( listFrame:GetRight() > GetScreenWidth() ) then
-				offscreenX = 1;	
+			if listFrame:GetRight() > GetScreenWidth() then
+				offscreenX = true;	
 			end
-			if ( offscreenY and offscreenX ) then
-				point = gsub(point, "TOP(.*)", "BOTTOM%1");
-				point = gsub(point, "(.*)LEFT", "%1RIGHT");
-				relativePoint = gsub(relativePoint, "TOP(.*)", "BOTTOM%1");
-				relativePoint = gsub(relativePoint, "(.*)RIGHT", "%1LEFT");
-				xOffset = -11;
-				yOffset = -14;
-			elseif ( offscreenY ) then
+
+			xOffset = 3;
+			yOffset = 6;
+
+			if offscreenY then
 				point = gsub(point, "TOP(.*)", "BOTTOM%1");
 				relativePoint = gsub(relativePoint, "TOP(.*)", "BOTTOM%1");
-				xOffset = 0;
-				yOffset = -14;
-			elseif ( offscreenX ) then
+				yOffset = -6;
+			end
+
+			if offscreenX then
 				point = gsub(point, "(.*)LEFT", "%1RIGHT");
 				relativePoint = gsub(relativePoint, "(.*)RIGHT", "%1LEFT");
-				xOffset = -11;
-				yOffset = 14;
-			else
-				xOffset = 0;
-				yOffset = 14;
+				xOffset = -8;
 			end
 			
 			listFrame:ClearAllPoints();
@@ -928,48 +703,6 @@ function DD:CloseDropDownMenus(level)
 	end
 end
 
-function DD:SetText(text)
-	self.Text:SetText(text)
-end
-
-function DD:GetText()
-	return self.Text:GetText()
-end
-
-function DD:ClearAll()
-	-- Previous code refreshed the menu quite often and was a performance bottleneck
-	self.selectedID = nil;
-	self.selectedName = nil;
-	self.selectedValue = nil;
-	DD.SetText(self, "");
-
-	local button, checkImage, uncheckImage;
-	for i=1, DD.MAXBUTTONS do
-		button = DD.LISTS[DD.MENU_LEVEL][i];
-		button:UnlockHighlight();
-
-		checkImage = button.Check;
-		checkImage:Hide();
-		uncheckImage = button.UnCheck;
-		uncheckImage:Hide();
-	end
-end
-
-function DD:JustifyText(justification)
-	local text = self.Text
-	text:ClearAllPoints();
-	if ( justification == "LEFT" ) then
-		text:SetPoint("LEFT", self.Left, "LEFT", 27, 1);
-		text:SetJustifyH("LEFT");
-	elseif ( justification == "RIGHT" ) then
-		text:SetPoint("RIGHT", self.Right, "RIGHT", -43, 1);
-		text:SetJustifyH("RIGHT");
-	elseif ( justification == "CENTER" ) then
-		text:SetPoint("CENTER", self.Middle, "CENTER", -5, 1);
-		text:SetJustifyH("CENTER");
-	end
-end
-
 function DD:SetDropdownAnchor(point, relativeTo, relativePoint, xOffset, yOffset)
 	self.xOffset = xOffset;
 	self.yOffset = yOffset;
@@ -986,19 +719,6 @@ function DD:GetCurrentDropDown()
 	end
 end
 
-
-function DD:OnDisable()
-	self.Text:SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
-	self.Button:Disable();
-	self.Enabled = false;
-end
-
-function DD:OnEnable()
-	self.Text:SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
-	self.Button:Enable();
-	self.Enabled = true;
-end
-
 function DD:SetScrollable(scrollable, maxHeight)
 	self = fixself(self)
 
@@ -1010,6 +730,171 @@ function DD:GetScrollable()
 	self = fixself(self)
 	
 	return self.scrollable
+end
+
+
+WorldFrame:HookScript("OnMouseDown", function()
+	DD:CloseDropDownMenus()
+end)
+
+
+
+
+
+
+
+local DD_Frame = TMW:NewClass("Config_DropDownMenu", "Config_Frame", "Config_DropDownMenu_NoFrame"){
+	OnNewInstance_DropDownMenu = function(self)
+		self.Button:SetMotionScriptsWhileDisabled(false)
+		self.wrapTooltips = true
+	end,
+
+	SetTexts = function(self, title, tooltip)
+		self:SetTooltip(title, tooltip)
+		self:SetText(title)
+	end,
+
+	SetLabel = function(self, title)
+		self.Label:SetText(title)
+	end,
+
+	SetUIDropdownText = function(self, value, tbl, text)
+		self.selectedValue = value
+
+		if tbl then
+			for k, v in pairs(tbl) do
+				if v.value == value then
+					self:SetText(v.text)
+					return v
+				end
+			end
+		end
+		self:SetText(text or value)
+	end,
+}
+
+function DD_Frame:SetText(text)
+	self.Text:SetText(text)
+end
+
+function DD_Frame:SetTexture(...)
+	self.Background:SetTexture(...)
+end
+
+function DD_Frame:GetText()
+	return self.Text:GetText()
+end
+
+function DD_Frame:OnDisable()
+	self.Text:SetVertexColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
+	self.Button:Disable();
+	self.Enabled = false;
+end
+
+function DD_Frame:OnEnable()
+	self.Text:SetVertexColor(HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+	self.Button:Enable();
+	self.Enabled = true;
+end
+
+function DD_Frame:JustifyText(justification)
+	local text = self.Text
+	text:ClearAllPoints();
+	if ( justification == "LEFT" ) then
+		text:SetPoint("LEFT", self.Background, "LEFT", 27, 1);
+		text:SetJustifyH("LEFT");
+	elseif ( justification == "RIGHT" ) then
+		text:SetPoint("RIGHT", self.Background, "RIGHT", -43, 1);
+		text:SetJustifyH("RIGHT");
+	elseif ( justification == "CENTER" ) then
+		text:SetPoint("CENTER", self.Background, "CENTER", -5, 1);
+		text:SetJustifyH("CENTER");
+	end
+end
+
+
+
+
+--------------------------
+-- Easy Functions
+--------------------------
+
+
+local function EasyFunction_OnClick(button, dropdown)
+	local settings = dropdown:GetSettingTable()
+	if not settings or not dropdown.setting then
+		error("couldn't get setting or settings table for easy function dropdown " .. (dropdown:GetParentKey() or dropdown:GetName() or "???"))
+	end
+
+	settings[dropdown.setting] = button.value
+
+	dropdown:CloseDropDownMenus()
+	dropdown:OnSettingSaved()
+end
+local function EasyFunction(self)
+	local settings = self:GetSettingTable()
+	for k, v in self.dataGenerator() do
+		local info = self:CreateInfo()
+
+		info.arg1 = self
+		info.func = self.clickFunction or EasyFunction_OnClick
+
+		self.buttonGenerator(info, k, v)
+
+		if info.checked == nil and settings and self.setting ~= nil then
+			info.checked = settings[self.setting] == info.value
+		end
+
+		self:AddButton(info)
+	end
+end
+
+function DD_Frame:SetEasyTitlePrepend(easyTitlePrepend)
+	self.easyTitlePrepend = easyTitlePrepend
+end
+
+function DD_Frame:SetEasyFunctions(dataGenerator, buttonGenerator, clickFunction)
+	self.dataGenerator = dataGenerator
+	self.buttonGenerator = buttonGenerator
+	self.clickFunction = clickFunction
+
+	self:SetFunction(EasyFunction)
+end
+
+function DD_Frame:ReloadSetting()
+	local settings = self:GetSettingTable()
+
+	if settings
+	and self.setting
+	and self.dataGenerator
+	and self.buttonGenerator
+	then
+		for k, v in self.dataGenerator() do
+			local info = self:CreateInfo()
+			self.buttonGenerator(info, k, v)
+
+			if info.value == settings[self.setting] then
+
+				local text = info.text
+				if self.easyTitlePrepend then
+					text = "|cff666666" .. self.easyTitlePrepend .. ": |r" .. text
+				end
+				self:SetText(text)
+
+				if info.font then
+					local oldFont, size, flags = self.Text:GetFont()
+					self.Text:SetFont(info.font or oldFont, size, flags)
+				end
+				if info.texture then
+					self:SetTexture(info.texture)
+				end
+
+				return
+			end
+		end
+		
+		self:SetText(settings[self.setting])
+	end
 end
 
 
@@ -1028,14 +913,14 @@ TMW:NewClass("Config_DropDownMenu_Icon", "Config_DropDownMenu"){
 	SetPreviewSize = function(self, size)
 		self.previewSize = size
 		self.IconPreview:SetSize(size, size)
-		self.Left:SetPoint("LEFT", -17 + size, 0)
+		self.Background:SetPoint("TOPLEFT", size + 2, 0)
 	end,
 
 
 	SetUIDropdownGUIDText = function(self, GUID, text)
 		self.selectedValue = GUID
 
-		local owner = TMW.GUIDToOwner[GUID]
+		local owner = TMW:GetDataOwner(GUID)
 		local type = TMW:ParseGUID(GUID)
 
 		if owner then
@@ -1057,6 +942,11 @@ TMW:NewClass("Config_DropDownMenu_Icon", "Config_DropDownMenu"){
 		elseif GUID and GUID ~= "" then
 			if type == "icon" then
 				text = L["UNKNOWN_ICON"]
+
+				local ics = TMW:GetSettingsFromGUID(GUID)
+				if ics then
+					text = TMW:GetIconMenuText(ics)
+				end
 			elseif type == "group" then
 				text = L["UNKNOWN_GROUP"]
 			else
@@ -1067,21 +957,39 @@ TMW:NewClass("Config_DropDownMenu_Icon", "Config_DropDownMenu"){
 		self:SetText(text)
 	end,
 
-	SetIconPreviewIcon = function(self, icon)
-		if not icon or not icon.IsIcon then
-			self.IconPreview:Hide()
+	SetIconPreviewIcon = function(self, GUID)
+		local icon = TMW:GetDataOwner(GUID)
+		local type = TMW:ParseGUID(GUID)
+
+		self.IconPreview:Hide()
+		if type ~= "icon" then
 			return
 		end
 
-		local desc = L["ICON_TOOLTIP2NEWSHORT"]
+		local title, desc, texture
+		if not icon then
+			local ics, _, gs, domain, groupID, iconID = TMW:GetSettingsFromGUID(GUID)
+			if not ics then return end
 
-		if TMW.db.global.ShowGUIDs then
-			desc = desc .. "\r\n\r\n|cffffffff" .. (not icon.TempGUID and (icon:GetGUID() .. "\r\n") or "") .. icon.group:GetGUID()
+			texture = TMW:GuessIconTexture(ics)
+			title = L["GROUPICON"]:format(TMW:GetGroupName(gs.Name, groupID, 1), iconID)
+
+			self.IconPreview.texture:SetTexture(tex)
+		else
+			desc = L["ICON_TOOLTIP2NEWSHORT"]
+			title = icon:GetIconName()
+			texture = icon and icon.attributes.texture
 		end
 
-		TMW:TT(self.IconPreview, icon:GetIconName(), desc, 1, 1)
+		if TMW.db.global.ShowGUIDs then
+			if not desc then
+				desc = ""
+			end
+			desc = desc .. "\r\n\r\n|cffffffff" .. GUID .. (icon and ("\r\n" .. icon.group:GetGUID()) or "")
+		end
+		TMW:TT(self.IconPreview, title, desc, 1, 1)
 		self.IconPreview.icon = icon
-		self.IconPreview.texture:SetTexture(icon and icon.attributes.texture)
+		self.IconPreview.texture:SetTexture(texture)
 		self.IconPreview:Show()
 	end,
 
@@ -1089,14 +997,14 @@ TMW:NewClass("Config_DropDownMenu_Icon", "Config_DropDownMenu"){
 		local icon = TMW.GUIDToOwner[GUID]
 
 		self:SetUIDropdownGUIDText(GUID, L["CHOOSEICON"])
-		self:SetIconPreviewIcon(icon)
+		self:SetIconPreviewIcon(GUID)
 	end,
 
 	SetIcon = function(self, icon)
 		local GUID = icon:GetGUID()
 
 		self:SetUIDropdownGUIDText(GUID, L["CHOOSEICON"])
-		self:SetIconPreviewIcon(icon)
+		self:SetIconPreviewIcon(GUID)
 	end,
 
 }

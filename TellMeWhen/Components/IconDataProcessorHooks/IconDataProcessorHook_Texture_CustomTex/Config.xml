@@ -1,8 +1,8 @@
-﻿<Ui>
+<Ui>
 
 	<Frame name="TellMeWhen_CustomTex" inherits="TellMeWhen_OptionsModuleContainer" virtual="true">
 		<Frames>
-			<EditBox name="$parentCustomTex" inherits="TellMeWhen_InputBoxTemplate" multiline="true" parentKey="CustomTex" autoFocus="false">
+			<EditBox parentKey="CustomTex" name="$parentCustomTex" inherits="TellMeWhen_InputBoxTemplate" multiline="true" autoFocus="false">
 				<Size y="15"/>
 				<Anchors>
 					<Anchor point="TOPLEFT" x="9" y="-5"/>
@@ -11,21 +11,17 @@
 				<Scripts>
 					<OnLoad>
 						TMW.SUG:EnableEditBox(self, "texture_withVarTex", true)	
-						self.BackgroundText:SetWidth(self:GetWidth())
 						self.label = TMW.L["ICONMENU_CUSTOMTEX"]
 						
 						self.__ttMinWidth = 300
-						TMW:CInit(self, {
-							setting = "CustomTex",
-							title = TMW.L["ICONMENU_CUSTOMTEX"],
-							tooltip = TMW.L["ICONMENU_CUSTOMTEX_DESC"],
-							OnTextChanged = function(self)
-								self:GetParent():AdjustHeight()
-							end,
-							ModifySettingValue = function(self, value)
-								return value:gsub([[\\]], [[\]])
-							end,
-						})
+						TMW:CInit(self)
+
+						self:SetTexts(TMW.L["ICONMENU_CUSTOMTEX"], TMW.L["ICONMENU_CUSTOMTEX_DESC"])
+						self:SetSetting("CustomTex")
+						
+						self:CScriptAdd("ModifyValueForSave", function(self, value)
+							return TMW:CleanPath(value)
+						end)
 						
 						
 						function self:DragReceived(icon, t, data, subType)
@@ -66,8 +62,9 @@
 							if tex then
 								-- clean off the first part of the path, it does not need to be saved
 								-- it will be appended when the texture is used.
-								tex = gsub(tex, "INTERFACE\\ICONS\\", "")
-								tex = gsub(tex, "Interface\\Icons\\", "")
+								tex = TMW:CleanPath(tex)
+								tex = gsub(tex, "INTERFACE/ICONS/", "")
+								tex = gsub(tex, "Interface/Icons/", "")
 
 								-- set the text
 								self.editbox:SetText(tex)
@@ -78,6 +75,9 @@
 						end)
 
 					</OnLoad>
+					<OnSizeChanged>
+						self:GetParent():AdjustHeight()
+					</OnSizeChanged>
 					<OnReceiveDrag>
 						TMW.IE:SpellItemToIcon(TMW.CI.icon, self.DragReceived, self)
 					</OnReceiveDrag>
@@ -89,11 +89,9 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				self.Header:SetText(TMW.L["ICONMENU_CUSTOMTEX"])
+				TMW:CInit(self)
 				
-				function self:AdjustHeight()
-					self:SetHeight(11 + self.CustomTex:GetHeight())
-				end
+				self:SetTitle(TMW.L["ICONMENU_CUSTOMTEX"])
 			</OnLoad>
 		</Scripts>
 	</Frame>

@@ -1,5 +1,5 @@
 local MAJOR_VERSION = "LibDogTag-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Revision: 245 $"):match("%d+")) or 0
+local MINOR_VERSION = 90000 + (tonumber(("@file-date-integer@"):match("%d+")) or 33333333333333)
 
 if MINOR_VERSION > _G.DogTag_MINOR_VERSION then
 	_G.DogTag_MINOR_VERSION = MINOR_VERSION
@@ -430,6 +430,110 @@ DogTag:AddTag("Base", "Icon", {
 	static = true,
 	doc = L["Return an icon using the given path"],
 	example = '["Interface\\Buttons\\WHITE8X8":Icon] => "|TInterface\\Buttons\\WHITE8X8:0|t"',
+	category = L["Miscellaneous"]
+})
+
+local GetEquippedArtifactInfo = _G.C_ArtifactUI.GetEquippedArtifactInfo
+local GetCostForPointAtRank = _G.C_ArtifactUI.GetCostForPointAtRank
+
+local function GetCurrentArtifactPowerRank()
+	return select(6, GetEquippedArtifactInfo()) or 0
+end
+
+DogTag:AddTag("Base", "ArtifactPower", {
+	code = function()
+		return select(5, GetEquippedArtifactInfo()) or 0
+	end,
+	ret = "number",
+	doc = L["Gets current artifact power"],
+	example = ('[ArtifactPower] => "%d"'):format(500),
+	category = L["Miscellaneous"]
+})
+
+DogTag:AddTag("Base", "MaxArtifactPower", {
+	code = function()
+		return GetCostForPointAtRank(GetCurrentArtifactPowerRank())
+	end,
+	ret = "number",
+	doc = L["Gets artifact power required for the current rank to unlock"],
+	example = ('[MaxArtifactPower] => "%d"'):format(400),
+	category = L["Miscellaneous"]
+})
+
+DogTag:AddTag("Base", "ArtifactPointsSpent", {
+	code = GetCurrentArtifactPowerRank,
+	ret = "number",
+	doc = L["Gets number of artifact points spent"],
+	example = ('[ArtifactPointsSpent] => "%d"'):format(3),
+	category = L["Miscellaneous"]
+})
+
+DogTag:AddTag("Base", "ArtifactPointsSpendable", {
+	code = function()
+		local _, _, _, _, totalXP, pointsSpent = GetEquippedArtifactInfo()
+		if pointsSpent == nil or totalXP == nil then
+			return 0
+		end
+	    local pointsAvailable = 0
+	    local nextRankCost = GetCostForPointAtRank(pointsSpent + pointsAvailable) or 0
+
+	    while totalXP >= nextRankCost  do
+	        totalXP = totalXP - nextRankCost
+	        pointsAvailable = pointsAvailable + 1
+	        nextRankCost = GetCostForPointAtRank(pointsSpent + pointsAvailable) or 0
+	    end
+
+	    return pointsAvailable
+	end,
+	ret = "number",
+	doc = L["Gets number of artifact points the player has available to spend"],
+	example = ('[GetArtifactPointsSpendable] => "%d"'):format(1),
+	category = L["Miscellaneous"]
+})
+
+DogTag:AddTag("Base", "ArtifactPowerForCurrentLevel", {
+	code = function()
+		local _, _, _, _, totalXP, pointsSpent = GetEquippedArtifactInfo()
+		if pointsSpent == nil or totalXP == nil then
+			return 0
+		end
+	    local pointsAvailable = 0
+	    local nextRankCost = GetCostForPointAtRank(pointsSpent + pointsAvailable) or 0
+
+	    while totalXP >= nextRankCost  do
+	        totalXP = totalXP - nextRankCost
+	        pointsAvailable = pointsAvailable + 1
+	        nextRankCost = GetCostForPointAtRank(pointsSpent + pointsAvailable) or 0
+	    end
+
+	    return totalXP
+	end,
+	ret = "number",
+	doc = L["Gets artifact power toward next rank"],
+	example = ('[ArtifactPowerForCurrentLevel] => "%d"'):format(125),
+	category = L["Miscellaneous"]
+})
+
+DogTag:AddTag("Base", "MaxArtifactPowerForCurrentLevel", {
+	code = function()
+		local _, _, _, _, totalXP, pointsSpent = GetEquippedArtifactInfo()
+		if pointsSpent == nil or totalXP == nil then
+			return 0
+		end
+	    local pointsAvailable = 0
+	    local nextRankCost = GetCostForPointAtRank(pointsSpent + pointsAvailable) or 0
+
+	    while totalXP >= nextRankCost  do
+	        totalXP = totalXP - nextRankCost
+	        pointsAvailable = pointsAvailable + 1
+	        nextRankCost = GetCostForPointAtRank(pointsSpent + pointsAvailable) or 0
+	    end
+
+	    return nextRankCost
+	end,
+	ret = "number",
+	doc = L["Gets artifact power required for the next rank to unlock"],
+	example = ('[MaxArtifactPowerForCurrentLevel] => "%d"'):format(425),
 	category = L["Miscellaneous"]
 })
 

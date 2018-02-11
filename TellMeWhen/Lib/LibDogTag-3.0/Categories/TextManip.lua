@@ -1,5 +1,5 @@
 local MAJOR_VERSION = "LibDogTag-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Revision: 237 $"):match("%d+")) or 0
+local MINOR_VERSION = 90000 + (tonumber(("@file-date-integer@"):match("%d+")) or 33333333333333)
 
 if MINOR_VERSION > _G.DogTag_MINOR_VERSION then
 	_G.DogTag_MINOR_VERSION = MINOR_VERSION
@@ -28,7 +28,11 @@ DogTag:AddTag("Base", "Percent", {
 DogTag:AddTag("Base", "Short", {
 	code = function(value)
 		if type(value) == "number" then
-			if value >= 10000000 or value <= -10000000 then
+			if abs(value) >= 10000000000 then
+				return ("%.1fb"):format(value / 1000000000)
+			elseif abs(value) >= 1000000000 then
+				return ("%.2fb"):format(value / 1000000000)
+			elseif value >= 10000000 or value <= -10000000 then
 				return ("%.1fm"):format(value / 1000000)
 			elseif value >= 1000000 or value <= -1000000 then
 				return ("%.2fm"):format(value / 1000000)
@@ -43,7 +47,11 @@ DogTag:AddTag("Base", "Short", {
 			local a,b = value:match("^(%d+)/(%d+)$")
 			if a then
 				a, b = tonumber(a), tonumber(b)
-				if a >= 10000000 or a <= -10000000 then
+				if abs(a) >= 10000000000 then
+					a = ("%.1fb"):format(a / 1000000000)
+				elseif abs(a) >= 1000000000 then
+					a = ("%.2fb"):format(a / 1000000000)
+				elseif a >= 10000000 or a <= -10000000 then
 					a = ("%.1fm"):format(a / 1000000)
 				elseif a >= 1000000 or a <= -1000000 then
 					a = ("%.2fm"):format(a / 1000000)
@@ -52,7 +60,11 @@ DogTag:AddTag("Base", "Short", {
 				elseif a >= 10000 or a <= -10000 then
 					a = ("%.1fk"):format(a / 1000)
 				end
-				if b >= 10000000 or b <= -10000000 then
+				if abs(b) >= 10000000000 then
+					b = ("%.1fb"):format(b / 1000000000)
+				elseif abs(b) >= 1000000000 then
+					b = ("%.2fb"):format(b / 1000000000)
+				elseif b >= 10000000 or b <= -10000000 then
 					b = ("%.1fm"):format(b / 1000000)
 				elseif b >= 1000000 or b <= -1000000 then
 					b = ("%.2fm"):format(b / 1000000)
@@ -80,7 +92,9 @@ DogTag:AddTag("Base", "Short", {
 DogTag:AddTag("Base", "VeryShort", {
 	code = function(value)
 		if type(value) == "number" then
-			if value >= 1000000 or value <= -1000000 then
+			if abs(value) >= 1000000000 then
+				return ("%.0fb"):format(value / 1000000000)
+			elseif value >= 1000000 or value <= -1000000 then
 				return ("%.0fm"):format(value / 1000000)
 			elseif value >= 1000 or value <= -1000 then
 				return ("%.0fk"):format(value / 1000)
@@ -91,12 +105,16 @@ DogTag:AddTag("Base", "VeryShort", {
 			local a,b = value:match("^(%d+)/(%d+)")
 			if a then
 				a, b = tonumber(a), tonumber(b)
-				if b >= 1000000 or b <= -1000000 then
+				if abs(b) >= 1000000000 then
+					b = ("%.0fb"):format(b / 1000000000)
+				elseif b >= 1000000 or b <= -1000000 then
 					b = ("%.0fm"):format(b / 1000000)
 				elseif b >= 1000 or b <= -1000 then
 					b = ("%.0fk"):format(b / 1000)
 				end
-				if a >= 1000000 or a <= -1000000 then
+				if abs(a) >= 1000000000 then
+					a = ("%.0fb"):format(a / 1000000000)
+				elseif a >= 1000000 or a <= -1000000 then
 					a = ("%.0fm"):format(a / 1000000)
 				elseif a >= 1000 or a <= -1000 then
 					a = ("%.0fk"):format(a / 1000)

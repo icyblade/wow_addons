@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -436,11 +436,15 @@ TMW:RegisterUpgrade(40080, {
 	end,
 })
 TMW:RegisterUpgrade(22010, {
-	icon = function(self, ics)
+	icon = function(self, ics, ...)
 		for k, condition in ipairs(ics.Conditions) do
-			if type(k) == "number" then
-				for k, v in pairs(condition) do
-					condition[k] = nil
+			local old = condition
+
+			-- Recreate the condition
+			ics.Conditions[k] = nil
+			condition = ics.Conditions[k]
+			for k, v in pairs(old) do
+				if k:find("Condition") then
 					condition[k:gsub("Condition", "")] = v
 				end
 			end
@@ -719,6 +723,11 @@ CNDT.Substitutions = {
 		else
 			return [[not %1]]
 		end
+	end,
+},
+{	src = "MULTINAMECHECK(%b())",
+	rep = function(conditionData, conditionSettings, name, name2)
+		return [[ (not not strfind(c.Name, SemicolonConcatCache[%1])) ]]
 	end,
 },
 
@@ -1215,7 +1224,7 @@ function CNDT:RegisterConditionSet(identifier, conditionSetData)
 	local defaults = CNDT.Condition_Defaults
 	if data.modifiedDefaults then
 		defaults = CopyTable(defaults)
-		TMW:CopyTableInPlaceWithMeta(data.modifiedDefaults, defaults["**"], true)
+		TMW:CopyInPlaceWithMetatable(data.modifiedDefaults, defaults["**"])
 		TMW:RegisterCallback("TMW_CNDT_DEFAULTS_NEWVAL", function(event, k, v)
 			defaults["**"][k] = v
 		end)
@@ -1225,7 +1234,7 @@ function CNDT:RegisterConditionSet(identifier, conditionSetData)
 	ConditionSets[identifier] = data
 	
 	if not data.useDynamicTab then
-		TMW:RegisterCallback("TMW_CONFIG_LOADED", function(event, icon)
+		TMW:RegisterCallback("TMW_CONFIG_TAB_CLICKED", function(event)
 			CNDT:SetTabText(identifier)
 		end)
 	end
@@ -1250,7 +1259,7 @@ function CNDT:RegisterConditionSetImplementingClass(className)
 end
 
 
-TMW:RegisterCallback("TMW_UPGRADE_REQUESTED", function(event, settingType, version, ...)
+TMW:RegisterCallback("TMW_UPGRADE_PERFORMED", function(event, settingType, upgradeData, ...)
 	local parentSettings = ...
 	
 	for identifier, conditionSetData in pairs(ConditionSets) do
@@ -1260,7 +1269,7 @@ TMW:RegisterCallback("TMW_UPGRADE_REQUESTED", function(event, settingType, versi
 			if type(parentSettings) ~= "table" then
 				TMW:Error("ConditionSet %q is defined as having child settings of '%q', " .. 
 				"but that settings type does not provide a settings table as the 4th arg "..
-				"(right after version) to TMW:DoUpgrade(settingType, version, ...)", identifier, settingType)
+				"(right after upgradeData) to TMW:Upgrade(settingType, upgradeData, ...)", identifier, settingType)
 				isGood = false
 			end
 			
@@ -1274,7 +1283,7 @@ TMW:RegisterCallback("TMW_UPGRADE_REQUESTED", function(event, settingType, versi
 			
 			if isGood then
 				for conditionID, condition in TMW:InNLengthTable(parentSettings[conditionSetData.settingKey]) do
-					TMW:DoUpgrade("condition", version, condition, conditionID)
+					TMW:Upgrade("condition", upgradeData, condition, conditionID)
 				end
 			end
 			

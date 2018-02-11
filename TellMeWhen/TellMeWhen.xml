@@ -1,8 +1,8 @@
-﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ .. \FrameXML\UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ .. \FrameXML\UI.xsd">
 
 	<!-- TEMPLATES -->
 
-	<Frame name="TellMeWhen_GenericBorder" virtual="true" parentKey="border" setAllPoints="true">
+	<Frame parentKey="border" name="TellMeWhen_GenericBorder" virtual="true" setAllPoints="true">
 		<Size x="1" y="1"/>
 		<Layers>
 			<Layer level="BACKGROUND">
@@ -31,7 +31,7 @@
 		</Layers>
 		<Scripts>
 			<OnLoad>
-				function self:SetSize(pixels)
+				function self:SetBorderSize(pixels)
 					self.size = pixels
 					self.borderTop:ClearAllPoints()
 					self.borderBottom:ClearAllPoints()
@@ -59,11 +59,11 @@
 					a = a or 1
 
 					for i, tex in TMW:Vararg(self:GetRegions()) do
-						tex:SetTexture(r, g, b, a)
+						tex:SetColorTexture(r, g, b, a)
 					end
 				end
 
-				self:SetSize(1)
+				self:SetBorderSize(1)
 				self:SetColor(0, 0, 0, 1)
 			</OnLoad>
 		</Scripts>
@@ -85,7 +85,7 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				self.border:SetSize(1)
+				self.border:SetBorderSize(1)
 				self.border:SetColor(0, 0.7647, 0, 0.75)
 			</OnLoad>
 		</Scripts>
@@ -108,82 +108,74 @@
 			</OnLoad>
 		</Scripts>
 	</Cooldown>
-
-	<Frame name="TellMeWhen_BlizzOptionsStub" hidden="true">
+	
+	<Frame name="TellMeWhen_InterfaceOptionsPanel">
 		<Layers>
-			<Layer level="OVERLAY">
-				<FontString inherits="GameFontHighlightLarge" parentKey="text" justifyH="CENTER">
+			<Layer level="ARTWORK">
+				<FontString parentKey="title" inherits="GameFontNormalHuge" justifyH="CENTER" text="TellMeWhen">
+					<Size y="150"/>
 					<Anchors>
-						<Anchor point="CENTER"/>
+						<Anchor point="TOP" y="-50"/>
+						<Anchor point="LEFT" x="20"/>
+						<Anchor point="RIGHT" x="-20"/>
 					</Anchors>
 				</FontString>
 			</Layer>
 		</Layers>
+		<Frames>
+			<!-- Much of this is copied from TellMeWhen_ButtonTemplate because that template is defined in the options. -->
+			<Button parentKey="Button">
+				<Size x="144" y="15"/>
+	
+				<Anchors>
+					<Anchor point="TOP" relativeKey="$parent.title" relativePoint="BOTTOM" y="-10"/>
+				</Anchors>
+
+				<NormalFont style="GameFontNormal"/>
+				<HighlightFont style="GameFontHighlight"/>
+
+				<Frames>
+					<Frame inherits="TellMeWhen_GenericBorder" >
+						<Scripts>
+							<OnLoad inherit="prepend">
+								self:SetBorderSize(-1)
+								self:SetColor(.4, .4, .4, 1)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+				</Frames>
+
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture parentKey="Background" setAllPoints="true">
+							<Color r="0.15" g="0.15" b="0.15" a="0.5"/>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						TMW:TT(self, "MAINOPTIONS_SHOW")
+						self:SetText(TMW.L["MAINOPTIONS_SHOW"])
+						self:SetWidth(self:GetTextWidth() + 10)
+						self:SetFrameLevel(self:GetFrameLevel() + 2)
+						self:SetScale(2)
+					</OnLoad>
+					<OnClick>
+						TMW:ClickSound()
+
+						TMW:SlashCommand("options")
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+
 		<Scripts>
 			<OnLoad>
-				local explanation = ""
-				if not _G.TellMeWhen then
-					local AceLocale = LibStub("AceLocale-3.0", true)
-					local msg
-					if AceLocale then
-						local L = AceLocale:GetLocale("TellMeWhen", true)
-						msg = L["ERROR_NOTLOADED_ERROR"]
-						explanation = L["ERROR_NOTINITIALIZED_INTERFACEPANEL_EXPLANATION"]
-					else
-						msg = "TellMeWhen has failed to load! Are you missing a required library?"
-						explanation = msg .. "\r\n\r\nAt the very least, you are missing AceLocale."
-					end
-					
-					DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99TellMeWhen|r: " .. msg)
-				else
-					explanation = TMW.L["ERROR_NOTINITIALIZED_INTERFACEPANEL_EXPLANATION"]
-
-					self:RegisterEvent("PLAYER_REGEN_ENABLED")
-					self:RegisterEvent("PLAYER_REGEN_DISABLED")
-				end
-				
 				self.name = "TellMeWhen"
-				InterfaceOptions_AddCategory(self)
-				
-				self.text:SetText(explanation)
-				
+				self.title:SetText("TellMeWhen v" .. TELLMEWHEN_VERSION_FULL)
+				self.title:SetFont("Fonts\\FRIZQT__.TTF", 40, "THINOUTLINE")
+				InterfaceOptions_AddCategory(self);
 			</OnLoad>
-			<OnShow>
-				self.text:SetWidth(self:GetWidth() - 150)
-				
-				if TMW and TMW:CheckCanDoLockedAction(false) then
-					TMW:LoadOptions()
-					
-					if TMW:AssertOptionsInitialized() then
-						return
-					end
-
-					if TMW.AddedToBlizz then
-						self.text:SetText(TMW.L["ERROR_GAMEMENU_INTERFACE_OPTIONS_FUCKED"])
-
-						InterfaceOptionsFrame_OpenToCategory(TMW.AddedToBlizz)
-
-						-- Sometimes a lot of things fuck up and I have to do this.
-						-- It might not even work (which is why ERROR_GAMEMENU_INTERFACE_OPTIONS_FUCKED exists)
-						InterfaceOptionsFrame_OnShow()
-						InterfaceOptionsFrame_OpenToCategory(TMW.AddedToBlizz)
-						
-						self:UnregisterAllEvents()
-					end
-				end
-			</OnShow>
-			<OnEvent>
-				if event == "PLAYER_REGEN_ENABLED" then
-					self.text:SetText(TMW.L["ERROR_NOTINITIALIZED_INTERFACEPANEL_EXPLANATION"])
-					
-					if self:IsShown() then
-						self:Hide()
-						self:Show()
-					end
-				elseif event == "PLAYER_REGEN_DISABLED" and not TMW.ALLOW_LOCKDOWN_CONFIG then
-					self.text:SetText(TMW.L["ERROR_NOOPTIONSLOAD_INCOMBAT"])
-				end
-			</OnEvent>
 		</Scripts>
 	</Frame>
 </Ui>

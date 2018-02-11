@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -39,7 +39,7 @@ function Module:Entry_AddToList_2(f, id)
 		f.Name:SetText(L["GCD"])
 		f.ID:SetText(nil)
 
-		f.tooltipmethod = "SetSpellByID"
+		f.tooltipmethod = "TMW_SetSpellByIDWithClassIcon"
 		f.tooltiparg = spellID
 
 		f.insert = "GCD"

@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -17,8 +17,8 @@ local TMW = TMW
 local L = TMW.L
 local print = TMW.print
 
-local pairs, error, rawget, next, wipe, tinsert, sort, strsplit, table, assert, loadstring, ipairs, tostring, assert
-	= pairs, error, rawget, next, wipe, tinsert, sort, strsplit, table, assert, loadstring, ipairs, tostring, assert
+local next, pairs, error, rawget, next, wipe, tinsert, sort, strsplit, table, assert, loadstring, ipairs, tostring, assert
+	= next, pairs, error, rawget, next, wipe, tinsert, sort, strsplit, table, assert, loadstring, ipairs, tostring, assert
 
 
 --- [[api/icon/api-documentation/|Icon]] is the class of all Icons.
@@ -36,9 +36,6 @@ local bitband = bit.band
 local function ClearScripts(f)
 	f:SetScript("OnEvent", nil)
 	f:SetScript("OnUpdate", nil)
-	if f:HasScript("OnValueChanged") then
-		f:SetScript("OnValueChanged", nil)
-	end
 end
 
 local UPD_INTV
@@ -85,9 +82,11 @@ do
 	})
 	
 	TMW:RegisterCallback("TMW_OPTIONS_LOADED", function()
-		tab = TMW.Classes.IconEditorTab:NewTab("CNDTICON", 5, "Conditions")
+		tab = TMW.IE:RegisterTab("ICON", "CNDTICON", "Conditions", 5)
+		tab:SetText(L["CONDITIONS"])
+		tab:SetHistorySet(TMW.C.HistorySet:GetHistorySet("ICON"))
 		
-		tab:PostHookMethod("ClickHandler", function()
+		tab:HookScript("OnClick", function()
 			TMW.CNDT:LoadConfig("Icon")
 		end)
 
@@ -149,11 +148,11 @@ function Icon.__tostring(icon)
 end
 
 function Icon.ScriptSort(iconA, iconB)
-	local gOrder = -TMW.db.profile.CheckOrder
+	local gOrder = 1 -- -TMW.db.profile.CheckOrder
 	local gA = iconA.group.ID
 	local gB = iconB.group.ID
 	if gA == gB then
-		local iOrder = -iconA.group.CheckOrder
+		local iOrder = 1 -- -iconA.group.CheckOrder
 		return iconA.ID*iOrder < iconB.ID*iOrder
 	end
 	return gA*gOrder < gB*gOrder
@@ -195,17 +194,25 @@ end
 -- [WRAPPER] (no documentation needed)
 Icon.RegisterEvent_Blizz = Icon.RegisterEvent
 function Icon.RegisterEvent(icon, event)
+	if not icon.registeredEvents then
+		icon.registeredEvents = {}
+	end
+	icon.registeredEvents[event] = true
+
 	icon:RegisterEvent_Blizz(event)
-	icon.hasEvents = 1
 end
 
 -- [WRAPPER] (no documentation needed)
 Icon.UnregisterAllEvents_Blizz = Icon.UnregisterAllEvents
 function Icon.UnregisterAllEvents(icon, event)
-	-- UnregisterAllEvents_Blizz uses a metric fuckton of CPU, so only do it if needed
-	if icon.hasEvents then
-		icon:UnregisterAllEvents_Blizz()
-		icon.hasEvents = nil
+	-- UnregisterAllEvents_Blizz uses a metric fuckton of CPU, so don't do it.
+	-- Instead, keep track of events that we register, and unregister them by hand.
+	
+	if icon.registeredEvents then
+		for event in pairs(icon.registeredEvents) do
+			icon:UnregisterEvent(event)
+		end
+		wipe(icon.registeredEvents)
 	end
 end
 
@@ -366,7 +373,7 @@ end
 --      -- See IconModule_IconEventConditionHandler's code for complete implementation.
 --      if matches then
 --        for eventSettings, icon in pairs(matches) do
---          icon:QueueEvent(eventSettings)
+--          icon:QueueEvent(eventSettings.__proxyRef)
 --          icon:ProcessQueuedEvents()
 --        end
 --      end
@@ -564,9 +571,8 @@ IconEventUpdateEngine.UpdateEvents = setmetatable({}, {__index = function(self, 
 	return self[event]
 end})
 IconEventUpdateEngine:SetScript("OnEvent", function(self, event, arg1)
-	local iconsForEvent = self.UpdateEvents[event]
-	for icon, arg1ToMatch in pairs(iconsForEvent) do
-		if arg1ToMatch == true or arg1ToMatch == arg1 then
+	for icon, arg1ToMatch in next, self.UpdateEvents[event] do
+		if icon.NextUpdateTime ~= 0 and (arg1ToMatch == true or arg1ToMatch == arg1) then
 			icon.NextUpdateTime = 0
 		end
 	end
@@ -663,8 +669,13 @@ function Icon.Update(icon, force)
 				if TMW.Locked then
 					for i = icon.__controlledIconIndex+1, icon.group.numIcons do
 						local ic = icon.group[i]
-						if ic and ic.attributes.shown then
-							ic:Hide()
+						if ic and ic.attributes.realAlpha > 0 then
+							-- This allows for correct handling of states & opacities in all cases.
+							ic:SetInfo("alphaOverride", 0)
+
+							-- The following won't work for this:
+							-- ic:SetInfo("state", 0), because it breaks meta icon controller groups (meta icon state overrides local state).
+							-- ic:Hide(), because it breaks OnShow/OnHide animations on controlled icons.
 						end
 					end
 				end
@@ -705,7 +716,7 @@ function Icon.YieldInfo(icon, isNotDone, ...)
 		if not destIcon then
 			return
 		end
-		destIcon:Show()
+		destIcon:SetInfo("alphaOverride", nil)
 
 		icon.typeData:HandleYieldedInfo(icon, destIcon, ...)
 
@@ -847,16 +858,6 @@ function Icon.Setup(icon)
 
 	-- Perform a soft reset on the icon.
 	icon:DisableIcon(true)
-
-
-	-- Associate the icon's GUID with the icon in a global context
-	-- so that it can be referred to by GUID.
-	TMW:DeclareDataOwner(iconGUID, icon)
-	
-
-	-- Store these on the icon for convenience
-	icon.typeData = typeData
-	icon.viewData = viewData
 	
 
 	-- Store all of the icon's relevant settings on the icon,
@@ -870,36 +871,28 @@ function Icon.Setup(icon)
 		end
 	end
 
-
-	-- Set icon.Alpha and icon.UnAlpha based on the icon.ShowWhen setting.
-	-- TODO: Overhaul the alpha system so this isn't hardcoded in.
-	if icon.ShowWhen then
-		if bitband(icon.ShowWhen, 0x1) == 0 then
-			icon.UnAlpha = 0
-		elseif bitband(icon.ShowWhen, 0x2) == 0 then
-			icon.Alpha = 0
-		end
-	end
-	
-
-	-- Non-controlled icons should always show if they're used.
-	-- Controlled icons are shown/hidden based on whether or not they're used
-	-- (this is handled by the icon controller system, so don't manually show controller icons here)
-	if not icon:IsControlled() then
-		icon:Show()
-	end
-
-
-	-- Lame framelevel fix: Sometimes, icons end up with dramatically different frame levels than their group.
-	icon:SetFrameLevel(group:GetFrameLevel() + 1)
-
-
-	-- Notify that we've begun setting up this icon (we're past all the basic stuff now,
-	-- and at the point where other parties might be interested in doing anything before we go further)
-	TMW:Fire("TMW_ICON_SETUP_PRE", icon)
+	-- Store these on the icon for convenience
+	icon.typeData = typeData
+	icon.viewData = viewData
 
 	
 	if icon.Enabled or not TMW.Locked then
+		icon:Show()
+
+		-- Associate the icon's GUID with the icon in a global context
+		-- so that it can be referred to by GUID.
+		TMW:DeclareDataOwner(iconGUID, icon)
+
+
+		-- Lame framelevel fix: Sometimes, icons end up with dramatically different frame levels than their group.
+		icon:SetFrameLevel(group:GetFrameLevel() + 1)
+
+
+		-- Notify that we've begun setting up this icon (we're past all the basic stuff now,
+		-- and at the point where other parties might be interested in doing anything before we go further)
+		TMW:Fire("TMW_ICON_SETUP_PRE", icon)
+
+
 
 		------------ Icon View ------------
 		viewData:Icon_Setup(icon)
@@ -934,8 +927,14 @@ function Icon.Setup(icon)
 			end
 		end
 	else
+		local iconGUID = icon:GetGUID()
+		if iconGUID then
+			TMW:DeclareDataOwner(iconGUID, nil)
+		end
+
+		icon:Hide()
 		-- Disable icons that aren't enabled when we're locked.
-		icon:DisableIcon()
+		--icon:DisableIcon()
 	end
 
 
@@ -1039,35 +1038,31 @@ function Icon.SetModulesToEnabledStateOfIcon(icon, sourceIcon)
 end
 
 
--- not worth documenting. If you want me to explain wtf this is, send me (Cybeloras) a PM on CurseForge.
-TMW.IconAlphaManager = {
-	AlphaHandlers = {},
-	
-	HandlerSorter = function(a, b)
-		return a.order < b.order
-	end,
+-- If you want me to explain wtf this is, send me (Cybeloras) a PM on CurseForge.
+TMW.IconStateArbitrator = {
+	StateHandlers = {},
 	
 	UPDATE = function(self, event, icon)
 		local attributes = icon.attributes
-		local AlphaHandlers = self.AlphaHandlers
+		local StateHandlers = self.StateHandlers
 		
 		local handlerToUse
 		
-		for i = 1, #AlphaHandlers do
-			local handler = AlphaHandlers[i]
+		for i = 1, #StateHandlers do
+			local handler = StateHandlers[i]
 			
-			local alpha = attributes[handler.attribute]
+			local stateData = attributes[handler.attribute]
 			
-			if alpha == 0 then
+			if stateData and stateData.Alpha == 0 then
 				-- If an alpha is set to 0, then the icon should be hidden no matter what, 
 				-- so use it as the final alpha value and stop looking for more.
 				-- This functionality has existed in TMW since practically day one, by the way. So don't be clever and remove it.
 				handlerToUse = handler
 				break
-			elseif alpha ~= nil then
+			elseif stateData ~= nil then
 				if not handlerToUse then
-					-- If we found an alpha value that isn't nil and we haven't figured out
-					-- an alpha value to use yet, use this one, but keep looking for 0 values.
+					-- If we found a state that isn't nil and we haven't figured out
+					-- a state to use yet, use this one, but keep looking for 0 values.
 					handlerToUse = handler
 				end
 				if handler.haltImmediatelyIfFound then
@@ -1077,50 +1072,65 @@ TMW.IconAlphaManager = {
 		end
 		
 		if handlerToUse then			
-			-- realAlpha stores the alpha that the icon should be showing, before FakeHidden.
-			icon:SetInfo_INTERNAL("realAlpha", attributes[handlerToUse.attribute])
-		end
-	end,
-	
-	SetupHandler = function(handler)
-		local self = handler.self
-		
-		local IconDataProcessor = TMW.Classes.IconDataProcessor.ProcessorsByName[handler.processorName]
-		if IconDataProcessor then
-			if IconDataProcessor.NumAttributes ~= 1 then
-				error("IconModule_Alpha handlers cannot check IconDataProcessors that have more than one attribute!")
+			-- calculatedState stores the state that the icon should be showing, before FakeHidden.
+			-- realAlpha does the same for the alpha. We use it on top of calculatedState in favor of backwards compatibility.
+			local state = attributes[handlerToUse.attribute]
+
+			if not state.Alpha then
+				-- Attempting to catch an elusive bug. Remove this if it doesn't seem to be happening anymore.
+				print("NO ALPHA ON STATE:", handlerToUse.attribute, icon, icon:GetName(), state.Alpha, state)
 			end
-			
-			handler.attribute = IconDataProcessor.attributesStringNoSpaces
-			
-			TMW:RegisterCallback(IconDataProcessor.changedEvent, self, "UPDATE")
-			
-			TMW:UnregisterCallback("TMW_CLASS_IconDataProcessor_INSTANCE_NEW", self.SetupHandler, handler)
+			icon:SetInfo_INTERNAL("realAlpha", state.Alpha)
+			icon:SetInfo_INTERNAL("calculatedState", state)
 		end
 	end,
 
+	GetConfigData = function(handler, icon, panelInfo)
+		if not handler.configGetter then
+			return nil
+		end
+
+		local configData = handler.configGetter(icon, panelInfo)
+		if not configData then
+			return nil
+		end
+
+		local icon = TMW.CI.icon
+		local dependant = handler.dependant
+		if dependant and not dependant:ShouldShowConfigPanels(icon) then
+			return nil
+		end
+
+		return configData
+	end,
+
 	-- PUBLIC METHOD (ish)
-	AddHandler = function(self, order, processorName, haltImmediatelyIfFound)
-		TMW:ValidateType(2, "IconAlphaManager:AddHandler()", order, "number")
-		TMW:ValidateType(3, "IconAlphaManager:AddHandler()", processorName, "string")
+	AddHandler = function(self, IconDataProcessor, order, dependant, haltImmediatelyIfFound, configGetter)
+		TMW:ValidateType(1, "IconStateArbitrator:AddHandler()", IconDataProcessor, "IconDataProcessor")
+		TMW:ValidateType(2, "IconStateArbitrator:AddHandler()", order, "number")
+		TMW:ValidateType(3, "IconStateArbitrator:AddHandler()", dependant, "IconDataProcessorComponent;nil")
+		TMW:ValidateType(4, "IconStateArbitrator:AddHandler()", haltImmediatelyIfFound, "boolean;nil")
+		TMW:ValidateType(5, "IconStateArbitrator:AddHandler()", configGetter, "function;nil")
 		
+
+		if IconDataProcessor.NumAttributes ~= 1 then
+			error("IconStateArbitrator handlers cannot check IconDataProcessors that have more than one attribute!")
+		end
+
 		local handler = {
-			self = self,
 			order = order,
-			processorName = processorName,
+			processor = IconDataProcessor,
+			attribute = IconDataProcessor.attributesStringNoSpaces,
+			dependant = dependant,
 			haltImmediatelyIfFound = haltImmediatelyIfFound,
+			configGetter = configGetter,
+			GetConfigData = self.GetConfigData,
 		}
 		
-		tinsert(self.AlphaHandlers, handler)
+		tinsert(self.StateHandlers, handler)
+		sort(self.StateHandlers, TMW.OrderSort)
 		
-		sort(self.AlphaHandlers, self.HandlerSorter)
-		
-		if TMW.Classes.IconDataProcessor.ProcessorsByName[processorName] then
-			self.SetupHandler(handler)
-		else
-			TMW:RegisterCallback("TMW_CLASS_IconDataProcessor_INSTANCE_NEW", self.SetupHandler, handler)
-		end
-		
+		TMW:RegisterCallback(IconDataProcessor.changedEvent, self, "UPDATE")
 	end,	
 }
 
@@ -1288,23 +1298,21 @@ end})
 -- @usage icon:SetInfo("texture", "Interface\\AddOns\\TellMeWhen\\Textures\\Disabled")
 --  
 --  -- From IconTypes/IconType_wpnenchant:
---  icon:SetInfo("alpha; start, duration; spell",
---    icon.UnAlpha,
+--  icon:SetInfo("state; start, duration; spell",
+--    STATE_ABSENT,
 --    0, 0,
 --    nil
 --  )
 -- 
---  -- From IconTypes/IconType_multistate:
---  icon:SetInfo("alpha; texture; start, duration; charges, maxCharges; stack, stackText; spell; inRange; noMana",
---    icon.UnAlpha,
---    GetActionTexture(Slot) or "Interface\\Icons\\INV_Misc_QuestionMark",
+--  -- From IconTypes/IconType_reactive:
+--  icon:SetInfo("state; texture; start, duration; charges, maxCharges, chargeStart, chargeDur; stack, stackText; spell",
+--    STATE_USABLE,
+--    GetSpellTexture(iName),
 --    start, duration,
---    charges, maxCharges,
+--    charges, maxCharges, chargeStart, chargeDur
 --    stack, stack,
---    spellID,
---    inrange,
---    nomana
---  )
+--    iName			
+-- )
 function Icon.SetInfo(icon, signature, ...)
 	SetInfoFuncs[signature](icon, ...)
 end

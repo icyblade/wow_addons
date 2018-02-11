@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -26,6 +26,7 @@ Env.UnitStat = UnitStat
 Env.GetHaste = GetHaste
 Env.GetExpertise = GetExpertise
 Env.GetCritChance = GetCritChance
+Env.GetSpellCritChance = GetSpellCritChance
 Env.GetMasteryEffect = GetMasteryEffect
 Env.GetSpellBonusDamage = GetSpellBonusDamage
 Env.GetSpellBonusHealing = GetSpellBonusHealing
@@ -116,7 +117,7 @@ ConditionCategory:RegisterCondition(6,	 "MELEECRIT", {
 	unit = PLAYER,
 	icon = "Interface\\Icons\\Ability_CriticalStrike",
 	tcoords = CNDT.COMMON.standardtcoords,
-	funcstr = [[GetCritChance()/100 c.Operator c.Level]],
+	funcstr = [[max(GetCritChance(), GetSpellCritChance(2))/100 c.Operator c.Level]],
 	events = function(ConditionObject, c)
 		return
 			ConditionObject:GenerateNormalEventString("COMBAT_RATING_UPDATE")
@@ -154,6 +155,8 @@ ConditionCategory:RegisterCondition(8,	 "MASTERY", {
 ConditionCategory:RegisterCondition(9,	 "EXPERTISE", {		-- DEPRECATED
 	text = _G["COMBAT_RATING_NAME"..CR_EXPERTISE],
 	funcstr = "DEPRECATED",
+	min = 0, 
+	range = 100,
 })
 
 
@@ -167,7 +170,7 @@ ConditionCategory:RegisterCondition(11,	"SPIRIT", {
 	formatter = TMW.C.Formatter.COMMANUMBER,
 	icon = "Interface\\Icons\\spell_shadow_burningspirit",
 	tcoords = CNDT.COMMON.standardtcoords,
-	funcstr = [[UnitStat("player", 1) c.Operator c.Level]],
+	funcstr = [[UnitStat("player", 5) c.Operator c.Level]],
 	events = function(ConditionObject, c)
 		return
 			ConditionObject:GenerateNormalEventString("UNIT_STATS", "player")
@@ -182,14 +185,7 @@ ConditionCategory:RegisterCondition(13, "MULTISTRIKE", {
 	unit = PLAYER,
 	icon = "Interface\\Icons\\Ability_UpgradeMoonGlaive",
 	tcoords = CNDT.COMMON.standardtcoords,
-	funcstr = [[GetMultistrike() c.Operator c.Level]],
-	Env = {
-		GetMultistrike = GetMultistrike,
-	},
-	events = function(ConditionObject, c)
-		return
-			ConditionObject:GenerateNormalEventString("MULTISTRIKE_UPDATE")
-	end,
+	funcstr = "DEPRECATED",
 })
 ConditionCategory:RegisterCondition(14, "LIFESTEAL", {
 	text = STAT_LIFESTEAL,

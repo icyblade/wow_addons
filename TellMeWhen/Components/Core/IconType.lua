@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -38,9 +38,7 @@ local RelevantToAll = {
 		Events = true,
 		Conditions = true,
 		UnitConditions = true,
-		ShowWhen = true,
-		Alpha = true,
-		UnAlpha = true,
+		States = true,
 	}
 }
 
@@ -77,6 +75,7 @@ local RelevantToAll = {
 
 local IconType = TMW:NewClass("IconType", "IconComponent")
 IconType.UsedAttributes = {}
+IconType.DefaultPanelColumnIndex = 1
 
 --- Constructor - Creates a new IconType
 -- @name IconType:New
@@ -87,29 +86,11 @@ function IconType:OnNewInstance(type)
 	self.type = type
 	self.Icons = {}
 	self.UsedProcessors = {}
-	self.Colors = {}
 
 	self.ViewAllowances = {}
 	self.defaultAllowanceForViews = true
 	
 	self:InheritTable(self.class, "UsedAttributes")
-end
-
--- [INTERNAL] - Updates self.Colors to the current settings in TMW.db.profile.Colors
-function IconType:UpdateColors(dontSetupIcons)
-	self:AssertSelfIsInstance()
-	
-	for k, v in pairs(TMW.db.profile.Colors[self.type]) do
-		if v.Override then
-			self.Colors[k] = v
-		else
-			self.Colors[k] = TMW.db.profile.Colors.GLOBAL[k]
-		end
-	end
-	
-	if not dontSetupIcons then
-		self:SetupIcons()
-	end
 end
 
 --- Performs TMW.Classes.Icon:Setup() on all icons that use this icon type.
@@ -288,15 +269,14 @@ function IconType:Register(order)
 	TMW:ValidateType("IconType.name", "IconType:Register(order)", self.name, "function;string")
 	TMW:ValidateType("IconType.desc", "IconType:Register(order)", self.desc, "function;string;nil")
 	TMW:ValidateType("IconType.tooltipTitle", "IconType:Register(order)", self.tooltipTitle, "function;string;nil")
-    -- TMW:ValidateType("IconType.menuIcon", "IconType:Register(order)", self.menuIcon, "function;string;nil")
-	TMW:ValidateType("IconType.menuIcon", "IconType:Register(order)", self.menuIcon, "function;string;nil;number") -- ICY: TODO temporary solution
+	TMW:ValidateType("IconType.menuIcon", "IconType:Register(order)", self.menuIcon, "function;string;number;nil")
 	TMW:ValidateType("IconType.menuSpaceBefore", "IconType:Register(order)", self.menuSpaceBefore, "boolean;nil")
 	TMW:ValidateType("IconType.menuSpaceAfter", "IconType:Register(order)", self.menuSpaceAfter, "boolean;nil")
 	TMW:ValidateType("IconType.hidden", "IconType:Register(order)", self.menuSpaceAfter, "function;boolean;nil")
 	
 	TMW:ValidateType("2 (order)", "IconType:Register(order)", order, "number")
 	
-	local typekey = self.type
+	local typekey = self.type 
 	
 	self.order = order
 	
@@ -320,13 +300,6 @@ function IconType:Register(order)
 	
 	-- Listen for any new processors, too, and update when they are created.
 	TMW:RegisterCallback("TMW_CLASS_IconDataProcessor_INSTANCE_NEW", self, "UpdateUsedProcessors")
-	
-	-- Covers the case of creating a type after login
-	-- (mainly used while debugging). Calling UpdateColors here prevents 
-	-- errors when types are created without performing a full TMW:Update() immediately afterwords.
-	if TMW.InitializedDatabase then
-		self:UpdateColors(true)
-	end
 	
 	return self -- why not?
 end
@@ -434,12 +407,12 @@ function IconType:SetModuleAllowance(moduleName, allow)
 		IconModule:SetAllowanceForType(self.type, allow)
 
 	elseif not IconModule then
-		TMW:RegisterCallback("TMW_CLASS_NEW", function(event, class)
+		TMW:RegisterSelfDestructingCallback("TMW_CLASS_NEW", function(event, class)
 			if class.className == moduleName and class.SetAllowanceForType then
 				local IconModule = class
 				IconModule:SetAllowanceForType(self.type, allow)
 
-				TMW:UnregisterThisCallback()
+				return true -- Signal callback destruction
 			end
 		end)
 	end
@@ -496,7 +469,7 @@ function IconType:IsAllowedByView(viewName)
 end
 
 IconType:RegisterConfigPanel_ConstructorFunc(1, "TellMeWhen_IsViewAllowed", function(self)
-	self.Header:SetText(L["ICONMENU_VIEWREQ"])
+	self:SetTitle(L["ICONMENU_VIEWREQ"])
 
 	self.text = self:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
 	self.text:SetWordWrap(true)
@@ -508,9 +481,12 @@ IconType:RegisterConfigPanel_ConstructorFunc(1, "TellMeWhen_IsViewAllowed", func
 	self:SetScript("OnSizeChanged", function()
 		self:SetHeight(self.text:GetStringHeight() + 20)
 	end)
-	self.ShouldShow = function(self)
-		return not TMW.CI.icon.typeData:IsAllowedByView(TMW.CI.group.View)
-	end
+
+	self:CScriptAdd("PanelSetup", function()
+		if TMW.CI.icon.typeData:IsAllowedByView(TMW.CI.icon.group.View) then
+			self:Hide()
+		end
+	end)
 end)
 
 
@@ -529,9 +505,9 @@ IconType:RegisterIconEvent(100, "OnEventsRestored", {
 	desc = L["SOUND_EVENT_ONEVENTSRESTORED_DESC"],
 })
 
-IconType:UsesAttributes("alpha")
 IconType:UsesAttributes("alphaOverride")
-IconType:UsesAttributes("realAlpha") -- this is implied by the mere existance of IconAlphaManager
+IconType:UsesAttributes("realAlpha")
+IconType:UsesAttributes("calculatedState")
 IconType:UsesAttributes("conditionFailed")
 
 doneImplementingDefaults = true

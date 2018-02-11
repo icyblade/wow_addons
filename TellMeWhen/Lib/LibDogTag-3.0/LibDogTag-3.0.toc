@@ -1,4 +1,4 @@
-## Interface: 60200
+## Interface: 70300
 ## LoadOnDemand: 1
 ## Title: Lib: DogTag-3.0
 ## Notes: A library to provide a markup syntax
@@ -7,11 +7,8 @@
 ## Version: 1.0
 ## X-Category: Library
 ## X-Credit: Shefki
+## X-Compatible-With: 70200
 ## OptionalDeps:
-## X-Curse-Packaged-Version: r270
-## X-Curse-Project-Name: LibDogTag-3.0
-## X-Curse-Project-ID: libdogtag-3-0
-## X-Curse-Repository-ID: wow/libdogtag-3-0/mainline
 
 LibStub\LibStub.lua
 lib.xml

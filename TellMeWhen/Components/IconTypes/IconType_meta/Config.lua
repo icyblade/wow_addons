@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -32,6 +32,34 @@ if not Type then return end
 -- GLOBALS: TellMeWhen_MetaIconOptions
 -- GLOBALS: CreateFrame
 
+
+
+Type:RegisterConfigPanel_XMLTemplate(150, "TellMeWhen_MetaIconOptions")
+
+Type:RegisterConfigPanel_ConstructorFunc(170, "TellMeWhen_MetaSortSettings", function(self)
+	self:SetTitle(TMW.L["SORTBY"])
+	self:BuildSimpleCheckSettingFrame({
+		numPerRow = 3,
+		function(check)
+			check:SetTexts(TMW.L["SORTBYNONE"], TMW.L["SORTBYNONE_META_DESC"])
+			check:SetSetting("Sort", false)
+		end,
+		function(check)
+			check:SetTexts(TMW.L["ICONMENU_SORTASC"], TMW.L["ICONMENU_SORTASC_META_DESC"])
+			check:SetSetting("Sort", -1)
+		end,
+		function(check)
+			check:SetTexts(TMW.L["ICONMENU_SORTDESC"], TMW.L["ICONMENU_SORTDESC_META_DESC"])
+			check:SetSetting("Sort", 1)
+		end,
+	})
+
+	self:CScriptAdd("PanelSetup", function()
+		if TMW.CI.icon:IsGroupController() then
+			self:Hide()
+		end
+	end)
+end)
 
 TMW.IconDragger:RegisterIconDragHandler(220, -- Add to meta icon
 	function(IconDragger, info)
@@ -85,67 +113,68 @@ function Type:GuessIconTexture(ics)
 end
 
 
-local ME = TMW:NewModule("MetaEditor")
-TMW.ME = ME
+local Config = {}
+Type.Config = Config
 
-function ME:LoadConfig()
+function Config:Reload()
+	TellMeWhen_MetaIconOptions:OnSettingSaved()
+end
+
+function Config:LoadConfig()
 	if not TellMeWhen_MetaIconOptions then return end
 	local settings = CI.ics.Icons
 
 	for k, GUID in pairs(settings) do
-		local mg = ME[k] or CreateFrame("Frame", "TellMeWhen_MetaIconOptions" .. k, TellMeWhen_MetaIconOptions, "TellMeWhen_MetaGroup", k)
-		ME[k] = mg
+		local mg = Config[k] or CreateFrame("Frame", "TellMeWhen_MetaIconOptions" .. k, TellMeWhen_MetaIconOptions, "TellMeWhen_MetaGroup", k)
+		Config[k] = mg
 		mg:Show()
 		if k > 1 then
-			mg:SetPoint("TOPLEFT", ME[k-1], "BOTTOMLEFT", 0, 0)
-			mg:SetPoint("TOPRIGHT", ME[k-1], "BOTTOMRIGHT", 0, 0)
+			mg:SetPoint("TOPLEFT", Config[k-1], "BOTTOMLEFT", 0, 0)
+			mg:SetPoint("TOPRIGHT", Config[k-1], "BOTTOMRIGHT", 0, 0)
 		end
 		mg:SetFrameLevel(TellMeWhen_MetaIconOptions:GetFrameLevel()+2)
 
-		mg.icon:SetGUID(GUID)
+		mg.Icon:SetGUID(GUID)
 	end
 
-	TellMeWhen_MetaIconOptions:SetHeight((#settings * ME[1]:GetHeight()) + 35)
+	TellMeWhen_MetaIconOptions:SetHeight((#settings * Config[1]:GetHeight()) + 35)
 	
-	for f=#settings+1, #ME do
-		ME[f]:Hide()
+	for f=#settings+1, #Config do
+		Config[f]:Hide()
 	end
-	ME[1]:Show()
+	Config[1]:Show()
 
 	if settings[2] then
-		ME[1].delete:Show()
+		Config[1].Delete:Show()
 	else
-		ME[1].delete:Hide()
+		Config[1].Delete:Hide()
 	end
 end
-TMW:RegisterCallback("TMW_CONFIG_ICON_LOADED", ME, "LoadConfig")
 
 
 ---------- Click Handlers ----------
-function ME:Insert(where)
-	tinsert(CI.ics.Icons, where, "")
-	ME:LoadConfig()
-end
-
-function ME:Delete(self)
+function Config:Delete(self)
 	tremove(CI.ics.Icons, self:GetParent():GetID())
-	ME:LoadConfig()
+	Config:Reload()
 end
 
-function ME:SwapIcons(id1, id2)
+function Config:SwapIcons(id1, id2)
 	local Icons = CI.ics.Icons
 	
 	Icons[id1], Icons[id2] = Icons[id2], Icons[id1]
 	
-	TMW.ME:LoadConfig()
+	Config:LoadConfig()
+
+	-- DO NOT CALL Config:Reload() here - it will break click and drag rearranging.
+	-- Config:Reload()
 end
 
 
 ---------- Dropdown ----------
 local addedGroups = {}
-function ME:IconMenu()
+function Config:IconMenu()
 	if TMW.DD.MENU_LEVEL == 1 then
-		local currentGroupView = TMW.CI.gs.View
+		local currentGroupView = TMW.CI.icon.group:GetSettings().View
 		
 		for group in TMW:InGroups() do
 			if group:ShouldUpdateIcons() then
@@ -167,7 +196,7 @@ function ME:IconMenu()
 					info.hasArrow = true
 				end
 				
-				info.func = ME.IconMenuOnClick
+				info.func = Config.IconMenuOnClick
 				info.arg1 = self
 				info.checked = CI.ics.Icons[self:GetParent():GetID()] == group:GetGUID()
 
@@ -176,7 +205,7 @@ function ME:IconMenu()
 		end
 	elseif TMW.DD.MENU_LEVEL == 2 then
 		for icon in TMW.DD.MENU_VALUE:InIcons() do
-			if icon:IsValid() and CI.icon ~= icon and not icon:IsControlled() then
+			if icon:IsValid() and CI.icon ~= icon then
 				local info = TMW.DD:CreateInfo()
 
 				local text, textshort, tooltip = icon:GetIconMenuText()
@@ -185,7 +214,7 @@ function ME:IconMenu()
 				info.tooltipText = tooltip
 
 				info.value = icon
-				info.func = ME.IconMenuOnClick
+				info.func = Config.IconMenuOnClick
 				info.arg1 = self
 				info.checked = CI.ics.Icons[self:GetParent():GetID()] == icon:GetGUID()
 
@@ -200,14 +229,14 @@ function ME:IconMenu()
 	end
 end
 
-function ME:IconMenuOnClick(frame)
+function Config:IconMenuOnClick(frame)
 	local GUID = self.value:GetGUID(true)
 
 	assert(GUID)
 
 	CI.ics.Icons[frame:GetParent():GetID()] = GUID
 
-	ME:LoadConfig()
+	Config:Reload()
 	TMW.DD:CloseDropDownMenus()
 end
 

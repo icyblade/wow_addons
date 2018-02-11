@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -263,10 +263,6 @@ TMW:RegisterCallback("TMW_ICON_SETTINGS_RESET", function(event, icon)
 end)	
 
 TMW:RegisterCallback("TMW_CONFIG_TAB_CLICKED", function(event, tab, oldTab)
-	HELP:ShowNext()
-end)	
-
-TMW:RegisterCallback("TMW_CONFIG_ICON_LOADED", function(event, icon)
 	HELP:ShowNext()
 end)
 

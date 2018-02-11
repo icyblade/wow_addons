@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -23,6 +23,7 @@ local GetSpellTexture = TMW.GetSpellTexture
 local strlowerCache = TMW.strlowerCache
 local OnGCD = TMW.OnGCD
 local SpellHasNoMana = TMW.SpellHasNoMana
+local GetRuneCooldownDuration = TMW.GetRuneCooldownDuration
 local IsSpellInRange = LibStub("SpellRange-1.0").IsSpellInRange
 
 local Type = TMW.Classes.IconType:New("reactive")
@@ -30,15 +31,17 @@ Type.name = L["ICONMENU_REACTIVE"]
 Type.desc = L["ICONMENU_REACTIVE_DESC"]
 Type.menuIcon = "Interface\\Icons\\ability_warrior_revenge"
 
+local STATE_USABLE           = TMW.CONST.STATE.DEFAULT_SHOW
+local STATE_UNUSABLE         = TMW.CONST.STATE.DEFAULT_HIDE
+local STATE_UNUSABLE_NORANGE = TMW.CONST.STATE.DEFAULT_NORANGE
+local STATE_UNUSABLE_NOMANA  = TMW.CONST.STATE.DEFAULT_NOMANA
 
 -- AUTOMATICALLY GENERATED: UsesAttributes
-Type:UsesAttributes("noMana")
+Type:UsesAttributes("state")
 Type:UsesAttributes("spell")
-Type:UsesAttributes("charges, maxCharges")
-Type:UsesAttributes("inRange")
-Type:UsesAttributes("stack, stackText")
+Type:UsesAttributes("charges, maxCharges, chargeStart, chargeDur")
 Type:UsesAttributes("start, duration")
-Type:UsesAttributes("alpha")
+Type:UsesAttributes("stack, stackText")
 Type:UsesAttributes("texture")
 -- END AUTOMATICALLY GENERATED: UsesAttributes
 
@@ -51,6 +54,9 @@ Type:SetModuleAllowance("IconModule_PowerBar_Overlay", true)
 Type:RegisterIconDefaults{
 	-- Cause an ability to be treated as reactive if there is an activation border on it on the action bars.
 	UseActvtnOverlay		= false,
+
+	-- Cause an ability to be treated as reactive ONLY IF there is an activation border on it on the action bars.
+	OnlyActvtnOverlay		= false,
 
 	-- Cause the avility to be considered unusable of it is on cooldown.
 	CooldownCheck			= false,
@@ -73,49 +79,55 @@ Type:RegisterConfigPanel_XMLTemplate(100, "TellMeWhen_ChooseName", {
 	text = L["CHOOSENAME_DIALOG"] .. "\r\n\r\n" .. L["CHOOSENAME_DIALOG_PETABILITIES"],
 })
 
-Type:RegisterConfigPanel_XMLTemplate(165, "TellMeWhen_WhenChecks", {
-	text = L["ICONMENU_SHOWWHEN"],
-	[0x2] = { text = "|cFF00FF00" .. L["ICONMENU_USABLE"], 			},
-	[0x1] = { text = "|cFFFF0000" .. L["ICONMENU_UNUSABLE"], 		},
+Type:RegisterConfigPanel_XMLTemplate(165, "TellMeWhen_IconStates", {
+	[STATE_USABLE]           = { text = "|cFF00FF00" .. L["ICONMENU_READY"],   },
+	[STATE_UNUSABLE]         = { text = "|cFFFF0000" .. L["ICONMENU_NOTREADY"], },
+	[STATE_UNUSABLE_NORANGE] = { text = "|cFFFFff00" .. L["ICONMENU_OORANGE"], requires = "RangeCheck" },
+	[STATE_UNUSABLE_NOMANA]  = { text = "|cFFFFff00" .. L["ICONMENU_OOPOWER"], requires = "ManaCheck" },
 })
 
 Type:RegisterConfigPanel_ConstructorFunc(150, "TellMeWhen_ReactiveSettings", function(self)
-	self.Header:SetText(Type.name)
-	TMW.IE:BuildSimpleCheckSettingFrame(self, {
-		{
-			setting = "UseActvtnOverlay",
-			title = L["ICONMENU_USEACTIVATIONOVERLAY"],
-			tooltip = L["ICONMENU_USEACTIVATIONOVERLAY_DESC"],
-		},
-		{
-			setting = "IgnoreNomana",
-			title = L["ICONMENU_IGNORENOMANA"],
-			tooltip = L["ICONMENU_IGNORENOMANA_DESC"],
-		},
-		{
-			setting = "CooldownCheck",
-			title = L["ICONMENU_COOLDOWNCHECK"],
-			tooltip = L["ICONMENU_COOLDOWNCHECK_DESC"],
-		},
-		{
-			setting = "RangeCheck",
-			title = L["ICONMENU_RANGECHECK"],
-			tooltip = L["ICONMENU_RANGECHECK_DESC"],
-		},
-		{
-			setting = "ManaCheck",
-			title = L["ICONMENU_MANACHECK"],
-			tooltip = L["ICONMENU_MANACHECK_DESC"],
-		},
-		pclass == "DEATHKNIGHT" and {
-			setting = "IgnoreRunes",
-			title = L["ICONMENU_IGNORERUNES"],
-			tooltip = L["ICONMENU_IGNORERUNES_DESC"],
-			disabledtooltip = L["ICONMENU_IGNORERUNES_DESC_DISABLED"],
-			disabled = function(self)
-				return not TMW.CI.ics.CooldownCheck
-			end,
-		},
+	self:SetTitle(Type.name)
+	self:BuildSimpleCheckSettingFrame({
+		function(check)
+			check:SetTexts(L["ICONMENU_USEACTIVATIONOVERLAY"], L["ICONMENU_USEACTIVATIONOVERLAY_DESC"])
+			check:SetSetting("UseActvtnOverlay")
+		end,
+		function(check)
+			check:SetTexts(L["ICONMENU_ONLYACTIVATIONOVERLAY"], L["ICONMENU_ONLYACTIVATIONOVERLAY_DESC"])
+			check:SetSetting("OnlyActvtnOverlay")
+			check:CScriptAdd("ReloadRequested", function()
+				check:SetEnabled(TMW.CI.ics.UseActvtnOverlay)
+			end)
+		end,
+		function(check)
+			check:SetTexts(L["ICONMENU_IGNORENOMANA"], L["ICONMENU_IGNORENOMANA_DESC"])
+			check:SetSetting("IgnoreNomana")
+		end,
+		function(check)
+			check:SetTexts(L["ICONMENU_RANGECHECK"], L["ICONMENU_RANGECHECK_DESC"])
+			check:SetSetting("RangeCheck")
+		end,
+		function(check)
+			check:SetTexts(L["ICONMENU_MANACHECK"], L["ICONMENU_MANACHECK_DESC"])
+			check:SetSetting("ManaCheck")
+		end,
+		function(check)
+			check:SetTexts(L["ICONMENU_COOLDOWNCHECK"], L["ICONMENU_COOLDOWNCHECK_DESC"])
+			check:SetSetting("CooldownCheck")
+		end,
+		pclass == "DEATHKNIGHT" and function(check)
+			check:SetSetting("IgnoreRunes")
+
+			check:CScriptAdd("ReloadRequested", function()
+				check:SetEnabled(TMW.CI.ics.CooldownCheck)
+				if TMW.CI.ics.CooldownCheck then
+					check:SetTexts(L["ICONMENU_IGNORERUNES"], L["ICONMENU_IGNORERUNES_DESC"])
+				else
+					check:SetTexts(L["ICONMENU_IGNORERUNES"], L["ICONMENU_IGNORERUNES_DESC_DISABLED"])
+				end
+			end)
+		end,
 	})
 end)
 
@@ -123,7 +135,7 @@ end)
 local function Reactive_OnEvent(icon, event, arg1)
 	-- If icon.UseActvtnOverlay == true, treat the icon as usable if the spell has an activation overlay glow.
 	if icon.Spells.First == arg1 or strlowerCache[GetSpellInfo(arg1)] == icon.Spells.FirstString then
-		icon.forceUsable = event == "SPELL_ACTIVATION_OVERLAY_GLOW_SHOW"
+		icon.activationOverlayActive = event == "SPELL_ACTIVATION_OVERLAY_GLOW_SHOW"
 		icon.NextUpdateTime = 0
 	end
 end
@@ -131,32 +143,26 @@ end
 local function Reactive_OnUpdate(icon, time)
 
 	-- Upvalue things that will be referenced a lot in our loops.
-	local NameArray, NameStringArray, RangeCheck, ManaCheck, CooldownCheck, IgnoreRunes, forceUsable, IgnoreNomana =
-	 icon.Spells.Array, icon.Spells.StringArray, icon.RangeCheck, icon.ManaCheck, icon.CooldownCheck, icon.IgnoreRunes, icon.forceUsable, icon.IgnoreNomana
+	local NameArray, NameStringArray, RangeCheck, ManaCheck, CooldownCheck, IgnoreRunes, IgnoreNomana, UseActvtnOverlay, OnlyActvtnOverlay =
+	 icon.Spells.Array, icon.Spells.StringArray, icon.RangeCheck, icon.ManaCheck, icon.CooldownCheck, icon.IgnoreRunes, icon.IgnoreNomana, icon.UseActvtnOverlay, icon.OnlyActvtnOverlay
+
+	local activationOverlayActive = icon.activationOverlayActive
 
 	-- These variables will hold all the attributes that we pass to SetInfo().
-	local inrange, nomana, start, duration, CD, usable, charges, maxCharges, stack, start_charge, duration_charge
+	local inrange, nomana, start, duration, CD, usable, charges, maxCharges, chargeStart, chargeDur, stack, start_charge, duration_charge
 
 	local numChecked = 1
+	local runeCD = IgnoreRunes and GetRuneCooldownDuration()
+	
 
 	for i = 1, #NameArray do
 		local iName = NameArray[i]
 		numChecked = i
 		
-		charges, maxCharges, start_charge, duration_charge = GetSpellCharges(iName)
-		if charges then
-			if charges < maxCharges then
-				-- If the ability has charges and isn't at max charges, 
-				-- the timer on the icon should be the time until the next charge is gained.
-				start, duration = start_charge, duration_charge
-			else
-				start, duration = GetSpellCooldown(iName)
-			end
-			stack = charges
-		else
-			start, duration = GetSpellCooldown(iName)
-			stack = GetSpellCount(iName)
-		end
+
+		start, duration = GetSpellCooldown(iName)
+		charges, maxCharges, chargeStart, chargeDur = GetSpellCharges(iName)
+		stack = charges or GetSpellCount(iName)
 		
 		if duration then
 			inrange, CD = true, nil
@@ -180,7 +186,7 @@ local function Reactive_OnUpdate(icon, time)
 			end
 
 			if CooldownCheck then
-				if IgnoreRunes and duration == 10 then
+				if IgnoreRunes and duration == runeCD then
 					-- DK abilities that are on cooldown because of runes are always reported
 					-- as having a cooldown duration of 10 seconds. We use this fact to filter out rune cooldowns.
 					-- We used to have to make sure the ability being checked wasn't Mind Freeze before doing this,
@@ -191,17 +197,19 @@ local function Reactive_OnUpdate(icon, time)
 				CD = not (duration == 0 or OnGCD(duration))
 			end
 
-			usable = forceUsable or usable
+			if UseActvtnOverlay and OnlyActvtnOverlay then
+				usable = activationOverlayActive
+			else
+				usable = activationOverlayActive or usable
+			end
 			if usable and not CD and not nomana and inrange then --usable
-				icon:SetInfo("alpha; texture; start, duration; charges, maxCharges; stack, stackText; spell; inRange; noMana",
-					icon.Alpha,
+				icon:SetInfo("state; texture; start, duration; charges, maxCharges, chargeStart, chargeDur; stack, stackText; spell",
+					STATE_USABLE,
 					GetSpellTexture(iName),
 					start, duration,
-					charges, maxCharges,
+					charges, maxCharges, chargeStart, chargeDur,
 					stack, stack,
-					iName,
-					inrange,
-					nomana			
+					iName		
 				)
 				return
 			end
@@ -213,20 +221,12 @@ local function Reactive_OnUpdate(icon, time)
 	-- otherwise reuse the values obtained above since they are just for the first one
 	local NameFirst = icon.Spells.First
 	if numChecked > 1 then
-		charges, maxCharges, start_charge, duration_charge = GetSpellCharges(NameFirst)
-		if charges then
-			if charges < maxCharges then
-				start, duration = start_charge, duration_charge
-			else
-				start, duration = GetSpellCooldown(NameFirst)
-			end
-			stack = charges
-		else
-			start, duration = GetSpellCooldown(NameFirst)
-			stack = GetSpellCount(NameFirst)
-		end
-		
-		if IgnoreRunes and duration == 10 then
+
+		start, duration = GetSpellCooldown(NameFirst)
+		charges, maxCharges, chargeStart, chargeDur = GetSpellCharges(NameFirst)
+		stack = charges or GetSpellCount(NameFirst)
+
+		if IgnoreRunes and duration == runeCD then
 			start, duration = 0, 0
 		end
 
@@ -245,18 +245,16 @@ local function Reactive_OnUpdate(icon, time)
 	end
 	
 	if duration then
-		icon:SetInfo("alpha; texture; start, duration; charges, maxCharges; stack, stackText; spell; inRange; noMana",
-			icon.UnAlpha,
+		icon:SetInfo("state; texture; start, duration; charges, maxCharges, chargeStart, chargeDur; stack, stackText; spell",
+			not inrange and STATE_UNUSABLE_NORANGE or nomana and STATE_DEFAULT_NOMANA or STATE_UNUSABLE,
 			icon.FirstTexture,
 			start, duration,
-			charges, maxCharges,
+			charges, maxCharges, chargeStart, chargeDur,
 			stack, stack,
-			NameFirst,
-			inrange,
-			nomana
+			NameFirst
 		)
 	else
-		icon:SetInfo("alpha", 0)
+		icon:SetInfo("state", 0)
 	end
 end
 

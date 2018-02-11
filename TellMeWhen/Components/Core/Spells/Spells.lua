@@ -25,6 +25,7 @@ local GetSpellInfo =
 
 local strlowerCache = TMW.strlowerCache
 
+local _, pclass = UnitClass("player")
 
 
 
@@ -123,7 +124,7 @@ local function parseSpellsString(setting, doLower, keepDurations)
 		if (tonumber(spell) or 0) >= 2^31 or duration >= 2^31 then
 			-- Invalid spellID or duration. Remove it to prevent integer overflow errors.
 			tremove(buffNames, k)
-			TMW.Warn(L["ERROR_INVALID_SPELLID2"]:format(v))
+			TMW:Warn(L["ERROR_INVALID_SPELLID2"]:format(v))
 		end
 	end
 
@@ -446,26 +447,23 @@ function TMW:EquivToTable(name)
 	-- If there was a duration, then replace the old name with the actual name without the duration attached
 	name = eqname or name 
 
-	local names
+	local tbl
 
 	-- Iterate over all of TMW.BE's sub-categories ('buffs', 'debuffs', 'casts', etc)
 	for k, v in pairs(TMW.BE) do
 		-- Iterate over each equivalency in the category
-		for equiv, str in pairs(v) do
+		for equiv, t in pairs(v) do
 			if strlowerCache[equiv] == name then
 				-- We found a matching equivalency, so stop searching.
-				names = str
+				tbl = t
 				break
 			end
 		end
-		if names then break end
+		if tbl then break end
 	end
 
 	-- If we didnt find an equivalency string then get out
-	if not names then return end
-
-	-- Split the string into a table of spells.
-	local tbl = { strsplit(";", names) }
+	if not tbl then return end
 
 	-- For each spell in the equivalency:
 	for a, b in pairs(tbl) do
@@ -487,3 +485,124 @@ function TMW:EquivToTable(name)
 	return tbl
 end
 TMW:MakeSingleArgFunctionCached(TMW, "EquivToTable")
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+-- Constant spell data
+---------------------------------
+
+
+if pclass == "DRUID" then
+	TMW.COMMON.CurrentClassTotems = {
+		name = GetSpellInfo(145205),
+		desc = L["ICONMENU_TOTEM_GENERIC_DESC"]:format(GetSpellInfo(145205)),
+		{
+			hasVariableNames = false,
+			name = GetSpellInfo(145205),
+			texture = GetSpellTexture(145205)
+		}
+	}
+elseif pclass == "MAGE" then
+	TMW.COMMON.CurrentClassTotems = {
+		name = GetSpellInfo(116011),
+		desc = L["ICONMENU_TOTEM_GENERIC_DESC"]:format(GetSpellInfo(116011)),
+		{
+			hasVariableNames = false,
+			name = GetSpellInfo(116011),
+			texture = GetSpellTexture(116011)
+		}
+	}
+
+elseif pclass == "PALADIN" then
+	local name = GetSpellInfo(26573) .. " & " .. GetSpellInfo(114158)
+	TMW.COMMON.CurrentClassTotems = {
+		name = name,
+		desc = L["ICONMENU_TOTEM_GENERIC_DESC"]:format(name),
+		{
+			hasVariableNames = false,
+			name = GetSpellInfo(26573), --consecration
+			texture = GetSpellTexture(26573)
+		},
+        {
+            hasVariableNames = false,
+            name = GetSpellInfo(114158), --light's hammer
+            texture = GetSpellTexture(114158)
+        }
+	}
+elseif pclass == "MONK" then
+	TMW.COMMON.CurrentClassTotems = {
+		name = L["ICONMENU_STATUE"],
+		desc = L["ICONMENU_TOTEM_GENERIC_DESC"]:format(L["ICONMENU_STATUE"]),
+		{
+			hasVariableNames = false,
+			name = L["ICONMENU_STATUE"],
+			texture = function()
+				if GetSpecialization() == 1 then
+					return GetSpellTexture(163177) -- black ox
+				else
+					return GetSpellTexture(115313) -- jade serpent
+				end
+			end,
+		}
+	}
+elseif pclass == "DEATHKNIGHT" then
+	local cachedName = TMW:TryGetNPCName(27829)
+	local name = function()
+		if cachedName then return cachedName end
+		cachedName = TMW:TryGetNPCName(27829)
+		return cachedName
+	end
+
+	TMW.COMMON.CurrentClassTotems = {
+		name = name,
+		desc = function() return L["ICONMENU_TOTEM_GENERIC_DESC"]:format(name()) end,
+		texture = GetSpellTexture(49206),
+		[3] = { -- wow blizzard, so nice. put the gargoyle in slot 3 why dontcha.
+			hasVariableNames = false,
+			name = name,
+			texture = GetSpellTexture(49206),
+		}
+	}
+else
+	-- This includes shamans now in Legion - the elements of totems is no longer a notion.
+	TMW.COMMON.CurrentClassTotems = {
+		name = L["ICONMENU_TOTEM"],
+		desc = L["ICONMENU_TOTEM_DESC"],
+		{
+			hasVariableNames = true,
+			name = L["GENERICTOTEM"]:format(1),
+			texture = "Interface\\ICONS\\ability_shaman_tranquilmindtotem"
+		},
+		{
+			hasVariableNames = true,
+			name = L["GENERICTOTEM"]:format(2),
+			texture = "Interface\\ICONS\\ability_shaman_tranquilmindtotem"
+		},
+		{
+			hasVariableNames = true,
+			name = L["GENERICTOTEM"]:format(3),
+			texture = "Interface\\ICONS\\ability_shaman_tranquilmindtotem"
+		},
+		{
+			hasVariableNames = true,
+			name = L["GENERICTOTEM"]:format(4),
+			texture = "Interface\\ICONS\\ability_shaman_tranquilmindtotem"
+		},
+		{
+			hasVariableNames = true,
+			name = L["GENERICTOTEM"]:format(5),
+			texture = "Interface\\ICONS\\ability_shaman_tranquilmindtotem"
+		},
+	}
+end

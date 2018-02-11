@@ -1,0 +1,12 @@
+tag 05f0c599f3db40175c2818c0cea61be86a7994b4 2.5.6
+Author:	Benjamin Staneck <staneck@gmail.com>
+Date:	Tue Feb 6 10:26:46 2018 +0100
+
+commit 85dcdd2e89c791bb021d7195d51a8ee2fffe99c5
+Author: emptyrivers <emptyrivers@users.noreply.github.com>
+Date:   Tue Feb 6 08:43:44 2018 +0100
+
+    Fix Lua errors on Login with certain locales
+    
+    Ticket-Nr: 1089
+

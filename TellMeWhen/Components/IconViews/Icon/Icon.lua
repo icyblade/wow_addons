@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -111,6 +111,9 @@ View:ImplementsModule("IconModule_CooldownSweep", 20, function(Module, icon)
 	Module.cooldown:ClearAllPoints()
 	Module.cooldown:SetSize(ICON_SIZE, ICON_SIZE)
 	Module.cooldown:SetPoint("CENTER", icon)
+	Module.cooldown2:ClearAllPoints()
+	Module.cooldown2:SetSize(ICON_SIZE, ICON_SIZE)
+	Module.cooldown2:SetPoint("CENTER", icon)
 end)
 View:ImplementsModule("IconModule_Texture_Colored", 30, function(Module, icon)
 	Module:Enable()
@@ -173,13 +176,7 @@ View:ImplementsModule("IconModule_IconContainer_Masque", 100, function(Module, i
 	end
 end)
 
-View:ImplementsModule("GroupModule_Resizer_ScaleXY", 10, function(Module, group)
-	if TMW.Locked or group.Locked then
-		Module:Disable()
-	else
-		Module:Enable()
-	end
-end)
+View:ImplementsModule("GroupModule_Resizer_ScaleXY", 10, true)
 View:ImplementsModule("GroupModule_IconPosition_Sortable", 20, true)
 	
 function View:Icon_SetSize(icon)

@@ -1,23 +1,25 @@
-﻿<Ui>
+<Ui>
 
 	<Frame name="TellMeWhen_LoseControlTypes" inherits="TellMeWhen_OptionsModuleContainer" virtual="true">
 		<Size y="33"/>
 		<Frames>
 		
-			<Frame name="$parentLocTypes" inherits="TMW_DropDownMenuTemplate" parentKey="LocTypes">
+			<Frame parentKey="LocTypes" name="$parentLocTypes" inherits="TMW_DropDownMenuTemplate">
 				<Anchors>
-					<Anchor point="TOPLEFT" x="7" y="-5"/>
+					<Anchor point="TOPLEFT" x="7" y="-6"/>
 					<Anchor point="RIGHT" x="-7" />
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						TMW:CInit(self, {
-							title = TMW.L["LOSECONTROL_DROPDOWNLABEL"],
-							tooltip = TMW.L["LOSECONTROL_DROPDOWNLABEL_DESC"],
-							func = TMW.Types.losecontrol.CONFIG.DropdownMenu_SelectTypes,
-						})
+						TMW:CInit(self)
+				
+						self:SetTexts(TMW.L["LOSECONTROL_DROPDOWNLABEL"], TMW.L["LOSECONTROL_DROPDOWNLABEL_DESC"])
+						self:SetFunction(TMW.Types.losecontrol.Config.DropdownMenu_SelectTypes)
 
-						self:SetText(TMW.L["LOSECONTROL_DROPDOWNLABEL"])
+						self:CScriptAdd("ReloadRequested", function()
+							TMW.Types.losecontrol.Config:DropdownMenu_SetText()
+						end)
+						
 						self.Button:HookScript("OnClick", function(self)
 							TMW.IE:SaveSettings()
 						end)
@@ -28,7 +30,9 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				self.Header:SetText(TMW.L["LOSECONTROL_DROPDOWNLABEL"])
+				TMW:CInit(self)
+				
+				self:SetTitle(TMW.L["LOSECONTROL_DROPDOWNLABEL"])
 			</OnLoad>
 		</Scripts>
 	</Frame>

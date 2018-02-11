@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -52,16 +52,16 @@ function Timer:LoadSettingsForEventID(eventID)
 	
 	self.ConfigContainer.Header:SetText(TMW.L["EVENTS_SETTINGS_TIMER_HEADER"])
 
-	self.ConfigContainer.Counter:SetText(eventSettings.Counter)
+	self.ConfigContainer.Timer:SetText(eventSettings.Counter)
 end
 
-function Timer:SetupEventDisplay(eventID)
+function Timer:GetEventDisplayText(eventID)
 	if not eventID then return end
 
 	local eventSettings = EVENTS:GetEventSettings(eventID)
 
 
-	local Counter = eventSettings.Counter
+	local Timer = eventSettings.Counter
 	local TimerOperation = eventSettings.TimerOperation
 	local opText = TimerOperation
 	for k, v in pairs(operations) do
@@ -72,44 +72,76 @@ function Timer:SetupEventDisplay(eventID)
 	end
 
 	local str = opText .. " "
-	if Counter == "" then
+	if Timer == "" then
 		str = str .. "|cff808080<No Timer>"
 	else
-		str = str .. Counter
+		str = str .. Timer
 	end
 	
-	EVENTS.EventHandlerFrames[eventID].DataText:SetText("|cffcccccc" .. L["EVENTHANDLER_TIMER_TAB"] .. ":|r " .. str)
+	return ("|cffcccccc" .. L["EVENTHANDLER_TIMER_TAB"] .. ":|r " .. str)
 end
 
 
-function Timer:OperationMenu_DropDown()
+local function OperationMenu_DropDown_OnClick(button, dropdown)
+	dropdown:SetUIDropdownText(button.value, operations)
+	
+	local eventSettings = EVENTS:GetEventSettings()
+	eventSettings.TimerOperation = button.value
+
+	dropdown:OnSettingSaved()
+end
+function Timer.OperationMenu_DropDown(dropdown)
 	for k, v in pairs(operations) do
 		local info = TMW.DD:CreateInfo()
-		info.func = Timer.OperationMenu_DropDown_OnClick
+		info.func = OperationMenu_DropDown_OnClick
 		info.text = v.text
 		info.tooltipTitle = v.text
 		info.tooltipText = v.tooltip
 		info.checked = v.value == EVENTS:GetEventSettings().TimerOperation
 		info.value = v.value
-		info.arg1 = self
+		info.arg1 = dropdown
 		TMW.DD:AddButton(info)
 	end
 end
 
-function Timer:OperationMenu_DropDown_OnClick(frame)
-	frame:SetUIDropdownText(self.value, operations)
-	
-	local eventSettings = EVENTS:GetEventSettings()
-	eventSettings.TimerOperation = self.value
 
-	TMW.EVENTS:LoadConfig()
-end
 
 
 
 
 local SUG = TMW.SUG
-local Module = SUG:NewModule("timerName", SUG:GetModule("counterName")) -- EWWW DEPENDENCIES
+local Module = SUG:NewModule("timerName", SUG:GetModule("default"))
+Module.noMin = true
+Module.noTexture = true
+Module.showColorHelp = false
+Module.helpText = L["SUG_TOOLTIPTITLE_GENERIC"]
+
+function Module.Sorter_Counter(a, b)
+	local special_a, special_b = strsub(a, 1, 1), strsub(b, 1, 1)
+	
+	local haveA, haveB = special_a ~= "%", special_b ~= "%"
+	if (haveA ~= haveB) then
+		return haveA
+	end
+	
+	--sort by alphabetical
+	return a < b
+end
+
+function Module:Table_GetSorter()
+	return self.Sorter_Counter
+end
+function Module:Entry_AddToList_1(f, name)
+	if name == "%A" then
+		name = SUG.lastName_unmodified
+	end
+
+	f.Name:SetText(name)
+
+	f.tooltiptitle = name
+
+	f.insert = name
+end
 function Module:Table_GetNormalSuggestions(suggestions, tbl, ...)
 	local lastName = SUG.lastName
 
@@ -122,5 +154,11 @@ function Module:Table_GetNormalSuggestions(suggestions, tbl, ...)
 		then
 			suggestions[#suggestions + 1] = eventSettings.Counter
 		end
+	end
+end
+
+function Module:Table_GetSpecialSuggestions_1(suggestions, tbl, ...)
+	if #SUG.lastName > 0 then
+		suggestions[#suggestions + 1] = "%A"
 	end
 end

@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -32,8 +32,6 @@ local UnitInRaid, GetNumPartyMembers =
       UnitInRaid, GetNumPartyMembers
 	  
 
-local clientVersion = select(4, GetBuildInfo())
-local wow_501 = clientVersion >= 50100
 
 
 
@@ -60,12 +58,19 @@ Announcements:RegisterEventDefaults{
 	Sticky 	  		= false,
 	ShowIconTex		= true,
 	TextDuration 	= 13,
-	r 		  		= 1,
-	g 		  		= 1,
-	b 		  		= 1,
+	TextColor 	 	= "ffffffff",
 	Size 	  		= 0,
 }
 
+TMW:RegisterUpgrade(80003, {
+	iconEventHandler = function(self, eventSettings)
+		eventSettings.TextColor = TMW:RGBAToString(eventSettings.r or 1, eventSettings.g or 1, eventSettings.b or 1, 1)
+
+		eventSettings.r = nil
+		eventSettings.g = nil
+		eventSettings.b = nil
+	end,
+})
 TMW:RegisterUpgrade(60312, {
 	iconEventHandler = function(self, eventSettings)
 		if eventSettings.Channel == "FRAME" and eventSettings.Location == "RaidWarningFrame" then
@@ -251,20 +256,16 @@ Announcements:RegisterEventHandlerDataNonSpecific(22, "RAID_WARNING", {
 Announcements:RegisterEventHandlerDataNonSpecific(24, "BATTLEGROUND", {
 	text = CHAT_MSG_BATTLEGROUND,
 	isBlizz = 1,
-	handler =
-	wow_501 and 
-		function(icon, data, Text)
-			if UnitInBattleground("player") then
-				SendChatMessage(Text, "INSTANCE_CHAT")
-			end
+	handler = function(icon, eventSettings, Text)
+		if UnitInBattleground("player") then
+			SendChatMessage(Text, "INSTANCE_CHAT")
 		end
-	or nil,
+	end,
 })
 Announcements:RegisterEventHandlerDataNonSpecific(25, "INSTANCE_CHAT", {
 	text = INSTANCE_CHAT,
 	isBlizz = 1,
-	hidden = not wow_501,
-	handler = function(icon, data, Text)
+	handler = function(icon, eventSettings, Text)
 		if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
 			SendChatMessage(Text, "INSTANCE_CHAT")
 		end
@@ -274,32 +275,17 @@ Announcements:RegisterEventHandlerDataNonSpecific(30, "SMART", {
 	text = L["CHAT_MSG_SMART"],
 	desc = L["CHAT_MSG_SMART_DESC"],
 	isBlizz = 1, -- flagged to not use override %t and %f substitutions, and also not to try and color any names
-	handler =
-	wow_501 and
-		function(icon, data, Text)
-			local channel = "SAY"
-			if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
-				channel = "INSTANCE_CHAT"
-			elseif IsInRaid(LE_PARTY_CATEGORY_HOME) then
-				channel = "RAID"
-			elseif IsInGroup() then
-				channel = "PARTY"
-			end
-			SendChatMessage(Text, channel)
+	handler = function(icon, eventSettings, Text)
+		local channel = "SAY"
+		if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+			channel = "INSTANCE_CHAT"
+		elseif IsInRaid(LE_PARTY_CATEGORY_HOME) then
+			channel = "RAID"
+		elseif IsInGroup() then
+			channel = "PARTY"
 		end
-	or
-		function(icon, data, Text)
-			local channel = "SAY"
-			if UnitInBattleground("player") then
-				channel = "BATTLEGROUND"
-			elseif IsInRaid() then
-				channel = "RAID"
-			elseif IsInGroup() then
-				channel = "PARTY"
-			end
-			SendChatMessage(Text, channel)
-		end
-	,
+		SendChatMessage(Text, channel)
+	end,
 })
 Announcements:RegisterEventHandlerDataNonSpecific(40, "CHANNEL", {
 	text = L["CHAT_MSG_CHANNEL"],
@@ -336,12 +322,12 @@ Announcements:RegisterEventHandlerDataNonSpecific(40, "CHANNEL", {
 			end
 		end
 	end,
-	handler = function(icon, data, Text)
+	handler = function(icon, eventSettings, Text)
 		for i = 1, huge, 2 do
 			local num, name = select(i, GetChannelList())
 			if not num then break end
-			if strlowerCache[name] == strlowerCache[data.Location] then
-				SendChatMessage(Text, data.Channel, nil, num)
+			if strlowerCache[name] == strlowerCache[eventSettings.Location] then
+				SendChatMessage(Text, eventSettings.Channel, nil, num)
 				break
 			end
 		end
@@ -397,10 +383,10 @@ Announcements:RegisterEventHandlerDataNonSpecific(70, "FRAME", {
 			i = i + 1
 		end
 	end,
-	handler = function(icon, data, Text)
-		local Location = data.Location
+	handler = function(icon, eventSettings, Text)
+		local Location = eventSettings.Location
 
-		if data.ShowIconTex then
+		if eventSettings.ShowIconTex then
 			Text = "|T" .. (icon.attributes.texture or "") .. ":0|t " .. Text
 		end
 
@@ -408,7 +394,7 @@ Announcements:RegisterEventHandlerDataNonSpecific(70, "FRAME", {
 		while _G["ChatFrame"..i] do
 			local frame = _G["ChatFrame"..i]
 			if Location == frame.name then
-				frame:AddMessage(Text, data.r, data.g, data.b, 1)
+				frame:AddMessage(Text, TMW:StringToRGBA(eventSettings.TextColor))
 				break
 			end
 			i = i+1
@@ -416,7 +402,7 @@ Announcements:RegisterEventHandlerDataNonSpecific(70, "FRAME", {
 	end,
 })
 
-local bullshitTable = {}
+local empty = {}
 Announcements:RegisterEventHandlerDataNonSpecific(71, "RAID_WARNING_FAKE", {
 	text = L["RAID_WARNING_FAKE"],
 	desc = L["RAID_WARNING_FAKE_DESC"],
@@ -427,19 +413,20 @@ Announcements:RegisterEventHandlerDataNonSpecific(71, "RAID_WARNING_FAKE", {
 		"TextDuration",
 	},
 
-	handler = function(icon, data, Text)
-		local Location = data.Location
+	handler = function(icon, eventSettings, Text)
+		local Location = eventSettings.Location
 
-		if data.ShowIconTex then
+		if eventSettings.ShowIconTex then
 			Text = "|T" .. (icon.attributes.texture or "") .. ":0|t " .. Text
 		end
 
 		-- GLOBALS: RaidWarningFrame, RaidNotice_AddMessage
 		
 		-- workaround: blizzard's code doesnt manage colors correctly when there are 2 messages being displayed with different colors.
-		Text = ("|cff%02x%02x%02x"):format(data.r * 0xFF, data.g * 0xFF, data.b * 0xFF) .. Text .. "|r"
+		-- The gsub here is so that text that appears after a link of some kind will be the correct color instead of black (caused by the |r at the end of the link).
+		Text = "|c" .. eventSettings.TextColor .. Text:gsub("|r", "|c" .. eventSettings.TextColor) .. "|r"
 
-		RaidNotice_AddMessage(RaidWarningFrame, Text, bullshitTable, data.TextDuration) -- arg3 still demands a valid table for the color info, even if it is empty
+		RaidNotice_AddMessage(RaidWarningFrame, Text, empty, eventSettings.TextDuration) -- arg3 still demands a valid table for the color info, even if it is empty
 		
 	end,
 })
@@ -453,17 +440,16 @@ Announcements:RegisterEventHandlerDataNonSpecific(72, "ERRORS_FRAME", {
 		"Color",
 	},
 
-	handler = function(icon, data, Text)
-		if data.ShowIconTex then
+	handler = function(icon, eventSettings, Text)
+		if eventSettings.ShowIconTex then
 			Text = "|T" .. (icon.attributes.texture or "") .. ":0|t " .. Text
 		end
 
 		-- GLOBALS: UIErrorsFrame
-		UIErrorsFrame:AddMessage(Text, data.r, data.g, data.b, 1)
+		UIErrorsFrame:AddMessage(Text, TMW:StringToRGBA(eventSettings.TextColor))
 	end,
 })
 
-local sctcolor = {r=1, b=1, g=1}
 Announcements:RegisterEventHandlerDataNonSpecific(81, "SCT", {
 	-- GLOBALS: SCT
 	text = "Scrolling Combat Text",
@@ -499,10 +485,10 @@ Announcements:RegisterEventHandlerDataNonSpecific(81, "SCT", {
 		if not SCT then return end
 		return Announcements.AllSubHandlersByIdentifier.SCT.frames[value]
 	end,
-	handler = function(icon, data, Text)
+	handler = function(icon, eventSettings, Text)
 		if SCT then
-			sctcolor.r, sctcolor.g, sctcolor.b = data.r, data.g, data.b
-			SCT:DisplayCustomEvent(Text, sctcolor, data.Sticky, data.Location, nil, data.ShowIconTex and icon.attributes.texture)
+			local color = TMW:StringToCachedRGBATable(eventSettings.TextColor)
+			SCT:DisplayCustomEvent(Text, color, eventSettings.Sticky, eventSettings.Location, nil, eventSettings.ShowIconTex and icon.attributes.texture)
 		end
 	end,
 })
@@ -537,11 +523,13 @@ Announcements:RegisterEventHandlerDataNonSpecific(83, "MSBT", {
 			return MikSBT and select(2, MikSBT:IterateScrollAreas())[value]
 		end
 	end,
-	handler = function(icon, data, Text)
+	handler = function(icon, eventSettings, Text)
 		if MikSBT then
-			local Size = data.Size
+			local Size = eventSettings.Size
 			if Size == 0 then Size = nil end
-			MikSBT.DisplayMessage(Text, data.Location, data.Sticky, data.r*0xFF, data.g*0xFF, data.b*0xFF, Size, nil, nil, data.ShowIconTex and icon.attributes.texture)
+
+			local c = TMW:StringToCachedRGBATable(eventSettings.TextColor)
+			MikSBT.DisplayMessage(Text, eventSettings.Location, eventSettings.Sticky, c.r*0xFF, c.g*0xFF, c.b*0xFF, Size, nil, nil, eventSettings.ShowIconTex and icon.attributes.texture)
 		end
 	end,
 })
@@ -576,11 +564,13 @@ Announcements:RegisterEventHandlerDataNonSpecific(85, "PARROT", {
 			return (Parrot.GetScrollAreasChoices and Parrot:GetScrollAreasChoices() or Parrot:GetScrollAreasValidate())[value]
 		end
 	end,
-	handler = function(icon, data, Text)
+	handler = function(icon, eventSettings, Text)
 		if Parrot then
-			local Size = data.Size
+			local Size = eventSettings.Size
 			if Size == 0 then Size = nil end
-			Parrot:ShowMessage(Text, data.Location, data.Sticky, data.r, data.g, data.b, nil, Size, nil, data.ShowIconTex and icon.attributes.texture)
+
+			local c = TMW:StringToCachedRGBATable(eventSettings.TextColor)
+			Parrot:ShowMessage(Text, eventSettings.Location, eventSettings.Sticky, c.r, c.g, c.b, nil, Size, nil, eventSettings.ShowIconTex and icon.attributes.texture)
 		end
 	end,
 })
@@ -595,8 +585,8 @@ Announcements:RegisterEventHandlerDataNonSpecific(88, "FCT", {
 		"Color",
 	},
 
-	handler = function(icon, data, Text)
-		if data.ShowIconTex then
+	handler = function(icon, eventSettings, Text)
+		if eventSettings.ShowIconTex then
 			Text = "|T" .. (icon.attributes.texture or "") .. ":20:20:-5|t " .. Text
 		end
 		if SHOW_COMBAT_TEXT ~= "0" then
@@ -604,7 +594,9 @@ Announcements:RegisterEventHandlerDataNonSpecific(88, "FCT", {
 				-- GLOBALS: UIParentLoadAddOn
 				UIParentLoadAddOn("Blizzard_CombatText")
 			end
-			CombatText_AddMessage(Text, CombatText_StandardScroll, data.r, data.g, data.b, data.Sticky and "crit" or nil, false)
+
+			local c = TMW:StringToCachedRGBATable(eventSettings.TextColor)
+			CombatText_AddMessage(Text, CombatText_StandardScroll, c.r, c.g, c.b, eventSettings.Sticky and "crit" or nil, false)
 		end
 	end,
 })

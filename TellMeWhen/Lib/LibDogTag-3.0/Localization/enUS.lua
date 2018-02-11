@@ -1,5 +1,5 @@
 local MAJOR_VERSION = "LibDogTag-3.0"
-local MINOR_VERSION = 90000 + tonumber(("$Revision: 203 $"):match("%d+")) or 0
+local MINOR_VERSION = 90000 + (tonumber(("@file-date-integer@"):match("%d+")) or 33333333333333)
 
 _G.DogTag_MINOR_VERSION = MINOR_VERSION
 

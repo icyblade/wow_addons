@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -55,6 +55,7 @@ UNITS.Units = {
 	{ value = "mouseover",			text = L["ICONMENU_MOUSEOVER"]										},
 	{ value = "mouseovertarget",	text = L["ICONMENU_MOUSEOVERTARGET"]								},
 	{ value = "vehicle",			text = L["ICONMENU_VEHICLE"]										},
+	{ value = "nameplate",			text = L["ICONMENU_NAMEPLATE"],	range = 30							},
 	{ value = "party",				text = PARTY,				range = MAX_PARTY_MEMBERS				},
 	{ value = "raid",				text = RAID,				range = MAX_RAID_MEMBERS				},
 	{ value = "group",				text = GROUP,				range = MAX_RAID_MEMBERS,	desc = L["ICONMENU_GROUPUNIT_DESC"]	},
@@ -113,6 +114,7 @@ local UnitSet = TMW:NewClass("UnitSet"){
 		self.Conditions = Conditions
 		self.parent = parent
 		
+		self.UnitsLookup = {}
 		self.unitSettings = unitSettings
 		self.originalUnits = UNITS:GetOriginalUnitTable(unitSettings)
 		self.updateEvents = {PLAYER_ENTERING_WORLD = true,}
@@ -123,6 +125,7 @@ local UnitSet = TMW:NewClass("UnitSet"){
 		-- determine the operations that the set needs to stay updated
 		for k, unit in ipairs(self.originalUnits) do
 			unit = tostring(unit)
+
 			if unit == "player" then
 			--	UNITS.unitsWithExistsEvent[unit] = true -- doesnt really have an event, but do this for external checks of unitsWithExistsEvent to increase efficiency.
 			-- if someone legitimately entered "playertarget" then they probably dont deserve to have increased eficiency... dont bother handling player as a base unit
@@ -183,6 +186,16 @@ local UnitSet = TMW:NewClass("UnitSet"){
 				UNITS.unitsWithBaseExistsEvent[unit] = unit:match("^(arena%d+)")
 				self.allUnitsChangeOnEvent = false
 
+			elseif unit:find("^nameplate%d+$") then -- the unit exactly
+				self.updateEvents.NAME_PLATE_UNIT_ADDED = true
+				self.updateEvents.NAME_PLATE_UNIT_REMOVED = true
+				UNITS.unitsWithExistsEvent[unit] = true
+			elseif unit:find("^nameplate%d+") then -- the unit as a base, with something else tacked onto it.
+				self.updateEvents.NAME_PLATE_UNIT_ADDED = true
+				self.updateEvents.NAME_PLATE_UNIT_REMOVED = true
+				UNITS.unitsWithBaseExistsEvent[unit] = unit:match("^(nameplate%d+)")
+				self.allUnitsChangeOnEvent = false
+
 			elseif unit:find("^maintank") or unit:find("^mainassist") then
 				self.updateEvents["GROUP_ROSTER_UPDATE"] = true
 
@@ -209,6 +222,16 @@ local UnitSet = TMW:NewClass("UnitSet"){
 					self.allUnitsChangeOnEvent = false
 					UNITS.unitsWithBaseExistsEvent[unit] = unit:match("^(group%d+)")
 				end
+
+			elseif unit:find("^vehicle") then
+				-- TODO: This isn't strictly true.
+				-- There might actually be events that work, but I don't feel like finding them at the moment.
+				self.allUnitsChangeOnEvent = false
+
+			elseif unit:find("^mouseover") then
+				-- There is a unit when you gain a mouseover, but there isn't one when you lose it, so we can't have events for this one.
+				self.allUnitsChangeOnEvent = false
+				
 			else
 				-- we found a unit and we dont really know what the fuck it is.
 				-- it MIGHT be a player name (or a derrivative thereof),
@@ -268,9 +291,10 @@ local UnitSet = TMW:NewClass("UnitSet"){
 		end
 	end,
 
-	Update = function(self)
-		local originalUnits, exposedUnits, translatedUnits =
+	Update = function(self, forceNoExists)
+		local originalUnits,      exposedUnits,      translatedUnits =
 		      self.originalUnits, self.exposedUnits, self.translatedUnits
+		local UnitsLookup = self.UnitsLookup
 		local hasSpecialUnitRefs = self.hasSpecialUnitRefs
 		local mightHaveWackyUnitRefs = self.mightHaveWackyUnitRefs
 
@@ -321,6 +345,9 @@ local UnitSet = TMW:NewClass("UnitSet"){
 					-- If it was subbed, its a string, and if it didnt need to be subbed, it will be nil.
 					subbedUnit ~= false
 
+					-- Don't expose the unit if the caller knows that this unit actually doesn't exist.
+				and forceNoExists ~= unit
+				
 					-- Don't expose the unit if it has conditions and those conditions failed
 				and (not ConditionObjects or not ConditionObjects[k] or not ConditionObjects[k].Failed)
 
@@ -331,6 +358,8 @@ local UnitSet = TMW:NewClass("UnitSet"){
 			then
 				if exposedUnits[exposed_len+1] ~= unit then
 					exposedUnits[exposed_len+1] = unit
+
+					UnitsLookup[unit] = true
 					changed = true
 				end
 				exposed_len = exposed_len + 1
@@ -339,6 +368,7 @@ local UnitSet = TMW:NewClass("UnitSet"){
 
 		-- Clear out the rest of the table.
 		for k = exposed_len+1, #exposedUnits do
+			UnitsLookup[exposedUnits[k]] = nil
 			exposedUnits[k] = nil
 		end
 
@@ -350,6 +380,8 @@ local UnitSet = TMW:NewClass("UnitSet"){
 		if changed then
 			TMW:Fire("TMW_UNITSET_UPDATED", self)
 		end
+
+		return changed
 	end,
 }
 
@@ -524,7 +556,7 @@ function UNITS:UpdateGroupedPlayersMap()
 	end
 end
 
-function UNITS:OnEvent(event, ...)
+function UNITS:OnEvent(event, arg1)
 
 	if (event == "GROUP_ROSTER_UPDATE" or event == "RAID_ROSTER_UPDATE") and UNITS.doTankAndAssistMap then
 		UNITS:UpdateTankAndAssistMap()
@@ -539,13 +571,22 @@ function UNITS:OnEvent(event, ...)
 		UNITS:UpdateGroupedPlayersMap()
 	end
 
+	-- NAME_PLATE_UNIT_REMOVED fires while UnitExists is still true for the unit.
+	-- We will pass this to Update() to force it to be treated as not existing.
+	local forceNoExists = event == "NAME_PLATE_UNIT_REMOVED" and arg1
+
 	local instances = UnitSet.instances
 	for i = 1, #instances do
 		local unitSet = instances[i]
 		if unitSet.updateEvents[event] then
-			unitSet:Update()
+			if not unitSet:Update(forceNoExists) then
+				-- If the units in the UnitSet didn't change, still fire a TMW_UNITSET_UPDATED to signal that they may have shuffled around a bit
+				-- (for example, the player changed target, or raid members moved around)
+				TMW:Fire("TMW_UNITSET_UPDATED", unitSet)
+			end
 		end
 	end
+	forceNoExists = nil
 end
 
 function UNITS:SubstituteSpecialUnit(oldunit)
@@ -557,7 +598,8 @@ function UNITS:SubstituteSpecialUnit(oldunit)
 		else
 			local oldnumber = tonumber(strmatch(oldunit, "(%d+)")) -- the old number (1)
 			if oldnumber == 1 then
-				return "player"
+				newunit = gsub(oldunit, "group", "player") -- the new unit (party1) (number not changed yet)
+				newunit = gsub(newunit, oldnumber, "", 1)
 			else
 				newunit = gsub(oldunit, "group", "party") -- the new unit (party1) (number not changed yet)
 				newunit = gsub(newunit, oldnumber, oldnumber - 1, 1)

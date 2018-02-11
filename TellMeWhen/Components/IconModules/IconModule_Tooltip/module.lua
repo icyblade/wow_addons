@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -22,10 +22,6 @@ local Module = TMW:NewClass("IconModule_Tooltip", "IconModule")
 local title_default = function(icon)
 	
 	local line1 = "TellMeWhen " .. icon:GetIconName()
-		
-	if icon.group.Locked then
-		line1 = line1 .. " (" .. L["LOCKED"] .. ")"
-	end
 	
 	return line1
 end
@@ -69,14 +65,25 @@ Module:SetScriptHandler("OnEnter", function(Module, icon)
 		TMW:TT_Anchor(icon)
 		GameTooltip:AddLine(TMW.get(Module.title, icon), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, false)
 		
+			
+		local GroupPosition = icon.group:GetModuleOrModuleChild("GroupModule_GroupPosition")
+		if GroupPosition and not GroupPosition:CanMove() then
+			GameTooltip:AddLine(L["LOCKED2"], NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+		end
+		
 		if icon:IsControlled() then
 			GameTooltip:AddLine(L["ICON_TOOLTIP_CONTROLLED"], NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
 		else
 			GameTooltip:AddLine(TMW.get(Module.text, icon), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, false)
 		end
 
-		if TMW.DOGTAG.AcceptingIcon then
-			GameTooltip:AddLine(L["DT_INSERTGUID_TOOLTIP"], NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, false)
+		local currentFocus = GetCurrentKeyBoardFocus()
+		if currentFocus and currentFocus.GetAcceptsTMWLinks then
+			local accepts, linkDesc = currentFocus:GetAcceptsTMWLinks()
+			if accepts then
+				GameTooltip:AddLine(" ")
+				GameTooltip:AddLine(linkDesc, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, false)
+			end
 		end
 
 		if icon:IsGroupController() then

@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -37,15 +37,17 @@ Type.unitType = "unitid"
 Type.hasNoGCD = true
 Type.canControlGroup = true
 
+local STATE_PRESENT = TMW.CONST.STATE.DEFAULT_SHOW
+local STATE_ABSENT = TMW.CONST.STATE.DEFAULT_HIDE
 
 -- AUTOMATICALLY GENERATED: UsesAttributes
-Type:UsesAttributes("unit, GUID")
+Type:UsesAttributes("state")
 Type:UsesAttributes("spell")
-Type:UsesAttributes("stack, stackText")
+Type:UsesAttributes("unit, GUID")
 Type:UsesAttributes("reverse")
 Type:UsesAttributes("auraSourceUnit, auraSourceGUID")
 Type:UsesAttributes("start, duration")
-Type:UsesAttributes("alpha")
+Type:UsesAttributes("stack, stackText")
 Type:UsesAttributes("texture")
 -- END AUTOMATICALLY GENERATED: UsesAttributes
 
@@ -88,9 +90,9 @@ Type:RegisterIconDefaults{
 Type:RegisterConfigPanel_XMLTemplate(100, "TellMeWhen_ChooseName", {
 	OnSetup = function(self, panelInfo, supplementalData)
 		if TMW.CI.icon:IsGroupController() then
-			self:SetLabels(L["ICONMENU_CHOOSENAME2"] .. " " .. L["ICONMENU_CHOOSENAME_ORBLANK"], nil)
+			self:SetTexts(L["ICONMENU_CHOOSENAME3"] .. " " .. L["ICONMENU_CHOOSENAME_ORBLANK"], L["CHOOSENAME_DIALOG"])
 		else
-			self:SetLabels(L["ICONMENU_CHOOSENAME2"], nil)
+			self:SetTexts(L["ICONMENU_CHOOSENAME3"], L["CHOOSENAME_DIALOG"])
 		end
 	end,
 
@@ -102,111 +104,138 @@ Type:RegisterConfigPanel_XMLTemplate(105, "TellMeWhen_Unit", {
 })
 
 Type:RegisterConfigPanel_ConstructorFunc(120, "TellMeWhen_BuffOrDebuff", function(self)
-	self.Header:SetText(TMW.L["ICONMENU_BUFFTYPE"])
-	TMW.IE:BuildSimpleCheckSettingFrame(self, {
+	self:SetTitle(TMW.L["ICONMENU_BUFFTYPE"])
+	self:BuildSimpleCheckSettingFrame({
 		numPerRow = 3,
-		{
-			setting = "BuffOrDebuff",
-			value = "HELPFUL",
-			title = "|cFF00FF00" .. L["ICONMENU_BUFF"],
-		},
-		{
-			setting = "BuffOrDebuff",
-			value = "HARMFUL",
-			title = "|cFFFF0000" .. L["ICONMENU_DEBUFF"],
-		},
-		{
-			setting = "BuffOrDebuff",
-			value = "EITHER",
-			title = L["ICONMENU_BOTH"],
-		},
+		function(check)
+			check:SetTexts("|cFF00FF00" .. L["ICONMENU_BUFF"], nil)
+			check:SetSetting("BuffOrDebuff", "HELPFUL")
+		end,
+		function(check)
+			check:SetTexts("|cFFFF0000" .. L["ICONMENU_DEBUFF"], nil)
+			check:SetSetting("BuffOrDebuff", "HARMFUL")
+		end,
+		function(check)
+			check:SetTexts(L["ICONMENU_BOTH"], nil)
+			check:SetSetting("BuffOrDebuff", "EITHER")
+		end,
 	})
 end)
 
 Type:RegisterConfigPanel_ConstructorFunc(125, "TellMeWhen_BuffSettings", function(self)
-	self.Header:SetText(Type.name)
-	TMW.IE:BuildSimpleCheckSettingFrame(self, {
-		{
-			setting = "OnlyMine",
-			title = L["ICONMENU_ONLYMINE"],
-			tooltip = L["ICONMENU_ONLYMINE_DESC"],
-		},
-		{
-			setting = "Stealable",
-			title = L["ICONMENU_STEALABLE"],
-			tooltip = L["ICONMENU_STEALABLE_DESC"],
-		},
-		{
-			setting = "HideIfNoUnits",
-			title = L["ICONMENU_HIDENOUNITS"],
-			tooltip = L["ICONMENU_HIDENOUNITS_DESC"],
-		},
-	})
-
-	self.ShowTTText = TMW.C.Config_DropDownMenu:New("Frame", "$parentShowTTText", self, "TMW_DropDownMenuTemplate", nil, {
-		title = L["ICONMENU_SHOWTTTEXT2"],
-		tooltip = L["ICONMENU_SHOWTTTEXT_DESC2"],
-		clickFunc = function(button, arg1)
-			TMW.CI.ics.ShowTTText = arg1
-			TMW.IE:Load(1)
+	self:SetTitle(Type.name)
+	self:BuildSimpleCheckSettingFrame({
+		function(check)
+			check:SetTexts(L["ICONMENU_ONLYMINE"], L["ICONMENU_ONLYMINE_DESC"])
+			check:SetSetting("OnlyMine")
 		end,
-		func = function(self)
-			local info = TMW.DD:CreateInfo()
-			info.text = L["ICONMENU_SHOWTTTEXT_STACKS"]
-			info.tooltipTitle = info.text
-			info.tooltipText = L["ICONMENU_SHOWTTTEXT_STACKS_DESC"]
-			info.func = self.data.clickFunc
-			info.arg1 = false
-			info.checked = info.arg1 == TMW.CI.ics.ShowTTText
-			TMW.DD:AddButton(info)
-
-			local info = TMW.DD:CreateInfo()
-			info.text = L["ICONMENU_SHOWTTTEXT_FIRST"]
-			info.tooltipTitle = info.text
-			info.tooltipText = L["ICONMENU_SHOWTTTEXT_FIRST_DESC"]
-			info.func = self.data.clickFunc
-			info.arg1 = true
-			info.checked = info.arg1 == TMW.CI.ics.ShowTTText
-			TMW.DD:AddButton(info)
-
-			TMW.DD:AddSpacer()
-
-			for _, var in TMW:Vararg(1, 2, 3) do
-				local info = TMW.DD:CreateInfo()
-				info.text = L["ICONMENU_SHOWTTTEXT_VAR"]:format(var)
-				info.tooltipTitle = info.text
-				info.tooltipText = L["ICONMENU_SHOWTTTEXT_VAR_DESC"]
-				info.func = self.data.clickFunc
-				info.arg1 = var
-				info.checked = info.arg1 == TMW.CI.ics.ShowTTText
-				TMW.DD:AddButton(info)
-			end
+		function(check)
+			check:SetTexts(L["ICONMENU_STEALABLE"], L["ICONMENU_STEALABLE_DESC"])
+			check:SetSetting("Stealable")
+		end,
+		function(check)
+			check:SetTexts(L["ICONMENU_HIDENOUNITS"], L["ICONMENU_HIDENOUNITS_DESC"])
+			check:SetSetting("HideIfNoUnits")
 		end,
 	})
 
-	TMW:RegisterCallback("TMW_CONFIG_PANEL_SETUP", function(event, frame, panelInfo)
-		if frame == self then
-			self.ShowTTText:SetText((TMW.CI.ics.ShowTTText ~= false and "|cffff5959" or "") .. L["ICONMENU_SHOWTTTEXT2"])
+	local function OnClick(button, arg1)
+		TMW.CI.ics.ShowTTText = arg1
+		TMW.IE:LoadIcon(1)
+	end
+	self.ShowTTText = TMW.C.Config_DropDownMenu:New("Frame", "$parentShowTTText", self, "TMW_DropDownMenuTemplate")
+	self.ShowTTText:SetTexts(L["ICONMENU_SHOWTTTEXT2"], L["ICONMENU_SHOWTTTEXT_DESC2"])
+	self.ShowTTText:SetWidth(135)
+	--self.ShowTTText:SetDropdownAnchor("TOPRIGHT", self.ShowTTText.Middle, "BOTTOMRIGHT")
+	self.ShowTTText:SetFunction(function(self)
+		local info = TMW.DD:CreateInfo()
+		info.text = L["ICONMENU_SHOWTTTEXT_STACKS"]
+		info.tooltipTitle = info.text
+		info.tooltipText = L["ICONMENU_SHOWTTTEXT_STACKS_DESC"]
+		info.func = OnClick
+		info.arg1 = false
+		info.checked = info.arg1 == TMW.CI.ics.ShowTTText
+		TMW.DD:AddButton(info)
+
+		local info = TMW.DD:CreateInfo()
+		info.text = L["ICONMENU_SHOWTTTEXT_FIRST"]
+		info.tooltipTitle = info.text
+		info.tooltipText = L["ICONMENU_SHOWTTTEXT_FIRST_DESC"]
+		info.func = OnClick
+		info.arg1 = true
+		info.checked = info.arg1 == TMW.CI.ics.ShowTTText
+		TMW.DD:AddButton(info)
+
+		TMW.DD:AddSpacer()
+
+		for _, var in TMW:Vararg(1, 2, 3) do
+			local info = TMW.DD:CreateInfo()
+			info.text = L["ICONMENU_SHOWTTTEXT_VAR"]:format(var)
+			info.tooltipTitle = info.text
+			info.tooltipText = L["ICONMENU_SHOWTTTEXT_VAR_DESC"]
+			info.func = OnClick
+			info.arg1 = var
+			info.checked = info.arg1 == TMW.CI.ics.ShowTTText
+			TMW.DD:AddButton(info)
 		end
 	end)
 
-	self.ShowTTText:SetWidth(135)
-	self.ShowTTText:SetDropdownAnchor("TOPRIGHT", self.ShowTTText.Middle, "BOTTOMRIGHT")
+	self:CScriptAdd("ReloadRequested", function(self, panel, panelInfo)
+		self.ShowTTText:SetText((TMW.CI.ics.ShowTTText ~= false and "|cffff5959" or "") .. L["ICONMENU_SHOWTTTEXT2"])
+	end)
+
 	TMW.IE:DistributeFrameAnchorsLaterally(self, 2, self.HideIfNoUnits, self.ShowTTText)
+	self.ShowTTText:ClearAllPoints()
+	self.ShowTTText:SetPoint("TOPLEFT", self.Stealable, "BOTTOMLEFT", 4, 0)
+	self.ShowTTText:SetPoint("RIGHT", -7, 0)
 	self.HideIfNoUnits:ConstrainLabel(self.ShowTTText)
 end)
 
-Type:RegisterConfigPanel_XMLTemplate(165, "TellMeWhen_WhenChecks", {
-	text = L["ICONMENU_SHOWWHEN"],
-	[ 0x2 ] = { text = "|cFF00FF00" .. L["ICONMENU_PRESENTONANY"], 	tooltipText = L["ICONMENU_PRESENTONANY_DESC"],	},
-	[ 0x1 ] = { text = "|cFFFF0000" .. L["ICONMENU_ABSENTONALL"], 	tooltipText = L["ICONMENU_ABSENTONALL_DESC"],	},
+Type:RegisterConfigPanel_XMLTemplate(165, "TellMeWhen_IconStates", {
+	[ STATE_PRESENT ] = { text = "|cFF00FF00" .. L["ICONMENU_PRESENTONANY"], tooltipText = L["ICONMENU_PRESENTONANY_DESC"],	},
+	[ STATE_ABSENT  ] = { text = "|cFFFF0000" .. L["ICONMENU_ABSENTONALL"],  tooltipText = L["ICONMENU_ABSENTONALL_DESC"],	},
 })
 
-Type:RegisterConfigPanel_XMLTemplate(170, "TellMeWhen_SortSettingsWithStacks", {
-	hidden = function(self)
-		return TMW.CI.icon:IsGroupController()
-	end,
-})
+Type:RegisterConfigPanel_ConstructorFunc(170, "TellMeWhen_SortSettingsWithStacks", function(self)
+	self:SetTitle(TMW.L["SORTBY"])
+	self:BuildSimpleCheckSettingFrame({
+		numPerRow = 3,
+		function(check)
+			check:SetTexts(TMW.L["SORTBYNONE_DURATION"], TMW.L["SORTBYNONE_DESC"])
+			check:SetSetting("Sort", false)
+		end,
+		function(check)
+			check:SetTexts(TMW.L["ICONMENU_SORTASC"], TMW.L["ICONMENU_SORTASC_DESC"])
+			check:SetSetting("Sort", -1)
+		end,
+		function(check)
+			check:SetTexts(TMW.L["ICONMENU_SORTDESC"], TMW.L["ICONMENU_SORTDESC_DESC"])
+			check:SetSetting("Sort", 1)
+		end,
+
+		function(check)
+			check:SetTexts(TMW.L["SORTBYNONE_STACKS"], TMW.L["SORTBYNONE_DESC"])
+			check:SetSetting("StackSort", false)
+		end,
+		function(check)
+			check:SetTexts(TMW.L["ICONMENU_SORT_STACKS_ASC"], TMW.L["ICONMENU_SORT_STACKS_ASC_DESC"])
+			check:SetSetting("StackSort", -1)
+		end,
+		function(check)
+			check:SetTexts(TMW.L["ICONMENU_SORT_STACKS_DESC"], TMW.L["ICONMENU_SORT_STACKS_DESC_DESC"])
+			check:SetSetting("StackSort", 1)
+		end,
+	})
+
+	self:CScriptAdd("DescendantSettingSaved", function()
+		local settings = self:GetSettingTable()
+		if settings.StackSort then
+			settings.Sort = false
+		elseif settings.Sort then
+			settings.StackSort = false
+		end
+	end)
+end)
 
 
 
@@ -219,15 +248,9 @@ local NOT_ACTUALLY_SPELLSTEALABLE = {
 
 
 local function Buff_OnEvent(icon, event, arg1)
-	if event == "UNIT_AURA" then
-		-- See if the icon is checking the unit. If so, schedule an update for the icon.
-		local Units = icon.Units
-		for u = 1, #Units do
-			if arg1 == Units[u] then
-				icon.NextUpdateTime = 0
-				return
-			end
-		end
+	if event == "UNIT_AURA" and icon.UnitSet.UnitsLookup[arg1] then
+		-- If the icon is checking the unit, schedule an update for the icon.
+		icon.NextUpdateTime = 0
 	elseif event == "TMW_UNITSET_UPDATED" and arg1 == icon.UnitSet then
 		-- A unit was just added or removed from icon.Units, so schedule an update.
 		icon.NextUpdateTime = 0
@@ -267,7 +290,7 @@ local function Buff_OnUpdate(icon, time)
 				local useFilter = Filter
 
 				while true do
-					local _buffName, _, _iconTexture, _count, _dispelType, _duration, _expirationTime, _caster, canSteal, _, _id, _, _, _, _v1, _v2, _v3 = UnitAura(unit, index, useFilter)
+					local _buffName, _, _iconTexture, _count, _dispelType, _duration, _expirationTime, _caster, canSteal, _, _id, _, _, _, _, _, _v1, _v2, _v3 = UnitAura(unit, index, useFilter)
 					index = index + 1
 					
 					-- Bugfix: Enraged is an empty string.
@@ -325,9 +348,9 @@ local function Buff_OnUpdate(icon, time)
 				for i = 1, #NameArray do
 					local iName = NameArray[i]
 
-					buffName, _, iconTexture, count, _, duration, expirationTime, caster, canSteal, _, id, _, _, _, v1, v2, v3 = UnitAura(unit, NameStringArray[i], nil, Filter)
+					buffName, _, iconTexture, count, _, duration, expirationTime, caster, canSteal, _, id, _, _, _, _, _, v1, v2, v3 = UnitAura(unit, NameStringArray[i], nil, Filter)
 					if Filterh and not buffName then
-						buffName, _, iconTexture, count, _, duration, expirationTime, caster, canSteal, _, id, _, _, _, v1, v2, v3 = UnitAura(unit, NameStringArray[i], nil, Filterh)
+						buffName, _, iconTexture, count, _, duration, expirationTime, caster, canSteal, _, id, _, _, _, _, _, v1, v2, v3 = UnitAura(unit, NameStringArray[i], nil, Filterh)
 					end
 
 					if buffName and id ~= iName and isNumber[iName] then
@@ -338,7 +361,7 @@ local function Buff_OnUpdate(icon, time)
 						local useFilter = Filter
 
 						while true do
-							buffName, _, iconTexture, count, _, duration, expirationTime, caster, canSteal, _, id, _, _, _, v1, v2, v3 = UnitAura(unit, index, useFilter)
+							buffName, _, iconTexture, count, _, duration, expirationTime, caster, canSteal, _, id, _, _, _, _, _, v1, v2, v3 = UnitAura(unit, index, useFilter)
 							index = index + 1
 
 							if not id then
@@ -396,7 +419,7 @@ local function Buff_OnUpdate_Controller(icon, time)
 			local filter = Filter
 
 			while true do
-				local buffName, _, iconTexture, count, dispelType, duration, expirationTime, caster, canSteal, _, id, _, _, _, v1, v2, v3 = UnitAura(unit, index, filter)
+				local buffName, _, iconTexture, count, dispelType, duration, expirationTime, caster, canSteal, _, id, _, _, _, _, _, v1, v2, v3 = UnitAura(unit, index, filter)
 				index = index + 1
 				
 				-- Bugfix: Enraged is an empty string.
@@ -457,8 +480,8 @@ function Type:HandleYieldedInfo(icon, iconToSet, unit, buffName, iconTexture, co
 			end
 		end
 
-		iconToSet:SetInfo("alpha; texture; start, duration; stack, stackText; spell; unit, GUID; auraSourceUnit, auraSourceGUID",
-			icon.Alpha,
+		iconToSet:SetInfo("state; texture; start, duration; stack, stackText; spell; unit, GUID; auraSourceUnit, auraSourceGUID",
+			STATE_PRESENT,
 			iconTexture,
 			expirationTime - duration, duration,
 			count, count,
@@ -468,7 +491,7 @@ function Type:HandleYieldedInfo(icon, iconToSet, unit, buffName, iconTexture, co
 		)
 
 	elseif not Units[1] and icon.HideIfNoUnits then
-		iconToSet:SetInfo("alpha; texture; start, duration; stack, stackText; spell; unit, GUID; auraSourceUnit, auraSourceGUID",
+		iconToSet:SetInfo("state; texture; start, duration; stack, stackText; spell; unit, GUID; auraSourceUnit, auraSourceGUID",
 			0,
 			icon.FirstTexture,
 			0, 0,
@@ -479,8 +502,8 @@ function Type:HandleYieldedInfo(icon, iconToSet, unit, buffName, iconTexture, co
 		)
 
 	else
-		iconToSet:SetInfo("alpha; texture; start, duration; stack, stackText; spell; unit, GUID; auraSourceUnit, auraSourceGUID",
-			icon.UnAlpha,
+		iconToSet:SetInfo("state; texture; start, duration; stack, stackText; spell; unit, GUID; auraSourceUnit, auraSourceGUID",
+			STATE_ABSENT,
 			icon.FirstTexture,
 			0, 0,
 			nil, nil,
@@ -582,7 +605,7 @@ function Type:Setup(icon)
 	-- Sorting is only handled if this value is true.
 	-- EffThreshold is a value that determines if we will switch to iterating by index instead of
 	-- iterating by spell if we are checking a large number of spells.
-	if icon.DurationSort or icon.StackSort or #icon.Spells.Array > TMW.db.profile.EffThreshold then
+	if icon.Sort or icon.StackSort or #icon.Spells.Array > TMW.db.global.EffThreshold then
 		icon.buffdebuff_iterateByAuraIndex = true
 	end
 
@@ -631,10 +654,6 @@ function Type:Setup(icon)
 	if icon.UnitSet.allUnitsChangeOnEvent then
 		icon:SetUpdateMethod("manual")
 		
-		for event in pairs(icon.UnitSet.updateEvents) do
-			icon:RegisterSimpleUpdateEvent(event)
-		end
-	
 		icon:RegisterEvent("UNIT_AURA")
 	
 		icon:SetScript("OnEvent", Buff_OnEvent)

@@ -1,4 +1,4 @@
-﻿<Ui>
+<Ui>
 
 	<EditBox name="TellMeWhen_UnitEditBox" inherits="TellMeWhen_InputBoxTemplate" virtual="true" multiline="true" autoFocus="false">
 		<Size y="15"/>

@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -43,5 +43,5 @@ end
 function Texture:TEXTURE(icon, texture)
 	self.texture:SetTexture(texture)
 end
-Texture:SetDataListner("TEXTURE")
+Texture:SetDataListener("TEXTURE")
 	

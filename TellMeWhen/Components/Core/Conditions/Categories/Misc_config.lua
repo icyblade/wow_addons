@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -21,32 +21,18 @@ local print = TMW.print
 
 
 
+-- Lua condition icon editor
 TMW:RegisterCallback("TMW_CNDT_GROUP_DRAWGROUP", function(event, CndtGroup, conditionData, conditionSettings)
+	CndtGroup.Lua:Hide()
 	if conditionData and conditionData.identifier == "LUA" then
-		if not CndtGroup.EditBox.HookedGUIDInsertion then 
-
-			TMW.Classes.ChatEdit_InsertLink_Hook:New(CndtGroup.EditBox, function(self, text, linkType, linkData)
-				-- if this editbox is active and is for a Lua condition,
-				-- attempt to insert a reference to it by GUID to insert into the editbox
-
-				if linkType == "TMW" and TMW.CNDT.settings[CndtGroup:GetID()].Type == "LUA" then
-					-- Reconstruct the GUID
-					local GUID = linkType .. ":" .. linkData
-
-					self.editbox:Insert(("TMW:GetDataOwner(%q)"):format(GUID))
-
-					-- notify success
-					return true
-				end
-			end)
-
-			CndtGroup.EditBox.HookedGUIDInsertion = true
-		end
+		CndtGroup.Lua:Show()
+		CndtGroup:AddRow(CndtGroup.Lua)
 	end
 end)
 
 
-TMW.IconDragger:RegisterIconDragHandler(210, -- Add as icon shown condition
+-- Add as icon shown condition
+TMW.IconDragger:RegisterIconDragHandler(210, 
 	function(IconDragger, info)
 		if IconDragger.desticon then
 			if IconDragger.srcicon:IsValid() then

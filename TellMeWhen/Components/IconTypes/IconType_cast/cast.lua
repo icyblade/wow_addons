@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -34,13 +34,16 @@ Type.unitType = "unitid"
 Type.hasNoGCD = true
 Type.canControlGroup = true
 
+local STATE_PRESENT = TMW.CONST.STATE.DEFAULT_SHOW
+local STATE_ABSENT = TMW.CONST.STATE.DEFAULT_HIDE
+local STATE_ABSENTEACH = 10
 
 -- AUTOMATICALLY GENERATED: UsesAttributes
+Type:UsesAttributes("state")
 Type:UsesAttributes("spell")
 Type:UsesAttributes("reverse")
-Type:UsesAttributes("unit, GUID")
 Type:UsesAttributes("start, duration")
-Type:UsesAttributes("alpha")
+Type:UsesAttributes("unit, GUID")
 Type:UsesAttributes("texture")
 -- END AUTOMATICALLY GENERATED: UsesAttributes
 
@@ -56,11 +59,14 @@ Type:RegisterIconDefaults{
 
 	-- True if the icon should only check interruptible casts.
 	Interruptible			= false,
+
+	-- True if the icon should display blanks instead of the pocketwatch texture.
+	NoPocketwatch			= false,
 }
 
 
 Type:RegisterConfigPanel_XMLTemplate(100, "TellMeWhen_ChooseName", {
-	title = L["ICONMENU_CHOOSENAME2"] .. " " .. L["ICONMENU_CHOOSENAME_ORBLANK"],
+	title = L["ICONMENU_CHOOSENAME3"] .. " " .. L["ICONMENU_CHOOSENAME_ORBLANK"],
 	SUGType = "cast",
 })
 
@@ -68,20 +74,23 @@ Type:RegisterConfigPanel_XMLTemplate(105, "TellMeWhen_Unit", {
 	implementsConditions = true,
 })
 
-Type:RegisterConfigPanel_XMLTemplate(165, "TellMeWhen_WhenChecks", {
-	--text = L["ICONMENU_CASTSHOWWHEN"],
-	[0x2] = { text = "|cFF00FF00" .. L["ICONMENU_PRESENT"], 	},
-	[0x1] = { text = "|cFFFF0000" .. L["ICONMENU_ABSENT"], 		},
+Type:RegisterConfigPanel_XMLTemplate(165, "TellMeWhen_IconStates", {
+	[STATE_PRESENT]     = { order = 1, text = "|cFF00FF00" .. L["ICONMENU_PRESENT"], },
+	[STATE_ABSENTEACH]  = { order = 2, text = "|cFFFF0000" .. L["ICONMENU_ABSENTEACH"], tooltipText = L["ICONMENU_ABSENTEACH_DESC"]:format(L["ICONMENU_ABSENTONALL"]) },
+	[STATE_ABSENT]      = { order = 3, text = "|cFFFF0000" .. L["ICONMENU_ABSENTONALL"],  },
 })
 
 Type:RegisterConfigPanel_ConstructorFunc(150, "TellMeWhen_CastSettings", function(self)
-	self.Header:SetText(Type.name)
-	TMW.IE:BuildSimpleCheckSettingFrame(self, {
-		{
-			setting = "Interruptible",
-			title = L["ICONMENU_ONLYINTERRUPTIBLE"],
-			tooltip = L["ICONMENU_ONLYINTERRUPTIBLE_DESC"],
-		},
+	self:SetTitle(Type.name)
+	self:BuildSimpleCheckSettingFrame({
+		function(check)
+			check:SetTexts(L["ICONMENU_ONLYINTERRUPTIBLE"], L["ICONMENU_ONLYINTERRUPTIBLE_DESC"])
+			check:SetSetting("Interruptible")
+		end,
+		function(check)
+			check:SetTexts(L["ICONMENU_NOPOCKETWATCH"], L["ICONMENU_NOPOCKETWATCH_DESC"])
+			check:SetSetting("NoPocketwatch")
+		end,
 	})
 end)
 
@@ -107,16 +116,10 @@ local events = {
 
 
 local function Cast_OnEvent(icon, event, arg1)
-	if events[event] then
+	if events[event] and icon.UnitSet.UnitsLookup[arg1] then
 		-- A UNIT_SPELLCAST_ event
-		-- See if the icon is checking the unit. If so, schedule an update for the icon.
-		local Units = icon.Units
-		for u = 1, #Units do
-			if arg1 == Units[u] then
-				icon.NextUpdateTime = 0
-				return
-			end
-		end
+		-- If the icon is checking the unit, schedule an update for the icon.
+		icon.NextUpdateTime = 0
 	elseif event == "TMW_UNITSET_UPDATED" and arg1 == icon.UnitSet then
 		-- A unit was just added or removed from icon.Units, so schedule an update.
 		icon.NextUpdateTime = 0
@@ -131,9 +134,9 @@ local function Cast_OnUpdate(icon, time)
 
 	for u = 1, #Units do
 		local unit = Units[u]
-		-- UnitSet:UnitExists(unit) is an improved UnitExists() that returns early if the unit
-		-- is known by TMW.UNITS to definitely exist.
-		if icon.UnitSet:UnitExists(unit) then
+		local GUID = UnitGUID(unit)
+
+		if GUID then
 
 			local name, _, _, iconTexture, start, endTime, _, _, notInterruptible = UnitCastingInfo(unit)
 			-- Reverse is used to reverse the timer sweep masking behavior. Regular casts should have it be false.
@@ -151,8 +154,14 @@ local function Cast_OnUpdate(icon, time)
 				-- Times reported by the cast APIs are in milliseconds for some reason.
 				start, endTime = start/1000, endTime/1000
 				local duration = endTime - start
+				icon.LastTextures[GUID] = iconTexture
 
-				if not icon:YieldInfo(true, name, unit, iconTexture, start, duration, reverse) then
+				if not icon:YieldInfo(true, name, unit, GUID, iconTexture, start, duration, reverse) then
+					-- If icon:YieldInfo() returns false, it means we don't need to keep harvesting data.
+					return
+				end
+			elseif icon.States[STATE_ABSENTEACH].Alpha > 0 then
+				if not icon:YieldInfo(true, nil, unit, GUID, icon.LastTextures[GUID], 0, 0, false) then
 					-- If icon:YieldInfo() returns false, it means we don't need to keep harvesting data.
 					return
 				end
@@ -164,26 +173,39 @@ local function Cast_OnUpdate(icon, time)
 	icon:YieldInfo(false)
 end
 
-function Type:HandleYieldedInfo(icon, iconToSet, spell, unit, texture, start, duration, reverse)
+function Type:HandleYieldedInfo(icon, iconToSet, spell, unit, GUID, texture, start, duration, reverse)
 	if spell then
 		-- There was a spellcast or channel present on one of the icon's units.
 		iconToSet:SetInfo(
-			"alpha; texture; start, duration; reverse; spell; unit, GUID",
-			icon.Alpha,
+			"state; texture; start, duration; reverse; spell; unit, GUID",
+			STATE_PRESENT,
 			texture,
 			start, duration,
 			reverse,
 			spell,
-			unit, nil
+			unit, GUID
 		)
-	else
-		-- There were no casts detected.
+	elseif unit then
+		-- There were no casts detected on this unit.
 		iconToSet:SetInfo(
-			"alpha; start, duration; spell; unit, GUID",
-			icon.UnAlpha,
+			"state; texture; start, duration; spell; unit, GUID",
+			STATE_ABSENTEACH,
+			texture or (icon.NoPocketwatch and "" or "Interface\\Icons\\INV_Misc_PocketWatch_01"),
 			0, 0,
 			icon.Spells.First,
-			icon.Units[1], nil
+			unit or icon.Units[1], GUID or nil
+		)
+	else
+		-- There were no casts detected at all.
+		unit = icon.Units[1]
+		GUID = unit and UnitGUID(unit)
+		iconToSet:SetInfo(
+			"state; texture; start, duration; spell; unit, GUID",
+			STATE_ABSENT,
+			GUID and icon.LastTextures[GUID] or (icon.NoPocketwatch and "" or "Interface\\Icons\\INV_Misc_PocketWatch_01"),
+			0, 0,
+			icon.Spells.First,
+			unit, GUID
 		)
 	end
 end
@@ -194,19 +216,19 @@ function Type:Setup(icon)
 	
 	icon.Units, icon.UnitSet = TMW:GetUnits(icon, icon.Unit, icon:GetSettings().UnitConditions)
 
+	icon.LastTextures = icon.LastTextures or {}
 
-
-	icon:SetInfo("texture", Type:GetConfigIconTexture(icon))
+	local texture, known = Type:GetConfigIconTexture(icon)
+	if not known and icon.NoPocketwatch then
+		texture = ""
+	end
+	icon:SetInfo("texture", texture)
 	
 
 
 	-- Setup events and update functions.
 	if icon.UnitSet.allUnitsChangeOnEvent then
 		icon:SetUpdateMethod("manual")
-
-		for event in pairs(icon.UnitSet.updateEvents) do
-			icon:RegisterSimpleUpdateEvent(event)
-		end
 	
 		-- Register the UNIT_SPELLCAST_ events
 		for event in pairs(events) do

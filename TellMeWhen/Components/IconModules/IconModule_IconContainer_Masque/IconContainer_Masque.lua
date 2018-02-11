@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -24,7 +24,7 @@ local IconContainer_Masque = TMW:NewClass("IconModule_IconContainer_Masque", "Ic
 
 
 if LibStub("LibButtonFacade", true) and select(6, GetAddOnInfo("Masque")) == "MISSING" then
-	TMW.Warn("TellMeWhen no longer supports ButtonFacade. If you wish to continue to skin your icons, please upgrade to ButtonFacade's successor, Masque.")
+	TMW:Warn("TellMeWhen no longer supports ButtonFacade. If you wish to continue to skin your icons, please upgrade to ButtonFacade's successor, Masque.")
 end
 
 
@@ -95,16 +95,6 @@ end
 
 function IconContainer_Masque:OnNewInstance_IconContainer_Masque(icon)
 	self.lmbGroup = GetLMBGroup(icon)
-end
-
-function IconContainer_Masque:SetupForIcon(icon)
-	if icon ~= self.icon then
-		local icnt = icon.normaltex
-		local iconnt = self.icon.normaltex
-		if icnt and iconnt then
-			iconnt:SetVertexColor(icnt:GetVertexColor())
-		end
-	end
 end
 
 

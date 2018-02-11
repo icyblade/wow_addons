@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -10,15 +10,6 @@
 -- Cybeloras of Aerie Peak/Detheroc/Mal'Ganis
 -- --------------------
 
-local icy_blacklist = {115069, 124255, 124273, 124274, 124275} -- ICY: blacklist some wierd spells
-local function icy_has_value(tbl, value)
-    for k, v in ipairs(tbl) do
-        if v == value then
-            return true
-        end
-    end
-    return false
-end
 
 if not TMW then return end
 
@@ -33,23 +24,28 @@ local SpellCache = TMW:NewModule("SpellCache", "AceEvent-3.0", "AceTimer-3.0")
 
 local Cache
 local CurrentItems = {}
--- local NumCachePerFrame = 200
-local NumCachePerFrame = 15 -- ICY: stuck fix
+local NumCachePerFrame = 200
 local IsCaching
 
 
 SpellCache.CONST = {
 	-- A rough estimate of the highest spellID in the game. Doesn't have to be accurate at all - visual only.
-	MAX_SPELLID_GUESS = 180000,
+	MAX_SPELLID_GUESS = 255000,
 	
 	-- Maximum number of non-existant spellIDs that will be checked before the cache is declared complete.
 	MAX_FAILED_SPELLS = 2000,
 	
+	WHITELIST = {
+		-- A list of spells that will fail other filters, but are still desired
+		[228911] = true, -- Odyn's test
+		[227626] = true, -- Odyn's test
+	},
+
 	-- A list of spells that should be excluded from the cache
 	INVALID_SPELLS = {
 		[1852] = true, -- GM spell named silenced, interferes with equiv
 		--[[
-		-- I added in special handling for these in the suggetion list. No longer need to manually exclude interferences.
+		-- I added in special handling for these in the suggestion list. No longer need to manually exclude interferences.
 		[47923] = true, -- spell named stunned, interferes
 		[65918] = true, -- spell named stunned, interferes
 		[78320] = true, -- spell named stunned, interferes
@@ -60,18 +56,25 @@ SpellCache.CONST = {
 	
 	-- A list of textures, spells that have these textures should be excluded from the cache.
 	INVALID_TEXTURES = {
-		["Interface\\Icons\\Trade_Alchemy"] = true,
-		["Interface\\Icons\\Trade_BlackSmithing"] = true,
-		["Interface\\Icons\\Trade_BrewPoison"] = true,
-		["Interface\\Icons\\Trade_Engineering"] = true,
-		["Interface\\Icons\\Trade_Engraving"] = true,
-		["Interface\\Icons\\Trade_Fishing"] = true,
-		["Interface\\Icons\\Trade_Herbalism"] = true,
-		["Interface\\Icons\\Trade_LeatherWorking"] = true,
-		["Interface\\Icons\\Trade_Mining"] = true,
-		["Interface\\Icons\\Trade_Tailoring"] = true,
-		["Interface\\Icons\\INV_Inscription_Tradeskill01"] = true,
-		["Interface\\Icons\\Temp"] = true,
+		-- These are the worst offenders by far
+		["Interface\\Icons\\Trade_Alchemy"] = true, [136240] = true,
+		["Interface\\Icons\\Trade_BlackSmithing"] = true, [136241] = true,
+		["Interface\\Icons\\Trade_Engineering"] = true, [136243] = true,
+		["Interface\\Icons\\Trade_LeatherWorking"] = true, [136247] = true,
+
+		-- These aren't as bad as the rest, but still don't have any real spells that should be in the list.
+		["Interface\\Icons\\Trade_Engraving"] = true, [136244] = true,
+		["Interface\\Icons\\Trade_Fishing"] = true, [136245] = true,
+		["Interface\\Icons\\Trade_Herbalism"] = true, [136246] = true,
+		["Interface\\Icons\\Trade_Mining"] = true, [136248] = true,
+		["Interface\\Icons\\Trade_Tailoring"] = true, [136249] = true,
+		["Interface\\Icons\\INV_Inscription_Tradeskill01"] = true, [237171] = true,
+
+
+		-- These are actually fine and shouldn't be blacklisted.
+		-- ["Interface\\Icons\\Trade_BrewPoison"] = true,
+		-- ["Interface\\Icons\\Temp"] = true,
+
 	},
 }
 local CONST = SpellCache.CONST
@@ -95,6 +98,11 @@ TMW.IE:RegisterUpgrade(71016, {
 		TMW.IE.db.global.IncompleteCache = nil
 		TMW.IE.db.global.WoWVersion = nil
 	end,
+})
+
+-- Force a re-cache - If a re-cache is needed, just update this version num to the latest version.
+-- 84201 - Added a fix to exclude spells with blank names, because Blizzard managed to make a spell with no name.
+TMW.IE:RegisterUpgrade(84201, {
 	locale = function(self, locale)
 		locale.SpellCacheWoWVersion = 0
 	end,
@@ -192,55 +200,52 @@ TMW:RegisterCallback("TMW_OPTIONS_LOADED", function()
 		local isInCombatLockdown = InCombatLockdown()
 		local function SpellCacher()
 
-			--while spellsFailed < CONST.MAX_FAILED_SPELLS do -- ICY: blacklist some wierd spells
-            while (spellsFailed < CONST.MAX_FAILED_SPELLS) do
-                if not icy_has_value(icy_blacklist, index) then
-                    local name, rank, icon = GetSpellInfo(index)
-                    if name then
-                        name = strlower(name)
+			while spellsFailed < CONST.MAX_FAILED_SPELLS do
+			
+				local name, rank, icon = GetSpellInfo(index)
+				if name then
+					name = strlower(name)
 
-                        local fail =
-                        CONST.INVALID_TEXTURES[icon] or
-                        findword(name, "dnd") or
-                        findword(name, "test") or
-                        findword(name, "debug") or
-                        findword(name, "bunny") or
-                        findword(name, "visual") or
-                        findword(name, "trigger") or
-                        strfind(name, "[%]%[%%%+%?]") or -- no brackets, plus signs, percent signs, or question marks
-                        findword(name, "vehicle") or
-                        findword(name, "event") or
-                        findword(name, "quest") or
-                        strfind(name, ":%s?%d") or -- interferes with colon duration syntax
-                        findword(name, "camera") or
-                        findword(name, "dmg")
+					local fail =
+					name:trim() == "" or
+					CONST.INVALID_TEXTURES[icon] or
+					findword(name, "dnd") or
+					findword(name, "test") or
+					findword(name, "debug") or
+					findword(name, "bunny") or
+					findword(name, "visual") or
+					findword(name, "trigger") or
+					strfind(name, "[%]%[%%%+%?]") or -- no brackets, plus signs, percent signs, or question marks
+					findword(name, "vehicle") or
+					findword(name, "event") or
+					findword(name, "quest") or
+					strfind(name, ":%s?%d") or -- interferes with colon duration syntax
+					findword(name, "camera") or
+					findword(name, "dmg")
 
-                        if not fail then
-                            Parser:SetOwner(UIParent, "ANCHOR_NONE") -- must set the owner before text can be obtained.
-                            Parser:SetSpellByID(index)
-                            local r, g, b = LT1:GetTextColor()
-                            if g > .95 and r > .95 and b > .95 then
-                                Cache[index] = name
-                            end
-                            spellsFailed = 0
-                        end
-                    else
-                        spellsFailed = spellsFailed + 1
-                    end
-                    index = index + 1
+					if CONST.WHITELIST[index] or not fail then
+						Parser:SetOwner(UIParent, "ANCHOR_NONE") -- must set the owner before text can be obtained.
+						Parser:SetSpellByID(index)
+						local r, g, b = LT1:GetTextColor()
+						if g > .95 and r > .95 and b > .95 then
+							Cache[index] = name
+						end
+						spellsFailed = 0
+					end
+				else
+					spellsFailed = spellsFailed + 1
+				end
+				index = index + 1
 
-                    if index % (isInCombatLockdown and 1 or NumCachePerFrame) == 0 then
-                        TMW:Fire("TMW_SPELLCACHE_NUMCACHED_CHANGED", index)
-                        if index > TMW.IE.db.locale.SpellCacheLength then
-                            TMW.IE.db.locale.SpellCacheLength = TMW.IE.db.locale.SpellCacheLength + 2000
-                            TMW:Fire("TMW_SPELLCACHE_EXPECTEDCACHELENGTH_UPDATED", TMW.IE.db.locale.SpellCacheLength)
-                        end
-                        yield()
-                    end
-                else
-                    index = index + 1
-                end
-            end
+				if index % (isInCombatLockdown and 1 or NumCachePerFrame) == 0 then
+					TMW:Fire("TMW_SPELLCACHE_NUMCACHED_CHANGED", index)
+					if index > TMW.IE.db.locale.SpellCacheLength then
+						TMW.IE.db.locale.SpellCacheLength = TMW.IE.db.locale.SpellCacheLength + 2000
+						TMW:Fire("TMW_SPELLCACHE_EXPECTEDCACHELENGTH_UPDATED", TMW.IE.db.locale.SpellCacheLength)
+					end
+					yield()
+				end
+			end
 		end
 		local co = coroutine.create(SpellCacher)
 		

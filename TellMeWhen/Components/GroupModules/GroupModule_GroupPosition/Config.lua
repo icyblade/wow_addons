@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -17,225 +17,8 @@ local TMW = TMW
 local L = TMW.L
 local print = TMW.print
 
-
-local FindGroupFromInfo = TMW.FindGroupFromInfo
-
-local stratas = {
-	"BACKGROUND",
-	"LOW",
-	"MEDIUM",
-	"HIGH",
-	"DIALOG",
-	"FULLSCREEN",
-	"FULLSCREEN_DIALOG",
-	"TOOLTIP",
-}
-local strataDisplay = {}
-for k, v in pairs(stratas) do
-	strataDisplay[k] = L["STRATA_"..v]
-end
-
-
-TMW.Classes.GroupModule_GroupPosition:RegisterConfigTable("args.position.args", "Position", {
-	type = "group",
-	order = 5,
-	name = "",
-	desc = "",
-	set = function(info, val)
-		local group = FindGroupFromInfo(info)
-
-		group:GetSettings().Point[info[#info]] = val
-		
-		local Module = group:GetModuleOrModuleChild("GroupModule_GroupPosition")
-		
-		if Module then
-			Module:SetPos()
-		end
-	end,
-	get = function(info)
-		local group = FindGroupFromInfo(info)
-
-		return group:GetSettings().Point[info[#info]]
-	end,
-	dialogInline = true,
-	guiInline = true,
-	
-	args = {
-		point = {
-			name = L["UIPANEL_POINT"],
-			desc = L["UIPANEL_POINT_DESC"],
-			type = "select",
-			values = TMW.points,
-			style = "dropdown",
-			order = 1,
-		},
-		relativeTo = {
-			name = L["UIPANEL_RELATIVETO"],
-			desc = function(info)
-				local group = FindGroupFromInfo(info)
-				local relativeTo = group:GetSettings().Point[info[#info]]
-
-				local desc = L["UIPANEL_RELATIVETO_DESC"]
-
-				if TMW:ParseGUID(relativeTo) == "group" then
-					desc = desc .. "\r\n\r\n" .. L["UIPANEL_RELATIVETO_DESC_GUIDINFO"]
-				end
-				
-				return desc
-			end,
-			type = "input",
-			width = "double",
-			order = 2,
-		},
-		relativePoint = {
-			name = L["UIPANEL_RELATIVEPOINT"],
-			desc = L["UIPANEL_RELATIVEPOINT_DESC"],
-			type = "select",
-			values = TMW.points,
-			style = "dropdown",
-			order = 3,
-		},
-		x = {
-			name = L["UIPANEL_FONT_XOFFS"],
-			desc = L["UIPANEL_FONT_XOFFS_DESC"],
-			type = "range",
-			order = 4,
-			softMin = -500,
-			softMax = 500,
-			step = 1,
-			bigStep = 1,
-		},
-		y = {
-			name = L["UIPANEL_FONT_YOFFS"],
-			desc = L["UIPANEL_FONT_YOFFS_DESC"],
-			type = "range",
-			order = 5,
-			softMin = -500,
-			softMax = 500,
-			step = 1,
-			bigStep = 1,
-		},
-	},
-})
-
-TMW.Classes.GroupModule_GroupPosition:RegisterConfigTable("args.position.args", "scaleAndStrata", {
-	type = "group",
-	order = 10,
-	name = "",
-	desc = "",
-	set = function(info, val)
-		local group = FindGroupFromInfo(info)
-
-		group:GetSettings()[info[#info]] = val
-
-		local Module = group:GetModuleOrModuleChild("GroupModule_GroupPosition")
-		
-		if Module then
-			Module:SetPos()
-		end
-	end,
-	get = "group_get_spv",
-	
-	dialogInline = true,
-	guiInline = true,
-	
-	args = {
-		
-		Scale = {
-			name = L["UIPANEL_SCALE"],
-			type = "range",
-			order = 6,
-			min = 0.6,
-			softMax = 10,
-			bigStep = 0.01,
-
-
-			set = function(info, val)
-				local group = FindGroupFromInfo(info)
-
-
-				local oldScale = group:GetScale()
-				local newScale = val
-				local newX = group:GetLeft() * oldScale / newScale
-				local newY = group:GetTop() * oldScale / newScale
-
-
-				group:ClearAllPoints()
-				group:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", newX, newY)
-
-				group:GetSettings().Scale = val
-				group:SetScale(val)
-
-				local GroupModule_GroupPosition = group:GetModuleOrModuleChild("GroupModule_GroupPosition")
-				GroupModule_GroupPosition:UpdatePositionAfterMovement()
-				
-				if GroupModule_GroupPosition then
-					GroupModule_GroupPosition:SetPos()
-				end
-			end,
-
-
-		},
-		Level = {
-			name = L["UIPANEL_LEVEL"],
-			type = "range",
-			order = 7,
-			min = 5,
-			softMax = 100,
-			step = 1,
-		},
-		Strata = {
-			name = L["UIPANEL_STRATA"],
-			type = "select",
-			style = "dropdown",
-			order = 8,
-			set = function(info, val)
-				local group = FindGroupFromInfo(info)
-				group:GetSettings()[info[#info]] = stratas[val]
-		
-				local Module = group:GetModuleOrModuleChild("GroupModule_GroupPosition")
-				
-				if Module then
-					Module:SetPos()
-				end
-			end,
-			get = function(info)
-				local group = FindGroupFromInfo(info)
-
-				local val = group:GetSettings()[info[#info]]
-				for k, v in pairs(stratas) do
-					if v == val then
-						return k
-					end
-				end
-			end,
-			values = strataDisplay,
-		},
-	},
-})
-
-TMW.Classes.GroupModule_GroupPosition:RegisterConfigTable("args.position.args", "reset", {
-	name = L["UIPANEL_GROUPRESET"],
-	desc = L["UIPANEL_TOOLTIP_GROUPRESET"],
-	type = "execute",
-	order = 50,
-	func = function(info)
-		local group = FindGroupFromInfo(info)
-		local gs = group:GetSettings()
-		
-		for k, v in pairs(TMW.Group_Defaults.Point) do
-			gs.Point[k] = v
-		end
-		gs.Scale = 1
-		gs.Locked = false
-		
-		TMW.ACEOPTIONS:NotifyChanges()
-		group:Setup()
-	end,
-})
-
-
-
+local SUG = TMW.SUG
+local strlowerCache = TMW.strlowerCache
 
 TMW.Classes.SharableDataType.types.group:RegisterMenuBuilder(10, function(Item_group)
 	local gs = Item_group.Settings
@@ -254,10 +37,11 @@ TMW.Classes.SharableDataType.types.group:RegisterMenuBuilder(10, function(Item_g
 		-- Setting it nil won't recreate it like other settings tables, so re-copy from defaults.
 		destgs.Point = CopyTable(TMW.Group_Defaults.Point)
 		
-		TMW:CopyTableInPlaceWithMeta(gs.Point, destgs.Point, true)
+		TMW:CopyTableInPlaceUsingDestinationMeta(gs.Point, destgs.Point, true)
 
 		destgs.Scale = gs.Scale or TMW.Group_Defaults.Scale
 		destgs.Level = gs.Level or TMW.Group_Defaults.Level
+		destgs.Strata = gs.Strata or TMW.Group_Defaults.Strata
 		
 		destgroup:Setup()
 	end
@@ -266,3 +50,152 @@ TMW.Classes.SharableDataType.types.group:RegisterMenuBuilder(10, function(Item_g
 	TMW.DD:AddButton(info)
 end)
 
+local Module = SUG:NewModule("frameName", SUG:GetModule("default"))
+Module.noTexture = true
+Module.noMin = true
+Module.showColorHelp = false
+Module.helpText = L["SUG_TOOLTIPTITLE_GENERIC"]
+function Module:OnInitialize()
+	self.Table = {}
+end
+function Module:OnSuggest()
+	wipe(self.Table)
+	
+	local frame = EnumerateFrames()
+	while frame do
+		local name = frame:GetName()
+		if name and _G[name] == frame and frame:GetPoint() and frame:GetHeight() > 0 and frame:GetWidth() > 0 then
+			self.Table[frame] = name
+		end
+		frame = EnumerateFrames(frame)
+	end
+end
+function Module:Table_Get()
+	return self.Table
+end
+function Module:Table_GetNormalSuggestions(suggestions, tbl, ...)
+	local atBeginning = SUG.atBeginning
+	local strfindsug = SUG.strfindsug
+	local lastName = SUG.lastName
+	
+	for frame, name in pairs(tbl) do
+		if frame.class == TMW.C.Group then
+			if (
+				-- Search by group name
+				strfind(strlowerCache[frame:GetGroupName()], lastName)
+				-- and by frame name for fun
+				or strfind(strlowerCache[name], lastName)
+				-- If the input is already a TMW group or is UIParent, list all TMW groups
+				or strfind(lastName, "tmw:group")
+				or strfind(lastName, "uiparent")
+			) 
+			-- Don't suggest the current group
+			and TMW.CI.group ~= frame
+			then
+				suggestions[#suggestions + 1] = frame
+			end
+		elseif strfind(strlowerCache[name], lastName) then
+			suggestions[#suggestions + 1] = frame
+		else
+			local secure, addon = issecurevariable(name)
+			if secure then
+				addon = "Blizzard"
+			end
+			if not secure and strfindsug(strlowerCache[addon]) then
+				suggestions[#suggestions + 1] = frame
+			end
+		end
+	end
+end
+
+function Module.Sorter_ByName(a, b)
+	local nameA, nameB = SUG.SortTable[a], SUG.SortTable[b]
+	return nameA < nameB
+end
+function Module:Sorter_Bucket(suggestions, buckets)
+	local atBeginning = SUG.atBeginning
+	local lastName_unmodified = SUG.lastName_unmodified
+	for i = 1, #suggestions do
+		local frame = suggestions[i]
+		local parent = frame
+
+		local depth = 0
+		while parent do
+			depth = depth + 1
+			parent = parent:GetParent()
+		end
+
+		local name = self.Table[frame]
+		if strlowerCache[name] == lastName_unmodified then
+			-- Exact matches first
+			depth = -2
+		elseif frame.class == TMW.C.Group then
+			if strfind(SUG.lastName, frame:GetGUID():lower()) then
+				-- Exact matches first (look for the GUID in the input string, which also contains the group's name and some color escapes)
+				depth = -2
+			else
+				-- Other TMW groups come next.
+				depth = -1
+			end
+		elseif name and strfind(strlowerCache[name], atBeginning) then
+			-- Make starts-with matches worth slightly more
+			depth = depth - 1
+		end
+
+		tinsert(buckets[depth], frame)
+	end
+end
+
+function Module:Table_GetSorter()
+	SUG.SortTable = self:Table_Get()
+	return self.Sorter_ByName, self.Sorter_Bucket
+end
+
+function Module:Entry_AddToList_1(f, frame)
+
+	if frame.class == TMW.C.Group then 
+		local group = frame
+		local name = group:GetGroupName()
+
+		f.insert = group:GetGUID()
+
+		f.Background:SetVertexColor(.41, .8, .94, 1)
+		f.tooltiptitlewrap = false
+		f.tooltiptitle = name
+		f.tooltiptext = "TellMeWhen"
+		f.Name:SetText(name)
+	else
+		local name = frame:GetName()
+
+		f.insert = name
+
+		f.tooltiptitlewrap = false
+		f.tooltiptitle = name
+		local secure, addon = issecurevariable(name)
+		if secure then
+			addon = "Blizzard"
+		end
+		f.tooltiptext = L["SUG_MODULE_FRAME_LIKELYADDON"]:format(addon)
+		f.Name:SetText(name)
+	end
+end
+
+local highlight = CreateFrame("Frame")
+highlight:SetFrameStrata("FULLSCREEN_DIALOG")
+highlight:SetScript("OnUpdate", function()
+	if not GameTooltip:IsVisible() then
+		highlight:Hide()
+	end
+end)
+local texture = highlight:CreateTexture(nil, "OVERLAY")
+texture:SetAllPoints()
+texture:SetColorTexture(1, 0, .66, 0.5)
+function GameTooltip:TMW_SetFrameHighlight(frame)
+	-- Don't highlight UIParent, it gets annoying.
+	if frame ~= UIParent then
+		highlight:SetAllPoints(frame)
+		highlight:Show()
+	else
+		highlight:Hide()
+	end
+end

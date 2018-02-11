@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -53,6 +53,8 @@ NAMES.CONST = {
 	pet;
 	pettarget;
 	pettargettarget;
+	
+	nameplate1-30;
 	
 	arena1-5;
 	arena1-5target;
@@ -121,7 +123,7 @@ function NAMES:UpdateClassColors()
 		if color.colorStr then
 			self.ClassColors[class] = "|c" .. color.colorStr
 		else
-			self.ClassColors[class] = ("|cff%02x%02x%02x"):format(color.r * 0xFF, color.g * 0xFF, color.b * 0xFF)
+			self.ClassColors[class] = "|c" .. TMW:RGBATableToStringWithoutFlags(color)
 		end
 	end
 end

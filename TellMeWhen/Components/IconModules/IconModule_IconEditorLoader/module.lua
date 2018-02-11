@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -21,47 +21,68 @@ local print = TMW.print
 local Module = TMW:NewClass("IconModule_IconEditorLoader", "IconModule")
 
 
+local function LoadIcon(icon)
+	-- If the user has hidden the icon editor before loading this icon,
+	-- or if this is the first time it is being shown (although this case doesn't matter),
+	-- go directly to the main icon tab.
+
+	-- Also, if the icon was already loaded, take them at least to the icon tab group,
+	-- so if the user sits there spam loading the icon when they're on the groups tab
+	-- they will get to the icon options that they so depserately want.
+
+	-- This should help ease some users' frustration when TMW can't read their minds about what tab they want.
+	-- It should also help people who are confused about what to do 
+	local wasShown = TMW.IE:IsShown()
+	local wasLoaded = TMW.CI.icon == icon
+
+	TMW.IE:LoadIcon(nil, icon)
+	TMW.IE:LoadGroup(nil, icon.group)
+	
+	if not wasShown then
+		TMW.IE.TabGroups.ICON.MAIN:Click()
+	elseif wasLoaded then
+		TMW.IE.TabGroups.ICON:Click()
+	end
+end
 
 local icons = {}
-local DD = TMW.C.Config_DropDownMenu:New("Frame", "TMW_IELoaderDD", UIParent, "TMW_DropDownMenuTemplate", nil, {
-	OnClick = function(button, self, icon)
-		icon.group:Raise()
-		TMW.IE:Load(nil, icon)
-	end,
-	
-	func = function(self)
-		local info = TMW.DD:CreateInfo()
-		info.text = L["ICONMENU_CHOSEICONTOEDIT"]
-		info.isTitle = true
-		info.notCheckable = true
-		TMW.DD:AddButton(info)
+local DD = TMW.C.Config_DropDownMenu_NoFrame:New()
+DD:ForceScale(1)
+local function DropdownOnClick(button, self, icon)
+	icon.group:Raise()
+	LoadIcon(icon)
+end
+DD:SetFunction(function(self)
+	local info = TMW.DD:CreateInfo()
+	info.text = L["ICONMENU_CHOSEICONTOEDIT"]
+	info.isTitle = true
+	info.notCheckable = true
+	TMW.DD:AddButton(info)
 
-		for i, icon in pairs(icons) do
-			if not icon:IsControlled() then
-				local info = TMW.DD:CreateInfo()
-				info.text = icon:GetIconName()
-				
-				local text, textshort, tooltip = icon:GetIconMenuText()
-				info.tooltipTitle = text
-				info.tooltipText = tooltip
+	for i, icon in pairs(icons) do
+		if not icon:IsControlled() then
+			local info = TMW.DD:CreateInfo()
+			info.text = icon:GetIconName()
+			
+			local text, textshort, tooltip = icon:GetIconMenuText()
+			info.tooltipTitle = text
+			info.tooltipText = tooltip
 
-				info.icon = icon.attributes.texture
-				info.tCoordLeft = 0.07
-				info.tCoordRight = 0.93
-				info.tCoordTop = 0.07
-				info.tCoordBottom = 0.93
-				
-				info.func = self.data.OnClick
-				info.arg1 = self
-				info.arg2 = icon
-				info.notCheckable = true
-				
-				TMW.DD:AddButton(info)
-			end
+			info.icon = icon.attributes.texture
+			info.tCoordLeft = 0.07
+			info.tCoordRight = 0.93
+			info.tCoordTop = 0.07
+			info.tCoordBottom = 0.93
+			
+			info.func = DropdownOnClick
+			info.arg1 = self
+			info.arg2 = icon
+			info.notCheckable = true
+			
+			TMW.DD:AddButton(info)
 		end
-	end,
-})
-DD:Hide()
+	end
+end)
 
 
 Module:SetScriptHandler("OnMouseUp", function(Module, icon, button)
@@ -75,8 +96,9 @@ Module:SetScriptHandler("OnMouseUp", function(Module, icon, button)
 		if button == "RightButton" then
 			if #icons == 1 then
 				if not icon:IsControlled() then
-					TMW.IE:Load(nil, icon)
+					LoadIcon(icon)
 				end
+				
 			elseif #icons > 1 then
 				GameTooltip:Hide() -- hide the tooltip over an icon so we can see the menu
 				TMW.DD:CloseDropDownMenus()

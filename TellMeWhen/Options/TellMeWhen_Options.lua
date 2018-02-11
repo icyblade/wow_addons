@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -13,6 +13,8 @@
 
 if not TMW then return end
 
+local clientVersion = select(4, GetBuildInfo())
+local wow_701 = clientVersion >= 70100 or GetBuildInfo() == "7.1.0" -- they haven't updated the interface number yet.
 
 ---------- Libraries ----------
 local LSM = LibStub("LibSharedMedia-3.0")
@@ -56,8 +58,8 @@ local get = TMW.get
 ---------- Globals ----------
 --GLOBALS: BINDING_HEADER_TELLMEWHEN, BINDING_NAME_TELLMEWHEN_ICONEDITOR_UNDO, BINDING_NAME_TELLMEWHEN_ICONEDITOR_REDO
 BINDING_HEADER_TELLMEWHEN = "TellMeWhen"
-BINDING_NAME_TELLMEWHEN_ICONEDITOR_UNDO = L["UNDO_ICON"]
-BINDING_NAME_TELLMEWHEN_ICONEDITOR_REDO = L["REDO_ICON"]
+BINDING_NAME_TELLMEWHEN_ICONEDITOR_UNDO = L["UNDO"]
+BINDING_NAME_TELLMEWHEN_ICONEDITOR_REDO = L["REDO"]
 
 
 ---------- Data ----------
@@ -93,50 +95,64 @@ TMW.operators = {
 	{ tooltipText = L["CONDITIONPANEL_GREATEREQUAL"], 	value = ">=", 	text = ">=" },
 }
 
-TMW.EquivOriginalLookup = {}
-TMW.EquivFullIDLookup = {}
-TMW.EquivFullNameLookup = {}
-TMW.EquivFirstIDLookup = {}
-for category, b in pairs(TMW.OldBE) do
-	for equiv, str in pairs(b) do
-		TMW.EquivOriginalLookup[equiv] = str
-
-		-- remove underscores
-		str = gsub(str, "_", "")
-
-		-- create the lookup tables first, so that we can have the first ID even if it will be turned into a name
-		TMW.EquivFirstIDLookup[equiv] = strsplit(";", str) -- this is used to display them in the list (tooltip, name, id display)
-
-		TMW.EquivFullIDLookup[equiv] = ";" .. str
-		local tbl = TMW:SplitNames(str)
-		for k, v in pairs(tbl) do
-			tbl[k] = GetSpellInfo(v) or v
-		end
-		TMW.EquivFullNameLookup[equiv] = ";" .. table.concat(tbl, ";")
-	end
-end
-for dispeltype, icon in pairs(TMW.DS) do
-	TMW.EquivFirstIDLookup[dispeltype] = icon
-end
 
 
 
 ---------- Miscellaneous ----------
-TMW.Backupdb = CopyTable(TellMeWhenDB)
-TMW.BackupDate = date("%I:%M:%S %p")
 
 TMW.CI = setmetatable({}, {__index = function(tbl, k)
-	if k == "ic" then
-		return tbl.icon
-	elseif k == "group" then
-		return tbl.icon and tbl.icon.group
-	elseif k == "ics" then
+	if k == "ics" then
 		return tbl.icon and tbl.icon:GetSettings()
 	elseif k == "gs" then
-		-- take no chances with errors occuring here
 		return tbl.group and tbl.group:GetSettings()
 	end
 end}) local CI = TMW.CI		--current icon
+
+
+
+
+
+---------- Misc Utilities ----------
+local ScrollContainerHook_Hide = function(c) c.ScrollFrame:Hide() end
+local ScrollContainerHook_Show = function(c) c.ScrollFrame:Show() end
+local ScrollContainerHook_OnSizeChanged = function(c) c.ScrollFrame:Show() end
+function TMW:ConvertContainerToScrollFrame(container, exteriorScrollBarPosition, scrollBarXOffs, scrollBarSizeX, leftSide)
+	local name = container:GetName() and container:GetName() .. "ScrollFrame"
+	local ScrollFrame = TMW.C.Config_ScrollFrame:New("ScrollFrame", name, container:GetParent(), "TellMeWhen_ScrollFrameTemplate")
+	
+	-- Make the ScrollFrame clone the container's position and size
+	local x, y = container:GetSize()
+	ScrollFrame:SetSize(x, y)
+	for i = 1, container:GetNumPoints() do
+		ScrollFrame:SetPoint(container:GetPoint(i))
+	end
+	
+
+	-- Make the container be the ScrollFrame's ScrollChild.
+	-- Fix its size to take the full width.
+	container:ClearAllPoints()
+	ScrollFrame:SetScrollChild(container)
+	container:SetSize(1, 1)
+	
+	local relPoint = leftSide and "LEFT" or "RIGHT"
+	if exteriorScrollBarPosition then
+		ScrollFrame.ScrollBar:SetPoint("LEFT", ScrollFrame, relPoint, scrollBarXOffs or 0, 0)
+	else
+		ScrollFrame.ScrollBar:SetPoint("RIGHT", ScrollFrame, relPoint, scrollBarXOffs or 0, 0)
+	end
+	
+	if scrollBarSizeX then
+		ScrollFrame.ScrollBar:SetWidth(scrollBarSizeX)
+	end
+	
+	container.ScrollFrame = ScrollFrame
+	ScrollFrame.container = container
+
+	hooksecurefunc(container, "Hide", ScrollContainerHook_Hide)
+	hooksecurefunc(container, "Show", ScrollContainerHook_Show)
+	
+	return ScrollFrame
+end
 
 
 
@@ -201,221 +217,24 @@ end
 
 
 
--- ----------------------
--- GENERAL CONFIG FUNCTIONS
--- ----------------------
-
----------- Icon Utilities ----------
-function TMW:GetIconMenuText(ics)
-	local Type = ics.Type or ""
-	local typeData = Types[Type]
-
-	local text, tooltip, dontShorten = typeData:GetIconMenuText(ics)
-	text = tostring(text)
-	
-	tooltip = tooltip or ""
-	
-	text = text == "" and (L["UNNAMED"] .. ((Type ~= "" and typeData and (" - " .. typeData.name) or ""))) or text
-	local textshort = not dontShorten and strsub(text, 1, 40) or text
-
-	if strlen(text) > 40 and not dontShorten then
-		textshort = textshort .. "..."
-	end
-
-	tooltip =	tooltip ..
-				((Type ~= "" and typeData.name) or "") ..
-				((ics.Enabled and "") or "\r\n(" .. L["DISABLED"] .. ")")
-
-	return text, textshort, tooltip
-end
-
-function TMW:GuessIconTexture(ics)
-	local tex
-
-	if ics.CustomTex then
-		tex = TMW:GetTexturePathFromSetting(ics.CustomTex)
-	end
-	
-	if not tex then
-		tex = TMW.Types[ics.Type]:GuessIconTexture(ics)
-	end
-	
-	if not tex then
-		tex = "Interface\\Icons\\INV_Misc_QuestionMark"
-	end
-	
-	return tex
-end
-
-function TMW:PrepareIconSettingsForCopying(ics, gs)
-	TMW:Fire("TMW_ICON_PREPARE_SETTINGS_FOR_COPY", ics, gs)
-end
-
-function TMW.IconsSort(a, b)
-	local icon1, icon2 = _G[a], _G[b]
-	local g1 = icon1.group:GetID()
-	local g2 = icon2.group:GetID()
-	if g1 ~= g2 then
-		return g1 < g2
-	else
-		return icon1:GetID() < icon2:GetID()
-	end
-end
-
-
-
----------- Misc Utilities ----------
-local ScrollContainerHook_Hide = function(c) c.ScrollFrame:Hide() end
-local ScrollContainerHook_Show = function(c) c.ScrollFrame:Show() end
-local ScrollContainerHook_OnSizeChanged = function(c) c.ScrollFrame:Show() end
-function TMW:ConvertContainerToScrollFrame(container, exteriorScrollBarPosition, scrollBarXOffs, scrollBarSizeX, leftSide)
-	
-	local name = container:GetName() and container:GetName() .. "ScrollFrame"
-	local ScrollFrame = CreateFrame("ScrollFrame", name, container:GetParent(), "TellMeWhen_ScrollFrameTemplate")
-	
-	-- Make the ScrollFrame clone the container's position and size
-	local x, y = container:GetSize()
-	ScrollFrame:SetSize(x, y)
-	for i = 1, container:GetNumPoints() do
-		ScrollFrame:SetPoint(container:GetPoint(i))
-	end
-	
-
-	-- Make the container be the ScrollFrame's ScrollChild.
-	-- Fix its size to take the full width.
-	container:ClearAllPoints()
-	ScrollFrame:SetScrollChild(container)
-	container:SetSize(x, 1)
-	
-	local relPoint = leftSide and "LEFT" or "RIGHT"
-	if exteriorScrollBarPosition then
-		ScrollFrame.ScrollBar:SetPoint("LEFT", ScrollFrame, relPoint, scrollBarXOffs or 0, 0)
-	else
-		ScrollFrame.ScrollBar:SetPoint("RIGHT", ScrollFrame, relPoint, scrollBarXOffs or 0, 0)
-	end
-	
-	if scrollBarSizeX then
-		ScrollFrame.ScrollBar:SetWidth(scrollBarSizeX)
-	end
-	
-	container.ScrollFrame = ScrollFrame
-	ScrollFrame.container = container
-
-	hooksecurefunc(container, "Hide", ScrollContainerHook_Hide)
-	hooksecurefunc(container, "Show", ScrollContainerHook_Show)
-	
-end
-
-
-
-
-
-
-
--- -------------
--- GROUP CONFIG
--- -------------
-
----------- Add/Delete ----------
-function TMW:Group_Delete(group)
-	local domain = group.Domain
-	local groupID = group.ID
-
-	tremove(TMW.db[domain].Groups, groupID)
-	TMW.db[domain].NumGroups = TMW.db[domain].NumGroups - 1
-
-
-	-- -- Delay these updates to try and avoid these errors: 
-	-- -- AceConfigDialog-3.0-58.lua:804: attempt to index field "rootframe" (a nil value) 
-	-- TMW:ScheduleTimer(function()
-		TMW:Update()
-
-		IE:Load(1)
-		TMW.ACEOPTIONS:NotifyChanges()
-	-- end, 0.1)
-end
-
-function TMW:Group_Add(domain, view)
-	if InCombatLockdown() then
-		-- Error if we are in combat because TMW:Update() won't create the group instantly if we are.
-		error("TMW: Can't add groups while in combat")
-	end
-
-	local groupID = TMW.db[domain].NumGroups + 1
-
-	TMW.db[domain].NumGroups = groupID
-
-	local gs = TMW.db[domain].Groups[groupID]
-
-	if view then
-		gs.View = view
-		
-		local viewData = TMW.Views[view]
-		if viewData then
-			viewData:Group_OnCreate(gs)
-		end
-	end
-
-	TMW:Update()
-
-	local group = TMW[domain][groupID]
-
-	TMW.ACEOPTIONS:CompileOptions()
-	TMW.ACEOPTIONS:NotifyChanges()
-
-	return group
-end
-
-function TMW:Group_Swap(domain, groupID1, groupID2)
-	local Groups = TMW.db[domain].Groups
-	
-	-- The point of this is to keep the icon editor's
-	-- current icon the same before and after the swap.
-	local iconID, groupGUID
-	if CI.icon then
-		iconID = CI.icon.ID
-		groupGUID = CI.group:GetGUID()
-	end
-
-	Groups[groupID1], Groups[groupID2] = Groups[groupID2], Groups[groupID1]
-
-	TMW:Update()
-
-	IE:Load(1, groupGUID and TMW:GetDataOwner(groupGUID)[iconID])
-end
-
-
----------- Etc ----------
-function TMW:Group_HasIconData(group)
-	for ics in group:InIconSettings() do
-		if not TMW:DeepCompare(TMW.DEFAULT_ICON_SETTINGS, ics) then
-			return true
-		end
-	end
-
-	return false
-end
-
-
-
 
 
 -- ----------------------
 -- ICON EDITOR
 -- ----------------------
 
-IE = TMW:NewModule("IconEditor", "AceEvent-3.0", "AceTimer-3.0") TMW.IE = IE
+IE = TMW:NewClass("IE", "Frame", "Core_Upgrades"):New("Frame")
+IE = TMW:NewModule("IconEditor", IE, "AceEvent-3.0", "AceTimer-3.0") TMW.IE = IE
 IE.Tabs = {}
 
 IE.CONST = {
-	TAB_OFFS_X = -18,
 	IE_HEIGHT_MIN = 400,
 	IE_HEIGHT_MAX = 1200,
 }
 
 function IE:OnInitialize()
 	-- if the file IS required for gross functionality
-	if not TMW.DROPDOWNMENU then
+	if not IE.TabGroups.ICON or not IndentationLib then
 		-- GLOBALS: StaticPopupDialogs, StaticPopup_Show, EXIT_GAME, CANCEL, ForceQuit
 		StaticPopupDialogs["TMWOPT_RESTARTNEEDED"] = {
 			text = L["ERROR_MISSINGFILE_OPT"], 
@@ -427,7 +246,7 @@ function IE:OnInitialize()
 			whileDead = true,
 			preferredIndex = 3, -- http://forums.wowace.com/showthread.php?p=320956
 		}
-		StaticPopup_Show("TMWOPT_RESTARTNEEDED", TELLMEWHEN_VERSION_FULL, "TellMeWhen_Options/TMWUIDropDownMenu.lua") -- arg3 could also be L["ERROR_MISSINGFILE_REQFILE"]
+		StaticPopup_Show("TMWOPT_RESTARTNEEDED", TELLMEWHEN_VERSION_FULL, L["ERROR_MISSINGFILE_REQFILE"]) -- arg3 could also be "TellMeWhen_Options/IconConfig.lua"
 		return
 
 	-- if the file is NOT required for gross functionality
@@ -445,14 +264,19 @@ function IE:OnInitialize()
 		StaticPopup_Show("TMWOPT_RESTARTNEEDED", TELLMEWHEN_VERSION_FULL, "TellMeWhen/Components/Core/Common/DogTags/config.lua") -- arg3 could also be L["ERROR_MISSINGFILE_REQFILE"]
 	end
 
+	if TMW.db.global.CreateImportBackup then
+		TMW.Backupdb = CopyTable(TellMeWhenDB)
+		TMW.BackupDate = date("%I:%M:%S %p")
+	end
+
 	TMW:Fire("TMW_OPTIONS_LOADING")
 	TMW:UnregisterAllCallbacks("TMW_OPTIONS_LOADING")
 
 	-- Make TMW.IE be the same as IE.
 	-- IE[0] = TellMeWhen_IconEditor[0] (already done in .xml)
-	local meta = CopyTable(getmetatable(IE))
-	meta.__index = getmetatable(TellMeWhen_IconEditor).__index
-	setmetatable(IE, meta)
+	-- local meta = CopyTable(getmetatable(IE))
+	-- meta.__index = getmetatable(TellMeWhen_IconEditor).__index
+	-- setmetatable(IE, meta)
 
 
 	hooksecurefunc("PickupSpellBookItem", function(...) IE.DraggingInfo = {...} end)
@@ -467,37 +291,25 @@ function IE:OnInitialize()
 	IE:InitializeDatabase()
 
 
-	IE:HookScript("OnShow", function()
-		TMW:RegisterCallback("TMW_ONUPDATE_POST", IE)
-	end)
-	IE:HookScript("OnHide", function()
-		TMW:UnregisterCallback("TMW_ONUPDATE_POST", IE)
-	end)
 	IE:SetScript("OnUpdate", IE.OnUpdate)
-	IE.iconsToUpdate = {}
 
-	TMW:RegisterCallback("TMW_GROUP_SETUP_POST", function(event, group)
-		if CI.group == group then
-			IE:CheckLoadedIconIsValid()
-		end
-	end)
 
 	IE.history = {}
 	IE.historyState = 0
 
-
-	IE.MainTab = TMW.Classes.IconEditorTab:NewTab("MAIN", 1, "Main")
-	IE.MainTab:SetText(TMW.L["MAIN"])
-	TMW:TT(IE.MainTab, "MAIN", "MAIN_DESC")
 	
 
 	-- Create resizer
 	self.resizer = TMW.Classes.Resizer_Generic:New(self)
+
+	TMW:TT(self.resizer.resizeButton, self.resizer.tooltipTitle, function()
+		return L["RESIZE_TOOLTIP"] .. (not TMW.IE.db.global.ScaleIE and "\r\n\r\n" .. L["RESIZE_TOOLTIP_IEEXTRA"] or "")
+	end, 1, 1)
+	self.resizer.tooltipText = L["RESIZE_TOOLTIP"] .. ("\r\n\r\n" .. L["RESIZE_TOOLTIP_IEEXTRA"])
 	self.resizer:Show()
 	self.resizer.scale_min = 0.4
 	self.resizer.y_min = 400
 	self.resizer.y_max = 1200
-	self.resizer:SetModes(self.resizer.MODE_SCALE, self.resizer.MODE_SIZE)
 	function self.resizer:SizeUpdated()
 		TMW.IE.db.global.EditorHeight = IE:GetHeight()
 		TMW.IE.db.global.EditorScale = IE:GetScale()
@@ -521,16 +333,15 @@ IE.Defaults = {
 	global = {
 		LastChangelogVersion = 0,
 		TellMeWhenDBBackupDate = 0,
-		EditorScale		= 0.9,
+		ScaleIE			= false,
+		EditorScale		= 1,
 		EditorHeight	= 600,
 		ConfigWarning	= true,
 		ConfigWarningN	= 0,
-		SimpleGSTab		= true,
+
+		RecentColors = {},
 	},
 }
-
-IE.UpgradeTable = {}
-IE.UpgradeTableByVersions = {}
 
 function IE:RegisterDatabaseDefaults(defaults)
 	assert(type(defaults) == "table", "arg1 to RegisterProfileDefaults must be a table")
@@ -545,6 +356,12 @@ end
 
 function IE:GetBaseUpgrades()			-- upgrade functions
 	return {
+		[80035] = {
+			global = function(self)
+				IE.db.global.EditorScale = 1
+				IE.db.global.ScaleIE = false
+			end,
+		},
 		[62218] = {
 			global = function(self)
 				IE.db.global.EditorScale = TMW.db.global.EditorScale or 0.9
@@ -564,100 +381,27 @@ function IE:GetBaseUpgrades()			-- upgrade functions
 	}
 end
 
-function IE:RegisterUpgrade(version, data)
-	assert(not data.Version, "Upgrade data cannot store a value with key 'Version' because it is a reserved key.")
-	
-	if IE.HaveUpgradedOnce then
-		error("Upgrades are being registered too late. They need to be registered before any upgrades occur.", 2)
-	end
-	
-	local upgradeSet = IE.UpgradeTableByVersions[version]
-	if upgradeSet then
-		-- An upgrade set already exists for this version, so we need to merge the two.
-		for k, v in pairs(data) do
-			if upgradeSet[k] ~= nil then
-				if type(v) == "function" then
-					-- If we already have a function with the same key (E.g. 'icon' or 'group')
-					-- then hook the existing function so that both run
-					hooksecurefunc(upgradeSet, k, v)
-				else
-					-- If we already have data with the same key (some kind of helper data for the upgrade)
-					-- then raise an error because there will certainly be conflicts.
-					error(("A value with key %q already exists for upgrades for version %d. Please choose a different key to store it in to prevent conflicts.")
-					:format(k, version), 2)
-				end
-			else
-				-- There was nothing already in place, so just stick it in the upgrade set as-is.
-				upgradeSet[k] = v
-			end
-		end
-	else
-		-- An upgrade set doesn't exist for this version,
-		-- so just use the table that was passed in and process it as a new upgrade set.
-		data.Version = version
-		IE.UpgradeTableByVersions[version] = data
-		tinsert(IE.UpgradeTable, data)
-	end
-end
 
-function IE:SortUpgradeTable()
-	sort(IE.UpgradeTable, TMW.UpgradeTableSorter)
-end
+IE:SetUpgradePerformedEvent("TMW_IE_UPGRADE_PERFORMED")
 
-function IE:GetUpgradeTable()	
-	if IE.GetBaseUpgrades then		
-		for version, data in pairs(IE:GetBaseUpgrades()) do
-			IE:RegisterUpgrade(version, data)
-		end
-		
-		IE.GetBaseUpgrades = nil
-	end
-	
-	IE:SortUpgradeTable()
-	
-	return IE.UpgradeTable
-end
-
-
-function IE:DoUpgrade(type, version, ...)
-	assert(_G.type(type) == "string")
-	assert(_G.type(version) == "number")
-	
-	-- upgrade the actual requested setting
-	for k, v in ipairs(IE:GetUpgradeTable()) do
-		if v.Version > version then
-			if v[type] then
-				v[type](v, ...)
-			end
-		end
-	end
-	
-	TMW:Fire("TMW_IE_UPGRADE_REQUESTED", type, version, ...)
-
-	-- delegate out to sub-types
+TMW:RegisterCallback("TMW_IE_UPGRADE_PERFORMED", function(event, type, upgradeData, ...)
 	if type == "global" then
-	
 		-- delegate to locale
 		if IE.db.sv.locale then
+			local currentLocale = GetLocale():lower()
+
 			for locale, ls in pairs(IE.db.sv.locale) do
-				IE:DoUpgrade("locale", version, ls, locale)
+				-- Delete non-current locale data. It doesn't contain anything useful.
+				if locale ~= currentLocale then
+					TMW.IE.db.sv.locale[locale] = nil
+					TMW:Printf("Deleted cache for locale %s", locale)
+				else
+					IE:Upgrade("locale", upgradeData, ls, locale)
+				end
 			end
 		end
-	
-		--All Global Upgrades Complete
-		TMWOptDB.Version = TELLMEWHEN_VERSIONNUMBER
-	elseif type == "profile" then
-		
-		-- Put any sub-type upgrade delegation here...
-		
-
-		
-		--All Profile Upgrades Complete
-		IE.db.profile.Version = TELLMEWHEN_VERSIONNUMBER
 	end
-	
-	IE.HaveUpgradedOnce = true
-end
+end)
 
 
 function IE:RawUpgrade()
@@ -688,7 +432,9 @@ end
 
 function IE:UpgradeGlobal()
 	if TMWOptDB.Version < TELLMEWHEN_VERSIONNUMBER then
-		IE:DoUpgrade("global", TMWOptDB.Version, IE.db.global)
+		IE:StartUpgrade("global", TMWOptDB.Version, IE.db.global)
+
+		TMWOptDB.Version = TELLMEWHEN_VERSIONNUMBER
 	end
 
 	-- This function isn't needed anymore
@@ -698,15 +444,14 @@ end
 function IE:UpgradeProfile()
 	-- Set the version for the current profile to the current version if it is a new profile.
 	IE.db.profile.Version = IE.db.profile.Version or TELLMEWHEN_VERSIONNUMBER
-		
-	if TMWOptDB.Version < TELLMEWHEN_VERSIONNUMBER then
-		IE:DoUpgrade("global", TMWOptDB.Version, IE.db.global)
-	end
 	
 	if IE.db.profile.Version < TELLMEWHEN_VERSIONNUMBER then
-		IE:DoUpgrade("profile", IE.db.profile.Version, IE.db.profile)
+		IE:StartUpgrade("profile", IE.db.profile.Version, IE.db.profile)
+
+		IE.db.profile.Version = TELLMEWHEN_VERSIONNUMBER
 	end
 end
+
 
 
 function IE:InitializeDatabase()
@@ -773,9 +518,15 @@ function IE:InitializeDatabase()
 		TellMeWhen_DBRestoredNofication:SetTime(IE.db.global.TellMeWhenDBBackupDate)
 		TellMeWhen_DBRestoredNofication:Show()
 
-	elseif not TMW.DBWasEmpty --[[and IE.db.global.TellMeWhenDBBackupDate + 86400 < time()]] then
+	elseif not TMW.db.global.BackupDbInOptions then
+		-- User has disabled storing of DB backups in the options. Get rid of it.
+		IE.db.global.TellMeWhenDBBackupDate = nil
+		if IE.db.global.TellMeWhenDBBackup then
+			collectgarbage()
+			IE.db.global.TellMeWhenDBBackup = nil
+		end
+	elseif not TMW.DBWasEmpty then
 		-- TellMeWhenDB was not corrupt, so back it up.
-		-- I have opted against only creating the backup after the old one reaches a certain age.
 		IE.db.global.TellMeWhenDBBackupDate = time()
 		IE.db.global.TellMeWhenDBBackup = TellMeWhenDB
 	end
@@ -787,10 +538,11 @@ end
 function IE:OnProfile(event, arg2, arg3)
 
 	if IE.Initialized then
-		TMW.ACEOPTIONS:CompileOptions() -- redo groups in the options
 
 		-- Reload the icon editor.
-		IE:Load(1)
+		IE:LoadIcon(1, false)
+		IE:LoadGroup(1, false)
+
 	
 		TMW:Fire("TMW_IE_ON_PROFILE", event, arg2, arg3)
 	end
@@ -800,200 +552,33 @@ TMW:RegisterCallback("TMW_ON_PROFILE", function(event, arg2, arg3)
 	IE.db:SetProfile(TMW.db:GetCurrentProfile())
 end)
 
- 
 
 
 
-TMW:NewClass("IconEditorTab", "Button"){
-	
-	NewTab = function(self, identifier, order, attachedFrame)
-		self:AssertSelfIsClass()
-		
-		TMW:ValidateType("2 (identifier)", "IconEditorTab:NewTab(identifier, order, attachedFrame)", identifier, "string")
-		TMW:ValidateType("3 (order)", "IconEditorTab:NewTab(identifier, order, attachedFrame)", order, "number")
-		TMW:ValidateType("4 (attachedFrame)", "IconEditorTab:NewTab(identifier, order, attachedFrame)", attachedFrame, "string")
-		
-		local tab = self:New("Button", "TellMeWhen_IconEditorTab" .. #IE.Tabs + 1, TellMeWhen_IconEditor, "CharacterFrameTabButtonTemplate")
-		
-		tab.doesIcon = 1
-		tab.doesGroup = 1
-	
-		tab.identifier = identifier
-		tab.order = order
-		tab.attachedFrame = attachedFrame
-		
-		IE.Tabs[#IE.Tabs + 1] = tab
-		tab:SetID(#IE.Tabs)
-		
-		TellMeWhen_IconEditor.numTabs = #IE.Tabs
-		
-		TMW:SortOrderedTables(IE.Tabs)
-		
-		
-		for id, tab in pairs(IE.Tabs) do
-			if id == 1 then
-				tab:SetPoint("BOTTOMLEFT", 0, -30)
-			else
-				tab:SetPoint("LEFT", IE.Tabs[id - 1], "RIGHT", IE.CONST.TAB_OFFS_X, 0)
-			end
-		end
-		
-		PanelTemplates_TabResize(tab, -6)
-				
-		return tab
-	end,
-	
-	OnClick = function(self)
-		if self.doesGroup and not CI.icon then
-			self:ClickHandlerBase(IE.NotLoadedMessage)
-		else
-			IE.NotLoadedMessage:Hide()
-			self:ClickHandler()
-		end
-	end,
-	
-	ClickHandlerBase = function(self, frame)
-		-- invoke blizzard's tab click function to set the apperance of all the tabs
-		PanelTemplates_Tab_OnClick(self, self:GetParent())
-		PlaySound("igCharacterInfoTab")
-
-		-- hide all tabs' frames, including the current tab so that the OnHide and OnShow scripts fire
-		for _, tab in ipairs(IE.Tabs) do
-			local frame = tab.attachedFrame
-			if TellMeWhen_IconEditor[frame] then
-				TellMeWhen_IconEditor[frame]:Hide()
-			end
-		end
-		IE.NotLoadedMessage:Hide()
-
-		local oldTab = IE.CurrentTab
-		
-		-- state the current tab.
-		-- this is used in many other places, including inside some OnShow scripts, so it MUST go before the :Show()s below
-		IE.CurrentTab = self
-
-		-- show the selected tab's frame
-		if frame then
-			frame:Show()
-		end
-
-		-- show the icon editor
-		--IE:Show()
-		
-		TMW:Fire("TMW_CONFIG_TAB_CLICKED", IE.CurrentTab, oldTab)
-	end,
-	
-	ClickHandler = function(self)
-		local frame = TellMeWhen_IconEditor[self.attachedFrame]
-		if not frame then
-			TMW:Error(("Couldn't find child of TellMeWhen_IconEditor with key %q"):format(self.attachedFrame))
-		end
-
-		self:ClickHandlerBase(frame)
-	end,
-
-	SetupHeader = function(self)
-		local titlePrepend = "TellMeWhen v" .. TELLMEWHEN_VERSION_FULL
-
-		local icon = CI.icon
-		local group = CI.group
 
 
-		if icon and self.doesGroup and self.doesIcon then
-			-- For IconEditor tabs that can configure icons
-
-			local groupName = group:GetGroupName(1)
-			local name = L["GROUPICON"]:format(groupName, icon.ID)
-			if group.Domain == "global" then
-				name = L["DOMAIN_GLOBAL"] .. " " .. name
-			end
-			
-			IE.Header:SetText(titlePrepend .. " - " .. name)
-
-			IE.Header:SetFontObject(GameFontNormal)
-
-			if IE.Header:IsTruncated() then
-				IE.Header:SetFontObject(GameFontNormalSmall)
-				local truncAmt = 3
-				while IE.Header:IsTruncated() and truncAmt < #groupName + 4 do
-
-
-					local name = L["GROUPICON"]:format(groupName:sub(1, -truncAmt - 4) .. "..." .. groupName:sub(-4), icon.ID)
-					if group.Domain == "global" then
-						name = L["DOMAIN_GLOBAL"] .. " " .. name
-					end
-
-					IE.Header:SetText(titlePrepend .. " - " .. name)
-					truncAmt = truncAmt + 1
-				end
-			end
-
-			if icon then
-				IE.icontexture:SetTexture(icon.attributes.texture)
-			end
-			IE.BackButton:Show()
-			IE.ForwardsButton:Show()
-
-			IE.Header:SetPoint("LEFT", IE.ForwardsButton, "RIGHT", 4, 0)
-		else
-			-- For IconEditor tabs that can't configure icons (tabs handled here might not configure groups either)
-			IE.icontexture:SetTexture(nil)
-			IE.BackButton:Hide()
-			IE.ForwardsButton:Hide()
-
-			-- Setting this relative to icontexture makes it roughly centered
-			-- (it gets offset to the left by the exit button)
-			IE.Header:SetPoint("LEFT", IE.icontexture, "RIGHT", 4, 0)
-			
-			if group and self.doesGroup then
-				-- for group config tabs, don't show icon info. Just show group info.
-				local name = L["fGROUP"]:format(group:GetGroupName(1))
-				if group.Domain == "global" then
-					name = L["DOMAIN_GLOBAL"] .. " " .. name
-				end
-				IE.Header:SetText(titlePrepend .. " - " .. name)
-			else
-				IE.Header:SetText(titlePrepend)
-			end
-		end
-	end,
-	
-	SetTitleComponents = function(self, doesIcon, doesGroup)
-		self.doesIcon = doesIcon
-		self.doesGroup = doesGroup
-	end,
-	
-
-
-	OnShow = function(self)
-		PanelTemplates_TabResize(self, -6)
-		self:SetFrameLevel(self:GetParent():GetFrameLevel() - 1)
-	end,
-	OnHide = function(self)
-		self:SetWidth(TMW.IE.CONST.TAB_OFFS_X)
-	end,
-	
-	OnSizeChanged = function(self)
-		PanelTemplates_TabResize(self, -6)
-	end,
-	
-	METHOD_EXTENSIONS = {
-		SetText = function(self, text)
-			PanelTemplates_TabResize(self, -6)
-		end,
-	}
-}
 
 
 function IE:OnUpdate()
 	local icon = CI.icon
 
-	-- update the top of the icon editor with the information of the current icon.
+	-- update the top of the icon editor with the information of the current tab.
 	-- this is done in an OnUpdate because it is just too hard to track when the texture changes sometimes.
 	-- I don't want to fill up the main addon with configuration code to notify the IE of texture changes	
-	local tab = IE.CurrentTab
-	if tab then
-		tab:SetupHeader()
+	local tabGroup = IE.CurrentTabGroup
+	if tabGroup then
+
+		IE.icontexture:SetTexture(nil)
+
+		IE.Header:SetText(nil)
+		IE.Header:SetPoint("LEFT", IE.icontexture, "RIGHT", 4, 0)
+		IE.Header:SetFontObject(GameFontNormal)
+
+		tabGroup:SetupHeader()
+
+		if not IE.Header:GetText() then
+			IE.Header:SetText("TellMeWhen v" .. TELLMEWHEN_VERSION_FULL)
+		end
 	end
 	
 	
@@ -1015,27 +600,8 @@ function IE:BAR_HIDEGRID()
 	IE.DraggingInfo = nil
 end
 
-function IE:TMW_ONUPDATE_POST(...)
-	-- run updates for any icons that are queued
-	for i, icon in ipairs(IE.iconsToUpdate) do
-		if icon:IsGroupController() then
-			TMW.safecall(icon.group.Setup, icon.group)
-		else
-			TMW.safecall(icon.Setup, icon)
-		end
-	end
-	wipe(IE.iconsToUpdate)
-
-	-- check and see if the settings of the current icon have changed.
-	-- if they have, create a history point (or at least try to)
-	-- IMPORTANT: do this after running icon updates <because of an old antiquated reason which no longer applies, but if it ain't broke, don't fix it>
-	IE:AttemptBackup(TMW.CI.icon)
-end
-
 TMW:RegisterCallback("TMW_CONFIG_TAB_CLICKED", function(event, tab)
-	IE:UndoRedoChanged()
-
-	if tab.doesIcon then
+	if IE.CurrentTabGroup.identifier == "ICON" then
 		IE.ResetButton:Enable()
 	else
 		IE.ResetButton:Disable()
@@ -1057,26 +623,9 @@ TMW:RegisterCallback("TMW_GLOBAL_UPDATE", function()
 	IE:SaveSettings()
 end)
 
-TMW:RegisterCallback("TMW_GROUP_SETUP_POST", function()
-	-- GLOBALS: TellMeWhen_NoGroupsWarning
-	if not TMW.Locked then
-		for group in TMW:InGroups() do
-			if group:IsVisible() then
-				TellMeWhen_NoGroupsWarning:Hide()
-				return
-			end
-		end
-
-		TellMeWhen_NoGroupsWarning:Show()
-	else
-		TellMeWhen_NoGroupsWarning:Hide()
-	end
-end)
-
 IE:RegisterEvent("PLAYER_REGEN_DISABLED", function()
 	if not TMW.ALLOW_LOCKDOWN_CONFIG then
 		IE:Hide()
-		LibStub("AceConfigDialog-3.0"):Close("TMWStandalone")
 	end
 end)
 
@@ -1097,93 +646,56 @@ function IE:StopMovingOrSizing()
 end
 
 
+
+
+
 ---------- Interface ----------
-IE.AllDisplayPanels = {}
-local panelList = {}
 
-function IE:PositionPanels()
-	for _, frame in pairs(IE.AllDisplayPanels) do
-		frame:Hide()
-	end
-	
-	if not CI.icon then
-		return
-	end
-
-	wipe(panelList)
-	for _, Component in pairs(CI.icon.Components) do
-		if Component:ShouldShowConfigPanels(CI.icon) then
-			for _, panelInfo in pairs(Component.ConfigPanels) do
-				tinsert(panelList, panelInfo)
-			end		
-		end
-	end
-	
+function IE:PositionPanels(parentPageName, panelList)
 	TMW:SortOrderedTables(panelList)
 	
-	local ParentLeft, ParentRight = TellMeWhen_IconEditorMainPanelsLeft, TellMeWhen_IconEditorMainPanelsRight
-	for i = 1, #ParentLeft do
-		ParentLeft[i] = nil
-	end
-	for i = 1, #ParentRight do
-		ParentRight[i] = nil
-	end
-	
-	for i, panelInfo in ipairs(panelList) do
-		local GenericComponent = panelInfo.component
-		
-		local parent
-		if GenericComponent.className == "IconType" then 
-			parent = ParentLeft
-		else
-			parent = ParentRight
+
+	local panelColumns = TellMeWhen_IconEditor.Pages[parentPageName].panelColumns
+	for _, panelColumn in ipairs(panelColumns) do
+		for _, panel in TMW:Vararg(panelColumn:GetChildren()) do
+			panel:Hide()
 		end
-		
-		local frame
-		-- Get the frame for the panel if it already exists, or create it if it doesn't.
-		if panelInfo.panelType == "XMLTemplate" then
-			frame = IE.AllDisplayPanels[panelInfo.xmlTemplateName]
-			
-			if not frame then
-				frame = TMW.C.Config_Panel:New("Frame", panelInfo.xmlTemplateName, parent, panelInfo.xmlTemplateName)
-
-				IE.AllDisplayPanels[panelInfo.xmlTemplateName] = frame
-			end
-		elseif panelInfo.panelType == "ConstructorFunc" then
-			frame = IE.AllDisplayPanels[panelInfo] 
-			
-			if not frame then
-				frame = TMW.C.Config_Panel:New("Frame", panelInfo.frameName, parent, "TellMeWhen_OptionsModuleContainer")
-
-				IE.AllDisplayPanels[panelInfo] = frame
-				TMW.safecall(panelInfo.func, frame)
-			end
-		end
-		
-		if frame and frame:ShouldShow() then
-			if type(parent[#parent]) == "table" then
-				frame:SetPoint("TOP", parent[#parent], "BOTTOM", 0, -11)
-			else
-				frame:SetPoint("TOP", 0, -11)
-			end
-			parent[#parent + 1] = frame
-			
-			
-			frame:Show()
-
-			frame:Setup(panelInfo)
-			
-			TMW:Fire("TMW_CONFIG_PANEL_SETUP", frame, panelInfo)
-		end	
-	end	
+		wipe(panelColumn.currentPanels)
+	end
 	
 	local IE_FL = IE:GetFrameLevel()
-	for i = 1, #ParentLeft do
-		ParentLeft[i]:SetFrameLevel(IE_FL + 3) --(#ParentLeft-i+1)*3)
-	end
-	for i = 1, #ParentRight do
-		ParentRight[i]:SetFrameLevel(IE_FL + 3) --(#ParentRight-i+1)*3)
-	end
+
+	for i, panelInfo in ipairs(panelList) do
+
+		if not panelInfo.columnIndex or panelInfo.columnIndex < 1 or panelInfo.columnIndex > #panelColumns then	
+			local frameName = panelInfo:GetFrameName()
+			error("columnIndex out of bounds for panel " .. frameName)
+		end
+		
+		local panelColumn = panelColumns[panelInfo.columnIndex]
+		local panel = panelInfo:GetPanel(panelColumn)
+
+		if panel then
+			local last = panelColumn.currentPanels[#panelColumn.currentPanels]
+
+			if type(last) == "table" then
+				panel:SetPoint("TOP", last, "BOTTOM", 0, -20)
+			else
+				panel:SetPoint("TOP", 0, -14)
+			end
+			
+			panel:Show()
+			panel:SetFrameLevel(IE_FL + 3)
+
+			-- Panel may be hidden by calling :Setup(), so we check after calling
+			-- to see if the panel is still shown.
+			panel:Setup(panelInfo)
+
+			if panel:IsShown() then
+				panelColumn.currentPanels[#panelColumn.currentPanels + 1] = panel
+			end
+		end	
+	end	
 end
 
 function IE:DistributeFrameAnchorsLaterally(parent, numPerRow, ...)
@@ -1218,261 +730,540 @@ function IE:DistributeFrameAnchorsLaterally(parent, numPerRow, ...)
 	end
 end
 
-function IE:Load(isRefresh, icon, isHistoryChange)
-	TMW.ACEOPTIONS:CompileOptions()
+function IE:DistributeCheckAnchorsEvenly(parent, ...)
+	local numChildFrames = select("#", ...)
+	
+	local widthPerFrame = parent:GetWidth()/(numChildFrames + 1)
+	local leftClickArea = 25
 
-	if icon ~= nil then
-		local ic_old = CI.icon
+	local lastChild
+	for i = 1, numChildFrames do
+		local child = select(i, ...)
 
-		if type(icon) == "table" then
-			PlaySound("igCharacterInfoTab")
-			IE:SaveSettings()
-			
-			CI.icon = icon
+		TMW:ValidateType("...", "DistributeCheckAnchorsEvenly(parent, ...)", child, "Config_CheckButton")
+		
+		local xOffs = widthPerFrame - (child:GetWidth() / 1)
 
-			if IE.history[#IE.history] ~= icon and not isHistoryChange then
-				-- if we are using an old history point (i.e. we hit back a few times and then loaded a new icon),
-				-- delete all history points from the current one forward so that we dont jump around wildly when backing and forwarding
-				for i = IE.historyState + 1, #IE.history do
-					IE.history[i] = nil
-				end
-
-				IE.history[#IE.history + 1] = icon
-
-				-- set the history state to the latest point
-				IE.historyState = #IE.history
-				-- notify the back and forwards buttons that there was a change so they can :Enable() or :Disable()
-				IE:BackFowardsChanged()
-			end
-			
-			if ic_old ~= CI.icon then
-				IE.Main.PanelsLeft.ScrollFrame:SetVerticalScroll(0)
-				IE.Main.PanelsRight.ScrollFrame:SetVerticalScroll(0)
-			end
-
-
-		elseif icon == false then
-			CI.icon = nil
-		end
-
-		if IE.CurrentTab then
-			IE.CurrentTab:OnClick()
+		child:ConstrainLabel(child, "RIGHT", min(widthPerFrame - child:GetWidth() - leftClickArea, 200), 0)
+		if lastChild then
+			child:SetPoint("LEFT", lastChild, "LEFT", widthPerFrame, 0)
 		else
-			IE.MainTab:OnClick()
+			-- Offset the first one by half of its width so that things stay nice and centered.
+			child:SetPoint("LEFT", xOffs, 0)
 		end
 
-		TMW:Fire("TMW_CONFIG_ICON_LOADED_CHANGED", CI.icon, ic_old)
+		-- Reposition the click interceptor so that users can click on either side of the check.
+		-- Normally, it is only on the right side, but this feels really strange.
+		child.ClickInterceptor:ClearAllPoints()
+		child.ClickInterceptor:SetPoint("TOP")
+		child.ClickInterceptor:SetPoint("BOTTOM")
+		child.ClickInterceptor:SetPoint("RIGHT", child.text)
+		child.ClickInterceptor:SetPoint("LEFT", child, "LEFT", -leftClickArea, 0)
+
+		lastChild = child
 	end
+end
 
-	local shouldShow = true
-	if TellMeWhen_ChangelogDialog and TellMeWhen_ChangelogDialog.showIEOnClose then
-		-- Wait for the changelog to hide before attemping to load again
-		return
-	end
 
-	if IE.db.global.LastChangelogVersion > 0 then
-		if IE.db.global.LastChangelogVersion < TELLMEWHEN_VERSIONNUMBER then
-			if IE.db.global.LastChangelogVersion < TELLMEWHEN_FORCECHANGELOG -- forced
-			or TELLMEWHEN_VERSION_MINOR == "" -- upgraded to a release version (e.g. 7.0.0 release)
-			or floor(IE.db.global.LastChangelogVersion/100) < floor(TELLMEWHEN_VERSIONNUMBER/100) -- upgraded to a new minor version (e.g. 6.2.6 release -> 7.0.0 alpha)
-			then
-				IE:ShowChangelog(IE.db.global.LastChangelogVersion, true)
-				shouldShow = false
 
-				TMW.HELP:Show{
-					code = "CHANGELOG_INFO",
-					codeOrder = 100,
-					codeOnlyOnce = false,
-
-					icon = nil,
-					parent = TellMeWhen_ChangelogDialog,
-					x = 0,
-					y = -40,
-					relativeTo = TellMeWhen_ChangelogDialog,
-					relativePoint = "TOPLEFT",
-					text = format(L["CHANGELOG_INFO"], TELLMEWHEN_VERSION_FULL)
-				}
-			
-			else
-				TMW:Printf(L["CHANGELOG_MSG"], TELLMEWHEN_VERSION_FULL)
-			end
-
-			IE.db.global.LastChangelogVersion = TELLMEWHEN_VERSIONNUMBER
-		end
-	else
-		IE.db.global.LastChangelogVersion = TELLMEWHEN_VERSIONNUMBER
-	end
-
-	if not IE:IsShown() then
-		if isRefresh then
-			return
-		elseif shouldShow then
-			IE:Show()
-		end
+function IE:Load(isRefresh)
+	if not isRefresh then
+		IE:Show()
 	end
 	
-	if 0 > IE:GetBottom() then
+	if IE:GetBottom() <= 0 then
 		IE.db.global.EditorScale = IE.Defaults.global.EditorScale
 		IE.db.global.EditorHeight = IE.Defaults.global.EditorHeight
 	end
+
+	IE:RefreshTabs()
 	
-	IE:SetScale(IE.db.global.EditorScale)
+
+	IE.resizer:SetModes(
+		IE.db.global.ScaleIE and IE.resizer.MODE_SCALE or IE.resizer.MODE_STATIC,
+		IE.resizer.MODE_SIZE)
+
+	IE:SetScale(IE.db.global.ScaleIE and IE.db.global.EditorScale or 1)
 	IE:SetHeight(IE.db.global.EditorHeight)
 
-	
-	if CI.icon then
-		-- This is really really important. The icon must be setup so that it has the correct components implemented
-		-- so that the correct config panels will be loaded and shown for the icon.
-		CI.icon:Setup()
-
-		IE:PositionPanels()
-		
-		if CI.ics.Type == "" then
-			IE.Main.Type:SetText(L["ICONMENU_TYPE"])
-		else
-			local Type = rawget(TMW.Types, CI.ics.Type)
-			if Type then
-				IE.Main.Type:SetText(Type.name)
-			else
-				IE.Main.Type:SetText(CI.ics.Type .. ": UNKNOWN TYPE")
-			end
-		end
-
-		IE.ResetButton:Enable()
-
-		IE:ScheduleIconSetup()
-
-		-- It is intended that this happens at the end instead of the beginning.
-		-- Table accesses that trigger metamethods flesh out an icon's settings with new things that aren't there pre-load (usually)
-		if icon then
-			IE:AttemptBackup(CI.icon)
-		end
-
-		TMW:Fire("TMW_CONFIG_ICON_LOADED", CI.icon)
-	else
-		IE.ResetButton:Disable()
-	end
-	
-	IE:UndoRedoChanged()
-
 	TMW:Fire("TMW_CONFIG_LOADED")
-end
 
-function IE:CheckLoadedIconIsValid()
-	if not TMW.IE:IsShown() then
-		return
-	end
-
-	if not CI.icon then
-		return
-	elseif
-		not CI.group:IsValid()
-		or not CI.icon:IsInRange()
-		or CI.icon:IsControlled()
-	then
-		TMW.IE:Load(nil, false)
-	end
+	IE:ResizeTabs()
 end
 
 
+-- TODO: integrate this with history sets
 function IE:Reset()	
 	IE:SaveSettings() -- this is here just to clear the focus of editboxes, not to actually save things
 	
 	CI.icon:DisableIcon()
 	
-	TMW.CI.gs.Icons[CI.icon.ID] = nil
+	TMW.CI.icon.group:GetSettings().Icons[CI.icon.ID] = nil
 	
 	TMW:Fire("TMW_ICON_SETTINGS_RESET", CI.icon)
 	
 	CI.icon:Setup()
 	
-	IE:Load(1)
-	
-	IE.MainTab:Click()
+	IE:LoadIcon(1)
+end
+
+function IE:ShowConfirmation(confirmText, desc, action)
+	local Description = IE.Pages.Confirm.MiddleBand.Description
+	Description:SetText(desc)
+
+	local AcceptButton = IE.Pages.Confirm.MiddleBand.AcceptButton
+	AcceptButton:SetText(confirmText)
+	AcceptButton:SetWidth(AcceptButton:GetTextWidth() + 20)
+	AcceptButton.Action = action
+
+	IE:DisplayPage("Confirm")
+end
+
+function IE:SaveSettings()
+	IE:CScriptTunnel("ClearFocus")
 end
 
 
----------- Spell/Item Dragging ----------
-function IE:SpellItemToIcon(icon, func, arg1)
-	if not icon.IsIcon then
+---------- Equivalancies ----------
+function IE:Equiv_GenerateTips(equiv)
+	local IDs = TMW:SplitNames(TMW.EquivFullIDLookup[equiv])
+	local original = TMW.EquivOriginalLookup[equiv]
+
+	for k, v in pairs(IDs) do
+		local name, _, texture = GetSpellInfo(v)
+		if not name then
+			if TMW.debug then
+				TMW:Error("INVALID ID FOUND: %s:%s", equiv, v)
+				name = "INVALID " .. v
+			else
+				name = v
+			end
+			texture = "Interface\\Icons\\INV_Misc_QuestionMark"
+		end
+
+		-- If this spell is tracked only by ID, add the ID in parenthesis
+		local originalSpell = original[k]
+		if originalSpell > 0 then
+			name = format("%s |cff7f6600(%d)|r", name, originalSpell)
+		end
+
+		tiptemp[name] = tiptemp[name] or "|T" .. texture .. ":0|t" .. name
+	end
+
+	local r = ""
+	for name, line in TMW:OrderedPairs(tiptemp) do
+		r = r .. line .. "\r\n"
+	end
+
+	r = strtrim(r, "\r\n ;")
+	wipe(tiptemp)
+	return r
+end
+TMW:MakeSingleArgFunctionCached(IE, "Equiv_GenerateTips")
+
+
+
+
+
+
+
+---------------------------------
+-- Config Classes
+---------------------------------
+
+
+-- These classes are declared in TellMeWhen.lua. This extends them.
+TMW.C.ConfigPanelInfo {
+	GetPanel = function(self, panelColumn)
+		if not self.panel and _G[self:GetFrameName()] then
+			self.panel = _G[self:GetFrameName()]
+		end
+		if self.panel then
+			self.panel:SetParent(panelColumn)
+
+			return self.panel
+		end
+
+		local success
+		success, self.panel = TMW.safecall(self.MakePanel, self, panelColumn)
+
+		if self.panel then
+			self.panel.panelInfo = self
+		end
+
+		return self.panel
+	end,
+}
+
+TMW.C.XmlConfigPanelInfo {
+	GetFrameName = function(self)
+		return self.xmlTemplateName
+	end,
+
+	MakePanel = function(self, panelColumn)
+		local panel = CreateFrame("Frame", self:GetFrameName(), panelColumn, self.xmlTemplateName)
+
+		if not panel.isLibOOInstance then
+			TMW:CInit(panel)
+		end
+
+		return panel
+	end,
+}
+
+TMW.C.LuaConfigPanelInfo {
+	GetFrameName = function(self)
+		return self.frameName
+	end,
+
+	MakePanel = function(self, panelColumn)
+		local panel = TMW.C.Config_Panel:New("Frame", self:GetFrameName(), panelColumn, "TellMeWhen_OptionsModuleContainer")
+
+		TMW.safecall(self.constructor, panel)
+		
+		-- no longer needed. Off to the GC!
+		self.constructor = nil
+
+		return panel
+	end,
+}
+
+TMW:NewClass("StaticConfigPanelInfo", "ConfigPanelInfo"){
+	OnNewInstance_Static = function(self, order, frameKey)
+		TMW:ValidateType(2, "LuaConfigPanelInfo:New()", order, "number")
+		TMW:ValidateType(3, "StaticConfigPanelInfo:New()", frameKey, "string")
+
+		self.order = order
+		self.frameKey = frameKey
+	end,
+
+	GetFrameName = function(self)
+		error("don't try to get the frame name of static config panels")
+	end,
+
+	GetPanel = function(self, panelColumn)
+		if not self.panel then
+			self.panel = panelColumn[self.frameKey]
+		end
+
+		if not self.panel then
+			error("Couldnt find static config panel with key " .. self.frameKey)
+		end
+
+		return self.panel
+	end,
+}
+
+
+
+
+local CScriptProvider
+local CS_SDepth = 0
+local CS_Root = "";
+local function bubble(frame, get, script, ...)
+	if not frame then
 		return
 	end
 
-	local t, data, subType, param4
-	local input
-	if not (CursorHasSpell() or CursorHasItem()) and IE.DraggingInfo then
-		t = "spell"
-		data, subType = unpack(IE.DraggingInfo)
-	else
-		t, data, subType, param4 = GetCursorInfo()
-	end
-	IE.DraggingInfo = nil
-
-	if not t then
-		return
+	if frame.isLibOOInstance and frame.class.inherits[CScriptProvider] then
+		if get then
+			local ret = frame:CScriptCallGet(script, ...)
+			if ret ~= nil then
+				return ret
+			end
+		else
+			frame:CScriptCall(script, ...)
+		end
 	end
 
-	IE:SaveSettings()
+	return bubble(frame:GetParent(), get, script, ...)
+end
 
-	-- create a backup before doing things
-	IE:AttemptBackup(icon)
-
-	-- handle the drag based on icon type
-	local success
-	if func then
-		success = func(arg1, icon, t, data, subType, param4)
-	else
-		success = icon.typeData:DragReceived(icon, t, data, subType, param4)
+local function tunnel(frame, get, script, ...)
+	if frame.isLibOOInstance and frame.class.inherits[CScriptProvider] then
+		if get then
+			local ret = frame:CScriptCallGet(script, ...)
+			if ret ~= nil then
+				return ret
+			end
+		else
+			frame:CScriptCall(script, ...)
+		end
 	end
-	if not success then
-		return
-	end
 
-	ClearCursor()
-	icon:Setup()
-	IE:Load(1)
+	for _, child in TMW:Vararg(frame:GetChildren()) do
+		local ret = tunnel(child, get, script, ...)
+		if get and ret ~= nil then
+			return ret
+		end
+	end
 end
 
 
----------- Settings ----------
+CScriptProvider = TMW:NewClass("CScriptProvider"){
+	DEBUG_MaxDepth = 25,
 
-
-
-TMW:NewClass("Config_Frame", "Frame"){
-	-- Constructor
-	OnNewInstance_Frame = function(self, data)
-		-- Setup callbacks that will load the settings when needed.
-		TMW:RegisterCallback("TMW_CONFIG_ICON_LOADED", self, "ReloadSetting")
-		TMW:RegisterCallback("TMW_CONFIG_ICON_HISTORY_STATE_CREATED", self, "ReloadSetting")
-		TMW:RegisterCallback("TMW_CONFIG_ICON_HISTORY_STATE_CHANGED", self, "ReloadSetting")
-
-		if data then
-			-- Set appearance and settings
-			self.data = data
-			self.setting = data.setting
-
-			if self.data.title or self.data.tooltip then
-				self:SetTooltip(self.data.title, self.data.tooltip)
+	CScriptTunnelGet = function(self, script, ...)
+		for _, child in TMW:Vararg(frame:GetChildren()) do
+			local ret = tunnel(child, true, script, ...)
+			if ret then
+				return ret
 			end
 		end
+	end,
+	CScriptBubbleGet = function(self, script, ...)
+		return bubble(self:GetParent(), true, script, ...)
+	end,
+	CScriptTunnel = function(self, script, ...)
+		if CS_SDepth == 0 then
+			CS_Root = script .. ":" .. (self:GetDebugName() or self.setting or "?")
+		end
+		CS_SDepth = CS_SDepth + 1
+
+		for _, child in TMW:Vararg(self:GetChildren()) do
+			tunnel(child, false, script, ...)
+		end
+
+		CS_SDepth = CS_SDepth - 1
+	end,
+	CScriptBubble = function(self, script, ...)
+		if CS_SDepth == 0 then
+			CS_Root = script .. ":" .. (self:GetDebugName() or self.setting or "?")
+		end
+		CS_SDepth = CS_SDepth + 1
+
+		bubble(self:GetParent(), false, script, ...)
+
+		CS_SDepth = CS_SDepth - 1
+	end,
+
+	CScriptAdd = function(self, script, func)
+		TMW:ValidateType("script", "CScriptAdd(script, func)", script, "string")
+		TMW:ValidateType("func", "CScriptAdd(script, func)", func, "function")
+
+		self.__CScripts = self.__CScripts or {}
+		local existing = self.__CScripts[script]
+
+		if existing == nil then
+			self.__CScripts[script] = func
+		elseif type(existing) == "function" then
+			self.__CScripts[script] = {existing, func}
+		else
+			tinsert(existing, func)
+		end
+	end,
+
+	CScriptAddPre = function(self, script, func)
+		TMW:ValidateType("script", "CScriptAddPre(script, func)", script, "string")
+		TMW:ValidateType("func", "CScriptAddPre(script, func)", func, "function")
+
+		self.__CScripts = self.__CScripts or {}
+		local existing = self.__CScripts[script]
+
+		if existing == nil then
+			self.__CScripts[script] = func
+		elseif type(existing) == "function" then
+			self.__CScripts[script] = {func, existing}
+		else
+			tinsert(existing, 1, func)
+		end
+	end,
+
+	CScriptRemove = function(self, script, func)
+		TMW:ValidateType("script", "CScriptRemove(script, func)", script, "string")
+		TMW:ValidateType("func", "CScriptRemove(script, func)", func, "function;nil")
+
+		if not self.__CScripts then
+			return
+		end
+
+		if func == nil then
+			self.__CScripts[script] = nil
+			return
+		end
+
+		local existing = self.__CScripts[script]
+		if not existing then
+			return
+		end
+
+		if type(existing) == "function" then
+			if existing == func then
+				self.__CScripts[script] = nil
+			end
+		else
+			TMW.tDeleteItem(existing, func, 1)
+		end
+	end,
+
+	CScriptRemoveAll = function(self)
+		self.__CScripts = null
+	end,
+
+	CScriptCall = function(self, script, ...)
+		if not self.__CScripts then
+			return
+		end
+
+		local cscript = self.__CScripts[script]
+		if not cscript then
+			return
+		end
+		
+		if CS_SDepth == 0 then
+			CS_Root = script .. ":" .. (self:GetDebugName() or self.setting or "?")
+		end
+		CS_SDepth = CS_SDepth + 1
+		-- If we enter 10 deep cscripts, go into emergency mode
+		-- and start recording data about what is being called.
+		if CS_SDepth > 10 and not self.DEBUG_Started then
+			self:DEBUG_Start()
+		end
+
+		if type(cscript) == "function" then
+			TMW.safecall(cscript, self, ...)
+		else
+			for i = 1, #cscript do
+				TMW.safecall(cscript[i], self, ...)
+			end
+		end
+		CS_SDepth = CS_SDepth - 1
+	end,
+
+	CScriptCallGet = function(self, script, ...)
+		if not self.__CScripts then
+			return
+		end
+
+		local existing = self.__CScripts[script]
+		if not existing then
+			return
+		end
+
+		if type(existing) == "function" then
+			return existing(self, ...)
+		else
+			for i = 1, #existing do
+				local ret = existing[i](self, ...)
+				if ret then
+					return ret
+				end
+			end
+		end
+	end,
+
+	DEBUG_Start = function(self)
+		if not CScriptProvider.DEBUG_Started then
+			print("entering cscript debug mode")
+
+			CScriptProvider.DEBUG_Stack = {{"ROOT", CS_Root}}
+			CScriptProvider.DEBUG_PrevDepth = CS_SDepth - 1
+
+			CScriptProvider.CScriptCall_ORIGINAL = CScriptProvider.CScriptCall
+			CScriptProvider.CScriptBubble_ORIGINAL = CScriptProvider.CScriptBubble
+			CScriptProvider.CScriptTunnel_ORIGINAL = CScriptProvider.CScriptTunnel
+
+			CScriptProvider:PreHookMethod("CScriptCall", self.DEBUG_CScriptCallBase)
+			CScriptProvider:PreHookMethod("CScriptBubble", self.DEBUG_CScriptCallBase)
+			CScriptProvider:PreHookMethod("CScriptTunnel", self.DEBUG_CScriptCallBase)
+
+			CScriptProvider.DEBUG_Started = true
+		end
+	end,
+
+	DEBUG_Stop = function(self)
+		if CScriptProvider.DEBUG_Started then
+			print("leaving cscript debug mode")
+
+			CScriptProvider.DEBUG_PrevDepth = nil
+			CScriptProvider.DEBUG_PrevStackFrame = nil
+			CScriptProvider.DEBUG_Stack = nil
+
+			CScriptProvider.CScriptCall = CScriptProvider.CScriptCall_ORIGINAL
+			CScriptProvider.CScriptBubble = CScriptProvider.CScriptBubble_ORIGINAL
+			CScriptProvider.CScriptTunnel = CScriptProvider.CScriptTunnel_ORIGINAL
+
+			CScriptProvider.DEBUG_Started = false
+		end
+	end,
+
+	DEBUG_CScriptCallBase = function(self, script, ...)
+		if not CScriptProvider.DEBUG_Started then
+			return
+		end
+
+		-- Only record calls that change the stack depth.
+		local name = tostring(self:GetDebugName() or self.setting or self.class)
+			:gsub("^TellMeWhen_?", "")
+			:gsub("_IconEditorPages", "P*")
+			:gsub("_IconEditor", "IE")
+			:gsub("[%x]*.container", "S*")
+		local stackFrame = {CS_SDepth, script, name}
+		if CScriptProvider.DEBUG_PrevDepth ~= CS_SDepth then
+			tinsert(CScriptProvider.DEBUG_Stack, CScriptProvider.DEBUG_PrevStackFrame)
+			tinsert(CScriptProvider.DEBUG_Stack, stackFrame)
+
+			CScriptProvider.DEBUG_PrevStackFrame = nil
+			CScriptProvider.DEBUG_PrevDepth = CS_SDepth
+		else
+			-- We do this so we can get calls right before the stack depth changes,
+			-- which are usually what cause it.
+			CScriptProvider.DEBUG_PrevStackFrame = stackFrame
+		end
+
+		if CS_SDepth < 2 then
+			print("fell out of cscript debug mode")
+			-- If it fell back down below ~2, then it recovered somehow.
+
+			CScriptProvider:DEBUG_Stop()
+
+		elseif CS_SDepth > self.DEBUG_MaxDepth then
+			-- Its gone on long enough. Report the data we got about what's going on.
+			local str = ""
+			for i, data in pairs(CScriptProvider.DEBUG_Stack) do
+				str = str .. table.concat(data, ":") .. "\n"
+			end
+
+			-- We fire this off in a delayed timer as well since there is a
+			-- good chance that the stack depth will end up going negative as the stack unwinds through some safecalls.
+			CS_SDepth = 0
+			C_Timer.After(0, function() CS_SDepth = 0 end)
+
+			CScriptProvider:DEBUG_Stop()
+
+			error("TellMeWhen: CScript Overflow: " .. str)
+		end
+	end,
+}
+
+
+TMW:NewClass("Config_Frame", "Frame", "CScriptProvider"){
+
+	-- Constructor
+	OnNewInstance_Frame = function(self)
+
+		-- Setup callbacks that will load the settings when needed.
+		if self.ReloadSetting ~= TMW.NULLFUNC then
+			self:CScriptAdd("ReloadRequested", self.ReloadSetting)
+		end
+	end,
+
+	SetSetting = function(self, key)
+		self.setting = key
+	end,
+
+	SetTexts = function(self, title, tooltip)
+		self:SetTooltip(title, tooltip)
 	end,
 	
 
 	-- Script Handlers
 	OnEnable = function(self)
 		self:SetAlpha(1)
-		
-		if self.data.disabledtooltip then
-			self:SetTooltip(self.data.title, self.data.tooltip)
-		end
 	end,
 	
 	OnDisable = function(self)
 		self:SetAlpha(0.2)
-		
-		if self.data.disabledtooltip then
-			self:SetTooltip(self.data.title, self.data.disabledtooltip)
-		end
 	end,
 	
 
@@ -1481,7 +1272,7 @@ TMW:NewClass("Config_Frame", "Frame"){
 	IsEnabled = function(self)
 		return self.Enabled
 	end,
-	SetEnabled = function(self, enabled)		
+	SetEnabled = function(self, enabled)
 		if self.Enabled ~= enabled then
 			self.Enabled = enabled
 			if enabled then
@@ -1497,31 +1288,6 @@ TMW:NewClass("Config_Frame", "Frame"){
 	Disable = function(self)
 		self:SetEnabled(false)
 	end,
-
-	CheckDisabled = function(self)
-		if self.data.disabled ~= nil then
-			if get(self.data.disabled, self) then
-				self:Disable()
-			else
-				self:Enable()
-			end
-		end
-	end,
-	
-	CheckHidden = function(self)
-		if self.data.hidden ~= nil then
-			if get(self.data.hidden, self) then
-				self:Hide()
-			else
-				self:Show()
-			end
-		end
-	end,
-	
-	CheckInteractionStates = function(self)
-		self:CheckDisabled()
-		self:CheckHidden()
-	end,
 	
 	SetTooltip = function(self, title, text)
 		if self.SetMotionScriptsWhileDisabled then
@@ -1531,19 +1297,184 @@ TMW:NewClass("Config_Frame", "Frame"){
 		end
 	end,
 	
-	ConstrainLabel = function(self, anchorTo, anchorPoint, ...)
+	ConstrainLabel = function(self, anchorTo, anchorPoint, x, y)
 		assert(self.text, "frame does not have a self.text object to constrain.")
 
-		self.text:SetPoint("RIGHT", anchorTo, anchorPoint or "LEFT", ...)
-		
-		-- Have to do this or else the text won't multiline/wordwrap when it should.
-		-- 30 is just an arbitrarily large number.
+		if not x then
+			x = -3
+		end
+
+		self.text:SetPoint("RIGHT", anchorTo, anchorPoint or "LEFT", x, y)
+
 		self.text:SetHeight(30)
 		self.text:SetMaxLines(3)
 	end,
 
+	-- Wow 7.1 wow_701 shim. Delete when the patch is live.
+	DoesClipChildren = not wow_701 and function() return false end or nil,
+	SetClipsChildren = not wow_701 and TMW.NULLFUNC or nil,
+
+	SetAnimateHeightAdjustments = function(self, animateHeightAdjusts)
+		self.animateHeightAdjusts = animateHeightAdjusts
+	end,
+
+	SetMinAdjustHeight = function(self, minAdjustHeight)
+		self.minAdjustHeight = minAdjustHeight
+	end,
+
+	SetAdjustHeightExclusion = function(self, frame, exclude)
+		if not frame then
+			return
+		end
+
+		self.adjustHeightExclusions = self.adjustHeightExclusions or {}
+
+		TMW.tDeleteItem(self.adjustHeightExclusions, frame)
+
+		if exclude then
+			tinsert(self.adjustHeightExclusions, frame)
+		end
+	end,
+
+
+	__AdjustHeightCheckBottom = function(self, child)
+		for i = 1, child:GetNumPoints() do
+			local point, relTo, relPoint = child:GetPoint(i)
+			if relTo == self and relPoint:find("BOTTOM") then
+				error("Attempted to adjust height of a frame with a child anchored to the bottom of the frame: " 
+					.. (TMW.tContains(self, child) or child:GetName() or "???"), 3)
+			end
+		end
+	end,
+
+	CalculateAutoHeight = function(self, bottomPadding)
+		if not self:GetTop() then
+			return -1
+		end
+
+		local top = self:GetTop() * self:GetEffectiveScale()
+		local lowest = top
+
+		if not lowest or lowest < 0 then
+			return -1
+		end
+
+		local highest = -math.huge
+		local exclusions = self.adjustHeightExclusions
+
+		-- Find child frames.
+		for _, child in TMW:Vararg(self:GetChildren()) do
+			if not child:GetBottom() then
+				-- If there are children that we can't get the edges of,
+				-- don't try to resize anything, because it will almost certainly be wrong.
+				return -1
+			end
+
+			if child:IsShown()
+			and (not exclusions or not TMW.tContains(exclusions, child))
+			then
+				self:__AdjustHeightCheckBottom(child)
+
+				local _, _, topInset, bottomInset = child:GetHitRectInsets()
+
+				local childTop = (child:GetTop() - topInset) * child:GetEffectiveScale()
+
+				-- Only look at children that have their top below the parent.
+				-- Otherwise, we'll get weird things for the highest value because
+				-- of things like header font strings.
+				if childTop <= top then
+					lowest = min(lowest, (child:GetBottom() + bottomInset) * child:GetEffectiveScale())
+					highest = max(highest, childTop)
+				end
+			end
+		end
+
+		-- Find child fontstrings.
+		-- Don't look for textures - we almost always don't need them to fit within the frame.
+		-- Usually, there is a background texture that will screw everything up if it is included.
+		for _, child in TMW:Vararg(self:GetRegions()) do
+			if child:IsShown()
+			and child:GetBottom()
+			and child:GetObjectType() == "FontString"
+			and (not exclusions or not TMW.tContains(exclusions, child))
+			and child:GetText()
+			and child:GetText() ~= ""
+			then
+				self:__AdjustHeightCheckBottom(child)
+
+				local childTop = child:GetTop() * self:GetEffectiveScale()
+
+				-- Only look at children that have their top below the parent.
+				-- Otherwise, we'll get weird things for the highest value because
+				-- of things like header font strings.
+				if childTop < top then
+					lowest = min(lowest, child:GetBottom() * self:GetEffectiveScale())
+					highest = max(highest, childTop)
+				end
+			end
+		end
+
+		-- If we didn't find any children at all, stop.
+		if highest == -math.huge then
+			return -1
+		end
+
+		-- If a bottom padding isn't specified, calculate it using the same gap
+		-- that exists between the highest child and the top of the frame.
+		bottomPadding = bottomPadding or (top - highest)
+		bottomPadding = max(bottomPadding, 0)
+
+		local height = (top - lowest + bottomPadding) / self:GetEffectiveScale()
+		return max(self.minAdjustHeight or 1, height)
+	end,
+
+	AdjustHeight = function(self, bottomPadding, duration)
+		if self.animateHeightAdjusts then
+			self:AdjustHeightAnimated(bottomPadding, duration)
+		else
+			self:AdjustHeightUnanimated(bottomPadding)
+		end
+	end,
+
+	AdjustHeightUnanimated = function(self, bottomPadding)
+		local height = self:CalculateAutoHeight(bottomPadding)
+
+		if height == -1 then return end
+
+		self:SetHeight(height)
+	end,
+
+	AdjustHeightAnimated = function(self, bottomPadding, duration)
+		local height = self:CalculateAutoHeight(bottomPadding)
+
+		if height == -1 then return end
+
+		TMW:AnimateHeightChange(self, height, duration or 0.1)
+	end,
+
+
+	GetParentKey = function(self)
+		return TMW.tContains(self:GetParent(), self)
+	end,
+
 	GetSettingTable = function(self)
-		return CI.ics
+		return self:CScriptCallGet("SettingTableRequested") or self:CScriptBubbleGet("SettingTableRequested")
+	end,
+
+	OnSettingSaved = function(self)
+		IE:SaveSettings()
+
+		self:CScriptCall("SettingSaved")
+		self:CScriptBubble("DescendantSettingSaved", self)
+	end,
+
+	RequestReload = function(self)
+		self:CScriptCall("ReloadRequested")
+		self:RequestReloadChildren()
+	end,
+
+	RequestReloadChildren = function(self)
+		self:CScriptTunnel("ReloadRequested")
 	end,
 
 	ReloadSetting = TMW.NULLFUNC
@@ -1552,19 +1483,12 @@ TMW:NewClass("Config_Frame", "Frame"){
 TMW:NewClass("Config_Panel", "Config_Frame"){
 	SetHeight_base = TMW.C.Config_Panel.SetHeight,
 }{
-	OnNewInstance_Frame = TMW.NULLFUNC,
-	CheckDisabled = TMW.NULLFUNC,
-
 	OnNewInstance_Panel = function(self)
 		if self:GetHeight() <= 0 then
 			self:SetHeight_base(1)
 		end
-		local hue = 2/3
-		
-		self.Background:SetTexture(hue, hue, hue) -- HUEHUEHUE
-		self.Background:SetGradientAlpha("VERTICAL", 1, 1, 1, 0.05, 1, 1, 1, 0.10)
 
-		self.height = self:GetHeight()
+		self.Background:SetColorTexture(.66, .66, .66, 0.09)
 	end,
 
 	Flash = function(self, dur)
@@ -1591,11 +1515,11 @@ TMW:NewClass("Config_Panel", "Config_Frame"){
 					offs = (remainingFlash/period)
 				end
 				offs = offs*0.3
-				bg:SetGradientAlpha("VERTICAL", 1, 1, 1, 0.05 + offs, 1, 1, 1, 0.10 + offs)
+				bg:SetColorTexture(.66, .66, .66, 0.08 + offs)
 			end
 
 			if timePassed > duration then
-				bg:SetGradientAlpha("VERTICAL", 1, 1, 1, 0.05, 1, 1, 1, 0.10)
+				bg:SetColorTexture(.66, .66, .66, 0.08)
 				ticker:Cancel()
 			end	
 		end)
@@ -1603,154 +1527,390 @@ TMW:NewClass("Config_Panel", "Config_Frame"){
 
 	SetTitle = function(self, text)
 		self.Header:SetText(text)
+
+		local font, size, flags = self.Header:GetFont()
+		size = 12
+		self.Header:SetFont(font, size, flags)
+
+		while size > 6 and self.Header:GetStringWidth() > self:GetWidth() - 10 do
+			size = size - 1
+			self.Header:SetFont(font, size, flags)
+		end
 	end,
 
 	Setup = function(self, panelInfo)
 		self.panelInfo = panelInfo
-		if panelInfo then
-			self.supplementalData = panelInfo.supplementalData
+
+		if type(panelInfo.supplementalData) == "table" then
+			local OnSetup = panelInfo.supplementalData.OnSetup
+
+			if OnSetup then
+				OnSetup(self, panelInfo, panelInfo.supplementalData)
+			end
 		end
 
+		self:CScriptCall("PanelSetup", self, panelInfo)
+		self:CScriptTunnel("PanelSetup", self, panelInfo)
 
-		get(self.OnSetup, self, panelInfo, self.supplementalData) 
+		self:RequestReload()
 
-		if type(self.supplementalData) == "table" then
-			self.data = self.supplementalData
-			self:CheckInteractionStates()
-
-			-- Cheater! (We arent getting anything)
-			-- (I'm using get as a wrapper so I don't have to check if the function exists before calling it)
-			get(self.supplementalData.OnSetup, self, panelInfo, self.supplementalData) 
+		if self.autoAdjustHeight then
+			self:AdjustHeight(tonumber(self.autoAdjustHeight))
 		end
 	end,
 
-	ShouldShow = function(self)
-		return true
+	SetAutoAdjustHeight = function(self, enabled)
+		-- If enabled is a number, it will be used as the bottom padding passed to AdjustHeight(bottomPadding)
+		self.autoAdjustHeight = enabled
 	end,
 
-	SetHeight = function(self, height)
-		if self.__oldHeight then
-			self.__oldHeight = height
+
+	BuildSimpleCheckSettingFrame = function(self, arg2, arg3)
+		local className, allData, objectType
+		if arg3 ~= nil then
+			allData = arg3
+			className = arg2
 		else
-			self:SetHeight_base(height)
+			allData = arg2
+			className = "Config_CheckButton"
 		end
-	end,
-	OnHide = function(self)
-		local p, r, t, x, y = self:GetPoint(1)
-		self:SetPoint(p, r, t, x, 1)
 
-		-- Set the height to 1 so things anchored under it are positioned right.
-		-- Can't set height to 0 anymore in WoD.
-		self.__oldHeight = self:GetHeight()
-		self:SetHeight_base(1)
-	end,
-	OnShow = function(self)
-		local p, r, t, x, y = self:GetPoint(1)
-		self:SetPoint(p, r, t, x, -11)
+		local sig = "Config_Panel:BuildSimpleCheckSettingFrame([className,] allData)"
+		TMW:ValidateType("panel",     sig, self,     "Config_Panel")
+		TMW:ValidateType("className", sig, className, "string")
+		TMW:ValidateType("allData",   sig, allData,   "table")
 
-		-- Restore the old height if it is still set to 1.
-		if self.__oldHeight and floor(self:GetHeight() + 0.5) == 1 then
-			self:SetHeight_base(self.__oldHeight)
-			self.__oldHeight = nil
-		end
-	end,
-
-	--[[
-	SetHeight = function(self, endHeight)
-		-- This function currently disabled because of frame level issues.
-		-- Top frames need to be above lower frames, but editboxes seem to go underneath everything for some reason.
-		-- It doesn't look awful, but I'm going to leave it disabled till I decide otherwise.
+		local class = TMW.Classes[className]
+		local objectType = class.isFrameObject
 		
-		if not self.__animateHeightHooked then
-			self.__animateHeightHooked = true
-			self:HookScript("OnUpdate", function()
-				if self.__animateHeight_duration then
-					if TMW.time - self.__animateHeight_startTime > self.__animateHeight_duration then
-						self.__animateHeight_duration = nil
-						self:SetHeight_base(self.__animateHeight_end)
-						return  
-					end
-					
-					local pct = (TMW.time - self.__animateHeight_startTime)/self.__animateHeight_duration
-					
-					self:SetHeight_base((pct*self.__animateHeight_delta)+self.__animateHeight_start)
+		assert(class, "Couldn't find class named " .. className .. ".")
+		assert(type(objectType) == "string", "Couldn't find a WoW frame object type for class named " .. className .. ".")
+		
+		
+		local lastCheckButton
+		local numFrames = 0
+		local numPerRow = allData.numPerRow or min(#allData, 2)
+		self.checks = {}
+		for i, data in ipairs(allData) do
+			if data then -- skip over falses (dont freak out about them, they are probably intentional)
+
+				local f = class:New(objectType, nil, self, "TellMeWhen_CheckTemplate", i)
+				data(f)
+
+				-- An human-friendly-ish unique (hopefully) identifier for the frame
+				if f.setting then
+					self[f.setting .. (f.value ~= nil and tostring(f.value) or "")] = f
 				end
-			end)    
+
+				-- I would store these directly on self,
+				-- but framestack breaks catastrophically when you store frames on their parent with integer keys.
+				self.checks[i] = f
+				
+				if lastCheckButton then
+					-- Anchor it to the previous check if it isn't the first one.
+					if numFrames%numPerRow == 0 then
+						f:SetPoint("TOP", self.checks[i-numPerRow], "BOTTOM", 0, 2)
+					else
+						-- This will get overwritten soon.
+						--f:SetPoint("LEFT", "RIGHT", 5, 0)
+					end
+				else
+					-- Anchor the first check to the self. The left anchor will be handled by DistributeFrameAnchorsLaterally.
+					f:SetPoint("TOP", 0, -1)
+				end
+				lastCheckButton = f
+				
+				f.row = ceil(i/numPerRow)
+				
+				numFrames = numFrames + 1
+			end
 		end
 		
-		self.__animateHeight_start = self:GetHeight()
-		self.__animateHeight_end = endHeight
-		self.__animateHeight_delta = self.__animateHeight_end - self.__animateHeight_start
-		self.__animateHeight_startTime = TMW.time
-		self.__animateHeight_duration = 0.1
-	end,]]
+		-- Set the bounds of the label text on all the checkboxes to prevent overlapping.
+		for i = 1, #self.checks do
+			local f0 = self.checks[i]
+			local f1 = self.checks[i+1]
+			
+			if not f1 or f1.row ~= f0.row then
+				f0:ConstrainLabel(self, "RIGHT")
+			else
+				f0:ConstrainLabel(f1)
+			end
+		end
+		
+		for i = 1, #self.checks, numPerRow do
+			IE:DistributeFrameAnchorsLaterally(self, numPerRow, unpack(self.checks, i))
+		end
+		
+		self:AdjustHeight()
+		
+		return self
+	end,
+
+	OnSizeChanged = function(self)
+		-- This method does resizing of the header to make it fit without truncation.
+		self:SetTitle(self.Header:GetText())
+	end,
 }
 
+TMW:NewClass("Config_Page", "Config_Frame"){
+	OnNewInstance_Page = function(self)
+		-- This one is admittedly pretty pointless - pages shouldn't have settings themselves,
+		-- but we'll do it anyway to avoid unexpected behavior.
+		self:CScriptAdd("SettingSaved", self.RequestReload)
+
+		-- Whenever a setting on a page has been saved, reload the whole page.
+		-- (RequestReload tunnels a ReloadRequested to all children.)
+		self:CScriptAdd("DescendantSettingSaved", self.RequestReload)
+
+		-- Whenever a page is reloaded, notify the page's tab that its page was reloaded.
+		self:CScriptAdd("ReloadRequested", self.ReloadRequested)
+	end,
+
+	ReloadRequested = function(self)
+		print("PAGE RELOAD", self:GetParentKey())
+
+		if IE.CurrentTab and IE.CurrentTab.pageKey == self:GetParentKey() then
+			IE.CurrentTab:CScriptCall("PageReloadRequested", self)
+		elseif not IE.CurrentTab then
+			IE.UndoButton:Disable()
+			IE.RedoButton:Disable()
+		end
+	end,
+}
+
+TMW:NewClass("Config_ScrollFrame", "ScrollFrame", "Config_Frame"){
+	edgeScrollEnabled = false,
+	edgeScrollMouseCursorRange = 20,
+	edgeScrollScrollDistancePerSecond = 150,
+
+	scrollPercentage = 1/2,
+	scrollStep = nil,
+
+	OnNewInstance_ScrollFrame = function(self)
+		self:EnableMouseWheel(true)
+	end,
+
+	SetEdgeScrollEnabled = function(self, enabled, range, dps)
+		self.edgeScrollEnabled = enabled
+		self.edgeScrollMouseCursorRange = range or self.edgeScrollMouseCursorRange
+		self.edgeScrollScrollDistancePerSecond = dps or self.edgeScrollScrollDistancePerSecond
+	end,
+
+	SetWheelStepPercentage = function(self, percent)
+		self.scrollPercentage = percent
+		self.scrollStep = nil
+	end,
+
+	SetWheelStepAmount = function(self, amount)
+		self.scrollStep = amount
+		self.scrollPercentage = nil
+	end,
+
+
+
+	ScrollToFrame = function(self, targetFrame)
+		if not targetFrame then return end
+
+		if not targetFrame:GetBottom() or not self:GetBottom() then
+			return
+		end
+
+		local targetBottom = targetFrame:GetBottom()
+		local targetTop = targetFrame:GetTop()
+
+		local scrollBottom = self:GetBottom()
+		local scrollTop = self:GetTop()
+
+		-- This is added/subtracted so the thing that we scroll to ends
+		-- up in the middle of the scrollframe instead of on the edge.
+		local halfHeight = (scrollTop - scrollBottom)/2
+
+		local scroll 
+		if targetBottom < scrollBottom then
+			-- It's too low. Scroll down.
+			scroll = self:GetVerticalScroll() + (scrollBottom - targetBottom) + halfHeight
+
+		elseif targetTop > scrollTop then
+			-- It's too high. Scroll up.
+			scroll = self:GetVerticalScroll() - (targetTop - scrollTop) - halfHeight
+		end
+
+
+		if scroll then
+			local yrange = self:GetVerticalScrollRange()
+			scroll = max(scroll, 0)
+			scroll = min(scroll, self:GetVerticalScrollRange())
+
+			self:SetVerticalScroll(scroll)
+		end
+	end,
+
+
+
+	OnScrollRangeChanged = function(self)
+		local yrange = self:GetVerticalScrollRange()
+
+		if floor(yrange) == 0 then
+			self.ScrollBar:Hide()
+		else
+			self.ScrollBar:Show()
+		end
+
+		if 0 >= self:GetVerticalScroll() then
+			self:SetVerticalScroll(0)
+		elseif self:GetVerticalScroll() > yrange then
+			self:SetVerticalScroll(yrange)
+		end
+
+		local height = self:GetHeight()
+		self.percentage = height / (yrange + height)
+
+		self.ScrollBar.Thumb:SetHeight(max(height*self.percentage, 20))
+
+		self.ScrollBar.Thumb:SetPoint("TOP", self, "TOP", 0, -(self:GetVerticalScroll() * self.percentage))
+
+
+	end,
+
+	OnVerticalScroll = function(self, offset)
+		self.ScrollBar.Thumb:SetPoint("TOP", self, "TOP", 0, -(offset * self.percentage))
+	end,
+
+	OnMouseWheel = function(self, delta)
+		local scrollStep = self.scrollStep or self:GetHeight() * self.scrollPercentage
+		local newScroll
+
+		if delta > 0 then
+			newScroll = self:GetVerticalScroll() - scrollStep
+		else
+			newScroll = self:GetVerticalScroll() + scrollStep
+		end
+
+		if newScroll < 0 then
+			newScroll = 0
+		elseif newScroll > self:GetVerticalScrollRange() then
+			newScroll = self:GetVerticalScrollRange()
+		end
+
+		self:SetVerticalScroll(newScroll)
+	end,
+
+	OnUpdate = function(self, elapsed)
+		local range = self.edgeScrollMouseCursorRange
+
+		if  self.edgeScrollEnabled
+		and not self.ScrollBar.Thumb:IsDragging()
+		and self:IsMouseOver(range, 0, -range, 0) -- allow the cursor to be above/below the frame, but not to the sides
+		then
+			local scale = self:GetEffectiveScale()
+			local self_top, self_bottom = self:GetTop()*scale, self:GetBottom()*scale
+
+			local _, cursorY = GetCursorPosition()
+
+			local absDistance_top = abs(self_top - cursorY)
+			local absDistance_bottom = abs(self_bottom - cursorY)
+
+			local scrollStep
+			if absDistance_top > absDistance_bottom then
+				-- We are closer to the bottom of the frame
+				if range > absDistance_bottom then
+					scrollStep = -self.edgeScrollScrollDistancePerSecond*elapsed
+				end
+			else
+				-- We are closer to the top of the frame
+				if range > absDistance_top then
+					scrollStep = self.edgeScrollScrollDistancePerSecond*elapsed
+				end
+			end
+
+			if scrollStep then
+				local newScroll = self:GetVerticalScroll() - scrollStep
+
+				if 0 > newScroll then
+					newScroll = 0
+				elseif newScroll > self:GetVerticalScrollRange() then
+					newScroll = self:GetVerticalScrollRange()
+				end
+				self:SetVerticalScroll(newScroll)
+			end
+		end
+	end,
+
+	OnSizeChanged = function(self)
+		-- container's width doesn't get adjusted as we resize. Fix this.
+		self.container:SetWidth(self:GetWidth())
+	end,
+}
+
+TMW:NewClass("Config_Button", "Button", "Config_Frame"){
+	SetTexts = function(self, title, tooltip)
+		self:SetText(title)
+		self:SetTooltip(title, tooltip)
+	end,
+
+	OnClick = function(self)
+		TMW:ClickSound()
+	end,
+}
 
 TMW:NewClass("Config_CheckButton", "CheckButton", "Config_Frame"){
 	-- Constructor
-	OnNewInstance_CheckButton = function(self, data)
-		self.text:SetText(get(self.data.label or self.data.title))
+	OnNewInstance_CheckButton = function(self)
 		self:SetMotionScriptsWhileDisabled(true)
+
+		if self.text then
+			self.text:SetHeight(30)
+			self.text:SetMaxLines(3)
+		end
+	end,
+
+	SetTexts = function(self, title, tooltip)
+		if not self.label then
+			self:SetLabel(title)
+		end
+		self:SetTooltip(title, tooltip)
+	end,
+
+	SetLabel = function(self, label)
+		self.label = label
+		self.text:SetText(label)
 	end,
 
 
+	SetSetting = function(self, key, value)
+		self.setting = key
+		self.value = value
+	end,
+
 	-- Script Handlers
 	OnClick = function(self, button)
+		TMW:ClickSound()
 		local settings = self:GetSettingTable()
 
 		local checked = not not self:GetChecked()
 
-		if self.data.invert then
-			checked = not checked
-		end
-
-		if checked then
-			PlaySound("igMainMenuOptionCheckBoxOn")
-		else
-			PlaySound("igMainMenuOptionCheckBoxOff")
-		end
-
 		if settings and self.setting then
-			if self.data.value == nil then
+			if self.value == nil then
 				settings[self.setting] = checked
-			else --if checked then
-				settings[self.setting] = self.data.value
+			else
+				settings[self.setting] = self.value
 				self:SetChecked(true)
 			end
-			IE:ScheduleIconSetup()
+
+			self:OnSettingSaved()
 		end
-		
-		-- Cheater! (We arent getting anything)
-		-- (I'm using get as a wrapper so I don't have to check if the function exists before calling it)
-		get(self.data.OnClick, self, button) 
-
-		self:OnState()
-	end,
-
-
-	-- Methods
-	OnState = function(self)
-		-- Cheater! (We arent getting anything)
-		-- (I'm using get as a wrapper so I don't have to check if the function exists before calling it)
-		get(self.data.OnState, self) 
 	end,
 	
 	ReloadSetting = function(self)
 		local settings = self:GetSettingTable()
 
-		if settings then
-			if self.data.value ~= nil then
-				self:SetChecked(settings[self.setting] == self.data.value)
+		if settings and self.setting then
+			if self.value ~= nil then
+				self:SetChecked(settings[self.setting] == self.value)
 			else
-				if self.data.invert then
-					self:SetChecked(not settings[self.setting])
-				else
-					self:SetChecked(settings[self.setting])
-				end
+				self:SetChecked(settings[self.setting])
 			end
-			self:CheckInteractionStates()
-			self:OnState()
 		end
 	end,
 }
@@ -1758,29 +1918,95 @@ TMW:NewClass("Config_CheckButton", "CheckButton", "Config_Frame"){
 TMW:NewClass("Config_EditBox", "EditBox", "Config_Frame"){
 	
 	-- Constructor
-	OnNewInstance_EditBox = function(self, data)
-		TMW:RegisterCallback("TMW_CONFIG_SAVE_SETTINGS", self, "ClearFocus")
+	OnNewInstance_EditBox = function(self)
+		self:SetSpacing(2)
 
 		self.BackgroundText:SetWidth(self:GetWidth())
-		if data and data.label then
-			self.label = data.label
+
+		self:CScriptAdd("ClearFocus", self.ClearFocus)
+	end,
+
+	SetTexts = function(self, title, tooltip)
+		if not self.label then
+			self:SetLabel(title)
 		end
+		self:SetTooltip(title, tooltip)
+	end,
+
+	SetLabel = function(self, label)
+		self.label = label
+		self:GetScript("OnTextChanged")(self)
 	end,
 	
-
-	-- Scripts
-	OnEditFocusLost = function(self, button)
-		self:SaveSetting()
-		
-		-- Cheater! (We arent getting anything)
-		-- (I'm using get as a wrapper so I don't have to check if the function exists before calling it)
-		get(self.data.OnEditFocusLost, self, button) 
+	UpdateLabel = function(self, label)
+		local text = self:GetText()
+		if text and text:trim(" \t\r\n") == "" then
+			self.BackgroundText:SetText(self.label)
+		else
+			self.BackgroundText:SetText(nil)
+		end
 	end,
 
-	OnTextChanged = function(self, button)		
-		-- Cheater! (We arent getting anything)
-		-- (I'm using get as a wrapper so I don't have to check if the function exists before calling it)
-		get(self.data.OnTextChanged, self, button) 
+	SetNewlineOnEnter = function(self, enable)
+		self.newlineOnEnter = enable
+	end,
+
+	MakeScrollable = function(self, ...)
+		local ScrollFrame = TMW:ConvertContainerToScrollFrame(self, ...)
+
+		ScrollFrame:SetWheelStepAmount(30)
+
+		self.border:SetParent(ScrollFrame)
+		self.border:ClearAllPoints()
+		self.border:SetAllPoints(ScrollFrame)
+		self.border:SetBorderSize(1)
+
+		self.background:SetParent(ScrollFrame)
+		self.background:ClearAllPoints()
+		self.background:SetAllPoints(ScrollFrame)
+
+		self.BackgroundText:SetPoint("LEFT", ScrollFrame)
+		self.BackgroundText:SetPoint("RIGHT", ScrollFrame)
+
+		self.clickInterceptor = CreateFrame("Button", nil, ScrollFrame)
+		self.clickInterceptor:SetAllPoints(ScrollFrame)
+		self.clickInterceptor:SetScript("OnClick", function()
+			self:SetFocus()
+		end)
+	end,
+
+
+	-- Scripts
+	OnCursorChanged = function(self)
+		if self.ScrollFrame and self:HasFocus() then
+			local cursor = select(5, self:GetRegions())
+
+			self.ScrollFrame:ScrollToFrame(cursor)
+		end
+	end,
+
+	OnEscapePressed = function(self)
+		self:ClearFocus()
+	end,
+
+	OnEnterPressed = function(self)
+		if self:IsMultiLine() and self.newlineOnEnter then
+			self:Insert("\n")
+		elseif self:IsMultiLine() and IsModifierKeyDown() then
+			self:Insert("\n")
+		else
+			self:ClearFocus()
+		end
+	end,
+
+	OnTextChanged = function(self)
+		self:UpdateLabel()
+	end,
+
+	OnEditFocusLost = function(self, button)
+		self:HighlightText(0, 0)
+		self:UpdateLabel()
+		self:SaveSetting()
 	end,
 
 	METHOD_EXTENSIONS = {
@@ -1802,18 +2028,16 @@ TMW:NewClass("Config_EditBox", "EditBox", "Config_Frame"){
 		local settings = self:GetSettingTable()
 
 		if settings and self.setting then
-			local value
-			if self.data.doCleanString then
-				value = TMW:CleanString(self)
-			else
-				value = self:GetText()
-			end
+			local value = self:GetText() or ""
 			
-			value = get(self.data.ModifySettingValue, self, value) or value
+			value = self:CScriptCallGet("ModifyValueForSave", value) or value
 
-			settings[self.setting] = value
-		
-			IE:ScheduleIconSetup()
+			if settings[self.setting] ~= value then
+				settings[self.setting] = value
+				self:OnSettingSaved()
+			else
+				self:RequestReload()
+			end
 		end
 	end,
 
@@ -1821,12 +2045,161 @@ TMW:NewClass("Config_EditBox", "EditBox", "Config_Frame"){
 		local settings = self:GetSettingTable()
 
 		if settings then
-			if not (eventMaybe == "TMW_CONFIG_ICON_HISTORY_STATE_CREATED" and self:HasFocus()) and self.setting then
-				self:SetText(settings[self.setting] or "")
+			if self.setting then
+				local value = settings[self.setting]
+
+				value = self:CScriptCallGet("ModifyValueForLoad", value) or value
+
+				self:SetText(value)
 			end
-			self:CheckInteractionStates()
+
 			self:ClearFocus()
 		end
+	end,
+
+	SetAcceptsTMWLinks = function(self, accepts, linkDesc)
+		self.acceptsTMWLinks = accepts
+		self.acceptsTMWLinksDesc = accepts and linkDesc or nil
+	end,
+
+	GetAcceptsTMWLinks = function(self, accepts, linkDesc)
+		return self.acceptsTMWLinks, self.acceptsTMWLinksDesc
+	end,
+}
+
+TMW:NewClass("Config_EditBox_Lua", "Config_EditBox") {
+	GetText_original = TMW.C.Config_EditBox_Lua.GetText,
+	SetText_original = TMW.C.Config_EditBox_Lua.SetText,
+	padNewlines = true,
+
+	ColorTable = (function()
+		local colorTable = {}
+		local tokens = IndentationLib.tokens
+		local function set(color, ...)
+			for i, v in TMW:Vararg(...) do
+				colorTable[v] = "|c00" .. color
+			end
+		end
+		set('208CD6', tokens.TOKEN_KEYWORD)
+		set('208CD6', tokens.TOKEN_SPECIAL)
+		set('888888', tokens.TOKEN_STRING)
+		set('FF8040', tokens.TOKEN_NUMBER)
+		set('207128', tokens.TOKEN_COMMENT_SHORT, tokens.TOKEN_COMMENT_LONG)
+		set('208CD6', "+","-","/","*","%","==","<","<=",">",">=","~=","and","or","not","..","=")
+		set('ffffff', "(",")","{","}","[","]",",",".",":")
+		set('f95f53', "function")
+		set('93C763', "...","true","false","nil")
+
+		return colorTable
+	end)(),
+
+	OnNewInstance_EditBox_Lua = function(self)
+		IndentationLib.enable(self, self.ColorTable, 4)
+
+		self:SetFont("Interface/Addons/TellMeWhen/Fonts/VeraMono.ttf", 11)
+
+		self:SetNewlineOnEnter(true)
+
+		local old = IndentationLib.padWithLinebreaks
+		IndentationLib.padWithLinebreaks = function(code)
+			if self:HasFocus() and not padNewlines then
+				return code, false
+			end
+			return old(code)
+		end
+
+		self:SetAcceptsTMWLinks(true, TMW.L["LUA_INSERTGUID_TOOLTIP"])
+		TMW.Classes.ChatEdit_InsertLink_Hook:New(self, self.InsertLinkHook)
+	end,
+
+	OnTabPressed = function(self)
+		self:Insert("    ")
+	end,
+
+	SetPadNewlines = function(self, value)
+		self.padNewlines = value;
+	end,
+
+	GetCursorLineNumber = function(self)
+		local text = self:GetText_original()
+		local curPos = self:GetCursorPosition()
+
+		if curPos == 0 then
+			return 1
+		end
+
+		local pos = 0
+		for lineNum, line in TMW:Vararg(strsplit("\n", text)) do
+			pos = pos + #line
+			if pos >= curPos then
+				return lineNum
+			end
+			pos = pos + 1
+		end
+	end,
+
+	InsertLinkHook = function(self, text, linkType, linkData)
+		-- if this editbox is active,
+		-- attempt to insert a reference to the linked icon by GUID
+
+		if linkType == "TMW" then
+			-- Reconstruct the GUID
+			local GUID = linkType .. ":" .. linkData
+
+			self.editbox:Insert(("TMW:GetDataOwner(%q)"):format(GUID))
+
+			-- notify success
+			return true
+		end
+	end,
+}
+
+
+TMW:NewClass("Config_TimeEditBox", "Config_EditBox"){
+	OnNewInstance_TimeEditBox = function(self)
+		self:CScriptAdd("ModifyValueForSave", self.ModifyValueForSave)
+		self:CScriptAdd("ModifyValueForLoad", self.ModifyValueForLoad)
+	end,
+
+	ModifyValueForSave = function(self, value)
+		local t = TMW:CleanString(self)
+		if strfind(t, ":") then
+			t = TMW.toSeconds(t)
+		end
+		return tonumber(t) or 0
+	end,
+
+	ModifyValueForLoad = function(self, value)
+		if value < 0 then
+			return value
+		end
+		return TMW.C.Formatter.TIME_COLONS_FORCEMINS:Format(value)
+	end,
+}
+
+TMW:NewClass("Config_EditBoxWithCheck", "Config_Frame"){
+	OnNewInstance_TimeEditBoxWithCheck = function(self)
+		self.EnableCheck:CScriptAdd("ReloadRequested", self.ReloadRequested)
+	end,
+
+	ReloadRequested = function(enableCheck)
+		local self = enableCheck:GetParent()
+		self.Duration:SetEnabled(enableCheck:GetChecked())
+	end,
+
+	SetTexts = function(self, title, tooltip)
+		self.text:SetText(title)
+
+		self.Duration:SetLabel("")
+		self.Duration:SetTexts(title, tooltip)
+
+		self.EnableCheck:SetLabel("")
+		self.EnableCheck:SetTexts(ENABLE, TMW.L["GENERIC_NUMREQ_CHECK_DESC"]:format(tooltip:gsub("^%u", strlower)))
+	end,
+
+	SetSettings = function(self, enableSetting, durationSetting)
+		self.EnableCheck:SetSetting(enableSetting)
+		self.Duration:SetSetting(durationSetting)
 	end,
 }
 
@@ -1851,14 +2224,14 @@ TMW:NewClass("Config_Slider", "Slider", "Config_Frame")
 	Config_EditBox_Slider = TMW:NewClass("Config_EditBox_Slider", "Config_EditBox"){
 		
 		-- Constructor
-		OnNewInstance_EditBox_Slider = function(self, data)
+		OnNewInstance_EditBox_Slider = function(self)
 			self:EnableMouseWheel(true)
 		end,
 		
 
 		-- Scripts
 		OnEditFocusLost = function(self, button)
-			local text = tonumber(self:GetText())
+			local text = tonumber(self:GetText()) or 0
 			if text then
 				self.Slider:SetValue(text)
 				self.Slider:SaveSetting()
@@ -1903,6 +2276,10 @@ TMW:NewClass("Config_Slider", "Slider", "Config_Frame")
 	MODE_STATIC = 1,
 	MODE_ADJUSTING = 2,
 
+	TEXT_MODE_TITLEVAL = 1,
+	TEXT_MODE_MINMAX = 2,
+	TEXT_MODE_MINMIDMAX = 3,
+
 	FORCE_EDITBOX_THRESHOLD = 10e5,
 
 	range = 10,
@@ -1911,28 +2288,33 @@ TMW:NewClass("Config_Slider", "Slider", "Config_Frame")
 	extremesFormatter = TMW.C.Formatter.PASS,
 
 	-- Constructor
-	OnNewInstance_Slider = function(self, data)
+	OnNewInstance_Slider = function(self)
 		self.min, self.max = self:GetMinMaxValues()
 
 		self:SetMode(self.MODE_STATIC)
+		self:SetTextMode(self.TEXT_MODE_TITLEVAL)
 
-		if data.min and data.max then
-			self:SetMinMaxValues(data.min, data.max)
-		end
-		if data.range then
-			self:SetRange(data.range)
-		end
-
-		self:SetValueStep(data.step or self:GetValueStep() or 1)
-		self:SetWheelStep(data.wheelStep)
-		
-		self.text:SetText(data.label or data.title)
-
-
-		self:SetTooltip(data.title, data.tooltip)
-
+		self.ThumbTexture:SetPoint("BOTTOM", self.thumb, 0, -2)
 		
 		self:EnableMouseWheel(true)
+		self:SetExtremesColor(0.25)
+	end,
+
+
+	SetTexts = function(self, title, tooltip)
+		self.title = title
+		self:UpdateTexts()
+		self:SetTooltip(title, tooltip)
+	end,
+
+	SetExtremesColor = function(self, color)
+		self.extremesColor = color
+		self:UpdateTexts()
+	end,
+
+	UseLightColor = function(self)
+		local c = 0.13
+		self.Background:SetColorTexture(c, c, c, 0.95)
 	end,
 
 	-- Blizzard Overrides
@@ -1952,7 +2334,9 @@ TMW:NewClass("Config_Slider", "Slider", "Config_Frame")
 		return self:CalculateValueRoundedToStep(self:GetValue_base())
 	end,
 	SetValue = function(self, value)
-		self.scriptFiredOnValueChanged = nil
+		TMW:ValidateType("value", "SetValue(value)", value, "number")
+
+		self.__scriptFiredOnValueChanged = nil
 
 		if value < self.min then
 			value = self.min
@@ -1967,8 +2351,8 @@ TMW:NewClass("Config_Slider", "Slider", "Config_Frame")
 			self.EditBox:SetText(value)
 		end
 
-		if not self.scriptFiredOnValueChanged and value ~= self:GetValue_base() then
-			self:OnValueChanged()
+		if not self.__scriptFiredOnValueChanged and value ~= self:GetValue_base() then
+			self:GetScript("OnValueChanged")(self, value)
 		end
 	end,
 
@@ -2039,7 +2423,7 @@ TMW:NewClass("Config_Slider", "Slider", "Config_Frame")
 			return
 		end
 
-		self.scriptFiredOnValueChanged = true
+		self.__scriptFiredOnValueChanged = true
 
 		if self.EditBox then
 			self.EditBox:SetText(self:GetValue())
@@ -2051,21 +2435,25 @@ TMW:NewClass("Config_Slider", "Slider", "Config_Frame")
 		end
 
 		self:UpdateTexts()
-		
-		-- Cheater! (We arent getting anything)
-		-- (I'm using get as a wrapper so I don't have to check if the function exists before calling it)
-		get(self.data.OnValueChanged, self) 
 	end,
 
 	OnMouseDown = function(self, button)
+		if not self:IsEnabled() then
+			return
+		end
+
 		if button == "RightButton" then
 			self:UseEditBox()
 
-			self:ReloadSetting()
+			self:RequestReload()
 		end
 	end,
 
 	OnMouseUp = function(self)
+		if not self:IsEnabled() then
+			return
+		end
+
 		if self.mode == self.MODE_ADJUSTING then
 			self:UpdateRange()
 		end
@@ -2144,9 +2532,13 @@ TMW:NewClass("Config_Slider", "Slider", "Config_Frame")
 			self.EditBox = self.Config_EditBox_Slider:New("EditBox", name, self:GetParent(), "TellMeWhen_InputBoxTemplate", nil, {})
 			self.EditBox.Slider = self
 
-			self.EditBox:SetPoint("TOP", self, "TOP", 0, -4)
-			self.EditBox:SetPoint("LEFT", self, "LEFT", 2, 0)
-			self.EditBox:SetPoint("RIGHT", self)
+			self.EditBox.title = self.EditBox:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+			self.EditBox.title:SetPoint("LEFT", self.EditBox)
+			self.EditBox.title:SetPoint("RIGHT", self.EditBox)
+			self.EditBox.title:SetPoint("BOTTOM", self.EditBox, "TOP")
+
+			self.EditBox:SetPoint("BOTTOMLEFT", self, 0, -2)
+			self.EditBox:SetPoint("BOTTOMRIGHT", self, 0, -2)
 
 			self.EditBox:SetText(self:GetValue())
 
@@ -2155,30 +2547,32 @@ TMW:NewClass("Config_Slider", "Slider", "Config_Frame")
 			end
 		end
 
+		self.EditBox.title:SetText(self.title)
+
 		if not self.EditBoxShowing then
-			PlaySound("igMainMenuOptionCheckBoxOn")
+			TMW:ClickSound()
 			
 			self.EditBoxShowing = true
 			
-			if self.text:GetParent() == self then
-				self.text:SetParent(self.EditBox)
-			end
+			--if self.text:GetParent() == self then
+			--	self.text:SetParent(self.EditBox)
+			--end
 
 			self.EditBox:Show()
 			self:Hide_base()
 
-			self:ReloadSetting()
+			self:RequestReload()
 		end
 	end,
 	UseSlider = function(self)
 		if self.EditBoxShowing then
-			PlaySound("igMainMenuOptionCheckBoxOn")
+			TMW:ClickSound()
 
 			self.EditBoxShowing = false
 
-			if self.text:GetParent() == self.EditBox then
-				self.text:SetParent(self)
-			end
+			--if self.text:GetParent() == self.EditBox then
+			--	self.text:SetParent(self)
+			--end
 
 			if self.EditBox:IsShown() then
 				self:Show_base()
@@ -2186,7 +2580,7 @@ TMW:NewClass("Config_Slider", "Slider", "Config_Frame")
 			self.EditBox:Hide()
 			self:UpdateRange()
 
-			self:ReloadSetting()
+			self:RequestReload()
 		end
 	end,
 
@@ -2197,12 +2591,6 @@ TMW:NewClass("Config_Slider", "Slider", "Config_Frame")
 
 		self.formatter = formatter or TMW.C.Formatter.PASS
 		self.extremesFormatter = extremesFormatter or formatter or TMW.C.Formatter.PASS
-
-		self:UpdateTexts()
-	end,
-
-	SetStaticMidText = function(self, text)
-		self.staticMidText = text
 
 		self:UpdateTexts()
 	end,
@@ -2245,18 +2633,42 @@ TMW:NewClass("Config_Slider", "Slider", "Config_Frame")
 	end,
 
 	UpdateTexts = function(self)
-		if self.staticMidText then
-			self.Mid:SetText(self.staticMidText)
-		else
-			self.formatter:SetFormattedText(self.Mid, self:GetValue())
-		end
 
-		local minValue, maxValue = self:GetMinMaxValues()
-		
-		self.extremesFormatter:SetFormattedText(self.Low, minValue)
-		self.extremesFormatter:SetFormattedText(self.High, maxValue)
+		self.Center:SetText("")
+		if self.textMode == self.TEXT_MODE_TITLEVAL then
+			if self.title then
+				self.Left:SetText(self.title .. ":")
+			else
+				self.Left:SetText("")
+			end
+
+			self.formatter:SetFormattedText(self.Right, self:GetValue())
+
+			local color = 1
+			self.Left:SetTextColor(color, color, color, 1)
+			self.Right:SetTextColor(color, color, color, 1)
+		else
+			local minValue, maxValue = self:GetMinMaxValues()
+
+			self.extremesFormatter:SetFormattedText(self.Left, minValue)
+			self.extremesFormatter:SetFormattedText(self.Right, maxValue)
+
+			local color = self.extremesColor or 1
+			self.Left:SetTextColor(color, color, color, 1)
+			self.Center:SetTextColor(color, color, color, 1)
+			self.Right:SetTextColor(color, color, color, 1)
+
+			if self.textMode == self.TEXT_MODE_MINMIDMAX then
+				self.formatter:SetFormattedText(self.Center, self:GetValue())
+			end
+		end
 	end,
 
+	SetTextMode = function(self, mode)
+		self.textMode = mode
+
+		self:UpdateTexts()
+	end,
 
 	UpdateRange = function(self, value)
 		if self.mode == self.MODE_ADJUSTING then
@@ -2279,14 +2691,19 @@ TMW:NewClass("Config_Slider", "Slider", "Config_Frame")
 
 		if settings and self.setting then
 		
-			TMW:TT_Update(self.EditBoxShowing and self.EditBox or self)
+			if self.ttData then
+				TMW:TT_Update(self.EditBoxShowing and self.EditBox or self)
+			end
 
 			local value = self:GetValue()
-			value = get(self.data.ModifySettingValue, self, value) or value
-			
-			settings[self.setting] = value
-			
-			IE:ScheduleIconSetup()
+			value = self:CScriptCallGet("ModifyValueForSave", value) or value
+
+			if settings[self.setting] ~= value then
+				settings[self.setting] = value
+				self:OnSettingSaved()
+			else
+				self:RequestReload()
+			end
 		end
 	end,
 
@@ -2294,79 +2711,72 @@ TMW:NewClass("Config_Slider", "Slider", "Config_Frame")
 		local settings = self:GetSettingTable()
 
 		if settings and self.setting then
-			self:SetValue(settings[self.setting])
-			
-			self:CheckInteractionStates()
+
+			local value = settings[self.setting]
+			value = self:CScriptCallGet("ModifyValueForLoad", value) or value
+
+			self:SetValue(value)
 		end
 	end,
 }
 
 TMW:NewClass("Config_Slider_Alpha", "Config_Slider"){
 	-- Constructor
-	OnNewInstance_Slider_Alpha = function(self, data)
+	OnNewInstance_Slider_Alpha = function(self)
 		self:SetMinMaxValues(0, 1)
 		self:SetValueStep(0.01)
-		
-		local color = 34/0xFF
-		self.Low:SetTextColor(color, color, color, 1)
-		self.High:SetTextColor(color, color, color, 1)
-	end,
+		-- self:SetWheelStep(0.1)
 
+		self:SetTextFormatter(self.Formatter)
 
-	-- Script Handlers
-	OnMinMaxChanged = function(self)
-		local minValue, maxValue = self:GetMinMaxValues()
-		
-		self.Low:SetText(minValue * 100 .. "%")
-		self.High:SetText(maxValue * 100 .. "%")
-		
 		self:UpdateTexts()
 	end,
 
 	METHOD_EXTENSIONS = {
 		OnDisable = function(self)
 			self:SetValue(0)
-			self:UpdateTexts() -- For the initial disable, so text doesn't go orange
+			self:UpdateTexts()
 		end,
 	},
 	
-
-	-- Methods
-	FakeSetValue = function(self, value)
-		self:SetValue(value)
-	end,
-	
-	UpdateTexts = function(self)
-		local value = self:GetValue()
-				
-		if value and self:IsEnabled() then
-			if value == self.data.setOrangeAtValue then
-				self.Mid:SetText("|cffff7400" .. value * 100 .. "%")
-			else
-				self.Mid:SetText(value * 100 .. "%")
-			end
+	Formatter = TMW.C.Formatter:New(function(value)
+		if value == 0 then
+			return L["CONDITIONPANEL_ICON_HIDDEN"]
 		else
-			self.Mid:SetText(value * 100 .. "%")
+			return TMW.C.Formatter.PERCENT100:Format(value)
 		end
-	end,
+	end),
+	
+	OrangeAt100Formatter = TMW.C.Formatter:New(function(value)
+		if value == 0 then
+			return L["CONDITIONPANEL_ICON_HIDDEN"]
+		else
+			if value == 1 then
+				return "|cffff7400" .. TMW.C.Formatter.PERCENT100:Format(value)
+			end
+			return TMW.C.Formatter.PERCENT100:Format(value)
+		end
+	end),
 }
-
 
 TMW:NewClass("Config_BitflagBase"){
 	-- Constructor
-	OnNewInstance_BitflagBase = function(self, data)
-		if data.bit then
-			self.bit = data.bit
+	OnNewInstance_BitflagBase = function(self)
+		if self:GetID() and not self:GetSettingBit() then
+			self:SetSettingBitID(self:GetID())
 		end
+	end,
 
-		if data.bit then
-			self.bit = data.bit
-		else
-			local bitID = data.value or self:GetID()
-			assert(bitID, "Couldn't figure out what bit " .. self:GetName() .. " is supposed to operate on!")
-			
-			self.bit = bit.lshift(1, (data.value or self:GetID()) - 1)
-		end
+	SetSettingBit = function(self, bit)
+		self.bit = bit
+	end,
+
+	GetSettingBit = function(self)
+		return self.bit
+	end,
+
+	SetSettingBitID = function(self, bitID)
+		self:SetSettingBit(bit.lshift(1, bitID - 1))
 	end,
 
 
@@ -2374,15 +2784,11 @@ TMW:NewClass("Config_BitflagBase"){
 	OnClick = function(self, button)	
 		local settings = self:GetSettingTable()
 
-		if settings and self.setting then
+		if settings and self.setting and self.bit then
 			settings[self.setting] = bit.bxor(settings[self.setting], self.bit)
 			
-			IE:ScheduleIconSetup()
+			self:OnSettingSaved()
 		end
-		
-		-- Cheater! (We arent getting anything)
-		-- (I'm using get as a wrapper so I don't have to check if the function exists before calling it)
-		get(self.data.OnClick, self, button) 
 	end,
 	
 
@@ -2393,203 +2799,188 @@ TMW:NewClass("Config_BitflagBase"){
 		if settings then
 			self:SetChecked(bit.band(settings[self.setting], self.bit) == self.bit)
 		end
-		
-		self:CheckInteractionStates()
 	end,
 }
 
 TMW:NewClass("Config_CheckButton_BitToggle", "Config_BitflagBase", "Config_CheckButton")
 
-TMW:NewClass("Config_Frame_WhenChecks", "Config_Frame"){
+TMW:NewClass("Config_Frame_IconStateSet", "Config_Frame"){
 	-- Constructor
-	OnNewInstance_Frame_WhenChecks = function(self, data)
-		local data = self.data
-		
-		-- ShowWhen toggle
-		assert(data.bit, "SettingWhenCheckSet's data table must declare a bit flag to be toggled in ics.ShowWhen! (data.bit)")
-		
-		self.Check.tmwClass = "Config_CheckButton_BitToggle"
-		TMW:CInit(self.Check, {
-			setting = "ShowWhen",
-			bit = data.bit,
-		})
-		
-		
-		-- Alpha slider
-		assert(data.alphaSettingName, "SettingWhenCheckSet's data table must declare an alpha setting to be used! (data.alphaSettingName)")
-		
-		TMW:CInit(self.Alpha, {
-			setting = data.alphaSettingName,
-			setOrangeAtValue = data.setOrangeAtValue or 0,
-			disabled = function(self)
-				local ics = TMW.CI.ics
-				if ics then
-					return bit.band(ics.ShowWhen, data.bit) == 0
-				end
-			end,
-		})
-		
-		-- Reparent the label text on the slider so that it will be at full opacity even while disabled.
-		self.Alpha.text:SetParent(self)
 
-		TMW:RegisterCallback("TMW_CONFIG_PANEL_SETUP", self)
+
+	OnNewInstance_Frame_IconStateSet = function(self)
+		self:CScriptAdd("SettingTableRequested", self.SettingTableRequested)
 	end,
-	
+
+	SettingTableRequested = function(self)
+		return TMW.CI.ics and TMW.CI.ics.States[self.setting] or false
+	end,
 
 	-- Script Handlers
 	OnEnable = function(self)
-		self.Check:CheckInteractionStates()
-		self.Alpha:CheckInteractionStates()
+		self:RequestReloadChildren()
 	end,
 	
 	OnDisable = function(self)
-		self.Check:Disable()
 		self.Alpha:Disable()
 	end,
 	
 
 	-- Methods
-	TMW_CONFIG_PANEL_SETUP = function(self, event, frame, panelInfo)
-		if frame == self:GetParent() then
-			local supplementalData = panelInfo.supplementalData
-			
-			assert(supplementalData, "Supplemental data (arg5 to RegisterConfigPanel_XMLTemplate) must be provided for TellMeWhen_WhenChecks!")
-			
-			-- Set the title for the frame
-			frame.Header:SetText(supplementalData.text)
-			
-			-- Numeric keys in supplementalData point to the tables that have the data for that specified bit toggle
-			local supplementalDataForBit = supplementalData[self.data.bit]
-			if supplementalDataForBit then
-				self.Check:SetTooltip(
-					L["ICONMENU_SHOWWHEN_SHOWWHEN_WRAP"]:format(supplementalDataForBit.text),
-					supplementalDataForBit.tooltipText or L["ICONMENU_SHOWWHEN_SHOW_GENERIC_DESC"]
-				)
-				
-				self.Alpha.text:SetText(supplementalDataForBit.text)
-				self.Alpha:SetTooltip(
-					L["ICONMENU_SHOWWHEN_OPACITYWHEN_WRAP"]:format(supplementalDataForBit.text),
-					supplementalDataForBit.tooltipText or L["ICONMENU_SHOWWHEN_OPACITY_GENERIC_DESC"]
-				)
-				self:Show()
-			else
-				self:Hide()
-			end
-		end
+
+	SetConfigData = function(self, configData)
+		self.Alpha:SetTexts(configData.text)
+		self.Alpha:SetTooltip(
+			L["ICONMENU_SHOWWHEN_OPACITYWHEN_WRAP"]:format(configData.text),
+			configData.tooltipText or L["ICONMENU_SHOWWHEN_OPACITY_GENERIC_DESC"]
+		)
 	end,
 
 	ReloadSetting = function(self)
-		-- Bad Things happen if this isn't defined
+		self:GetParent():AdjustHeight()
 	end,
 }
 
-
 TMW:NewClass("Config_ColorButton", "Button", "Config_Frame"){
-	
-	OnNewInstance_ColorButton = function(self, data)
-		assert(self.background1 and self.text and self.swatch, 
-			"This setting frame doesn't inherit from the thing that it should have inherited from")
+	hasOpacity = false,
+	hasDesaturate = false,
 
-		self.text:SetText(get(data.label or data.title))
+	OnNewInstance_ColorButton = function(self)
+		assert(self.background1 and self.text and self.swatch, 
+			"This setting frame doesn't inherit from TellMeWhen_ColorButtonTemplate")
+
+		self.text:SetHeight(30)
+		self.text:SetMaxLines(3)
+
+		self.swatch:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+	end,
+
+	SetTexts = function(self, title, tooltip)
+		self:SetTooltip(title, tooltip)
+		self.text:SetText(title)
 	end,
 	
 	OnClick = function(self, button)
 		local settings = self:GetSettingTable()
 
-		local prevRGBA = {self:GetRGBA()}
-		self.prevRGBA = prevRGBA
-
-		self:GenerateMethods()
-
-		ColorPickerFrame.func = self.colorFunc
-		ColorPickerFrame.opacityFunc = self.colorFunc
-		ColorPickerFrame.cancelFunc = self.cancelFunc
-
-		ColorPickerFrame:SetColorRGB(unpack(prevRGBA))
-		ColorPickerFrame.hasOpacity = self.data.hasOpacity
-		ColorPickerFrame.opacity = 1 - prevRGBA[4]
-
-		ColorPickerFrame:Show()
+		if settings and self.setting then
+			IE:RegisterRapidSetting(self.setting)
+			
+			TellMeWhen_ColorPicker:Load(
+				self,
+				"PickerCallback",
+				settings[self.setting],
+				self.swatchTexture,
+				self.hasOpacity,
+				self.hasDesaturate,
+				self.hasTexture and settings[self.textureSetting] or nil)
+		end
 	end,
 
-	-- We have to do this for these to have access to self.
-	GenerateMethods = function(self)
-		self.colorFunc = function()
-			local r, g, b = ColorPickerFrame:GetColorRGB()
-			local a = 1 - OpacitySliderFrame:GetValue()
+	SetHasOpacity = function(self, hasOpacity)
+		self.hasOpacity = hasOpacity
 
-			self:SetRGBA(r, g, b, a)
+		self.background1:SetShown(hasOpacity)
+		self.background2:SetShown(hasOpacity)
+		self.background3:SetShown(hasOpacity)
+		self.background4:SetShown(hasOpacity)
+	end,
 
-			self:ReloadSetting()
+	SetHasDesaturate = function(self, hasDesaturate)
+		self.hasDesaturate = hasDesaturate
+	end,
 
-			TMW.IE:ScheduleIconSetup()
+	SetHasTextureConfig = function(self, hasTexture, textureSetting)
+		self.hasTexture = hasTexture
+		self.textureSetting = textureSetting
+	end,
+
+	SetSwatchTexture = function(self, baseTexture, overrideTexture)
+		self.swatchTexture = baseTexture
+		self.swatchOverrideTexture = overrideTexture
+		self:UpdateSwatchTexture()
+	end,
+
+	UpdateSwatchTexture = function(self)
+		local r, g, b, a, flags = self:GetRGBA()
+
+		local texture
+		if self.swatchOverrideTexture then
+			texture = self.swatchOverrideTexture
+		elseif self.swatchTexture then
+			texture = self.swatchTexture
 		end
 
-		self.cancelFunc = function()
-			self:SetRGBA(unpack(self.prevRGBA))
-
-			self:ReloadSetting()
-
-			TMW.IE:ScheduleIconSetup()
+		if texture then
+			-- We have to set the texture to nil first in case the (texture == "").
+			-- In Legion, calling SetTexture("") seems to have no effect, so if the swatch was previously
+			-- set to a color texture, it will stay that way unless we explicitly nil it out.
+			self.swatch:SetTexture(nil)
+			self.swatch:SetTexture(texture)
+			self.swatch:SetVertexColor(r, g, b)
+			self.swatch:SetAlpha(a)
+			self.swatch:SetDesaturated(flags and flags.desaturate)
+		else
+			self.swatch:SetColorTexture(r, g, b, a)
+			self.swatch:SetDesaturated(false)
 		end
-
-		self.GenerateMethods = TMW.NULLFUNC
 	end,
 
 	ReloadSetting = function(self)
 		local settings = self:GetSettingTable()
 
 		if settings then
-			self.swatch:SetTexture(self:GetRGBA())
+			self:UpdateSwatchTexture()
+		end
+	end,
 
-			self:CheckInteractionStates()
+	PickerCallback = function(self, colorString, texture)
+		local settings = self:GetSettingTable()
+
+		if settings and self.setting then
+			settings[self.setting] = colorString
+			if self.hasTexture then
+				settings[self.textureSetting] = texture
+			end
+			self:OnSettingSaved()
 		end
 	end,
 
 	GetRGBA = function(self)
-		if self.data.GetRGBA then
-			return self.data.GetRGBA(self)
-		else
-			local settings = self:GetSettingTable()
-			local c = settings[self.setting]
-			return c.r, c.g, c.b, c.a
-		end
-	end,
+		local settings = self:GetSettingTable()
 
-	SetRGBA = function(self, r, g, b, a)
-		if self.data.SetRGBA then
-			return self.data.SetRGBA(self, r, g, b, a)
-		else
-			local settings = self:GetSettingTable()
-			local c = settings[self.setting]
+		if settings and self.setting then
+			IE:RegisterRapidSetting(self.setting)
+			
+			local c = TMW:StringToCachedRGBATable(settings[self.setting])
+			local a = self.hasOpacity and c.a or 1
 
-			c.r, c.g, c.b, c.a = r, g, b, a
-		end
+			return c.r, c.g, c.b, a, c.flags
+		else
+			return 0, 0, 0, 0, nil
+		end		
 	end,
 }
 
 TMW:NewClass("Config_Button_Rune", "Button", "Config_BitflagBase", "Config_Frame"){
 	-- Constructor
-	Runes = {
-		"Blood",
-		"Unholy",
-		"Frost",
-	},
 
-	OnNewInstance_Button_Rune = function(self, data)
-		self.runeNumber = data.value or self:GetID()
-
-		-- detect what texture should be used
-		local runeType = ((self.runeNumber-1)%6)+1 -- gives 1, 2, 3, 4, 5, 6
-		local runeName = self.Runes[ceil(runeType/2)] -- Gives "Blood", "Unholy", "Frost"
-		
-		if self.runeNumber > 6 then
-			self.texture:SetTexture("Interface\\AddOns\\TellMeWhen\\Textures\\" .. runeName)
-		else
-			self.texture:SetTexture("Interface\\PlayerFrame\\UI-PlayerFrame-Deathknight-" .. runeName)
+	OnNewInstance_Button_Rune = function(self)
+		if not self:GetRuneNumber() then
+			self:SetRuneNumber(self:GetID())
 		end
+	end,
 
-		self.bit = bit.lshift(1, self.runeNumber - 1)
+	GetRuneNumber = function(self)
+		return self.runeNumber
+	end,
+
+	SetRuneNumber = function(self, runeNumber)
+		self.runeNumber = runeNumber
+
+		self.texture:SetTexture("Interface\\PlayerFrame\\UI-PlayerFrame-Deathknight-SingleRune")
+
+		self:SetSettingBitID(self.runeNumber)
 	end,
 
 
@@ -2609,331 +3000,697 @@ TMW:NewClass("Config_Button_Rune", "Button", "Config_BitflagBase", "Config_Frame
 	end,
 }
 
+TMW:NewClass("Config_PointSelect", "Config_Frame"){
 
+	SetTexts = function(self, title, tooltip)
+		self.Header:SetText(title)
+		self:SetTooltipBody(tooltip)
+	end,
 
-function IE:BuildSimpleCheckSettingFrame(parent, arg2, arg3)
-	local className, allData, objectType
-	if arg3 ~= nil then
-		allData = arg3
-		className = arg2
-	else
-		allData = arg2
-		className = "Config_CheckButton"
-	end
-	local class = TMW.Classes[className]
-	local objectType = class.isFrameObject
+	SetTooltipBody = function(self, body)
+		TMW:ValidateType("2 (body)", "SetTooltipBody", body, "string")
+
+		assert(body:find("%%s"), "tooltip body should contain a %s that will be formatted to the point.")
+
+		for k, v in pairs(self) do
+			if type(v) == "table" and v.GetObjectType and v:GetObjectType() == "CheckButton" then
+				TMW:TT(v, TMW.L[k], body:format(TMW.L[k]), 1, 1)
+			end
+		end
+	end,
+
+	SetSelectedPoint = function(self, point)
+		TMW:ValidateType("2 (point)", "SetSelectedPoint", point, "string")
+
+		point = tostring(point):upper()
+
+		if not self[point] then
+			error("Invalid point " .. point .. " to Config_PointSelect:SetSelected(point)")
+		end
+
+		for k, v in TMW:Vararg(self:GetChildren()) do
+			if v.SetChecked then
+				v:SetChecked(false)
+			end
+		end
+
+		self[point]:SetChecked(true)
+	end,
+
+	SelectChild = function(self, child)
+		TMW:ValidateType("2 (child)", "SelectChild", child, "frame")
+
+		for k, v in pairs(self) do
+			if v == child then
+
+				local settings = self:GetSettingTable()
+
+				TMW:ClickSound()
+				self:SetSelectedPoint(k)
+
+				if settings and self.setting then
+					settings[self.setting] = k
+
+					self:OnSettingSaved()
+				end
+
+				return
+			end
+		end
+
+		error("child wasn't valid")
+	end,
+
+	GetSelectedPoint = function(self)
+		for k, v in pairs(self) do
+			if type(v) == "table" and v.GetObjectType and v:GetObjectType() == "Button" then
+				if v:GetChecked() then
+					return k
+				end
+			end
+		end
+	end,
 	
-	assert(class, "Couldn't find class named " .. className .. ".")
-	assert(type(objectType) == "string", "Couldn't find a WoW frame object type for class named " .. className .. ".")
-	assert(type(className) == "string", "Usage: IE:BuildSimpleCheckSettingFrame(parent, [, className], allData)")
-	assert(type(allData) == "table", "Usage: IE:BuildSimpleCheckSettingFrame(parent, [, className], allData)")
+	ReloadSetting = function(self)
+		local settings = self:GetSettingTable()
+
+		if settings then
+			self:SetSelectedPoint(settings[self.setting])
+		end
+	end,
+
+	OnSizeChanged = function(self)
+		self.CENTER:SetSize(self:GetWidth() / 3, self:GetHeight() / 3)
+	end,
+}
+
+TMW:NewClass("Config_ColorPicker", "Config_Frame"){
+
+	h = 0,
+	s = 1,
+	v = 0.5,
+	a = 0.5,
+	textureValue = "",
+	desaturate = false,
 	
-	
-	local lastCheckButton
-	local numFrames = 0
-	local numPerRow = allData.numPerRow or min(#allData, 2)
-	for i, data in ipairs(allData) do
-		if data ~= nil and data ~= false then -- skip over nils/false (dont freak out about them, they are probably intentional)
-		
-			assert(type(data) == "table", "All values in allData must be tables!")
-			
-			local setting = data.setting -- the setting that the check will handle
-			-- the setting is used by the current icon type, and doesnt have an override that is "hiding" the check, so procede to set it up
-			
-			-- An human-friendly-ish unique (hopefully) identifier for the frame
-			local identifier = setting .. (data.value ~= nil and tostring(data.value) or "")
-			
-			local f = parent[identifier]
+	OnNewInstance = function(self)
+		self.RecentColorFrame.frames = {}
+
+		self.swatchLabel:SetText(L["COLORPICKER_SWATCH"])
+		self.iconLabel:SetText(L["COLORPICKER_ICON"])
+		self.recentHeader:SetText(L["COLORPICKER_RECENT"])
+
+		self:CScriptAdd("SettingTableRequested", function() return self end)
+
+		for i, slider in TMW:Vararg(self.HueSlider, self.SaturationSlider, self.ValueSlider, self.AlphaSlider) do
+			-- Set the setting to h, s, v, or a
+			slider:SetSetting(slider:GetParentKey():sub(1, 1):lower())
+
+			slider:PostHookMethod("UpdateTexts", self.Slider_UpdateTextsHook)
+		end
+
+		self:RequestReload()
+
+		self:CScriptAdd("DescendantSettingSaved", self.LiveUpdate)
+	end,
+
+	Slider_UpdateTextsHook = function(slider)
+		local self = slider:GetParent()
+		self:LiveUpdate()
+	end,
+
+	RECENT_COLOR_COLUMNS = 3,
+	RECENT_COLOR_ROWS = 7,
+	RecentColor_OnClick = function(recentColorButton, button)
+		local self = recentColorButton:GetParent().ScrollFrame:GetParent()
+
+		-- This must be upvalued because it is about to get overwritten when we
+		-- add the current color as a recent color.
+		local string = recentColorButton.string
+
+		if button == "RightButton" then
+			local RecentColors = IE.db.global.RecentColors
+
+			for i, v in ipairs(RecentColors) do
+				if v == string then
+					tremove(RecentColors, i)
+					break
+				end
+			end
+
+			self:UpdateRecentColors()
+		else
+			self:AddRecentColor(self:GetColorString())
+			self:AddRecentColor(string)
+
+			self:SetColorString(string, false)
+		end
+	end,
+
+	AddRecentColor = function(self, colorString)
+		-- Don't include flags with recent colors.
+		colorString = colorString:sub(1, 8)
+
+		local RecentColors = IE.db.global.RecentColors
+
+		for i, v in ipairs(RecentColors) do
+			if v == colorString then
+				tremove(RecentColors, i)
+				break
+			end
+		end
+
+		tinsert(RecentColors, 1, colorString)
+		while #RecentColors > self.RECENT_COLOR_COLUMNS * self.RECENT_COLOR_ROWS do
+			tremove(RecentColors, #RecentColors)
+		end
+
+		self:UpdateRecentColors()
+	end,
+
+	UpdateRecentColors = function(self)
+		local padding = 5
+		for i, color in ipairs(IE.db.global.RecentColors) do
+			local f = self.RecentColorFrame.frames[i]
 			if not f then
-				f = class:New(objectType, parent:GetName() .. identifier, parent, "TellMeWhen_CheckTemplate", nil, data)
-				parent[identifier] = f
-				parent[i] = f
-			end
-			
-			if lastCheckButton then
-				-- Anchor it to the previous check if it isn't the first one.
-				if numFrames%numPerRow == 0 then
-					f:SetPoint("TOP", parent[i-numPerRow], "BOTTOM", 0, 2)
+				f = CreateFrame("Button", nil, self.RecentColorFrame, "TellMeWhen_ColorButtonTemplate")
+				f:SetScript("OnClick", self.RecentColor_OnClick)
+				f:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+				local dim = (self.RecentColorFrame:GetWidth() - padding*(1+self.RECENT_COLOR_COLUMNS)) / self.RECENT_COLOR_COLUMNS
+				f:SetSize(dim, dim)
+				self.RecentColorFrame.frames[i] = f
+				if i == 1 then
+					f:SetPoint("TOPLEFT")
+				elseif (i-1) % self.RECENT_COLOR_COLUMNS == 0 then
+					f:SetPoint("TOPLEFT", self.RecentColorFrame.frames[i-self.RECENT_COLOR_COLUMNS], "BOTTOMLEFT", 0, -padding)
 				else
-					-- This will get overwritten soon.
-					--f:SetPoint("LEFT", "RIGHT", 5, 0)
+					f:SetPoint("LEFT", self.RecentColorFrame.frames[i-1], "RIGHT", padding, 0)
 				end
-			else
-				-- Anchor the first check to the parent. The left anchor will be handled by DistributeFrameAnchorsLaterally.
-				f:SetPoint("TOP", 0, -1)
 			end
-			lastCheckButton = f
-			
-			f.row = ceil(i/numPerRow)
-			
-			numFrames = numFrames + 1
+			f:Show()
+			TMW:TT(f, color, "COLORPICKER_RECENT_DESC", 1, nil)
+			f.string = color
+			f.swatch:SetColorTexture(TMW:StringToRGBA(color))
 		end
-	end
-	
-	-- Set the bounds of the label text on all the checkboxes to prevent overlapping.
-	for i = 1, #parent do
-		local f0 = parent[i]
-		local f1 = parent[i+1]
-		
-		if not f1 or f1.row ~= f0.row then
-			f0:ConstrainLabel(parent, "RIGHT", -1, 0)
-		else
-			f0:ConstrainLabel(f1)
+
+		for i = #IE.db.global.RecentColors, #self.RecentColorFrame.frames do
+			self.RecentColorFrame.frames[i]:Hide()
 		end
-	end
-	
-	TMW:RegisterCallback("TMW_CONFIG_ICON_LOADED", function()
-		for i = 1, #parent, numPerRow do
-			IE:DistributeFrameAnchorsLaterally(parent, numPerRow, unpack(parent, i))
+	end,
+
+	LiveUpdate = function(self)
+		if not self.HueSlider.textures then
+			return
+		end
+
+		-- TODO: HANDLE ALPHA
+		local h = self.HueSlider:GetValue()
+		local s = self.SaturationSlider:GetValue()
+		local v = self.ValueSlider:GetValue()
+		local a = self.AlphaSlider:GetValue()
+
+		self.StringEditbox:SetText(TMW:HSVAToColorString(h, s, v, a))
+
+		local r,g,b=TMW:HSVToRGB(h, 0, v)
+		self.SaturationSlider.Background:SetGradient("HORIZONTAL", r,g,b, TMW:HSVToRGB(h, 1, v))
+
+		local r,g,b=TMW:HSVToRGB(h, s, 0)
+		self.ValueSlider.Background:SetGradient("HORIZONTAL", r,g,b, TMW:HSVToRGB(h, s, 1))
+
+		for i = 1, self.HueSlider.NUM_SEGMENTS do
+			local r,g,b=TMW:HSVToRGB((i-1)/self.HueSlider.NUM_SEGMENTS, s, v)
+			self.HueSlider.textures[i]:SetGradient("HORIZONTAL", r,g,b, TMW:HSVToRGB(i/self.HueSlider.NUM_SEGMENTS, s, v))
+		end
+
+		local r,g,b=TMW:HSVToRGB(h, s, v)
+		self.AlphaSlider.Background:SetGradientAlpha("HORIZONTAL", r, g, b, 0, r, g, b, 1)
+
+		self.swatch.swatch:SetColorTexture(r,g,b)
+		self.swatch.swatch:SetAlpha(a)
+
+
+		self.iconTexture:SetTexture(self.originalTexture)
+		if self.hasTexture then
+			local textureValue = self.textureValue
+			if textureValue and textureValue ~= "" then
+				textureValue = TMW.COMMON.Textures:EvaluateTexturePath(textureValue, TMW.NULLFUNC)
+
+				self.iconTexture:SetTexture(textureValue)
+			end
 		end		
-	end)
-	
-	parent:SetHeight(ceil(numFrames/numPerRow)*30)
-	
-	return parent
-end
+		self.iconTexture:SetVertexColor(TMW:HSVToRGB(h, s, v))
+		self.iconTexture:SetDesaturated(self.desaturate)
+	end,
 
-function IE:SaveSettings()	
-	TMW:Fire("TMW_CONFIG_SAVE_SETTINGS")
-	if CI.icon then
-		TMW.safecall(CI.icon.Setup, CI.icon)
-	end
-end
+	SaveSetting = function(self)
+		self:AddRecentColor(self:GetColorString())
 
-
----------- Equivalancies ----------
-function IE:Equiv_GenerateTips(equiv)
-	local IDs = TMW:SplitNames(TMW.EquivFullIDLookup[equiv])
-	local original = TMW:SplitNames(TMW.EquivOriginalLookup[equiv])
-
-	for k, v in pairs(IDs) do
-		local name, _, texture = GetSpellInfo(v)
-		if not name then
-			if TMW.debug then
-				TMW:Error("INVALID ID FOUND: %s:%s", equiv, v)
-				name = "INVALID " .. v
-			else
-				name = v
-			end
-			texture = "Interface\\Icons\\INV_Misc_QuestionMark"
+		if self.callbackObj and self.callback then
+			self.callbackObj[self.callback](self.callbackObj, self:GetColorString(), self.textureValue)
 		end
 
-		-- If this spell is tracked only by ID, add the ID in parenthesis
-		local originalSpell = tostring(original[k])
-		if originalSpell:sub(1, 1) ~= "_" then
-			name = format("%s |cff7f6600(%d)|r", name, originalSpell)
+		self:Hide()
+	end,
+
+	SetColorString = function(self, value, loadFlags)
+		if #value == 6 then
+			value = "ff" .. value
 		end
 
-		tiptemp[name] = tiptemp[name] or "|T" .. texture .. ":0|t" .. name
-	end
+		local c = TMW:ColorStringToCachedHSVATable(value)
 
-	local r = ""
-	for name, line in TMW:OrderedPairs(tiptemp) do
-		r = r .. line .. "\r\n"
-	end
+		self.h, self.s, self.v = c.h, c.s, c.v
 
-	r = strtrim(r, "\r\n ;")
-	wipe(tiptemp)
-	return r
-end
-TMW:MakeSingleArgFunctionCached(IE, "Equiv_GenerateTips")
+		self.a = self.hasOpacity and c.a or 1
+		if loadFlags then
+			self.desaturate = self.hasDesaturate and c.flags and c.flags.desaturate or false
+		end
+
+		self:RequestReloadChildren()
+		self:LiveUpdate()
+	end,
+
+	GetColorString = function(self, value)
+		return TMW:HSVAToColorString(self.h, self.s, self.v, self.a, {desaturate=self.desaturate})
+	end,
+
+	Load = function(self, callbackObj, callback, value, texture, hasOpacity, hasDesaturate, textureValue)
+		self.hasOpacity = hasOpacity
+		self.hasDesaturate = hasDesaturate
+		self.hasTexture = not not textureValue
+		self.originalTexture = texture
+		self.callbackObj = callbackObj
+		self.callback = callback
+
+		self.AlphaSlider:SetShown(hasOpacity)
+		self.Desaturate:SetShown(hasDesaturate)
+
+		self.Texture:SetShown(self.hasTexture)
+		TMW.SUG:EnableEditBox(self.Texture, "texture_withVarTex", true, true, self)
+
+		self.iconTexture:SetTexture(texture)
+		self.iconLabel:SetShown(not not texture)
+
+		self.textureValue = textureValue or ""
+		self:SetColorString(value, true)
+
+		self:AddRecentColor(value)
+		self:UpdateRecentColors()
+
+		self:Show()
+		self:Raise()
+
+		local c = TMW:StringToCachedRGBATable(value)
+		self.swatchPrevious.swatch:SetColorTexture(c.r, c.g, c.b, c.a)
+	end,
+}
 
 
----------- Dropdowns ----------
-function IE:Type_DropDown()
-	for _, typeData in ipairs(TMW.OrderedTypes) do
-		if CI.ics.Type == typeData.type or not get(typeData.hidden) then
-			if typeData.menuSpaceBefore then
-				TMW.DD:AddSpacer()
+
+TMW.C.IE:Inherit("Config_Frame")
+
+---------------------------------
+-- Icon Editor Tabs
+---------------------------------
+
+TMW:NewClass("IconEditorTabBase", "Config_Button"){
+
+	SetTexts = function(self, title, tooltip)
+		self:SetText(title)
+		TMW:TT(self, title, tooltip, 1, 1)
+	end,
+
+	AdjustWidth = function(self)
+		self:SetWidth(self.text:GetStringWidth() + 10)
+	end,
+
+	METHOD_EXTENSIONS = {
+		SetText = function(self, text)
+			if self:IsVisible() then
+				IE:ResizeTabs()
 			end
+		end,
+	},
+}
 
-			local info = TMW.DD:CreateInfo()
-			
-			info.text = get(typeData.name)
-			info.value = typeData.type
-			
-			local allowed = typeData:IsAllowedByView(CI.icon.viewData.view)
-			info.disabled = not allowed
+TMW:NewClass("IconEditorTabGroup", "IconEditorTabBase"){
+	childrenEnabled = true,
 
-			local desc = get(typeData.desc)
-				
-			if not allowed then
-				desc = (desc and desc .. "\r\n\r\n" or "") .. L["ICONMENU_TYPE_DISABLED_BY_VIEW"]:format(CI.icon.viewData.name)
-			end
+	OnNewInstance = function(self)
+		self.Tabs = {}
+	end,
 
-			if typeData.canControlGroup then
-				desc = (desc and desc .. "\r\n\r\n" or "") .. L["ICONMENU_TYPE_CANCONTROL"]
-			end
+	OnClick = function(self)
+		PlaySound(SOUNDKIT and SOUNDKIT.IG_CHARACTER_INFO_TAB or "igCharacterInfoTab") -- SOUNDKIT is patch 7.3 compat
 
-			if desc then
-				info.tooltipTitle = typeData.tooltipTitle or info.text
-				info.tooltipText = desc
-				info.tooltipWhileDisabled = true
-			end
-			
-			info.checked = (info.value == CI.ics.Type)
-			info.func = IE.Type_Dropdown_OnClick
-			info.arg1 = typeData
-			
-			info.icon = get(typeData.menuIcon)
-			info.tCoordLeft = 0.07
-			info.tCoordRight = 0.93
-			info.tCoordTop = 0.07
-			info.tCoordBottom = 0.93
-				
-			TMW.DD:AddButton(info)
+		IE.CurrentTabGroup = self
 
-			if typeData.menuSpaceAfter then
-				TMW.DD:AddSpacer()
+		TMW.IE.Tabs.art.pSelectedHorizontal:ClearAllPoints()
+		TMW.IE.Tabs.art.pSelectedHorizontal:SetPoint("TOPLEFT", self)
+		TMW.IE.Tabs.art.pSelectedHorizontal:SetPoint("TOPRIGHT", self)
+
+		for i, tab in TMW:Vararg(TMW.IE.Tabs.secondary:GetChildren()) do
+			tab:Hide()
+		end
+		
+		local lastTab
+		local firstShown
+		for i = 1, #self.Tabs do
+			local tab = self.Tabs[i]
+
+			if tab:ShouldShowTab() then
+				lastTab = tab
+
+				tab:Show()
+				tab:SetFrameLevel(tab:GetParent():GetFrameLevel() + 3)
+				tab:SetEnabled(self.childrenEnabled)
+
+				firstShown = firstShown or tab
 			end
 		end
-	end
-end
 
-function IE:Type_Dropdown_OnClick()
-	-- Automatically enable the icon when the user chooses an icon type
-	-- when the icon was of the default (unconfigured) type.
-	if CI.ics.Type == "" then
-		CI.ics.Enabled = true
-	end
+		if not self.childrenEnabled then
+			IE.CurrentTab = nil
+			local page = IE:DisplayPage(self.disabledPageKey)
+			page:RequestReload()
 
-	CI.icon:SetInfo("texture", nil)
+		elseif self.currentTab and self.currentTab:IsShown() then
+			self.currentTab:Click()
 
-	local oldType = CI.ics.Type
-	CI.ics.Type = self.value
-
-	TMW:Fire("TMW_CONFIG_ICON_TYPE_CHANGED", CI.icon, CI.ics.Type, oldType)
-	
-	CI.icon:Setup()
-	
-	IE:Load(1)
-end
-
-
----------- Tooltips ----------
---local cachednames = {}
-function IE:GetRealNames(Name)
-	-- gets a table of all of the spells names in the name box in the IE. Splits up equivalancies and turns IDs into names
-
-	local outTable = {}
-
-	local text = TMW:CleanString(Name)
-	
-	local CI_typeData = Types[CI.ics.Type]
-	local checksItems = CI_typeData.checksItems
-	
-	-- Note 11/12/12 (WoW 5.0.4) - caching causes incorrect results with "replacement spells" after switching specs like the corruption/immolate pair 
-	--if cachednames[CI.ics.Type .. SoI .. text] then return cachednames[CI.ics.Type .. SoI .. text] end
-
-	local tbl
-	if checksItems then
-		tbl = TMW:GetItems(text)
-	else
-		tbl = TMW:GetSpells(text).Array
-	end
-	local durations = TMW:GetSpells(text).Durations
-
-	local Cache = TMW:GetModule("SpellCache"):GetCache()
-	
-	for k, v in pairs(tbl) do
-		local name, texture
-		if checksItems then
-			name = v:GetName() or v.what or ""
-			texture = v:GetIcon()
+		elseif firstShown then
+			firstShown:Click()
 		else
-			name, _, texture = GetSpellInfo(v)
-			texture = texture or GetSpellTexture(name or v)
-			
-			if not name and Cache then
-				local lowerv = strlower(v)
-				for id, lowername in pairs(Cache) do
-					if lowername == lowerv then
-						local newname, _, newtex = GetSpellInfo(id)
-						name = newname
-						if not texture then
-							texture = newtex
-						end
-						break
-					end
-				end
-			end
-			
-			name = name or v or ""
-
-			texture = texture or GetSpellTexture(name)
+			error("No tabs shown to click for tab group " .. self.identifier)
 		end
 
-		local dur = ""
-		if CI_typeData.DurationSyntax or durations[k] > 0 then
-			dur = ": "..TMW:FormatSeconds(durations[k])
+		if not IE.CurrentTab then
+			TMW.IE.Tabs.art.sSelectedHorizontal:ClearAllPoints()
+			TMW.IE.Tabs.art.sSelectedHorizontal:SetPoint("TOP")
 		end
 
-		local str = (texture and ("|T" .. texture .. ":0|t") or "") .. name .. dur
+		IE:ResizeTabs()
+	end,
 
-		if type(v) == "number" and tonumber(name) ~= v then
-			str = str .. format(" |cff7f6600(%d)|r", v)
+	SetChildrenEnabled = function(self, enabled)
+		self.childrenEnabled = enabled
+
+		if IE.CurrentTabGroup == self then
+			self:Click()
+		end
+	end,
+
+	SetDisabledPageKey = function(self, pageKey)
+		self.disabledPageKey = pageKey
+	end,
+}
+
+TMW:NewClass("IconEditorTab", "IconEditorTabBase"){
+	endPadding = 6,
+	interPadding = 5,
+
+	OnNewInstance_Tab = function(self)
+		self:CScriptAdd("PageReloadRequested", self.PageReloadRequested)
+	end,
+
+	PageReloadRequested = function(self, page)
+		-- Also notify the tab group one of its pages was reloaded
+		-- so that generic actions that apply to a whole tab group (like re-setting up an icon) can happen.
+		self.parent:CScriptCall("PageReloadRequested")
+
+		if self.historySet then
+
+			-- Because some settings can get changed when we're reloading,
+			-- we need to delay this until all reloading is done.
+			C_Timer.After(0, function()
+				self.historySet:AttemptAutoBackup()
+				self.historySet:UpdateButtons()
+			end)
+		else
+			IE.UndoButton:Disable()
+			IE.RedoButton:Disable()
+		end
+	end,
+
+	SetHistorySet = function(self, historySet)
+		TMW:ValidateType("historySet", "SetHistorySet(historySet)", historySet, "HistorySet")
+
+		self.historySet = historySet
+	end,
+
+	GetHistorySet = function(self)
+		return self.historySet
+	end,
+
+	OnClick = function(self)
+		PlaySound(SOUNDKIT and SOUNDKIT.IG_CHARACTER_INFO_TAB or "igCharacterInfoTab") -- SOUNDKIT is patch 7.3 compat
+
+		if IE.CurrentTabGroup ~= self.parent then
+			self.parent:Click()
 		end
 
-		tinsert(outTable,  str)
+		local oldTab = IE.CurrentTab
+
+		IE.CurrentTab = self
+		self.parent.currentTab = self
+
+		IE.Tabs.art.sSelectedHorizontal:ClearAllPoints()
+		IE.Tabs.art.sSelectedHorizontal:SetPoint("BOTTOMLEFT", self)
+		IE.Tabs.art.sSelectedHorizontal:SetPoint("BOTTOMRIGHT", self)
+
+
+		local page = IE:DisplayPage(self.pageKey)
+		
+		TMW:Fire("TMW_CONFIG_TAB_CLICKED", self, oldTab)
+
+		page:RequestReload()
+
+		IE:ResizeTabs()
+	end,
+
+	GetPage = function(self)
+		return TMW.IE.Pages[self.pageKey]
+	end,
+
+	ShouldShowTab = function(self)
+		return true
+	end,
+}
+
+IE.TabGroups = {}
+function IE:RegisterTabGroup(identifier, text, order, setupHeaderFunc)
+	local sig = "IE:RegisterTabGroup(identifier, text, order, setupHeaderFunc)"
+	TMW:ValidateType("identifier",      sig, identifier,      "string")
+	TMW:ValidateType("text",            sig, text,            "string")
+	TMW:ValidateType("order",           sig, order,           "number")
+	TMW:ValidateType("setupHeaderFunc", sig, setupHeaderFunc, "function")
+
+	assert(identifier == identifier:upper(), "Tab identifiers should be all uppercase")
+
+	if IE.TabGroups[identifier] then
+		error("A tab group with the identifier " .. identifier .. " is already registered.")
 	end
+	
+	local tab = TMW.C.IconEditorTabGroup:New("Button", nil, TMW.IE.Tabs.primary, "TellMeWhen_IE_Tab")
+	TMW.IE.Tabs.primary[identifier] = tab
 
-	return outTable
+	tab.identifier = identifier
+	tab.order = order
+	tab.SetupHeader = setupHeaderFunc
+
+	tab:SetText(text)
+
+	IE.TabGroups[identifier] = tab
+
+	for i, tab in ipairs(TMW.IE.Tabs.primary) do
+		tab:Hide()
+	end
+	
+
+
+	return tab
 end
 
-function GameTooltip:TMW_AddSpellBreakdown(tbl)
-	if #tbl <= 0 then
+function IE:RegisterTab(groupIdentifier, identifier, pageKey, order)
+	local sig = "IE:RegisterTab(groupIdentifier, identifier, pageKey, order)"
+	TMW:ValidateType("groupIdentifier", sig, groupIdentifier, "string")
+	TMW:ValidateType("identifier",      sig, identifier,      "string")
+	TMW:ValidateType("pageKey",         sig, pageKey,         "string")
+	TMW:ValidateType("order",           sig, order,           "number")
+
+	assert(identifier == identifier:upper(), "Tab identifiers should be all uppercase")
+
+	local tabGroup = IE.TabGroups[groupIdentifier]
+
+	if not tabGroup then
+		error("Could not find tab group registered with identifier " .. groupIdentifier)
+	end
+
+	if tabGroup[identifier] then
+		error("A tab with the identifier " .. identifier .. " is already registered to tab group " .. groupIdentifier)
+	end
+
+	local tab = TMW.C.IconEditorTab:New("Button", nil, TMW.IE.Tabs.secondary, "TellMeWhen_IE_Tab")
+	TMW.IE.Tabs.secondary[identifier] = tab
+
+	tab.identifier = identifier
+	tab.pageKey = pageKey
+	tab.order = order
+	tab.parent = tabGroup
+
+	tabGroup[identifier] = tab
+
+	tabGroup.Tabs[#tabGroup.Tabs + 1] = tab
+
+	TMW:SortOrderedTables(tabGroup.Tabs)
+
+	return tab
+end
+
+function IE:ResizeTabs()
+	local endPadding = TMW.C.IconEditorTab.endPadding
+	local interPadding = TMW.C.IconEditorTab.interPadding
+
+	-- First, resize the primary tabs (the tab groups) so that we can figure out their exact width
+	local primaryWidth = -interPadding
+	local prevTabGroup
+	for identifier, tabGroup in TMW:OrderedPairs(IE.TabGroups, TMW.OrderSort, true) do
+		tabGroup:AdjustWidth()
+		if prevTabGroup then
+			prevTabGroup:SetPoint("RIGHT", tabGroup, "LEFT", -interPadding, 0)
+		end
+		primaryWidth = primaryWidth + tabGroup:GetWidth() + interPadding
+
+		prevTabGroup = tabGroup
+	end
+	prevTabGroup:SetPoint("RIGHT", -interPadding)
+	-- Adjust the conatiner width to fit the tabs exactly so calculations are easy.
+	TMW.IE.Tabs.primary:SetWidth(primaryWidth)
+
+
+	-- Next, figure out how much room we we will have for the secondary tabs.
+	-- Subtract an additional 10 here because it just isn't quite right without it. Not sure why it ends up off like that.
+	if not TMW.IE.Tabs.primary:GetLeft() then return end
+	local availableWidth = TMW.IE.Tabs.primary:GetLeft() - TMW.IE.Tabs.secondary:GetLeft() - 20
+
+	-- Now, divide the tabs up into rows so that no rows are overflowing.
+	-- As we gather them into rows, position the tabs within that row.
+	-- We will determine the positioning of the rows once we're all done.
+	-- We don't do any fancy packing of them - just place them in the order that they're defined in.
+	local rows = {}
+	local currentRow = 1
+	rows[currentRow] = {width = endPadding - interPadding }
+	for i, tab in TMW:OrderedPairs({TMW.IE.Tabs.secondary:GetChildren()}, TMW.OrderSort, true) do
+		tab:AdjustWidth()
+		if tab:IsShown() then
+			local newWidth = rows[currentRow].width + tab:GetWidth() + interPadding
+
+			tab:ClearAllPoints()
+			if newWidth > availableWidth and rows[currentRow][1] then
+				-- No more room in the current row. Start a new row.
+				-- We check that there is at least one tab in the row already so the first row doesn't end up empty
+				-- when we're stress testing the text widths with massive strings.
+				-- Anchor the tab to the far left.
+				currentRow = currentRow + 1
+				rows[currentRow] = {width = endPadding + tab:GetWidth(), [1] = tab }
+				tab:SetPoint("LEFT", tab.endPadding, 0, 0)
+			else
+				-- There's room in an existing row. Put this tab in it.
+				rows[currentRow].width = newWidth
+
+				local numTabs = #rows[currentRow]
+				if numTabs == 0 then
+					-- This is the very first tab that we've looked at. It also goes on the left.
+					tab:SetPoint("LEFT", tab.endPadding, 0, 0)
+				else
+					-- There are other tabs in this row. Place the tab next to the last one.
+					tab:SetPoint("LEFT", rows[currentRow][numTabs], "RIGHT", tab.interPadding, 0)
+				end
+				rows[currentRow][numTabs + 1] = tab
+			end
+		end
+	end
+
+	-- Figure out the width of the widest row, 
+	-- and figure out which row the current tab is in (if there is a current tab).
+	local width = 0
+	local selectedRow = nil
+	for k, row in ipairs(rows) do
+		width = max(width, row.width)
+
+		for i, tab in ipairs(row) do
+			if IE.CurrentTab == tab then
+				selectedRow = row
+				break
+			end
+		end
+	end
+
+	-- Position the rows amongst themselves.
+	-- The row with the currently selected tab gets popped to the top.
+	-- The rest of the rows are placed in their natural order from bottom to top.
+	if #rows == 1 then
+		rows[1][1]:SetPoint("BOTTOM")
+	else
+
+		local previousRow = nil
+		for k, row in ipairs(rows) do
+			if row == selectedRow then
+				-- do nothing. The selected row gets placed last.
+			else
+				if previousRow then
+					row[1]:SetPoint("BOTTOM", previousRow[1], "TOP")
+				else
+					row[1]:SetPoint("BOTTOM")
+				end
+				previousRow = row
+			end
+		end
+
+		if selectedRow then
+			-- If there wasn't actually a selected tab,
+			-- don't do this. The row will have been positioned normally above.
+			selectedRow[1]:SetPoint("BOTTOM", previousRow[1], "TOP")
+		end
+	end
+
+	-- All done!
+	TMW.IE.Tabs:SetHeight(8 + (25 * #rows))
+	TMW.IE.Tabs.secondary:SetWidth(width + endPadding)
+end
+
+function IE:RefreshTabs()
+	local tabGroup = IE.CurrentTabGroup
+
+	if not tabGroup then
+		for _, tabGroup in TMW:OrderedPairs(IE.TabGroups, TMW.OrderSort, true) do
+			tabGroup:Click()
+			return
+		end
+	else
+		tabGroup:Click()
+	end
+end
+
+function IE:DisplayPage(pageKey)
+	for _, otherPage in TMW:Vararg(TMW.IE.Pages:GetChildren()) do
+		otherPage:Hide()
+	end
+
+	-- If no key is specified, the function was probably just being called to hide all pages.
+	if not pageKey then
 		return
 	end
 
-	GameTooltip:AddLine(" ")
-
-	local numLines = GameTooltip:NumLines()
-	
-	-- Need to do this so that we can get the widths of the lines.
-	GameTooltip:Show()
-	
-	
-	local longest = 100
-	for i = 1, numLines do
-		longest = max(longest, _G["GameTooltipTextLeft" .. i]:GetWidth())
+	local page = TellMeWhen_IconEditor.Pages[pageKey]
+	if not page then
+		TMW:Error(("Couldn't find child of TellMeWhen_IconEditor.Pages with key %q"):format(pageKey))
 	end
 
+	page:Show()
 
-	-- Completely unscientific adjustment to prevent extremely tall tooltips:
-	longest = max(longest, #tbl*3)
-
-	
-	local numLines = numLines + 1
-	
-	local i = 1
-	
-	while i <= #tbl do
-		while _G["GameTooltipTextLeft" .. numLines]:GetStringWidth() < longest and i <= #tbl do
-			local fs = _G["GameTooltipTextLeft" .. numLines]
-			local s = tostring(tbl[i]):trim(" ")
-			if fs:GetText() == nil then
-				GameTooltip:AddLine(s, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, nil)
-			else
-				fs:SetText(fs:GetText() .. "; " .. s)
-			end
-			i = i + 1
-		end
-		numLines = numLines + 1
-	end
+	return page
 end
 
-
----------- Icon Update Scheduler ----------
-function IE:ScheduleIconSetup(icon)
-	-- this is a handler to prevent the spamming of icon:Setup().
-	if not icon then
-		icon = CI.icon
-	end
-
-	if not TMW.tContains(IE.iconsToUpdate, icon) then
-		tinsert(IE.iconsToUpdate, icon)
-	end
-end
 
 
 
@@ -2963,7 +3720,7 @@ function TMW:Import(SettingsItem, ...)
 		SharableDataType:Import_ImportData(SettingsItem, ...)
 
 		TMW:Update()
-		IE:Load(1)
+		IE:RefreshTabs()
 		
 		TMW:Print(L["IMPORT_SUCCESSFUL"])
 	else
@@ -2971,9 +3728,6 @@ function TMW:Import(SettingsItem, ...)
 	end
 
 	TMW:Fire("TMW_IMPORT_POST", SettingsItem, ...)
-	
-	TMW.ACEOPTIONS:CompileOptions()
-	TMW.ACEOPTIONS:NotifyChanges()
 end
 
 function TMW:ImportPendingConfirmation(SettingsItem, luaDetections, callArgsAfterSuccess)
@@ -3005,13 +3759,13 @@ function TMW:DeserializeDatum(string)
 
 	if spaceControl then
 		if spaceControl:find("`|") then
-			-- EVERYTHING is fucked up. try really hard to salvage it. It probably won't be completely successful
+			-- EVERYTHING is broken. try really hard to salvage it. It probably won't be completely successful
 			return TMW:DeserializeDatum(string:gsub("`", "~`"):gsub("~`|", "~`~|"))
 		elseif spaceControl:find("`") then
-			-- if spaces have become corrupt, then reformat them and... re-deserialize (lol)
+			-- if spaces have become corrupt, then reformat them and... re-deserialize
 			return TMW:DeserializeDatum(string:gsub("`", "~`"))
 		elseif spaceControl:find("~|") then
-			-- if pipe characters have been screwed up by blizzard's cute little method of escaping things combined with AS-3.0's cute way of escaping things, try to fix them.
+			-- if pipe characters have been screwed up by blizzard's method of escaping things combined with AS-3.0's way of escaping things, try to fix them.
 			return TMW:DeserializeDatum(string:gsub("~||", "~|"))
 		end
 	end
@@ -3160,31 +3914,22 @@ end
 
 
 ---------- Dropdown ----------
-
-
 TMW:RegisterCallback("TMW_CONFIG_REQUEST_AVAILABLE_IMPORT_EXPORT_TYPES", function(event, editbox, import, export)
-	if editbox == TMW.IE.ExportBox then	
-		
-		if IE.CurrentTab.doesGroup then	
+	if editbox == TMW.IE.ExportBox then
+		if IE.CurrentTabGroup.identifier == "ICON" and CI.icon then
+			import.icon = CI.icon
+			export.icon = CI.icon
+
+			import.group_overwrite = CI.icon.group
+			export.group = CI.icon.group
+
+		elseif IE.CurrentTabGroup.identifier == "GROUP" and CI.group then	
 			import.group_overwrite = CI.group
 			export.group = CI.group
 		end
-		
-		if IE.CurrentTab.doesIcon then
-			import.icon = CI.icon
-			export.icon = CI.icon
-		end
 	end
 end)
 
-TMW:RegisterCallback("TMW_CONFIG_REQUEST_AVAILABLE_IMPORT_EXPORT_TYPES", function(event, editbox, import, export)
-	if editbox.IsImportExportWidget then
-		local info = editbox.obj.userdata
-		
-		import.group_overwrite = TMW.FindGroupFromInfo(info)
-		export.group = TMW.FindGroupFromInfo(info)
-	end
-end)
 
 
 
@@ -3199,21 +3944,19 @@ end)
 IE.RapidSettings = {
 	-- settings that can be changed very rapidly, i.e. via mouse wheel or in a color picker
 	-- consecutive changes of these settings will be ignored by the undo/redo module
-	r = true,
-	g = true,
-	b = true,
-	a = true,
+
+	-- TODO: auto register these when they are used by a slider, and kill this table.
 	Size = true,
 	Level = true,
 	Alpha = true,
-	UnAlpha = true,
 	GUID = true,
+	Color = true,
 }
+
 function IE:RegisterRapidSetting(setting)
 	IE.RapidSettings[setting] = true
 end
 
----------- Comparison ----------
 function IE:GetCompareResultsPath(match, ...)
 	if match then
 		return true
@@ -3229,320 +3972,226 @@ function IE:GetCompareResultsPath(match, ...)
 	return path, setting
 end
 
+local function DeepCompareWithBlocker(table1, table2, blocker, ...)
+	-- heavily modified version of http://snippets.luacode.org/snippets/Deep_Comparison_of_Two_Values_3
 
----------- DoStuff ----------
-function IE:AttemptBackup(icon)
-	if not icon then return end
+	-- attempt direct comparison
+	if table1 == table2 then
+		return true, ...
+	end
 
-	if not icon.history then
-		-- create the needed infrastructure for storing icon history if it does not exist.
-		-- this includes creating the first history point
-		icon.history = {TMW:CopyWithMetatable(icon:GetSettings())}
-		icon.historyState = #icon.history
+	-- if the values are not the same (they made it through the check above) AND they are not both tables, then they cannot be the same, so exit.
+	local type1 = type(table1)
+	if type1 ~= "table" or type1 ~= type(table2) then
+		return false, ...
+	end
 
-		-- notify the undo and redo buttons that there was a change so they can :Enable() or :Disable()
-		IE:UndoRedoChanged()
-	else
-		-- the needed stuff for undo and redo already exists, so lets delve into the meat of the process.
+	-- compare table values
 
-		-- compare the current icon settings with what we have in the currently used history point
-		-- the currently used history point may or may not be the most recent settings of the icon, but we want to check ics against what is being used.
-		-- result is either (true) if there were no changes in the settings, or a string representing the key path to the first setting change that was detected.
-		--(it was likely only one setting that changed, but not always)
-		local result, changedSetting = IE:GetCompareResultsPath(TMW:DeepCompare(icon.history[icon.historyState], icon:GetSettings()))
-		if type(result) == "string" then
-			-- if we are using an old history point (i.e. we hit undo a few times and then made a change),
-			-- delete all history points from the current one forward so that we dont jump around wildly when undoing and redoing
-			for i = icon.historyState + 1, #icon.history do
-				icon.history[i] = nil
+	-- We need to two two full comparsions:
+	-- table1 to table2, and table2 to table1.
+	-- To do this easily without code duplication, we just do this part in a loop,
+	-- and swap the two tables after the first iteration.
+	for i = 1, 2 do
+
+		for key, value1 in pairs(table1) do
+			local value2 = table2[key]
+
+			-- The blocker for this specific key.
+			-- If the value is true, we won't do a comparison here.
+			-- If the value is anything else (nil if it doesnt exist, or a table that holds deeper blockers),
+			-- then the comparison will happen and the blocker will get passed down to the next level.
+			local keyBlocker = blocker and blocker[key]
+
+			-- don't bother calling DeepCompareWithBlocker on the values if they are the same - it will just return true.
+			-- Only call it if the values are different (they are either 2 tables, or they actually are different non-table values)
+			-- by adding the (v1 ~= v2) check, efficiency is increased by about 300%.
+
+			if keyBlocker ~= true and value1 ~= value2 and not DeepCompareWithBlocker(value1, value2, keyBlocker, key, ...) then
+
+				-- it only reaches this point if there is a difference between the 2 tables somewhere
+				-- so i dont feel bad about calling DeepCompareWithBlocker with the same args again
+				-- i need to because the key of the setting that changed is in there
+				return DeepCompareWithBlocker(value1, value2, keyBlocker, key, ...)
 			end
+		end
 
-			-- if the last setting that was changed is the same as the most recent setting that was changed,
-			-- and if the setting is one that can be changed very rapidly,
-			-- delete the previous history point so that we dont murder our memory usage and piss off the user as they undo a number from 1 to 10, 0.1 per click.
-			if icon.lastChangePath == result and IE.RapidSettings[changedSetting] and icon.historyState > 1 then
-				icon.history[#icon.history] = nil
-				icon.historyState = #icon.history
+		table1, table2 = table2, table1
+	end
+
+	return true, ...
+end
+
+local function WipeWithBlocker(table, blocker)
+	for k, v in pairs(table) do
+		local keyBlocker = blocker and blocker[k]
+
+		if keyBlocker ~= true then
+			if type(v) == "table" then
+				WipeWithBlocker(v, keyBlocker)
+				if not next(v) then
+					table[k] = nil
+				end
+			else
+				table[k] = nil
 			end
-			icon.lastChangePath = result
-
-			-- finally, create the newest history point.
-			-- we copy with with the metatable so that when doing comparisons against the current icon settings, we can invoke metamethods.
-			-- this is needed because otherwise an empty event table (icon:GetSettings().Events) will not match a fleshed out one that has no non-default data in it.
-			icon.history[#icon.history + 1] = TMW:CopyWithMetatable(icon:GetSettings())
-
-			-- set the history state to the latest point
-			icon.historyState = #icon.history
-			-- notify the undo and redo buttons that there was a change so they can :Enable() or :Disable()
-			IE:UndoRedoChanged()
-			
-			TMW:Fire("TMW_CONFIG_ICON_HISTORY_STATE_CREATED", icon)
 		end
 	end
 end
 
 function IE:DoUndoRedo(direction)
-	local icon = CI.icon
-	
-	IE:UndoRedoChanged()
-
-	if not icon.history[icon.historyState + direction] then return end -- not valid, so don't try
-
-	icon.historyState = icon.historyState + direction
-
-	TMW.CI.gs.Icons[CI.icon.ID] = nil -- recreated when passed into CTIPWM
-	TMW:CopyTableInPlaceWithMeta(icon.history[icon.historyState], CI.ics)
-	
-	CI.icon:Setup() -- do an immediate setup for good measure
-	
-	TMW:Fire("TMW_CONFIG_ICON_HISTORY_STATE_CHANGED", icon)
-
-	TMW.DD:CloseDropDownMenus()
-	IE:Load(1)
-	
-	IE:UndoRedoChanged()
-end
-
-
----------- Interface ----------
-function IE:UndoRedoChanged()
-	if not IE.CurrentTab or not IE.CurrentTab.doesIcon then
-		IE.UndoButton:Disable()
-		IE.RedoButton:Disable()
-
+	if not IE.CurrentTab then
 		return
 	end
 
-	local icon = CI.icon
+	local historySet = IE.CurrentTab:GetHistorySet()
 
-	if icon then
-		if not icon.historyState or icon.historyState - 1 < 1 then
-			IE.UndoButton:Disable()
-		else
-			IE.UndoButton:Enable()
+	if not historySet then
+		return
+	end
+
+	historySet:DoUndoRedo(direction)
+end
+
+TMW:NewClass("HistorySet") {
+	HistorySets = {},
+
+	OnNewInstance = function(self, identifier)
+		TMW:ValidateType("identifier", "HistorySet:New(identifier)", identifier, "string")
+
+		if self.HistorySets[identifier] then
+			error("Identifier " .. identifier .. " is already used for a history set")
 		end
 
-		if not icon.historyState or icon.historyState + 1 > #icon.history then
-			IE.RedoButton:Disable()
-		else
-			IE.RedoButton:Enable()
+		self.HistorySets[identifier] = self
+		self.blocker = {}
+	end,
+
+	GetHistorySet = function(self, identifier)
+		return self.HistorySets[identifier]
+	end,
+
+	AddBlocker = function(self, blocker)
+		TMW:CopyInPlaceWithMetatable(blocker, self.blocker)
+	end,
+
+	AttemptBackup = function(self, location, settings)
+		print("running backup")
+
+		if not location or not settings then
+			return
 		end
-	end
-end
 
+		if not location.history then
+			-- Create the needed infrastructure for storing history if it does not exist.
+			-- This includes creating the first history point
+			location.history = {TMW:CopyWithMetatable(settings, self.blocker)}
+			location.historyState = #location.history
 
----------- Back/Fowards ----------
-function IE:DoBackForwards(direction)
-	if not IE.history[IE.historyState + direction] then return end -- not valid, so don't try
+		else
+			-- The needed stuff for undo and redo already exists, so lets delve into the meat of the process.
 
-	IE.historyState = IE.historyState + direction
+			-- Compare the current settings with what we have in the currently used history point.
+			-- The currently used history point may or may not be the most recent settings, but we want to check ics against what is being used.
+			-- Result is either (true) if there were no changes in the settings, or a string representing the key path to the first setting change that was detected.
+			-- (it was likely only one setting that changed, but not always)
+			local result, changedSetting = IE:GetCompareResultsPath(DeepCompareWithBlocker(location.history[location.historyState], settings, self.blocker))
+			if type(result) == "string" then
 
-	TMW.DD:CloseDropDownMenus()
-	IE:Load(nil, IE.history[IE.historyState], true)
+				-- If we are using an old history point (i.e. we hit undo a few times and then made a change),
+				-- delete all history points from the current one forward so that we dont jump around wildly when undoing and redoing
+				for i = location.historyState + 1, #location.history do
+					location.history[i] = nil
+				end
 
-	IE:BackFowardsChanged()
-end
+				-- If the last setting that was changed is the same as the most recent setting that was changed,
+				-- and if the setting is one that can be changed very rapidly, delete the previous history point.
+				-- This improves memory usage and user experience.
+				if location.lastChangePath == result and IE.RapidSettings[changedSetting] and location.historyState > 1 then
+					location.history[#location.history] = nil
+					location.historyState = #location.history
+				end
+				location.lastChangePath = result
 
-function IE:BackFowardsChanged()
-	if IE.historyState - 1 < 1 then
-		IE.BackButton:Disable()
-		IE.CanBack = false
-	else
-		IE.BackButton:Enable()
-		IE.CanBack = true
-	end
+				-- Finally, create the newest history point.
+				-- We copy with with the metatable so that when doing comparisons against the current settings, we can invoke metamethods.
+				-- This is needed because otherwise an empty event table will not match a fleshed out one that has no non-default data in it.
+				location.history[#location.history + 1] = TMW:CopyWithMetatable(settings, self.blocker)
 
-	if IE.historyState + 1 > #IE.history then
-		IE.ForwardsButton:Disable()
-		IE.CanFowards = false
-	else
-		IE.ForwardsButton:Enable()
-		IE.CanFowards = true
-	end
-end
+				-- Set the history state to the latest point
+				location.historyState = #location.history
 
-
-
-
-
-
-
--- ----------------------
--- CHANGELOG
--- ----------------------
-
-function IE:CreateChangelogDialog()
-	if not TellMeWhen_ChangelogDialog then
-		CreateFrame("Frame", "TellMeWhen_ChangelogDialog", UIParent, "TellMeWhen_ChangelogDialogTemplate")
-	end
-
-	return TellMeWhen_ChangelogDialog
-end
-
-local changelogEnd = "<p align='center'>|cff666666To see the changelog for versions up to v" ..
-(TMW.CHANGELOG_LASTVER or "???") .. ", type /tmw changelog.|r</p>"
-local changelogEndAll = "<p align='center'>|cff666666For older versions, visit TellMeWhen's AddOn page on Curse.com|r</p>"
-
-function IE:ShowChangelog(lastVer, showIEOnClose)
-	if not lastVer then lastVer = 0 end
-
-	local CHANGELOGS = IE:ProcessChangelogData()
-
-	local dialog = IE:CreateChangelogDialog()
-	dialog.showIEOnClose = showIEOnClose
-
-	local texts = {}
-
-	for version, text in TMW:OrderedPairs(CHANGELOGS, nil, nil, true) do
-		if lastVer >= version then
-			if lastVer > 0 then
-				text = text:gsub("</h1>", " (" .. L["CHANGELOG_LAST_VERSION"] .. ")</h1>")
 			end
-				
-			tinsert(texts, text)
-			break
-		else
-			tinsert(texts, text)
 		end
+	end,
+
+	UpdateButtons = function(self)
+		if not IE.CurrentTab then
+			IE.UndoButton:Disable()
+			IE.RedoButton:Disable()
+
+			return
+		end
+
+		local location = self:GetCurrentLocation()
+
+		if location then
+			if not location.historyState or location.historyState - 1 < 1 then
+				IE.UndoButton:Disable()
+			else
+				IE.UndoButton:Enable()
+			end
+
+			if not location.historyState or location.historyState + 1 > #location.history then
+				IE.RedoButton:Disable()
+			else
+				IE.RedoButton:Enable()
+			end
+		end
+	end,
+
+
+	GetCurrentLocation = function(self)
+		error("This function must be overridden to use AttemptAutoBackup")
+	end,
+
+	GetCurrentSettings = function(self)
+		error("This function must be overridden to use AttemptAutoBackup")
+	end,
+
+	AttemptAutoBackup = function(self)
+		local location = self:GetCurrentLocation()
+		local settings = self:GetCurrentSettings()
+
+		if location and settings then
+			self:AttemptBackup(location, settings)
+		end
+	end,
+
+	DoUndoRedo = function(self, direction)
+		IE:SaveSettings()
+
+		local location = self:GetCurrentLocation()
+		local settings = self:GetCurrentSettings()
+
+		local icon = CI.icon
+
+		if not location.history[location.historyState + direction] then return end -- not valid, so don't try
+
+		location.historyState = location.historyState + direction
+
+
+		-- From the current settings, wipe out anything that isn't being blocked.
+		WipeWithBlocker(settings, self.blocker)
+
+		-- Copy everything in the backup that isn't blocked into the original settings.
+		TMW:CopyInPlaceWithMetatable(location.history[location.historyState], settings, self.blocker)
+
+		IE:RefreshTabs()
 	end
-
-	if lastVer > 0 then
-		tinsert(texts, changelogEnd .. changelogEndAll)
-	else
-		tinsert(texts, changelogEndAll)
-	end
-
-	local body = format("<html><body>%s</body></html>", table.concat(texts, "<br/>"))
-	dialog.scrollContainer.html:SetText(body)
-
-	-- This has to be stored because there is no GetText method.
-	dialog.scrollContainer.html.text = body
-
-	if showIEOnClose then
-		dialog.Okay:SetText(TMW.L["CHANGELOG_OKAY_OPENIE"])
-	else
-		dialog.Okay:SetText(OKAY)
-	end
-
-	dialog:Show()
-end
-
-local function htmlEscape(char)
-	if char == "&" then
-		return "&amp;"
-	elseif char == "<" then
-		return "&lt;"
-	elseif char == ">" then
-		return "&gt;"
-	end
-end
-
-local bulletColors = {
-	"4FD678",
-	"2F99FF",
-	"F62FAD",
 }
 
-local function bullets(b, text)
-	local numDashes = #b 
-	
-	if numDashes <= 0 then
-		return "><p>" .. text .. "</p><"
-	end
-
-	local color = bulletColors[(numDashes-1) % #bulletColors + 1]
-	
-	-- This is not a regular space. It is U+2002 - EN SPACE
-	local dashes = (" "):rep(numDashes) .. "•"
-
-	return "><p>|cFF" .. color .. dashes .. " |r" .. text .. "</p><"
-end
-
-local CHANGELOGS
-function IE:ProcessChangelogData()
-	if CHANGELOGS then
-		return CHANGELOGS
-	end
-
-	CHANGELOGS = {}
-
-	if not TMW.CHANGELOG then
-		TMW:Error("There was an error loading TMW's changelog data.")
-		TMW:Print("There was an error loading TMW's changelog data.")
-	end
-
-	local log = TMW.CHANGELOG
-
-	log = log:gsub("([&<>])", htmlEscape)        
-	log = log:trim(" \t\r\n")
-
-	-- Replace 4 equals with h2
-	log = log:gsub("[ \t]*====(.-)====[ \t]*", "<h2>%1</h2>")
-
-	-- Replace 3 equals with h1, formatting as a version name
-	log = log:gsub("[ \t]*===(.-)===[ \t]*", "<h1>TellMeWhen %1</h1>")
-
-	-- Remove extra space after closing header tags
-	log = log:gsub("(</h.>)%s*", "%1")
-
-	-- Remove extra space before opening header tags.
-	log = log:gsub("%s*(<h.>)", "%1")
-
-	-- Convert newlines to <br/>
-	log = log:gsub("\r\n", "<br/>")
-	log = log:gsub("\n", "<br/>")
-
-	-- Put a break at the end for the next gsub - it relies on a tag of some kind
-	-- being at the end of each line.
-	log = log .. "<br/>"
-
-	-- Convert asterisks to colored dashes
-	log = log:gsub(">%s*(*+)%s*(.-)<", bullets)
-
-	-- Remove double breaks 
-	log = log:gsub("<br/><br/>", "<br/>")
-
-	-- Remove breaks between paragraphs
-	log = log:gsub("</p><br/><p>", "</p><p>")
-
-	-- Add breaks between paragraphs and h2ss
-	-- Put an empty paragraph in since they are smaller than a full break.
-	log = log:gsub("</p>%s*<h2>", "</p><p> </p><h2>")
-
-	-- Add a "General" header before the first paragraph after an h1
-	log = log:gsub("</h1>%s*<p>", "</h1><h2>General</h2><p>")
 
 
-	local subStart, subEnd = 0, 0
-	repeat
-		local done
-
-		-- Find the start of a version
-		subStart, endH1 = log:find("<h1>", subEnd)
-
-		-- Find the start of the next version
-		subEnd = log:find("<h1>", endH1)
-
-		if not subEnd then
-			-- We're at the end of the data. Set the length of the data as the end position.
-			subEnd = #log
-			done = true
-		else
-			-- We want to end just before the start of the next version.
-			subEnd = subEnd - 1
-		end
-
-		local versionString = log:match("TellMeWhen v([0-9%.]+)", subStart):gsub("%.", "")
-		local versionNumber = tonumber(versionString) * 100
-		
-		-- A full version's changelog is between subStart and subEnd. Store it.
-		CHANGELOGS[versionNumber] = log:sub(subStart, subEnd)
-	until done
-
-	-- Send this out to the garbage collector
-	TMW.CHANGELOG = nil
-
-	return CHANGELOGS
-end
 
 

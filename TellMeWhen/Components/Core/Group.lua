@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -19,8 +19,8 @@ local print = TMW.print
 
 local sort, type, pairs
 	= sort, type, pairs
-local UnitAffectingCombat, GetActiveSpecGroup, GetSpecialization
-	= UnitAffectingCombat, GetActiveSpecGroup, GetSpecialization
+local UnitAffectingCombat, GetSpecialization
+	= UnitAffectingCombat, GetSpecialization
 
 local GetCurrentSpecializationRole = TMW.GetCurrentSpecializationRole
 
@@ -71,10 +71,11 @@ do	-- TMW.CNDT implementation
 	})
 	
 	TMW:RegisterCallback("TMW_OPTIONS_LOADED", function()
-		tab = TMW.Classes.IconEditorTab:NewTab("CNDTGROUP", 15, "Conditions")
-		tab:SetTitleComponents(nil, 1)
+		tab = TMW.IE:RegisterTab("GROUP", "CNDTGROUP", "Conditions", 15)
+		tab:SetText(L["GROUPCONDITIONS"])
+		tab:SetHistorySet(TMW.C.HistorySet:GetHistorySet("GROUP"))
 		
-		tab:PostHookMethod("ClickHandler", function()
+		tab:HookScript("OnClick", function()
 			TMW.CNDT:LoadConfig("Group")
 		end)
 
@@ -160,7 +161,7 @@ end
 
 -- [INTERNAL]
 function Group.ScriptSort(groupA, groupB)
-	local gOrder = -TMW.db.profile.CheckOrder
+	local gOrder = 1 -- -TMW.db.profile.CheckOrder
 	return groupA.ID*gOrder < groupB.ID*gOrder
 end
 Group:UpdateTable_SetAutoSort(Group.ScriptSort)
@@ -230,25 +231,6 @@ function Group.TMW_CNDT_OBJ_PASSING_CHANGED(group, event, ConditionObject, faile
 end
 
 
-
--- [INTERNAL]
-function Group.SwitchDomain(group)
-	local gs = group:GetSettings()
-
-	tremove(TMW.db[group.Domain].Groups, group.ID)
-	TMW.db[group.Domain].NumGroups = TMW.db[group.Domain].NumGroups - 1
-
-	local newDomain = group.Domain == "global" and "profile" or "global"
-
-	TMW.db[newDomain].NumGroups = TMW.db[newDomain].NumGroups + 1
-	TMW.db[newDomain].Groups[TMW.db[newDomain].NumGroups] = gs
-
-	if newDomain == "profile" then
-		--wipe(gs.EnabledProfiles)
-	end
-
-	TMW:Update()
-end
 
 
 -- [INTERNAL]
@@ -357,17 +339,19 @@ end
 function Group.ShouldUpdateIcons(group)
 	local gs = group:GetSettings()
 
-	if	(group:GetID() > TMW.db[group.Domain].NumGroups) or
-		(not group.viewData) or
-		(not group:IsEnabled()) or 
-		(not helper_currentSpecMatchesRole(group.Role))
-	then return false
+	if	(group:GetID() > TMW.db[group.Domain].NumGroups)
+		or (not group.viewData)
+		or (not group:IsEnabled())
+		or (not helper_currentSpecMatchesRole(group.Role))
+	then
+		return false
 
-	elseif group.Domain == "profile" and (
-		(GetActiveSpecGroup() == 1 and not gs.PrimarySpec) or
-		(GetActiveSpecGroup() == 2 and not gs.SecondarySpec) or
-		(GetSpecialization() and not gs["Tree" .. GetSpecialization()]))
-	then return false
+	elseif
+		group.Domain == "profile"
+		and GetSpecialization()
+		and not gs.EnabledSpecs[GetSpecializationInfo(GetSpecialization())]
+	then
+		return false
 	
 	end
 

@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -24,28 +24,25 @@ local pairs, format, ipairs, rawget, wipe, _G, bit =
 
 
 local Type = TMW.Types.cleu
-Type.CONFIG = {}
-local CONFIG = Type.CONFIG
+Type.Config = {}
+local Config = Type.Config
 
 
-CONFIG.Events = {
+Config.Events = {
 		"",
 	"SPACE",
 
 	"CAT_SWING",
 		"SWING_DAMAGE", -- normal
-		"SWING_DAMAGE_MULTISTRIKE", -- normal (fake event)
 		"SWING_MISSED", -- normal
 		"SPELL_EXTRA_ATTACKS", -- normal
 	"SPACE",
 		"RANGE_DAMAGE", -- normal
-		"RANGE_DAMAGE_MULTISTRIKE", -- normal (fake event)
 		"RANGE_MISSED", -- normal
 
 
 	"CAT_SPELL",
 		"SPELL_DAMAGE", -- normal
-		"SPELL_DAMAGE_MULTISTRIKE", -- normal (fake event)
 		"SPELL_DAMAGE_CRIT", -- normal (fake event)
 		"SPELL_DAMAGE_NONCRIT", -- normal (fake event)
 		"SPELL_MISSED", -- normal
@@ -56,7 +53,6 @@ CONFIG.Events = {
 		"SPELL_SUMMON", -- normal
 	"SPACE",
 		"SPELL_HEAL", -- normal
-		"SPELL_HEAL_MULTISTRIKE", -- normal (fake event)
 		"SPELL_RESURRECT", -- normal
 	"SPACE",
 		"SPELL_ENERGIZE", -- normal
@@ -82,12 +78,10 @@ CONFIG.Events = {
 		"SPELL_AURA_BROKEN_SPELL",-- extraSpellID/name
 	"SPACE",
 		"SPELL_PERIODIC_DAMAGE",
-		"SPELL_PERIODIC_DAMAGE_MULTISTRIKE", -- normal (fake event)
 		"SPELL_PERIODIC_DRAIN",
 		"SPELL_PERIODIC_ENERGIZE",
 		"SPELL_PERIODIC_LEECH",
 		"SPELL_PERIODIC_HEAL",
-		"SPELL_PERIODIC_HEAL_MULTISTRIKE", -- normal (fake event)
 		"SPELL_PERIODIC_MISSED",
 
 
@@ -114,7 +108,7 @@ CONFIG.Events = {
 		"PARTY_KILL",
 }
 
-CONFIG.Flags = {
+Config.Flags = {
 					-- "COMBATLOG_OBJECT_REACTION_MASK",
     "COMBATLOG_OBJECT_REACTION_FRIENDLY",
     "COMBATLOG_OBJECT_REACTION_NEUTRAL",
@@ -145,7 +139,7 @@ CONFIG.Flags = {
     "COMBATLOG_OBJECT_NONE",
 }
 
-CONFIG.BetterMasks = {
+Config.BetterMasks = {
 	-- some of the default masks contain bits that arent used by any flags (read: they suck), so we will make our own
 	COMBATLOG_OBJECT_REACTION_MASK = bit.bor(
 		COMBATLOG_OBJECT_REACTION_FRIENDLY,
@@ -172,24 +166,23 @@ CONFIG.BetterMasks = {
 }
 
 
-function CONFIG:LoadConfig()
+function Config:LoadConfig()
 	if TellMeWhen_CLEUOptions then
-		CONFIG:Menus_SetTexts()
+		Config:Menus_SetTexts()
 
-		CONFIG:CheckMasks()
+		Config:CheckMasks()
 	end
 end
-TMW:RegisterCallback("TMW_CONFIG_ICON_LOADED", CONFIG.LoadConfig, CONFIG)
 
 
 --- Warn the user if they have disabled all flags in a single category.
-function CONFIG:CheckMasks()
+function Config:CheckMasks()
 	TMW.HELP:Hide("CLEU_WHOLECATEGORYEXCLUDED")
 
 	-- Check the flags of the icon to make sure that the user hasn't excluded every flag in a given category.
 	-- If they have, then they have effectively disabled the icon. Tell the user if they have done this.
 	for _, key in TMW:Vararg("SourceFlags", "DestFlags") do
-		for maskName, mask in pairs(CONFIG.BetterMasks) do
+		for maskName, mask in pairs(Config.BetterMasks) do
 			if bit.band(TMW.CI.ics[key], mask) == 0 then
 				local category = L["CLEU_" .. maskName]
 				TMW.HELP:Show{
@@ -209,7 +202,7 @@ end
 
 --- Helper function to count how many flags that are disabled in a flag set.
 -- This information gets displayed on the flag dropdowns.
-function CONFIG:CountDisabledBits(bitfield)
+function Config:CountDisabledBits(bitfield)
 	local n = 0
 	for _ = 1, 32 do
 		local digit = bit.band(bitfield, 1)
@@ -223,7 +216,7 @@ end
 
 
 ---------- Dropdowns ----------
-function CONFIG:Menus_SetTexts()
+function Config:Menus_SetTexts()
 	local n = 0
 	if TMW.CI.ics.CLEUEvents[""] then
 		n = L["CLEU_EVENTS_ALL"]
@@ -241,7 +234,7 @@ function CONFIG:Menus_SetTexts()
 	end
 	TellMeWhen_CLEUOptions.CLEUEvents:SetText(L["CLEU_EVENTS"] .. n)
 
-	local n = CONFIG:CountDisabledBits(TMW.CI.ics.SourceFlags)
+	local n = Config:CountDisabledBits(TMW.CI.ics.SourceFlags)
 	if n ~= 0 then
 		n = "|cFFFF5959(" .. n .. ")|r "
 	else
@@ -249,7 +242,7 @@ function CONFIG:Menus_SetTexts()
 	end
 	TellMeWhen_CLEUOptions.SourceFlags:SetText(n .. L["CLEU_FLAGS_SOURCE"])
 
-	local n = CONFIG:CountDisabledBits(TMW.CI.ics.DestFlags)
+	local n = Config:CountDisabledBits(TMW.CI.ics.DestFlags)
 	if n ~= 0 then
 		n = "|cFFFF5959(" .. n .. ")|r "
 	else
@@ -259,9 +252,22 @@ function CONFIG:Menus_SetTexts()
 end
 
 
-function CONFIG:EventMenu()
+local function EventMenu_OnClick(button, dropdown)
+	if button.value == "" and not TMW.CI.ics.CLEUEvents[""] then -- if we are checking "Any Event" then uncheck all others
+		wipe(TMW.CI.ics.CLEUEvents)
+		TMW.DD:CloseDropDownMenus()
+	elseif button.value ~= "" and TMW.CI.ics.CLEUEvents[""] then -- if we are checking a specific event then uncheck "Any Event"
+		TMW.CI.ics.CLEUEvents[""] = false
+		TMW.DD:CloseDropDownMenus()
+	end
+
+	TMW.CI.ics.CLEUEvents[button.value] = not TMW.CI.ics.CLEUEvents[button.value]
+	
+	dropdown:OnSettingSaved()
+end
+function Config.EventMenu(dropdown)
 	local currentCategory
-	for _, event in ipairs(CONFIG.Events) do
+	for _, event in ipairs(Config.Events) do
 		if event:find("^CAT_") then --and event ~= currentCategory then
 			if TMW.DD.MENU_LEVEL == 1 then
 				local info = TMW.DD:CreateInfo()
@@ -292,8 +298,8 @@ function CONFIG:EventMenu()
 				info.checked = TMW.CI.ics.CLEUEvents[event]
 				info.keepShownOnClick = true
 				info.isNotRadio = true
-				info.func = CONFIG.EventMenu_OnClick
-				info.arg1 = self
+				info.func = EventMenu_OnClick
+				info.arg1 = dropdown
 
 				TMW.DD:AddButton(info)
 			end
@@ -301,26 +307,17 @@ function CONFIG:EventMenu()
 	end
 end
 
-function CONFIG:EventMenu_OnClick(frame)
-	if self.value == "" and not TMW.CI.ics.CLEUEvents[""] then -- if we are checking "Any Event" then uncheck all others
-		wipe(TMW.CI.ics.CLEUEvents)
-		TMW.DD:CloseDropDownMenus()
-	elseif self.value ~= "" and TMW.CI.ics.CLEUEvents[""] then -- if we are checking a specific event then uncheck "Any Event"
-		TMW.CI.ics.CLEUEvents[""] = false
-		TMW.DD:CloseDropDownMenus()
-	end
 
-	TMW.CI.ics.CLEUEvents[self.value] = not TMW.CI.ics.CLEUEvents[self.value]
 
-	CONFIG:Menus_SetTexts()
-	TMW.IE:ScheduleIconSetup()
+local function FlagsMenu_OnClick(button, dropdown)
+	TMW.CI.ics[dropdown.flagSet] = bit.bxor(TMW.CI.ics[dropdown.flagSet], _G[button.value])
+
+	dropdown:OnSettingSaved()
 end
+function Config.FlagsMenu(dropdown)
+	Config:CheckMasks()
 
-
-function CONFIG:FlagsMenu()
-	CONFIG:CheckMasks()
-
-	for _, flag in ipairs(CONFIG.Flags) do
+	for _, flag in ipairs(Config.Flags) do
 		if flag == "SPACE" then
 			TMW.DD:AddSpacer()
 		else
@@ -332,25 +329,17 @@ function CONFIG:FlagsMenu()
 			info.tooltipText = L["CLEU_" .. flag .. "_DESC"]
 
 			info.value = flag
-			info.checked = bit.band(TMW.CI.ics[self.flagSet], _G[flag]) ~= _G[flag]
+			info.checked = bit.band(TMW.CI.ics[dropdown.flagSet], _G[flag]) ~= _G[flag]
 			info.keepShownOnClick = true
 			info.isNotRadio = true
-			info.func = CONFIG.FlagsMenu_OnClick
-			info.arg1 = self
+			info.func = FlagsMenu_OnClick
+			info.arg1 = dropdown
 
 			TMW.DD:AddButton(info)
 		end
 	end
 end
 
-function CONFIG:FlagsMenu_OnClick(frame)
-	TMW.CI.ics[frame.flagSet] = bit.bxor(TMW.CI.ics[frame.flagSet], _G[self.value])
-
-	CONFIG:CheckMasks()
-
-	CONFIG:Menus_SetTexts()
-	TMW.IE:ScheduleIconSetup()
-end
 
 
 

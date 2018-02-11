@@ -1,5 +1,3 @@
-﻿
-
 -- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
@@ -23,14 +21,27 @@ local print = TMW.print
 local TimerBar_BarDisplay = TMW:NewClass("IconModule_TimerBar_BarDisplay", "IconModule_TimerBar")
 
 TimerBar_BarDisplay:RegisterIconDefaults{
+	BarDisplay_Reverse			= false,
 	BarDisplay_Invert			= false,
 	BarDisplay_BarGCD			= false,
+	BarDisplay_ClassColor		= false,
 	BarDisplay_FakeMax			= 0,
-	BarDisplay_StartColor		= { r=1, g=0, b=0, a=1 },
-	BarDisplay_MiddleColor		= { r=1, g=1, b=0, a=1 },
-	BarDisplay_CompleteColor	= { r=0, g=1, b=0, a=1 },
-	BarDisplay_EnableColors		= false,
 }
+
+TMW:RegisterUpgrade(80006, {
+	icon = function(self, ics)
+		ics.TimerBar_StartColor    = TMW:RGBATableToStringWithFallback(ics.BarDisplay_StartColor,    "ffff0000")
+		ics.TimerBar_MiddleColor   = TMW:RGBATableToStringWithFallback(ics.BarDisplay_MiddleColor,   "ffffff00")
+		ics.TimerBar_CompleteColor = TMW:RGBATableToStringWithFallback(ics.BarDisplay_CompleteColor, "ff00ff00")
+
+		ics.TimerBar_EnableColors  = ics.BarDisplay_EnableColors or ics.TimerBar_EnableColors
+
+		ics.BarDisplay_StartColor    = nil
+		ics.BarDisplay_MiddleColor   = nil
+		ics.BarDisplay_CompleteColor = nil
+		ics.BarDisplay_EnableColors  = nil
+	end,
+})
 
 TimerBar_BarDisplay:RegisterConfigPanel_XMLTemplate(210, "TellMeWhen_BarDisplayBarOptions")
 
@@ -40,7 +51,11 @@ TimerBar_BarDisplay:PostHookMethod("OnEnable", function(self)
 	local attributes = icon.attributes
 	self.Invert = self.Invert_base
 
-	self:VALUE(icon, attributes.value, attributes.maxValue, attributes.valueColor)
+	if TMW.Locked then
+		self:VALUE(icon, attributes.value, attributes.maxValue, attributes.valueColor)
+	else
+		self:VALUE(icon, 1, 1, attributes.valueColor)
+	end
 end)
 
 function TimerBar_BarDisplay:GetValue()
@@ -92,25 +107,71 @@ function TimerBar_BarDisplay:VALUE(icon, value, maxValue, valueColor)
 			self.bar:SetMinMaxValues(0, self.Max)
 		end
 
-		self:SetupColors(self.sourceIcon, valueColor)
+		self:SetupColors(self.sourceIcon, valueColor, icon.attributes.unit)
 
 		-- Force an update here since it won't get updated if the color changes and the value doesnt.
 		-- This is harmless, because 99% of the the time, the value has changed, so an update would be performed anyway.
 		self:UpdateValue(true)
+	else
+		self.value = value
 	end
 end
-TimerBar_BarDisplay:SetDataListner("VALUE")
+TimerBar_BarDisplay:SetDataListener("VALUE")
 
-function TimerBar_BarDisplay:SetupColors(icon, valueColor)
+function TimerBar_BarDisplay:UNIT(icon, unit)
+	if unit then
+		self:SetupColors(self.sourceIcon, icon.attributes.valueColor, unit)
+		-- Force an update here since it won't get updated if the unit changes and the value doesnt.
+		-- This is harmless, because 99% of the the time, the value has changed, so an update would be performed anyway.
+		self:UpdateValue(true)
+	end
+end
+TimerBar_BarDisplay:SetDataListener("UNIT")
+
+local colorSettingNames = {
+	"TimerBar_StartColor",
+	"TimerBar_MiddleColor",
+	"TimerBar_CompleteColor",
+}
+
+function TimerBar_BarDisplay:SetupColors(icon, valueColor, unit)
 	icon = icon or self.icon
 
-	if icon.BarDisplay_EnableColors then
-		self:SetColors(
-			icon.BarDisplay_StartColor,
-			icon.BarDisplay_MiddleColor,
-			icon.BarDisplay_CompleteColor)
+	if icon.TimerBar_EnableColors then
+		if icon.BarDisplay_ClassColor then
+			local class = unit and select(2, UnitClass(unit))
+			if class then
+				local color = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[class]
+				
+				if color then
+					-- GLOBALS: CUSTOM_CLASS_COLORS, RAID_CLASS_COLORS
+					if color.colorStr then
+						color = color.colorStr
+					else
+						color = TMW:RGBATableToStringWithoutFlags(color)
+					end
 
-	elseif valueColor then
+					self:SetColors(
+						color,
+						color,
+						color)
+
+					return
+				end
+			end
+		else
+			self:SetColors(
+				icon.TimerBar_StartColor,
+				icon.TimerBar_MiddleColor,
+				icon.TimerBar_CompleteColor)
+
+			return
+		end
+	end
+
+	if valueColor then
+		-- TODO: add a setting to the value icon type called "use color", and don't ever pass this value color if they disable that setting?
+		-- This will make color overriding much more intuitive, since the icon.TimerBar_EnableColors is labeled as "Override group colors".
 		if type(valueColor) == "table" and #valueColor == 3 then
 			self:SetColors(unpack(valueColor))
 		else
@@ -119,12 +180,14 @@ function TimerBar_BarDisplay:SetupColors(icon, valueColor)
 				valueColor,
 				valueColor)
 		end
-	else
-		self:SetColors(
-			icon.typeData.Colors.CBS,
-			icon.typeData.Colors.CBM,
-			icon.typeData.Colors.CBC)
+
+		return
 	end
+
+	self:SetColors(
+		TMW:GetColors(colorSettingNames, "TimerBar_EnableColors",
+		              icon.group:GetSettings(), TMW.db.global)
+	)
 end
 
 function TimerBar_BarDisplay:SetupForIcon(sourceIcon)
@@ -148,7 +211,8 @@ function TimerBar_BarDisplay:SetupForIcon(sourceIcon)
 	end
 
 	self.sourceIcon = sourceIcon
-	self:SetupColors(sourceIcon, sourceIcon.attributes.valueColor)
+	self.bar:SetReverseFill(sourceIcon.BarDisplay_Reverse)
+	self:SetupColors(sourceIcon, sourceIcon.attributes.valueColor, sourceIcon.attributes.unit)
 	
 	self:UpdateValue(true)
 end

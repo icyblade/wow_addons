@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -34,7 +34,7 @@ TMW.TEXT = TEXT
 
 TEXT.MasqueSkinnableTexts = {
 	-- A list of available SkinAs settings,
-	-- paired with their localized name (for easy use in Ace3ConfigDialog dropdown)
+	-- paired with their localized name (for easy use in dropdowns)
 	
 	[""] = L["TEXTLAYOUTS_SKINAS_NONE"],
 	
@@ -161,7 +161,7 @@ TMW:RegisterUpgrade(70010, {
 					-- The layout doesn't already exist, so just put it straight in.
 
 					layout.Name = (layout.Name or L["TEXTLAYOUTS_DEFAULTS_NOLAYOUT"]) .. " (" .. FROM .. " " .. profileName .. ")"
-					TMW:CopyTableInPlaceWithMeta(layout, TMW.db.global.TextLayouts[layout.GUID])
+					TMW:CopyTableInPlaceUsingDestinationMeta(layout, TMW.db.global.TextLayouts[layout.GUID])
 
 					-- Make sure we upgrade the copy of the layout, not the old one that will be discarded
 					layout = TMW.db.global.TextLayouts[layout.GUID]
@@ -171,7 +171,7 @@ TMW:RegisterUpgrade(70010, {
 					-- version number. When we are upgrading a profile, global upgrades have already
 					-- happened, so the layout we are sticking into global.TextLayouts will never get
 					-- old upgrades.
-					TMW:DoUpgrade("textlayout", profile.Version, layout, layout.GUID)
+					TMW:StartUpgrade("textlayout", profile.Version, layout, layout.GUID)
 				else
 					-- The layout does already exist.
 
@@ -183,7 +183,7 @@ TMW:RegisterUpgrade(70010, {
 					-- Check to see if it is exactly the same as the existing layout.
 					-- In order to properly compare, we have to copy the old layout 
 					-- into a new table so that all the database metatables will be in place.
-					local layoutWithMetatables = TMW:CopyTableInPlaceWithMeta(layout, TMW.db.global.TextLayouts["\000"])
+					local layoutWithMetatables = TMW:CopyTableInPlaceUsingDestinationMeta(layout, TMW.db.global.TextLayouts["\000"])
 					TMW.db.global.TextLayouts["\000"] = nil
 
 
@@ -202,10 +202,10 @@ TMW:RegisterUpgrade(70010, {
 						layout.GUID = newGUID
 						layout.Name = layout.Name .. " (" .. FROM .. " " .. profileName .. ")"
 
-						TMW:CopyTableInPlaceWithMeta(layout, TMW.db.global.TextLayouts[layout.GUID])
+						TMW:CopyTableInPlaceUsingDestinationMeta(layout, TMW.db.global.TextLayouts[layout.GUID])
 
 						-- See above for an explanation of this upgrade.
-						TMW:DoUpgrade("textlayout", profile.Version, layout, layout.GUID)
+						TMW:StartUpgrade("textlayout", profile.Version, layout, layout.GUID)
 					end
 
 				end
@@ -314,7 +314,7 @@ TMW:RegisterUpgrade(51019, {
 		-- I don't know why this layout exists, but I know it was my fault, so I am going to delete it.
 		if GUID == "icon" and settings.GUID == "" then
 			TMW.db.global.TextLayouts[GUID] = nil
-			TMW.Warn("TMW has deleted the invalid text layout keyed as 'icon' that was probably causing errors for you. If you were using it on any of your icons, then I apologize, but you probably weren't because it probably wasn't even named")
+			TMW:Warn("TMW has deleted the invalid text layout keyed as 'icon' that was probably causing errors for you. If you were using it on any of your icons, then I apologize, but you probably weren't because it probably wasn't even named")
 		end
 	end,
 })
@@ -534,12 +534,12 @@ TMW:RegisterUpgrade(51002, {
 	end,
 })
 
-TMW:RegisterCallback("TMW_UPGRADE_REQUESTED", function(event, type, version, ...)
+TMW:RegisterCallback("TMW_UPGRADE_PERFORMED", function(event, type, upgradeData, ...)
 	-- When a global settings upgrade is requested, update all text layouts.
 	
 	if type == "global" then
 		for GUID, settings in pairs(TMW.db.global.TextLayouts) do
-			TMW:DoUpgrade("textlayout", version, settings, GUID)
+			TMW:Upgrade("textlayout", upgradeData, settings, GUID)
 		end
 	end
 end)
@@ -679,6 +679,7 @@ end
 
 local function reSetup(self, event, icon)
 	self:SetupForIcon(icon)
+	return true -- Signal RegisterSelfDestructingCallback to unregister.
 end
 
 local function rotate(self, degrees)
@@ -752,7 +753,7 @@ function Texts:GetAnchor(layoutSettings, anchorSettings, fontStringID)
 			else
 				-- Run the text setup again after the icon is updated if we were missing an anchor frame.
 				-- It might just be an issue with the module implementation order, although IconModule_Texts should always be last.
-				TMW:RegisterRunonceCallback("TMW_ICON_SETUP_POST", reSetup, self)
+				TMW:RegisterSelfDestructingCallback("TMW_ICON_SETUP_POST", reSetup, self)
 
 				-- Temporarily anchor to the icon.
 				relativeTo = icon
@@ -941,4 +942,4 @@ function Texts:DOGTAGUNIT(icon, dogTagUnit)
 		self:OnKwargsUpdated()
 	end
 end
-Texts:SetDataListner("DOGTAGUNIT")
+Texts:SetDataListener("DOGTAGUNIT")

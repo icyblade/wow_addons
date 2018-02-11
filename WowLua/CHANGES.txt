@@ -1,0 +1,12 @@
+tag 1e579ba56c902fab50ec19a88cd1110435318bd0 v70300-1.0.1
+Author:	Jim Whitehead <jnwhiteh@gmail.com>
+Date:	Sun Sep 24 09:15:04 2017 +0200
+
+Tagging v70300-1.0.1
+
+commit d0fabe12ca5fa8e807945e9821031852e371c7db
+Author: Jim Whitehead <jnwhiteh@gmail.com>
+Date:   Sun Sep 24 09:14:49 2017 +0200
+
+    Fix constant names
+

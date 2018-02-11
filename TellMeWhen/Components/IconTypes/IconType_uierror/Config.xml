@@ -1,11 +1,11 @@
-﻿<Ui>
+<Ui>
 
 	<Frame name="TellMeWhen_UIErrorOptions" inherits="TellMeWhen_OptionsModuleContainer" virtual="true">
 		<Size y="30"/>
 		<Frames>
 		
 			
-			<EditBox name="$parentCLEUDur" parentKey="CLEUDur" inherits="TellMeWhen_TimeEditBoxTemplate">
+			<EditBox parentKey="CLEUDur" name="$parentCLEUDur" inherits="TellMeWhen_TimeEditBoxTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentCLEUEvents" relativePoint="BOTTOMLEFT" y="3"/>
 				</Anchors>
@@ -23,19 +23,15 @@
 					<OnLoad>
 						self.text2:SetText(TMW.L["CLEU_TIMER"])
 						
-						TMW:CInit(self, {
-							setting = "CLEUDur",
-							title = TMW.L["CLEU_TIMER"],
-							tooltip = TMW.L["UIERROR_TIMER_DESC"],
-							ModifySettingValue = function(self, value)
-								return tonumber(value) or 0
-							end,
-						})
+						TMW:CInit(self)
+
+						self:SetTexts(TMW.L["CLEU_TIMER"], TMW.L["UIERROR_TIMER_DESC"])
+						self:SetSetting("CLEUDur")
 					</OnLoad>
 				</Scripts>
 			</EditBox>
 
-			<CheckButton name="$parentCLEUNoRefresh" inherits="TellMeWhen_CheckTemplate" parentKey="CLEUNoRefresh">
+			<CheckButton parentKey="CLEUNoRefresh" name="$parentCLEUNoRefresh" inherits="TellMeWhen_CheckTemplate">
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentCLEUDur" relativePoint="RIGHT" x="2" y="-1"/>
 				</Anchors>
@@ -43,11 +39,10 @@
 					<OnLoad>
 						self:SetFrameLevel(self:GetFrameLevel() + 2) -- sometimes it ends up under the type dropdown which makes half of the checkbox unclickable
 					
-						TMW:CInit(self, {
-							setting = "CLEUNoRefresh",
-							title = TMW.L["ICONMENU_CLEU_NOREFRESH"],
-							tooltip = TMW.L["ICONMENU_CLEU_NOREFRESH_DESC"],
-						})
+						TMW:CInit(self)
+
+						self:SetTexts(TMW.L["ICONMENU_CLEU_NOREFRESH"], TMW.L["ICONMENU_CLEU_NOREFRESH_DESC"])
+						self:SetSetting("CLEUNoRefresh")
 					</OnLoad>
 				</Scripts>
 			</CheckButton>
@@ -56,7 +51,9 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				self.Header:SetText(TMW.L["ICONMENU_UIERROR"])
+				TMW:CInit(self)
+				
+				self:SetTitle(TMW.L["ICONMENU_UIERROR"])
 				
 				TMW.IE:DistributeFrameAnchorsLaterally(self, 2, self.CLEUDur, self.CLEUNoRefresh)
 				self.CLEUDur:SetPoint("LEFT", 8, 0)

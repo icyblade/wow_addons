@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -64,17 +64,24 @@ TMW:RegisterUpgrade(42102, {
 
 -- Helper methods
 function Sound:GetSoundFile(sound)
-	if sound == "" or sound == "Interface\\Quiet.ogg" or sound == "None" then
+	sound = TMW:CleanPath(sound)
+	local quiet = TMW:CleanPath("Interface/Quiet.ogg")
+
+	if sound == "" or sound == quiet or sound == "None" then
 		return nil
-	elseif strfind(sound, "%.[^\\]+$") then
+
+	elseif strfind(sound, "%.[^/]+$") or tonumber(sound) then
+
 		-- Checks to see if sound is a file name (although poorly). Checks for a period followed by non-slashes:
-		-- Good: file.ogg; path\to\file.ogg
-		-- Bad: file; path\to\file; folder.with.periods\containing\file.ogg
+		-- Also allows numbers to pass through for PlaySoundKitID
+		-- Good: file.ogg; path/to/file.ogg
+		-- Bad: file; path/to/file; folder.with.periods/containing/file.ogg
 		return sound
 	else
 		-- This will handle sounds from LSM.
 		local s = LSM:Fetch("sound", sound)
-		if s and s ~= "Interface\\Quiet.ogg" and s ~= "" then
+		s = TMW:CleanPath(s)
+		if s and s ~= quiet and s ~= "" then
 			return s
 		end
 	end
@@ -90,7 +97,11 @@ function Sound:HandleEvent(icon, eventSettings)
 	local Sound = self:GetSoundFile(eventSettings.Sound)
 	
 	if Sound then
-		PlaySoundFile(Sound, TMW.db.profile.SoundChannel)
+		if tonumber(Sound) then
+			(PlaySoundKitID or PlaySound)(Sound) -- PlaySoundKitID is gone in 7.3
+		else
+			PlaySoundFile(Sound, TMW.db.profile.SoundChannel)
+		end
 		
 		return true
 	end

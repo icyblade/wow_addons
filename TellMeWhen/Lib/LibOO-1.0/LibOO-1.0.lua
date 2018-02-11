@@ -2,7 +2,7 @@
 -- @class file
 -- @name LibOO-1.0.lua
 
-local MAJOR, MINOR = "LibOO-1.0", 20
+local MAJOR, MINOR = "LibOO-1.0", 22
 local LibOO, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not LibOO then return end
@@ -13,6 +13,9 @@ local assert, error, loadstring, xpcall = assert, error, loadstring, xpcall
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget
 local select, pairs, ipairs, type, tostring = select, pairs, ipairs, type, tostring
 
+
+local clientVersion = select(4, GetBuildInfo())
+local wow_701 = clientVersion >= 70100 or GetBuildInfo() == "7.1.0" -- they haven't updated the interface number yet.
 
 local safecall
 do
@@ -499,7 +502,10 @@ function Class:NewFromExisting(instance, ...)
 	elseif isWidget then
 		if not self.isFrameObject then
 			error("Non-widget classes must be instantiated on non-widgets.", 2)
-		elseif instance:GetObjectType() ~= self.isFrameObject then
+
+			-- For some bizarre reason, ScrollFrames return "Frame" as their widget type in patch 7.1. What the hell.
+			-- I reported it to http://us.battle.net/forums/en/wow/topic/20749674808#1, so we'll see what happens.
+		elseif instance:GetObjectType() ~= self.isFrameObject and (not wow_701 or self.isFrameObject ~= "ScrollFrame") then
 			error("Expected a " .. self.isFrameObject .. " widget, got a " .. instance:GetObjectType(), 2)
 		end
 	end

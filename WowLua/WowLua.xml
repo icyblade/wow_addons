@@ -23,8 +23,7 @@
 		</Scripts>
 	</Frame>
 
-    <!-- <Font name="WowLuaMonoFont" font="Interface\AddOns\WowLua\fonts\VeraMono.ttf"> -->
-    <Font name="WowLuaMonoFont" font="Fonts\bHEI00M.ttf"> <!-- ICY: 3rd party font -->
+    <Font name="WowLuaMonoFont" font="Interface\AddOns\WowLua\fonts\VeraMono.ttf">
 		<FontHeight val="14"/>
     </Font>
 
@@ -72,7 +71,6 @@
 						<Anchor point="TOPLEFT"/>
 					</Anchors>
 				</Texture>
-                
 				<Texture name="$parentTopRight" file="Interface\WorldStateFrame\WorldStateFinalScoreFrame-TopRight">
 					<Size x="140" y="242"/>
 					<Anchors>
@@ -667,8 +665,12 @@
                     <OnMouseDown>
                         WowLuaFrameCommandEditBox:SetFocus()
                     </OnMouseDown>
+                    <OnLoad>
+                        self:SetFont([[Interface\AddOns\WowLua\fonts\VeraMono.ttf]], 14)
+                        self:SetJustifyH("LEFT")
+                        self:SetFading(False)
+                    </OnLoad>
 				</Scripts>
-                <FontString inherits="WowLuaMonoFont" justifyH="LEFT"/>
 			</ScrollingMessageFrame>
 		</Frames>
 		<Scripts>
@@ -676,7 +678,7 @@
 				WowLua:Initialize(self)
 			</OnShow>
 			<OnHide>
-				PlaySound("igMainMenuQuit");
+				PlaySound(SOUNDKIT.IG_MAINMENU_QUIT);
 			</OnHide>
 			<OnSizeChanged>
 				WowLua:OnSizeChanged(self)

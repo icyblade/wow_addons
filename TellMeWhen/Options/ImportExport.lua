@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -321,7 +321,7 @@ function profile:Import_ImportData(Item, profileName)
 		TMW.db:SetProfile(profileName)
 	else
 		TMW.db:ResetProfile()
-		TMW:CopyTableInPlaceWithMeta(Item.Settings, TMW.db.profile, true)
+		TMW:CopyTableInPlaceUsingDestinationMeta(Item.Settings, TMW.db.profile, true)
 	end
 
 	if Item.Version then
@@ -540,7 +540,7 @@ function group:Import_ImportData(Item_group, domain, createNewGroup, oldgroupID,
 
 	TMW.db[domain].Groups[group.ID] = nil -- restore defaults, table recreated when passed in to CTIPWM
 	local gs = group:GetSettings()
-	TMW:CopyTableInPlaceWithMeta(Item_group.Settings, gs, true)
+	TMW:CopyTableInPlaceUsingDestinationMeta(Item_group.Settings, gs, true)
 
 	if version < 70000 then
 		gs.__UPGRADEHELPER_OLDGROUPID = oldgroupID
@@ -594,7 +594,7 @@ function group:Import_ImportData(Item_group, domain, createNewGroup, oldgroupID,
 		if version > TELLMEWHEN_VERSIONNUMBER then
 			TMW:Print(L["FROMNEWERVERSION"])
 		else
-			TMW:DoUpgrade("group", version, gs, domain, group.ID)
+			TMW:StartUpgrade("group", version, gs, domain, group.ID)
 		end
 	end
 
@@ -767,7 +767,7 @@ function icon:Import_ImportData(Item)
 
 	gs.Icons[icon.ID] = nil -- restore defaults
 	local ics = icon:GetSettings()
-	TMW:CopyTableInPlaceWithMeta(Item.Settings, ics, true)
+	TMW:CopyTableInPlaceUsingDestinationMeta(Item.Settings, ics, true)
 
 
 	local version = Item.Version
@@ -797,7 +797,7 @@ function icon:Import_ImportData(Item)
 		if version > TELLMEWHEN_VERSIONNUMBER then
 			TMW:Print(L["FROMNEWERVERSION"])
 		else
-			TMW:DoUpgrade("icon", version, ics, gs, icon.ID)
+			TMW:StartUpgrade("icon", version, ics, gs, icon.ID)
 		end
 	end
 end
@@ -914,7 +914,7 @@ function icon:Export_SetButtonAttributes(editbox, info)
 	local IMPORTS, EXPORTS = editbox:GetAvailableImportExportTypes()
 	local icon = EXPORTS.icon
 	
-	local text = L["fICON"]:format(icon.typeData.name)
+	local text = L["fICON"]:format(TMW.get(icon.typeData.name))
 	info.text = text
 	info.tooltipTitle = text
 
@@ -978,9 +978,13 @@ end
 ---------- Backup ----------
 local Backup = ImportSource:New("Backup")
 Backup.displayText = L["IMPORT_FROMBACKUP"]
-Backup.displayDescription = L["IMPORT_FROMBACKUP_DESC"]:format(TMW.BackupDate)
+Backup.displayDescription = L["IMPORT_FROMBACKUP_DESC"]:format(TMW.BackupDate or "<backup disabled>")
+Backup.displayDisabled = function()
+	return not TMW.Backupdb
+end
 
 function Backup:HandleTopLevelMenu()
+	if not TMW.Backupdb then return end
 	local Item = Item:New("database")
 	Item.ImportSource = self
 
@@ -1209,7 +1213,7 @@ local Comm = ExportDestination:New("Comm")
 Comm.Export_DescriptionPrepend = L["EXPORT_TOCOMM_DESC"]
 
 function Comm:Export(type, settings, defaults, ...)
-	local player = strtrim(EDITBOX:GetText())
+	local player = self.player
 	if player and #player > 1 then
 		local strings = TMW:GetSettingsStrings(nil, type, settings, defaults, ...)
 
@@ -1226,7 +1230,7 @@ function Comm:Export(type, settings, defaults, ...)
 		end
 
 		for n, str in pairs(strings) do
-			if player == "RAID" or player == "GUILD" then -- note the upper case
+			if player == "RAID" or player == "GUILD" or player == "PARTY" then -- note the upper case
 				TMW:SendCommMessage("TMW", str, player, nil, "BULK", EDITBOX.callback, {n, #strings})
 			else
 				TMW:SendCommMessage("TMW", str, "WHISPER", player, "BULK", EDITBOX.callback, {n, #strings})
@@ -1237,27 +1241,69 @@ function Comm:Export(type, settings, defaults, ...)
 	TMW.DD:CloseDropDownMenus()
 end
 
-function Comm:SetButtonAttributes(editbox, info)
-	local player = strtrim(editbox:GetText())
+function Comm:HandleTopLevelMenu()
+	local info = TMW.DD:CreateInfo()
+	info.notCheckable = true
+	info.hasArrow = true
+
+
+	info.text = RAID
+	info.disabled = not IsInRaid()
+	info.value = function() self.player = "RAID"; ExportDestination.HandleTopLevelMenu(self) end
+	TMW.DD:AddButton(info)
+
+
+	info.text = PARTY
+	info.disabled = not IsInGroup()
+	info.value = function() self.player = "PARTY"; ExportDestination.HandleTopLevelMenu(self) end
+	TMW.DD:AddButton(info)
+
+
+	info.text = GUILD
+	info.disabled = not IsInGuild()
+	info.value = function() self.player = "GUILD"; ExportDestination.HandleTopLevelMenu(self) end
+	TMW.DD:AddButton(info)
+
+
+	local targetIsXrealm = UnitRealmRelationship("target") == LE_REALM_RELATION_COALESCED 
+	info.text = TARGET .. ": " .. (GetUnitName("target", true) or NONE)
+	-- can't send cross realm right now. messages appear to send, but are never recieved.
+	info.disabled = not UnitName("target") or targetIsXrealm
+	if targetIsXrealm then
+		info.tooltipWhileDisabled = true
+		info.tooltipTitle = TARGET
+		info.tooltipText = ERR_PETITION_NOT_SAME_SERVER
+	end
+	info.value = function() self.player = GetUnitName("target", true); ExportDestination.HandleTopLevelMenu(self) end
+	TMW.DD:AddButton(info)
+
+
+	info.text = strtrim(EDITBOX:GetText())
+	local player = strtrim(EDITBOX:GetText())
 	local playerLength = strlenutf8(player)
 	info.disabled = (strfind(player, "[`~^%d!@#%$%%&%*%(%)%+=_]") or playerLength <= 1 or playerLength > 35) and true
-
-	local text
-	if player == "RAID" or player == "GUILD" then
-		text = L["EXPORT_TO" .. player]
-	else
-		text = L["EXPORT_TOCOMM"]
-		if not info.disabled then
-			text = text .. ": " .. player
-		end
+	info.value = function() self.player = player; ExportDestination.HandleTopLevelMenu(self) end
+	local text = L["EXPORT_TOCOMM"]
+	if not info.disabled then
+		text = text .. ": " .. player
 	end
-
-	info.text = text
+	info.tooltipWhileDisabled = true
 	info.tooltipTitle = text
-	info.tooltipText = L["EXPORT_TOCOMM_DESC"]
+	if player:find("%-") then
+		text = "|TInterface\\AddOns\\TellMeWhen\\Textures\\Alert:0:2|t" .. text
+		info.tooltipText = ERR_PETITION_NOT_SAME_SERVER
+	else
+		info.tooltipText = L["EXPORT_TOCOMM_DESC"]
 
-	info.value = "EXPORT_TOCOMM"
-	info.hasArrow = not info.disabled
+	end
+	info.text = text
+	TMW.DD:AddButton(info)
+end
+
+function Comm:SetButtonAttributes(editbox, info)
+	info.text = L["EXPORT_TOCOMM"]
+	info.tooltipTitle = L["EXPORT_TOCOMM"]
+	info.hasArrow = true
 end
 
 
@@ -1355,6 +1401,8 @@ function TMW.IE:ImportExport_DropDown(...)
 		else
 			error("Bad value at " .. TMW.DD.MENU_LEVEL)
 		end
+	elseif type(VALUE) == "function" then
+		VALUE()
 	end
 end
 

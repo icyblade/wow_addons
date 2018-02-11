@@ -1,75 +1,26 @@
-﻿<Ui>
+<Ui>
 
 
 
 	<Frame name="TellMeWhen_BarDisplayBarOptions" inherits="TellMeWhen_OptionsModuleContainer" virtual="true">
-		<Size y="85"/>
+		<Size y="90"/>
 		<Frames>
-			<CheckButton name="$parentInvert" inherits="TellMeWhen_CheckTemplate" parentKey="Invert">
+			<CheckButton parentKey="Invert" inherits="TellMeWhen_CheckTemplate">
 				<Anchors>
 					<!-- Left anchor is handled by DistributeFrameAnchorsLaterally in parent's OnLoad -->
 					<Anchor point="TOP" y="-1"/>
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						TMW:CInit(self, {
-							setting = "BarDisplay_Invert",
-							title = TMW.L["ICONMENU_INVERTBARS"],
-							tooltip = TMW.L["ICONMENU_INVERTBARDISPLAYBAR_DESC"],
-						})
+						TMW:CInit(self)
+
+						self:SetTexts(TMW.L["ICONMENU_INVERTBARS"], TMW.L["ICONMENU_INVERTBARDISPLAYBAR_DESC"])
+						self:SetSetting("BarDisplay_Invert")
 					</OnLoad>
 				</Scripts>
 			</CheckButton>
-			
-			<CheckButton name="$parentBarGCD" inherits="TellMeWhen_CheckTemplate" parentKey="BarGCD">
-				<!-- Anchoring is handled by DistributeFrameAnchorsLaterally in parent's OnLoad -->
-				<Scripts>
-					<OnLoad>
-						TMW:CInit(self, {
-							setting = "BarDisplay_BarGCD",
-							title = TMW.L["ICONMENU_ALLOWGCD"],
-							tooltip = TMW.L["ICONMENU_ALLOWGCD_DESC"],
-							hidden = function(self)
-								return TMW.CI.icon.typeData.hasNoGCD
-							end,
-						})
-					</OnLoad>
-				</Scripts>
-			</CheckButton>
-			
-			<CheckButton name="$parentEnableColors" inherits="TellMeWhen_CheckTemplate" parentKey="EnableColors">
-				<Anchors>
-					<!-- Left anchor is handled by DistributeFrameAnchorsLaterally in parent's OnLoad -->
-					<Anchor point="TOP" relativeTo="$parentInvert" relativePoint="BOTTOM" y="3"/>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						TMW:CInit(self, {
-							setting = "BarDisplay_EnableColors",
-							title = TMW.L["ICONMENU_ENABLECOLORS"],
-							tooltip = TMW.L["ICONMENU_ENABLECOLORS_DESC"],
-							OnState = function(self)
-								if self:GetChecked() then
-									TMW.HELP:Show{
-										code = "COLOR_COPY_DRAG",
-										icon = nil,
-										relativeTo = self,
-										x = 0,
-										y = 0,
-										text = format(TMW.L["ICONMENU_ENABLECOLORS_HELP"])
-									}
-								end
-							end,
-						})
-					</OnLoad>
-				</Scripts>
-			</CheckButton>
-			
-			<EditBox name="$parentFakeMax" inherits="TellMeWhen_TimeEditBoxTemplate" parentKey="FakeMax" autoFocus="false">
+			<EditBox parentKey="FakeMax" inherits="TellMeWhen_TimeEditBoxTemplate" autoFocus="false">
 				<Size x="45" y="15"/>
-				<Anchors>
-					<Anchor point="TOP" relativeTo="$parentBarGCD" relativePoint="BOTTOM" y="-2"/>
-				</Anchors>
 				<Scripts>
 					<OnLoad>
 						self.text:SetText(TMW.L["ICONMENU_FAKEMAX"])
@@ -78,98 +29,126 @@
 						self.text:SetPoint("LEFT", self, "RIGHT", 2, 0)
 						self.text:SetPoint("RIGHT", self:GetParent(), "RIGHT", -5, 0)
 						
-						self:SetPoint("LEFT", self:GetParent().BarGCD, "LEFT", 8, 0)
-						
-						TMW:CInit(self, {
-							setting = "BarDisplay_FakeMax",
-							title = TMW.L["ICONMENU_FAKEMAX"],
-							tooltip = TMW.L["ICONMENU_FAKEMAX_DESC"],
-							disabled = function(self)
-								return TMW.CI.ics.BarDisplay_Invert
-							end,
-							ModifySettingValue = function(self, value)
-								return tonumber(value) or 0
-							end,
-						})
+						TMW:CInit(self)
+
+						self:SetTexts(TMW.L["ICONMENU_FAKEMAX"], TMW.L["ICONMENU_FAKEMAX_DESC"])
+						self:SetSetting("BarDisplay_FakeMax")
+
+						self:CScriptAdd("ReloadRequested", function()
+							local settings = self:GetSettingTable()
+							self:SetEnabled(not settings.BarDisplay_Invert)
+						end)
 					</OnLoad>
 				</Scripts>
 			</EditBox>
 
-			<Button name="$parentColorStart" parentKey="ColorStart" inherits="TellMeWhen_ColorButtonTemplate">
+			<CheckButton parentKey="Reverse" inherits="TellMeWhen_CheckTemplate">
 				<Anchors>
-					<Anchor point="TOP" relativeTo="$parentFakeMax" relativePoint="BOTTOM" y="-10" />
+					<!-- Left anchor is handled by DistributeFrameAnchorsLaterally in parent's OnLoad -->
+					<Anchor point="TOP" relativeKey="$parent.Invert" relativePoint="BOTTOM" y="3"/>
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						TMW:CInit(self, {
-							setting = "BarDisplay_StartColor",
-							title = TMW.L["ICONMENU_BAR_COLOR_START"],
-							tooltip = TMW.L["ICONMENU_BAR_COLOR_START_DESC"],
-							hasOpacity = true,
-							disabled = function(self)
-								return not TMW.CI.ics.BarDisplay_EnableColors
-							end,
-						})
-					</OnLoad>
-				</Scripts>
-			</Button>
+						TMW:CInit(self)
 
-			<Button name="$parentColorMiddle" parentKey="ColorMiddle" inherits="TellMeWhen_ColorButtonTemplate">
-				<Anchors>
-					<Anchor point="TOP" relativeTo="$parentColorStart" />
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						TMW:CInit(self, {
-							setting = "BarDisplay_MiddleColor",
-							title = TMW.L["ICONMENU_BAR_COLOR_MIDDLE"],
-							tooltip = TMW.L["ICONMENU_BAR_COLOR_MIDDLE_DESC"],
-							hasOpacity = true,
-							disabled = function(self)
-								return not TMW.CI.ics.BarDisplay_EnableColors
-							end,
-						})
+						self:SetTexts(TMW.L["ICONMENU_REVERSEBARS"], TMW.L["ICONMENU_REVERSEBARS_DESC"])
+						self:SetSetting("BarDisplay_Reverse")
 					</OnLoad>
 				</Scripts>
-			</Button>
+			</CheckButton>
+			
+			<CheckButton parentKey="BarGCD" inherits="TellMeWhen_CheckTemplate">
+				<!-- Anchoring is handled by DistributeFrameAnchorsLaterally in parent's OnLoad -->
+				<Scripts>
+					<OnLoad>
+						TMW:CInit(self)
 
-			<Button name="$parentColorComplete" parentKey="ColorComplete" inherits="TellMeWhen_ColorButtonTemplate">
+						self:SetTexts(TMW.L["ICONMENU_ALLOWGCD"], TMW.L["ICONMENU_ALLOWGCD_DESC"])
+						self:SetSetting("BarDisplay_BarGCD")
+						
+						self:CScriptAdd("ReloadRequested", function()
+							self:SetShown(not TMW.CI.icon.typeData.hasNoGCD)
+						end)
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+			
+			
+			<CheckButton parentKey="EnableColors" inherits="TellMeWhen_CheckTemplate">
 				<Anchors>
-					<Anchor point="TOP" relativeTo="$parentColorStart" />
+					<!-- Left anchor is handled by DistributeFrameAnchorsLaterally in parent's OnLoad -->
+					<Anchor point="TOP" relativeKey="$parent.Reverse" relativePoint="BOTTOM" y="3"/>
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						TMW:CInit(self, {
-							setting = "BarDisplay_CompleteColor",
-							title = TMW.L["ICONMENU_BAR_COLOR_COMPLETE"],
-							tooltip = TMW.L["ICONMENU_BAR_COLOR_COMPLETE_DESC"],
-							hasOpacity = true,
-							disabled = function(self)
-								return not TMW.CI.ics.BarDisplay_EnableColors
-							end,
-						})
+						TMW:CInit(self)
+
+						self:SetTexts(TMW.L["COLOR_OVERRIDE_GROUP"], TMW.L["COLOR_OVERRIDE_GROUP_DESC"])
+						self:SetSetting("TimerBar_EnableColors")
 					</OnLoad>
 				</Scripts>
-			</Button>
+			</CheckButton>
+			
+			<CheckButton parentKey="ClassColor" inherits="TellMeWhen_CheckTemplate">
+				<Anchors>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						TMW:CInit(self)
+
+						self:SetTexts(TMW.L["COLOR_USECLASS"], TMW.L["COLOR_USECLASS_DESC"])
+						self:SetSetting("BarDisplay_ClassColor")
+						
+						self:CScriptAdd("ReloadRequested", function()
+							local settings = self:GetSettingTable()
+							self:SetShown(settings.TimerBar_EnableColors)
+							local hasUnits = TMW.CI.icon.typeData.UsedProcessors[TMW.C.IconDataProcessor.ProcessorsByName.UNIT]
+							self:SetEnabled(hasUnits)
+							if not hasUnits then
+								settings[self.setting] = false
+							end
+
+							self:GetParent():AdjustHeight()
+						end)
+					</OnLoad>
+				</Scripts>
+			</CheckButton>
+
+			<Frame inherits="TellMeWhen_TimerBarColorsTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativeKey="$parent.ClassColor" relativePoint="BOTTOM" y="-3" />
+				</Anchors>
+				<Scripts>
+					<OnLoad inherit="prepend">
+						self:CScriptAdd("ReloadRequested", function()
+							local settings = self:GetSettingTable()
+							self:SetShown(settings.TimerBar_EnableColors and not settings.BarDisplay_ClassColor)
+
+							self:GetParent():AdjustHeight()
+						end)
+					</OnLoad> 
+				</Scripts>
+			</Frame>
 
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				self.Header:SetText(TMW.L["CONFIGPANEL_TIMERBAR_BARDISPLAY_HEADER"])
+				TMW:CInit(self)
 				
-				self.Invert:ConstrainLabel(self.BarGCD)
-				self.BarGCD:ConstrainLabel(self, "RIGHT", -1, 0)
-
-				self.EnableColors:ConstrainLabel(self.FakeMax)
-				self.FakeMax:ConstrainLabel(self, "RIGHT", -1, 0)
-
-				self.ColorStart:ConstrainLabel(self.ColorMiddle)
-				self.ColorMiddle:ConstrainLabel(self.ColorComplete)
-				self.ColorComplete:ConstrainLabel(self, "RIGHT", -1, 0)
+				self:SetTitle(TMW.L["CONFIGPANEL_TIMERBAR_BARDISPLAY_HEADER"])
 				
-				TMW.IE:DistributeFrameAnchorsLaterally(self, 2, self.Invert, self.BarGCD)
-				TMW.IE:DistributeFrameAnchorsLaterally(self, 2, self.EnableColors)
-				TMW.IE:DistributeFrameAnchorsLaterally(self, 3, self.ColorStart, self.ColorMiddle, self.ColorComplete)
+				self.Invert:ConstrainLabel(self.FakeMax)
+				self.FakeMax:ConstrainLabel(self, "RIGHT")
+
+				self.Reverse:ConstrainLabel(self.BarGCD)
+				self.BarGCD:ConstrainLabel(self, "RIGHT")
+
+				self.EnableColors:ConstrainLabel(self.ClassColor)
+				self.ClassColor:ConstrainLabel(self, "RIGHT")
+
+				TMW.IE:DistributeFrameAnchorsLaterally(self, 2, self.Invert, self.FakeMax)
+				TMW.IE:DistributeFrameAnchorsLaterally(self, 2, self.Reverse, self.BarGCD)
+				TMW.IE:DistributeFrameAnchorsLaterally(self, 2, self.EnableColors, self.ClassColor)
 			</OnLoad>
 		</Scripts>
 	</Frame>

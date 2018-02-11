@@ -152,10 +152,11 @@ end)
 
 
 local function BigWigs_timer_init()
+	local owner = {}
 	BigWigs_timer_init = nil
 
 	if not BigWigsLoader then
-		TMW.Warn("BigWigsLoader wasn't loaded when BigWigs timer conditions tried to initialize.")
+		TMW:Warn("BigWigsLoader wasn't loaded when BigWigs timer conditions tried to initialize.")
 		function Env.BigWigs_GetTimeRemaining()
 			return 0, 0
 		end
@@ -179,7 +180,7 @@ local function BigWigs_timer_init()
 
 	end
 
-	BigWigsLoader:RegisterMessage("BigWigs_StartBar", function(_, module, key, text, time)
+	BigWigsLoader.RegisterMessage(owner, "BigWigs_StartBar", function(_, module, key, text, time)
 			stop(module, text)
 			
 			tinsert(Timers, {module = module, key = key, text = text:lower(), start = TMW.time, duration = time})
@@ -187,17 +188,17 @@ local function BigWigs_timer_init()
 			TMW:Fire("TMW_CNDT_BOSSMODS_BIGWIGS_TIMER_CHANGED")
 	end)
 
-	BigWigsLoader:RegisterMessage("BigWigs_StopBar", function(_, module, text)
+	BigWigsLoader.RegisterMessage(owner, "BigWigs_StopBar", function(_, module, text)
 			stop(module, text)  
 	end)
 
-	BigWigsLoader:RegisterMessage("BigWigs_StopBars", function(_, module)
+	BigWigsLoader.RegisterMessage(owner, "BigWigs_StopBars", function(_, module)
 			stop(module)  
 	end)
-	BigWigsLoader:RegisterMessage("BigWigs_OnBossDisable", function(_, module)
+	BigWigsLoader.RegisterMessage(owner, "BigWigs_OnBossDisable", function(_, module)
 			stop(module)  
 	end)
-	BigWigsLoader:RegisterMessage("BigWigs_OnPluginDisable", function(_, module)
+	BigWigsLoader.RegisterMessage(owner, "BigWigs_OnPluginDisable", function(_, module)
 			stop(module)  
 	end)
 
@@ -226,8 +227,12 @@ ConditionCategory:RegisterCondition(1,	 "BIGWIGS_TIMER", {
 	range = 30,
 	step = 0.1,
 	unit = false,
-	name = function(editbox) TMW:TT(editbox, "MODTIMERTOCHECK", "MODTIMERTOCHECK_DESC") editbox.label = L["MODTIMERTOCHECK"] end,
-	check = function(check) TMW:TT(check, "MODTIMER_PATTERN", "MODTIMER_PATTERN_DESC") end,
+	name = function(editbox)
+		editbox:SetTexts(L["MODTIMERTOCHECK"], L["MODTIMERTOCHECK_DESC"])
+	end,
+	check = function(check)
+		check:SetTexts(L["MODTIMER_PATTERN"], L["MODTIMER_PATTERN_DESC"])
+	end,
 	formatter = TMW.C.Formatter.TIME_0ABSENT,
 	icon = function()
 		if not BigWigsLoader then
@@ -285,10 +290,11 @@ ConditionCategory:RegisterCondition(1,	 "BIGWIGS_TIMER", {
 
 
 local function BigWigs_engaged_init()
+	local owner = {}
 	BigWigs_engaged_init = nil
 
 	if not BigWigsLoader then
-		TMW.Warn("BigWigsLoader wasn't loaded when BigWigs engaged conditions tried to initialize.")
+		TMW:Warn("BigWigsLoader wasn't loaded when BigWigs engaged conditions tried to initialize.")
 
 		function Env.BigWigs_IsBossEngaged()
 			return false
@@ -300,12 +306,12 @@ local function BigWigs_engaged_init()
 	local EngagedBosses = {}
 
 
-	BigWigsLoader:RegisterMessage("BigWigs_OnBossEngage", function(_, module, diff)
+	BigWigsLoader.RegisterMessage(owner, "BigWigs_OnBossEngage", function(_, module, diff)
 			EngagedBosses[module] = true
 
 			TMW:Fire("TMW_CNDT_BOSSMODS_BIGWIGS_ENGAGED_CHANGED")
 	end)
-	BigWigsLoader:RegisterMessage("BigWigs_OnBossDisable", function(_, module)
+	BigWigsLoader.RegisterMessage(owner, "BigWigs_OnBossDisable", function(_, module)
 			EngagedBosses[module] = nil
 
 			TMW:Fire("TMW_CNDT_BOSSMODS_BIGWIGS_ENGAGED_CHANGED")
@@ -327,13 +333,12 @@ ConditionCategory:RegisterCondition(2,	 "BIGWIGS_ENGAGED", {
 	text = L["CONDITIONPANEL_BIGWIGS_ENGAGED"],
 	tooltip = L["CONDITIONPANEL_BIGWIGS_ENGAGED_DESC"],
 
-	min = 0,
-	max = 1,
-	formatter = TMW.C.Formatter.BOOL,
-	nooperator = true,
+	bool = true,
 	unit = false,
 
-	name = function(editbox) TMW:TT(editbox, "ENCOUNTERTOCHECK", "ENCOUNTERTOCHECK_DESC_BIGWIGS") editbox.label = L["ENCOUNTERTOCHECK"] end,
+	name = function(editbox)
+		editbox:SetTexts(L["ENCOUNTERTOCHECK"], L["ENCOUNTERTOCHECK_DESC_BIGWIGS"])
+	end,
 	useSUG = "bossfights",
 	icon = function()
 		if not BigWigsLoader then
@@ -374,7 +379,7 @@ ConditionCategory:RegisterSpacer(9)
 local function DBM_timer_init()
 	DBM_timer_init = nil
 	if not DBM then
-		TMW.Warn("DBM wasn't loaded when DBM timer conditions tried to initialize.")
+		TMW:Warn("DBM wasn't loaded when DBM timer conditions tried to initialize.")
 		
 		function Env.DBM_GetTimeRemaining()
 			return 0, 0
@@ -428,8 +433,12 @@ ConditionCategory:RegisterCondition(10,	 "DBM_TIMER", {
 	range = 30,
 	step = 0.1,
 	unit = false,
-	name = function(editbox) TMW:TT(editbox, "MODTIMERTOCHECK", "MODTIMERTOCHECK_DESC") editbox.label = L["MODTIMERTOCHECK"] end,
-	check = function(check) TMW:TT(check, "MODTIMER_PATTERN", "MODTIMER_PATTERN_DESC") end,
+	name = function(editbox)
+		editbox:SetTexts(L["MODTIMERTOCHECK"], L["MODTIMERTOCHECK_DESC"])
+	end,
+	check = function(check)
+		check:SetTexts(L["MODTIMER_PATTERN"], L["MODTIMER_PATTERN_DESC"])
+	end,
 	formatter = TMW.C.Formatter.TIME_0ABSENT,
 	icon = function()
 		if not DBM then
@@ -489,7 +498,7 @@ ConditionCategory:RegisterCondition(10,	 "DBM_TIMER", {
 local function DBM_engaged_init()
 	DBM_engaged_init = nil
 	if not DBM then
-		TMW.Warn("DBM wasn't loaded when DBM engaged conditions tried to initialize.")
+		TMW:Warn("DBM wasn't loaded when DBM engaged conditions tried to initialize.")
 		
 		function Env.DBM_IsBossEngaged()
 			return false
@@ -528,13 +537,12 @@ ConditionCategory:RegisterCondition(11,	 "DBM_ENGAGED", {
 	text = L["CONDITIONPANEL_DBM_ENGAGED"],
 	tooltip = L["CONDITIONPANEL_DBM_ENGAGED_DESC"],
 
-	min = 0,
-	max = 1,
-	formatter = TMW.C.Formatter.BOOL,
-	nooperator = true,
+	bool = true,
 	unit = false,
 
-	name = function(editbox) TMW:TT(editbox, "ENCOUNTERTOCHECK", "ENCOUNTERTOCHECK_DESC_DBM") editbox.label = L["ENCOUNTERTOCHECK"] end,
+	name = function(editbox)
+		editbox:SetTexts(L["ENCOUNTERTOCHECK"], L["ENCOUNTERTOCHECK_DESC_DBM"])
+	end,
 	useSUG = "bossfights",
 	icon = function()
 		if not DBM then

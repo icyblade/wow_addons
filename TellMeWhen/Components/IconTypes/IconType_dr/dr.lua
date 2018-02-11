@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -50,13 +50,15 @@ Type.usePocketWatch = 1
 Type.unitType = "unitid"
 Type.hasNoGCD = true
 
+local STATE_UNDIMINISHED = TMW.CONST.STATE.DEFAULT_SHOW
+local STATE_DIMINISHED = TMW.CONST.STATE.DEFAULT_HIDE
 
 -- AUTOMATICALLY GENERATED: UsesAttributes
+Type:UsesAttributes("state")
 Type:UsesAttributes("spell")
 Type:UsesAttributes("unit, GUID")
-Type:UsesAttributes("stack, stackText")
 Type:UsesAttributes("start, duration")
-Type:UsesAttributes("alpha")
+Type:UsesAttributes("stack, stackText")
 Type:UsesAttributes("texture")
 -- END AUTOMATICALLY GENERATED: UsesAttributes
 
@@ -123,25 +125,22 @@ Type:RegisterConfigPanel_XMLTemplate(105, "TellMeWhen_Unit", {
 	implementsConditions = true,
 })
 
-Type:RegisterConfigPanel_XMLTemplate(165, "TellMeWhen_WhenChecks", {
-	text = L["ICONMENU_SHOWWHEN"],
-	[0x2] = { text = "|cFF00FF00" .. L["ICONMENU_DRABSENT"], 	},
-	[0x1] = { text = "|cFFFF0000" .. L["ICONMENU_DRPRESENT"], 	},
+Type:RegisterConfigPanel_XMLTemplate(165, "TellMeWhen_IconStates", {
+	[STATE_UNDIMINISHED] = { text = "|cFF00FF00" .. L["ICONMENU_DRABSENT"],  },
+	[STATE_DIMINISHED]   = { text = "|cFFFF0000" .. L["ICONMENU_DRPRESENT"], },
 })
 
 Type:RegisterConfigPanel_ConstructorFunc(150, "TellMeWhen_DRSettings", function(self)
-	self.Header:SetText(Type.name)
-	TMW.IE:BuildSimpleCheckSettingFrame(self, {
-		{
-			setting = "CheckRefresh",
-			title = L["ICONMENU_CHECKREFRESH"],
-			tooltip = L["ICONMENU_CHECKREFRESH_DESC"],
-		},
-		{
-			setting = "ShowWhenNone",
-			title = L["ICONMENU_SHOWWHENNONE"],
-			tooltip = L["ICONMENU_SHOWWHENNONE_DESC"],
-		},
+	self:SetTitle(Type.name)
+	self:BuildSimpleCheckSettingFrame({
+		function(check)
+			check:SetTexts(L["ICONMENU_CHECKREFRESH"], L["ICONMENU_CHECKREFRESH_DESC"])
+			check:SetSetting("CheckRefresh")
+		end,
+		function(check)
+			check:SetTexts(L["ICONMENU_SHOWWHENNONE"], L["ICONMENU_SHOWWHENNONE_DESC"])
+			check:SetSetting("ShowWhenNone")
+		end,
 	})
 end)
 
@@ -177,7 +176,8 @@ TMW:RegisterCallback("TMW_EQUIVS_PROCESSING", function()
 			local k = myCategories[category]
 
 			if k then
-				dr[k] = (dr[k] and (dr[k] .. ";" .. spellID)) or tostring(spellID)
+				dr[k] = dr[k] or {}
+				tinsert(dr[k], spellID)
 			elseif TMW.debug and not ignored[category] then
 				TMW:Error("The DR category %q is undefined!", category)
 			end
@@ -241,7 +241,10 @@ end
 
 local function DR_OnUpdate(icon, time)
 	-- Upvalue things that will be referenced a lot in our loops.
-	local Alpha, UnAlpha, Units = icon.Alpha, icon.UnAlpha, icon.Units
+	local Units = icon.Units
+
+	local undimAlpha = icon.States[STATE_UNDIMINISHED].Alpha
+	local dimAlpha = icon.States[STATE_DIMINISHED].Alpha
 
 	for u = 1, #Units do
 		local unit = Units[u]
@@ -252,42 +255,42 @@ local function DR_OnUpdate(icon, time)
 			if dr.start + dr.duration <= time then
 				-- The timer is expired.
 
-				icon:SetInfo("alpha; texture; start, duration; stack, stackText; unit, GUID",
-					icon.Alpha,
+				icon:SetInfo("state; texture; start, duration; stack, stackText; unit, GUID",
+					STATE_UNDIMINISHED,
 					dr.tex,
 					0, 0,
 					nil, nil,
 					unit, GUID
 				)
 				
-				if Alpha > 0 then
+				if undimAlpha > 0 then
 					return
 				end
 			else
 				-- The timer is not expired.
 
 				local amt = dr.amt
-				icon:SetInfo("alpha; texture; start, duration; stack, stackText; unit, GUID",
-					icon.UnAlpha,
+				icon:SetInfo("state; texture; start, duration; stack, stackText; unit, GUID",
+					STATE_DIMINISHED,
 					dr.tex,
 					dr.start, dr.duration,
 					amt, amt .. "%",
 					unit, GUID
 				)
-				if UnAlpha > 0 then
+				if dimAlpha > 0 then
 					return
 				end
 			end
 		else
 			-- The unit doesn't have any DR.
-			icon:SetInfo("alpha; texture; start, duration; stack, stackText; unit, GUID",
-				icon.Alpha,
+			icon:SetInfo("state; texture; start, duration; stack, stackText; unit, GUID",
+				STATE_UNDIMINISHED,
 				icon.FirstTexture,
 				0, 0,
 				nil, nil,
 				unit, GUID
 			)
-			if Alpha > 0 then
+			if undimAlpha > 0 then
 				return
 			end
 		end
@@ -295,15 +298,15 @@ local function DR_OnUpdate(icon, time)
 	
 	if icon.ShowWhenNone then
 		-- Nothing found. Show default state of the icon.
-		icon:SetInfo("alpha; texture; start, duration; stack, stackText; unit, GUID",
-			icon.Alpha,
+		icon:SetInfo("state; texture; start, duration; stack, stackText; unit, GUID",
+			STATE_UNDIMINISHED,
 			icon.FirstTexture,
 			0, 0,
 			nil, nil,
 			Units[1], nil
 		)
 	else
-		icon:SetInfo("alpha", 0)
+		icon:SetInfo("state", 0)
 	end
 end
 
@@ -335,9 +338,9 @@ do	-- CheckCategories
 		local append = ""
 
 		for i, IDorName in ipairs(NameArray) do
-			for category, str in pairs(TMW.BE.dr) do
+			for category, tbl in pairs(TMW.BE.dr) do
 
-				local Names = TMW:GetSpells(str)
+				local Names = TMW:GetSpells(category)
 
 				-- Check if the spell being checked by the icon is in the DR category that we are looking at.
 				if Names.Hash[IDorName] or Names.StringHash[IDorName] then
@@ -422,9 +425,6 @@ function Type:Setup(icon)
 	-- Setup events and update functions
 	if icon.UnitSet.allUnitsChangeOnEvent then
 		icon:SetUpdateMethod("manual")
-		for event in pairs(icon.UnitSet.updateEvents) do
-			icon:RegisterSimpleUpdateEvent(event)
-		end
 		
 		TMW:RegisterCallback("TMW_UNITSET_UPDATED", DR_OnEvent, icon)
 	end

@@ -1,0 +1,163 @@
+changeset:   700:379ec089b56c
+tag:         tip
+user:        Tercio
+date:        Fri Feb 09 11:33:02 2018 -0200
+summary:     - Added real time compile error while writing a custom script.
+
+
+changeset:   699:ad8526b89561
+user:        Tercio
+date:        Fri Feb 02 13:29:07 2018 -0200
+summary:     - Fixed wasted shield subtracting the total healing of the spell. This wasn't affecting the healing done of the actor it self.
+
+
+changeset:   698:77c2eeecd28d
+user:        Tercio
+date:        Fri Jan 26 14:07:43 2018 -0200
+summary:     - Warlock mana from Life Tap won't show up any more under mana regen, this makes easy to see Soul Shard gain.
+
+
+changeset:   697:8e9fc4be13d7
+user:        Tercio
+date:        Thu Jan 18 14:58:35 2018 -0200
+summary:     - Framework upated to v63 (template parenting support).
+
+
+changeset:   696:d4a8c7e49b83
+user:        Tercio
+date:        Fri Jan 12 10:36:46 2018 -0200
+summary:     - Default width for death window is now 350 (up from 300).
+
+
+changeset:   695:a9105667be91
+user:        Tercio
+date:        Wed Jan 03 11:53:23 2018 -0200
+summary:     - Custom window should now clear the previous code when start editing a new custom display.
+
+
+changeset:   694:a3424c8730ec
+user:        Tercio
+date:        Fri Dec 22 09:09:34 2017 -0200
+summary:     - Create Aura and API window moved to the new plugin window.
+
+
+changeset:   693:a690bf789019
+user:        Tercio
+date:        Fri Dec 15 08:29:20 2017 -0200
+summary:     - Polish on the Custom Display and Encounter Details windows.
+
+
+changeset:   692:d29c7d939821
+user:        Tercio
+date:        Tue Dec 12 13:09:20 2017 -0200
+summary:     - Embeding the custom display window into the new plugin window.
+
+
+changeset:   691:bfc5ab9d4df1
+user:        Tercio
+date:        Sat Dec 09 10:08:54 2017 -0200
+summary:     - Fixed an issue with the statistics sharing among guild members.
+
+
+changeset:   690:18cba0f76e41
+user:        Tercio
+date:        Fri Dec 08 18:09:20 2017 -0200
+summary:     - Fixed an issue with the statistics sharing among guild members.
+
+
+changeset:   689:deb826e20b4f
+user:        Tercio
+date:        Wed Dec 06 20:37:04 2017 -0200
+summary:     - attempt to fix the argus encounter double segments.
+
+
+changeset:   688:17b265227703
+user:        Tercio
+date:        Wed Nov 29 11:32:17 2017 -0200
+summary:     - Hotfix the issue of getting errors when login in the game.
+
+
+changeset:   687:89042076572f
+user:        Tercio
+date:        Mon Nov 27 11:54:48 2017 -0200
+summary:     - adding stuff for the new raid.
+
+
+changeset:   686:83216118b57d
+user:        Tercio
+date:        Sun Nov 26 16:31:05 2017 -0200
+summary:     - added new panel to consolidate plugins and panels from the main addon into only one frame.
+
+
+changeset:   685:39dd82ba0a0e
+user:        Tercio
+date:        Tue Nov 21 10:00:22 2017 -0200
+summary:     - removed some already fixed debug lines.
+
+
+changeset:   684:8a7fba7e847c
+user:        Tercio
+date:        Sat Oct 21 13:30:06 2017 -0200
+summary:     - Fixed an error when clicking on the spec icon.
+
+
+changeset:   683:e708d8a64e08
+user:        Tercio
+date:        Sat Oct 21 12:40:54 2017 -0200
+summary:     - Fix for ticket #262: unable to open the player detail window when streamer option 'no alerts' are enabled.
+
+
+changeset:   682:6ade12d881ad
+user:        Tercio
+date:        Mon Oct 16 21:21:44 2017 -0200
+summary:     - Fixed green icons on the new feature 'event tracker'.
+
+
+changeset:   681:217e1d219223
+user:        Tercio
+date:        Mon Oct 16 14:38:40 2017 -0200
+summary:     - Click to open menus now close the menu if already opened.
+
+
+changeset:   680:7ffc9da9aaee
+user:        Tercio
+date:        Sat Oct 14 16:01:59 2017 -0300
+summary:     - framework update to v58 (looks like some author are adding words like 'topleft' and 'top' to the global namespace).
+
+
+changeset:   679:bc5a5e38ecac
+user:        Tercio
+date:        Sat Oct 14 13:04:36 2017 -0300
+summary:     - fixed an issue opening the segments menu.
+
+
+changeset:   678:fb72e955bfed
+user:        Tercio
+date:        Mon Oct 09 22:43:26 2017 -0300
+summary:     - Added several options and tools for streamers and youtubers.
+
+
+changeset:   677:6cf0fca6ebdb
+user:        Tercio
+date:        Sun Oct 01 21:03:47 2017 -0300
+summary:     - lib folder renamed.
+
+
+changeset:   676:8f7230c2e02e
+user:        Tercio
+date:        Wed Sep 27 17:59:04 2017 -0300
+summary:     - Rolling back to Mercurial repository.
+
+
+changeset:   675:899e13d626a1
+user:        Tercio
+date:        Tue Sep 19 12:56:32 2017 -0300
+summary:     - testing the mercurial repo packpager.
+
+
+changeset:   674:3939641c0fe0
+user:        Tercio
+date:        Wed Jul 26 10:14:37 2017 -0300
+summary:     - packpager, hello?
+
+

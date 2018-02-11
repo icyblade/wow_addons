@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -25,10 +25,16 @@ TMW:NewClass("GroupModule_Resizer", "GroupModule", "Resizer_Generic"){
 		OnImplementIntoGroup = function(self)
 			local group = self.group
 			
-			local GroupModule_GroupPosition = group:GetModuleOrModuleChild("GroupModule_GroupPosition")
+			local GroupPosition = group:GetModuleOrModuleChild("GroupModule_GroupPosition")
 			
-			if not GroupModule_GroupPosition then
+			if not GroupPosition then
 				error("Implementing GroupModule_Resizer (or a derivative) requies that GroupModule_GroupPosition (or a derivative) already be implemented.")
+			end
+
+			if TMW.Locked or not GroupPosition:CanMove() then
+				self:Disable()
+			else
+				self:Enable()
 			end
 		
 			self.resizeButton:SetFrameLevel(group:GetFrameLevel() + 3)
@@ -74,8 +80,6 @@ TMW:NewClass("GroupModule_Resizer", "GroupModule", "Resizer_Generic"){
 		GroupModule_GroupPosition:UpdatePositionAfterMovement()
 		
 		group:Setup()
-		
-		TMW.ACEOPTIONS:NotifyChanges()
 	end,
 
 	SizeUpdate_RightButton = function(resizeButton)
@@ -114,7 +118,7 @@ TMW:NewClass("GroupModule_Resizer", "GroupModule", "Resizer_Generic"){
 			group:Setup()
 
 			if TMW.CI.ics ~= ics_old then
-				TMW.IE:Load(1, false)
+				TMW.IE:LoadIcon(1, false)
 			end
 		end
 	end,

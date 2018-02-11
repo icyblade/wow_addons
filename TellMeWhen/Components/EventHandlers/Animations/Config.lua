@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -40,7 +40,7 @@ end)
 
 
 ---------- Events ----------
-function Animations:SetupEventDisplay(eventID)
+function Animations:GetEventDisplayText(eventID)
 	if not eventID then return end
 
 	local subHandlerData, subHandlerIdentifier = self:GetSubHandler(eventID)
@@ -51,9 +51,9 @@ function Animations:SetupEventDisplay(eventID)
 			text = "|cff808080" .. text
 		end
 
-		EVENTS.EventHandlerFrames[eventID].DataText:SetText("|cffcccccc" .. L["ANIM_TAB"] .. ":|r " .. text)
+		return ("|cffcccccc" .. L["ANIM_TAB"] .. ":|r " .. text)
 	else
-		EVENTS.EventHandlerFrames[eventID].DataText:SetText("|cffcccccc" .. L["ANIM_TAB"] .. ":|r UNKNOWN: " .. (subHandlerIdentifier or "?"))
+		return ("|cffcccccc" .. L["ANIM_TAB"] .. ":|r UNKNOWN: " .. (subHandlerIdentifier or "?"))
 	end
 end
 
@@ -68,10 +68,7 @@ TMW.IE:RegisterRapidSetting("Thickness")
 TMW.IE:RegisterRapidSetting("Size_anim")
 TMW.IE:RegisterRapidSetting("SizeX")
 TMW.IE:RegisterRapidSetting("SizeY")
-TMW.IE:RegisterRapidSetting("r_anim")
-TMW.IE:RegisterRapidSetting("g_anim")
-TMW.IE:RegisterRapidSetting("b_anim")
-TMW.IE:RegisterRapidSetting("a_anim")
+TMW.IE:RegisterRapidSetting("AnimColor")
 
 
 function Animations:AnchorTo_Dropdown()

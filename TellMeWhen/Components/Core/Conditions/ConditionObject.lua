@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -157,9 +157,6 @@ function ConditionObject:CompileUpdateFunction(Conditions)
 	end
 
 	self.UpdateMethod = "OnEvent"
-	if TMW.db.profile.DEBUG_ForceAutoUpdate then
-		self.UpdateMethod = "OnUpdate"
-	end
 	
 	-- Begin creating the final string that will be used to make the function.
 	local funcstr = "if (not event or \r\n"

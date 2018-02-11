@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -85,13 +85,18 @@ function Lua:SetError(code, kind, err)
 	
 	err = err:gsub("%[string .*%]", "line")
 	local line = tonumber(err:match("line:(%d+):"))
-	
-	code = code:gsub("\r\n", "\n"):gsub("\r", "\n")
-	local lineText = select(line, strsplit("\n", code)) or ""
-	
-	lineText = lineText:trim(" \t\r\n")
-	if #lineText > 25 then
-		lineText = lineText:sub(1, 25) .. "..."
+	local lineText
+
+	if line then
+		code = code:gsub("\r\n", "\n"):gsub("\r", "\n")
+		lineText = select(line, strsplit("\n", code)) or ""
+		
+		lineText = lineText:trim(" \t\r\n")
+		if #lineText > 25 then
+			lineText = lineText:sub(1, 25) .. "..."
+		end
+	else
+		lineText = ""
 	end
 	
 	err = "|cffee0000" .. kind .. " ERROR: " .. err:gsub("line:(%d+):", "line %1 (\"" .. lineText .. "\"):")
@@ -100,7 +105,7 @@ function Lua:SetError(code, kind, err)
 	Error:SetText(err)
 end
 
-function Lua:SetupEventDisplay(eventID)
+function Lua:GetEventDisplayText(eventID)
 	if not eventID then return end
 
 	local eventSettings = EVENTS:GetEventSettings(eventID)
@@ -118,9 +123,8 @@ function Lua:SetupEventDisplay(eventID)
 			code = "|cff808080<No Code/No Title>"
 		end
 	end
-
 	
-	EVENTS.EventHandlerFrames[eventID].DataText:SetText("|cffcccccc" .. L["EVENTHANDLER_LUA_LUA"] .. ":|r " .. code)
+	return ("|cffcccccc" .. L["EVENTHANDLER_LUA_LUA"] .. ":|r " .. code)
 end
 
 

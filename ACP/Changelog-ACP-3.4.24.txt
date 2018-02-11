@@ -1,8 +1,0 @@
-2015-12-05  sylvanaar  <sylvanaar@mindspring.com>
-
-[2992f6d83b39] [3.4.24]
-* ACP.lua:
-
-Make the window smaller and actually movable.
-
-

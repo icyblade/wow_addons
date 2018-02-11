@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -39,6 +39,8 @@ local SUG = TMW:NewModule("Suggester", "AceEvent-3.0", "AceComm-3.0", "AceSerial
 TMW.SUG = SUG
 
 
+local DEBOUNCE_TIMER = 0.15
+
 TMW.IE:RegisterUpgrade(62217, {
 	global = function(self)
 		-- These are both old and unused. Kill them.
@@ -62,16 +64,12 @@ TMW:RegisterCallback("TMW_CONFIG_ICON_TYPE_CHANGED", function(event, icon)
 end)
 
 function SUG:TMW_SPELLCACHE_STARTED()
-	SUG.SuggestionList.Status:Show()
-	SUG.SuggestionList.Speed:Show()
-	SUG.SuggestionList.Finish:Show()
+	SUG.SuggestionList.Caching:Show()
 end
 TMW:RegisterCallback("TMW_SPELLCACHE_STARTED", SUG)
 
 function SUG:TMW_SPELLCACHE_COMPLETED()
-	SUG.SuggestionList.Speed:Hide()
-	SUG.SuggestionList.Status:Hide()
-	SUG.SuggestionList.Finish:Hide()
+	SUG.SuggestionList.Caching:Hide()
 	
 	if SUG.onCompleteCache and SUG.SuggestionList:IsVisible() then
 		SUG.redoIfSame = 1
@@ -136,7 +134,7 @@ function SUG:SuggestingComplete(doSort)
 			buckets_meta.__mode = nil
 
 			-- Fill the bukkits.
-			sorterBucket(SUGpreTable, buckets)
+			sorterBucket(SUG.CurrentModule, SUGpreTable, buckets)
 
 			-- All this data is in the buckets now, so wipe SUGpreTable
 			-- so we can fill it after we sort the buckets.
@@ -222,6 +220,7 @@ function SUG:SuggestingComplete(doSort)
 		f.insert2 = nil
 		f.tooltipmethod = nil
 		f.tooltiparg = nil
+		f.tooltiptitlewrap = 1
 		f.tooltiptitle = nil
 		f.tooltiptext = nil
 		f.overrideInsertID = nil
@@ -476,7 +475,8 @@ local EditBoxHooks = {
 			SUG.Box = self
 			SUG.CurrentModule = newModule
 			SUG.SuggestionList.Header:SetText(SUG.CurrentModule.headerText)
-			SUG:SetStyle(self.SUG_inline)
+			SUG:SetInline(self.SUG_inline)
+			SUG.SuggestionList:SetParent(self.SUG_parent or TellMeWhen_IconEditor)
 			SUG:NameOnCursor()
 		end
 	end,
@@ -484,7 +484,7 @@ local EditBoxHooks = {
 		if self.SUGTimer then
 			self.SUGTimer:Cancel()
 		end
-		self.SUGTimer = C_Timer.NewTimer(0.2, function()
+		self.SUGTimer = C_Timer.NewTimer(DEBOUNCE_TIMER, function()
 			if userInput and self.SUG_Enabled then
 				SUG.redoIfSame = nil
 				SUG:NameOnCursor()
@@ -513,7 +513,8 @@ local EditBoxHooks = {
 -- @param inputType [string] The name of the suggestion list module to use.
 -- @param onlyOneEntry [boolean|nil] True to have the suggestion list hide after inserting an entry.
 -- @param inline [boolean|nil] True to cause the suggestion list to display underneath the editbox. Otherwise, will be attached to the IconEditor.
-function SUG:EnableEditBox(editbox, inputType, onlyOneEntry, inline)
+-- @param parent [Frame|nil] A frame to reparent the suggestion list to when active. Defaults to TellMeWhen_IconEditor
+function SUG:EnableEditBox(editbox, inputType, onlyOneEntry, inline, parent)
 	editbox.SUG_Enabled = 1
 
 	inputType = TMW.get(inputType)
@@ -524,6 +525,7 @@ function SUG:EnableEditBox(editbox, inputType, onlyOneEntry, inline)
 	editbox.SUG_type = inputType
 	editbox.SUG_inline = inline
 	editbox.SUG_onlyOneEntry = onlyOneEntry
+	editbox.SUG_parent = parent
 
 	if not editbox.SUG_hooked then
 		for k, v in pairs(EditBoxHooks) do
@@ -558,7 +560,6 @@ function SUG:ColorHelp(frame)
 		GameTooltip:AddLine(L["SUG_BUFFEQUIVS"], .2, .9, .2, 1)
 		GameTooltip:AddLine(L["SUG_DEBUFFEQUIVS"], .77, .12, .23, 1)
 		GameTooltip:AddLine(L["SUG_OTHEREQUIVS"], 1, .96, .41, 1)
-		GameTooltip:AddLine(L["SUG_MSCDONBARS"], 0, .44, .87, 1)
 		GameTooltip:AddLine(L["SUG_PLAYERSPELLS"], .41, .8, .94, 1)
 		GameTooltip:AddLine(L["SUG_CLASSSPELLS"], .96, .55, .73, 1)
 		GameTooltip:AddLine(L["SUG_PLAYERAURAS"], .79, .30, 1, 1)
@@ -582,11 +583,15 @@ function SUG:GetHeightForFrames(numFrames)
 	return (numFrames * TMW.SUG[1]:GetHeight()) + 6
 end
 
-function SUG:SetStyle(inline)
+function SUG:SetInline(inline)
 	local firstItem = TMW.SUG:GetFrame(1)
 	self.inline = inline
 
 	local List = SUG.SuggestionList
+
+	if List.fixLevelTimer then
+		List.fixLevelTimer:Cancel()
+	end
 
 	if inline then
 
@@ -594,18 +599,20 @@ function SUG:SetStyle(inline)
 		List.Header:Hide()
 		List.Help:Hide()
 
-		List:SetFrameLevel(100)
-		List:SetScale(0.85)
+		List:SetScale(0.95)
 		List:ClearAllPoints()
 		List:SetPoint("TOPLEFT", SUG.Box, "BOTTOMLEFT", 0, -2)
 		--List:SetPoint("TOPRIGHT", SUG.Box, "BOTTOMRIGHT", 0, -2)
 		--List:SetParent(SUG.Box)
 		List:SetHeight(SUG:GetHeightForFrames(INLINE_MAX_FRAMES))
-		List.Background:SetTexture(0.02, 0.02, 0.02, 0.970)
+		List.Background:SetColorTexture(0.02, 0.02, 0.02, 0.970)
+
+		List.fixLevelTimer = C_Timer.NewTicker(0.01, function() 
+			List:SetFrameLevel(SUG.Box:GetFrameLevel() + 5)
+		end)
 	else
 		firstItem:SetPoint("TOP", 0, -6 - TMW.SUG[1]:GetHeight())
 
-		List:SetFrameLevel(TMW.IE:GetFrameLevel() + 1)
 		List:SetScale(1)
 		List:ClearAllPoints()
 		List:SetPoint("TOPLEFT", TMW.IE, "TOPRIGHT", 1, 0)
@@ -614,7 +621,7 @@ function SUG:SetStyle(inline)
 
 		List.Header:Show()
 		List.Help:Show()
-		List.Background:SetTexture(0.05, 0.05, 0.05, 0.970)
+		List.Background:SetColorTexture(0.05, 0.05, 0.05, 0.970)
 	end
 end
 
@@ -876,7 +883,7 @@ function Module:Table_Get()
 	return SpellCache_Cache
 end
 
-function Module.Sorter_Bucket(suggestions, buckets)
+function Module:Sorter_Bucket(suggestions, buckets)
 	for i = 1, #suggestions do
 		local id = suggestions[i]
 
@@ -984,7 +991,7 @@ function Module:Entry_AddToList_1(f, id)
 		f.Name:SetText(name)
 		f.ID:SetText(id)
 
-		f.tooltipmethod = "SetSpellByID"
+		f.tooltipmethod = "TMW_SetSpellByIDWithClassIcon"
 		f.tooltiparg = id
 
 		f.insert = id
@@ -1103,7 +1110,7 @@ end
 function Module:Entry_AddToList_2(f, id)
 	if TMW.BE.casts[id] then
 		-- the entry is an equivalacy
-		-- id is the equivalency name (e.g. Tier11Interrupts)
+		-- id is the equivalency name (e.g. Stunned)
 		local equiv = id
 		id = TMW.EquivFirstIDLookup[equiv]
 

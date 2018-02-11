@@ -1,9 +1,9 @@
-﻿<Ui>
+<Ui>
 	<Button name="TellMeWhen_IconDragger" hidden="true" enableMouse="false" frameStrata="HIGH">
 		<Size x="30" y="30"/>
 		<Layers>
 			<Layer level="ARTWORK">
-				<Texture name="$parentIcon" parentKey="texture" file="Interface\Icons\INV_Misc_QuestionMark">
+				<Texture parentKey="texture" name="$parentIcon" file="Interface\Icons\INV_Misc_QuestionMark">
 					<Size x="30" y="30"/>
 				</Texture>
 			</Layer>
@@ -21,16 +21,5 @@
 				self.texture:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x/scale, y/scale)
 			</OnUpdate>
 		</Scripts>
-		<Frames>
-			<Frame name="$parentDropdown" inherits="TMW_DropDownMenuTemplate" parentKey="Dropdown">
-				<Scripts>
-					<OnLoad>
-						TMW:CInit(self, {
-							func = TMW.IconDragger.DropDownFunc,
-						})
-					</OnLoad>
-				</Scripts>
-			</Frame>
-		</Frames>
 	</Button>
 </Ui>

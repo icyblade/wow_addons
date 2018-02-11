@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -25,11 +25,7 @@ local function stopMoving(group)
 	isMoving = nil
 	
 	local GroupModule_GroupPosition = group:GetModuleOrModuleChild("GroupModule_GroupPosition")
-	GroupModule_GroupPosition:UpdatePositionAfterMovement()
-	
-	group:Setup()
-	
-	TMW.ACEOPTIONS:NotifyChanges()
+	GroupModule_GroupPosition:UpdatePositionAfterMovement(true)
 end
 
 	
@@ -56,7 +52,9 @@ local Module = TMW:NewClass("IconModule_GroupMover", "IconModule"){
 Module:SetScriptHandler("OnDragStart", function(Module, icon, button)
 	if button == "LeftButton" then
 		local group = icon:GetParent()
-		if not TMW.Locked and not group.Locked then
+		local GroupPosition = group:GetModuleOrModuleChild("GroupModule_GroupPosition")
+
+		if not TMW.Locked and GroupPosition and GroupPosition:CanMove() then
 
 			local GroupModule_Resizer = group:GetModuleOrModuleChild("GroupModule_Resizer")
 			if GroupModule_Resizer then

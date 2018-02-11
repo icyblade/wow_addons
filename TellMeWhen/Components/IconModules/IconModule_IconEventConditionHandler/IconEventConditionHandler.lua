@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -48,7 +48,7 @@ local function TMW_CNDT_OBJ_PASSING_CHANGED(event, ConditionObject, failed)
 		local matches = MapConditionObjectToEventSettings[ConditionObject]
 		if matches then
 			for eventSettings, icon in pairs(matches) do
-				icon:QueueEvent(eventSettings)
+				icon:QueueEvent(eventSettings.__proxyRef)
 				icon:ProcessQueuedEvents()
 			end
 		end
@@ -71,7 +71,7 @@ function Module:OnEnable()
 					matches = {}
 					MapConditionObjectToEventSettings[ConditionObject] = matches
 				end
-				matches[eventSettings] = icon
+				matches[TMW.C.EventHandler:Proxy(eventSettings, icon)] = icon
 				
 				TMW:RegisterCallback("TMW_CNDT_OBJ_PASSING_CHANGED", TMW_CNDT_OBJ_PASSING_CHANGED)
 			end
@@ -119,7 +119,7 @@ do
 
 		useDynamicTab = true,
 		ShouldShowTab = function(self)
-			local button = TellMeWhen_IconEditor.Events.EventSettingsContainer.IconEventOnCondition
+			local button = TellMeWhen_IconEditor.Pages.Events.EventSettingsContainer.IconEventOnCondition
 			
 			return button and button:IsShown()
 		end,

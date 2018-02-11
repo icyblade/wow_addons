@@ -1,4 +1,4 @@
-﻿--GAME_LOCALE = UnitName("player") == "Cybeloras" and "zhCN" --FOR TESTING
+--GAME_LOCALE = UnitName("player") == "Cybeloras" and "zhCN" --FOR TESTING
 local L = LibStub("AceLocale-3.0"):NewLocale("TellMeWhen", "enUS", true)
 
 -- WARNING! DO NOT EXPECT TO FIND ANY DECENT LEVEL OF ORGANIZATION IN THIS FILE, BECAUSE IT SIMPLY DOES NOT EXIST. MOVE ALONG.
@@ -20,27 +20,31 @@ L["CMD_PROFILE_INVALIDPROFILE_SPACES"] = "Tip: If the profile name contains spac
 L["PROFILE_LOADED"] = "Loaded profile: %s"
 
 L["DOMAIN_PROFILE"] = "Profile"
-L["DOMAIN_PROFILE_SWITCHTO"] = "Move this group to profile %q"
 L["DOMAIN_GLOBAL"] = "|cff00c300Global|r"
-L["DOMAIN_GLOBAL_SWITCHTO"] = "Make this group global"
-L["GLOBAL_GROUP_GENERIC_DESC"] = "|cff00c300Global|r groups are those that are be available to all your TellMeWhen profiles on this WoW account."
+L["GLOBAL_GROUP_GENERIC_DESC"] = "|cff00c300Global|r groups are available to all your TellMeWhen profiles on this WoW account."
 
-L["IE_NOLOADED"] = [[There isn't an icon currently loaded into the Icon Editor.
 
-To load an icon, right-click on it.
 
-If there are no icons visible on your screen, type '/tmw options' to view the settings of your groups.
+L["IE_NOLOADED_ICON"] = [[No icon loaded!]]
+L["IE_NOLOADED_ICON_DESC"] = [[To load an icon, right-click on it.
 
-From there, you can add a new group or configure an existing group to be available to your character's current class specialization.
+If there are no icons visible on your screen, click on the %s tab below.
+
+From there, you can add a new group or configure an existing group to be available.
 
 Type '/tmw' to leave configuration mode.]]
 
+L["IE_NOLOADED_GROUP"] = [[Select a group to load:]]
+
+
+
 L["ICON_TOOLTIP2NEW"] = [[|cff7fffffRight-click|r for icon options.
+|cff7fffffLeft-click and drag|r to move this group.
 |cff7fffffRight-click and drag|r to another icon to move/copy.
 |cff7fffffDrag|r spells or items onto the icon for quick setup.]]
 L["ICON_TOOLTIP2NEWSHORT"] = [[|cff7fffffRight-click|r for icon options.]]
 L["LDB_TOOLTIP1"] = "|cff7fffffLeft-click|r to toggle the group locks"
-L["LDB_TOOLTIP2"] = "|cff7fffffRight-click|r to show the main TMW options"
+L["LDB_TOOLTIP2"] = "|cff7fffffRight-click|r to show the Icon Editor"
 L["LOADERROR"] = "TellMeWhen_Options could not be loaded: "
 L["LOADINGOPT"] = "Loading TellMeWhen_Options."
 L["ENABLINGOPT"] = "TellMeWhen_Options is disabled. Enabling..."
@@ -55,22 +59,24 @@ L["IMPORTERROR_FAILEDPARSE"] = "There was an error processing the string. Ensure
 
 L["DBRESTORED_INFO"] = [[TellMeWhen has detected that its database was either empty or corrupted. This can be caused by a number of issues, the most common of which is WoW not exiting properly.
 
-TellMeWhen_Options maintains a backup of your database in case this happens since it is very unlikely that both TellMeWhen's and TellMeWhen_Options's databases will become corrupted in this way at the same time.
+TellMeWhen_Options maintains a backup of your database in case this happens. The current backup was created on:
+
+%s
+
+This backup has been restored.]]
 
 
-This backup, created from your session that began %s, has been restored.]]
-
-
-L["DIALOG_HEADER_CHANGELOG"] = "TellMeWhen Changelog"
+L["CHANGELOG"] = "Changelog"
+L["CHANGELOG_DESC"] = "Displays a list of changes made in current and past versions of TellMeWhen."
 L["CHANGELOG_LAST_VERSION"] = "Previous Installed Version"
 
 
 L["NOGROUPS_DIALOG_BODY"] = [[Your current TellMeWhen configuration and/or player specialization does not allow any TellMeWhen groups to be shown, so there is nothing to configure.
 
-If you would like to change the settings of an existing group or create a new group, open TellMeWhen's main options by typing '/tmw options' or click the button below.
+If you would like to change the settings of an existing group or create a new group, open TellMeWhen's group options by typing '/tmw options' or click the button below.
 
-Type '/tellmewhen' or '/tmw' to leave configuration mode.]]
-L["MAINOPTIONS_SHOW"] = "Group Options"
+Type '/tmw' to leave configuration mode.]]
+L["MAINOPTIONS_SHOW"] = "Show Main Options"
 
 L["GUIDCONFLICT_DESC_PART1"] = [[TellMeWhen has detected that the following things have the same globally-unique identifier (GUID). This can cause quite a few issues if you want to reference either one from another icon or group (E.g. making one the target of a meta icon).
 
@@ -97,35 +103,28 @@ All other icons in the group will be made unavailable for individual configurati
 
 You may wish to customize the group's layout direction and/or sorting options if you use it as a controlled group.]]
 L["ICONMENU_CTRLGROUP_UNAVAILABLE_DESC"] = [[The current icon type does not have the ability to control an entire group.]]
-
-
-
-L["UIPANEL_GROUP_QUICKSORT_DEFAULT"] = "Sort by ID"
-L["UIPANEL_GROUP_QUICKSORT_DEFAULT_DESC"] = "Quickly apply settings to sort the group by iconID. This is the default group behavior."
-L["UIPANEL_GROUP_QUICKSORT_DURATION"] = "Sort by Duration"
-L["UIPANEL_GROUP_QUICKSORT_DURATION_DESC"] = "Quickly apply settings to sort the group by duration."
-
+L["ICONMENU_CTRLGROUP_UNAVAILABLEID_DESC"] = [[Only the first icon in a group (icon ID 1) can be a group controller.]]
 
 
 L["ERROR_MISSINGFILE_REQFILE"] = "A required file"
-L["ERROR_MISSINGFILE"] = [[A complete restart of WoW is required to use TellMeWhen %s:
+L["ERROR_MISSINGFILE"] = [[A complete restart of WoW is required to use TellMeWhen %s.
 
-%s was not found.
+%s was not loaded. 
 
 Would you like to restart WoW now?]]
 L["ERROR_MISSINGFILE_NOREQ"] = [[A complete restart of WoW may be required to fully use TellMeWhen %s:
 
-%s was not found.
+%s was not loaded.
 
 Would you like to restart WoW now?]]
 L["ERROR_MISSINGFILE_OPT"] = [[A complete restart of WoW is required to configure TellMeWhen %s:
 
-%s was not found.
+%s was not loaded.
 
 Would you like to restart WoW now?]]
 L["ERROR_MISSINGFILE_OPT_NOREQ"] = [[A complete restart of WoW may be required to fully configure TellMeWhen %s:
 
-%s was not found.
+%s was not loaded.
 
 Would you like to restart WoW now?]]
 
@@ -147,32 +146,9 @@ L["ERROR_ANCHOR_CYCLICALDEPS"] = "%s was trying to anchor to %s, but the positio
 L["ERROR_NO_LOCKTOGGLE_IN_LOCKDOWN"] = "Cannot unlock TellMeWhen in combat if the %q option isn't enabled (type '/tmw options' to access this option)."
 L["ERROR_ACTION_DENIED_IN_LOCKDOWN"] = "Cannot do that in combat if the %q option isn't enabled (type '/tmw options' to access this option)."
 
-L["ERROR_NOTLOADED_ERROR"] = "TellMeWhen has failed to load! Are you missing a required library?"
 L["ERROR_NOTINITIALIZED_NO_LOAD"] = "TellMeWhen_Options cannot be loaded if TellMeWhen failed to initialize!"
 L["ERROR_NOTINITIALIZED_NO_ACTION"] = "TellMeWhen cannot perform that action if the addon failed to initialize!"
 L["ERROR_NOTINITIALIZED_OPT_NO_ACTION"] = "TellMeWhen_Options cannot perform that action if the addon failed to initialize!"
-L["ERROR_NOOPTIONSLOAD_INCOMBAT"] = [[Cannot load TellMeWhen's options while in combat if the %q option isn't enabled.
-
-They will automatically be loaded when you leave combat if this window is still open.]]
-L["ERROR_NOTINITIALIZED_INTERFACEPANEL_EXPLANATION"] = [[It looks like TellMeWhen or TellMeWhen_Options has failed to initialize.
-
-Because of this, TellMeWhen may not be able to function, and you will not be able to configure any of its settings.
-
-If you saw a message that said that a complete restart of WoW is required to use TMW, then please do so.
-
-If you did not see that message, then please enable Lua errors (%s > %s > %s) if you have not already, reload your UI, and post any errors that you get that mention TellMeWhen to a ticket at |cff7fffffhttp://wow.curseforge.com/addons/tellmewhen/create-ticket/|r
-
-I apologize for the inconvenience, but this is a rare occurrence, and any information about it that you can provide will help to get it fixed right away!
-
-Thank you for using TellMeWhen!]]
-
-L["ERROR_GAMEMENU_INTERFACE_OPTIONS_FUCKED"] = [[TellMeWhen's options have successfully loaded, but something happened that is preventing them from being displayed here correctly.
-
-Try closing the interface options (this window) and reopening them.
-
-If that doesn't work, then you can still access TellMeWhen's options by typing "/tmw options"
-
-Sorry about the inconvenience!]]
 
 
 
@@ -183,8 +159,10 @@ L["SAFESETUP_COMPLETE"] = "Safe & slow setup complete."
 L["SAFESETUP_FAILED"] = "Safe & slow setup FAILED: %s"
 
 L["LOCKED"] = "Locked"
+L["LOCKED2"] = "Position Locked."
 L["RESIZE"] = "Resize"
 L["RESIZE_TOOLTIP"] = [[|cff7fffffClick-and-drag|r to resize]] -- keep this like this, used by the icon editor
+L["RESIZE_TOOLTIP_IEEXTRA"] = [[Enable scaling in the General options.]]
 L["RESIZE_TOOLTIP_SCALEXY"] = [[|cff7fffffClick-and-drag|r to scale
 |cff7fffffHold Control|r to invert scale axis]]
 L["RESIZE_TOOLTIP_SCALEY_SIZEX"] = [[|cff7fffffClick-and-drag|r to scale]]
@@ -193,8 +171,6 @@ L["RESIZE_TOOLTIP_CHANGEDIMS"] = [[|cff7fffffRight-Click-and-drag|r to change nu
 
 L["RESIZE_GROUP_CLOBBERWARN"] = [[When shrinking a group using |cff7fffffRight-Click-and-drag|r, you may clobber some icons. These icons have been saved temporarily and will be restored if you increase the size again via |cff7fffffRight-Click-and-drag|r, but will be lost forever if you log out or reload your UI. ]]
 
-L["CONDITIONORMETA_CHECKINGINVALID"] = "Warning! Group %d, Icon %d is checking an invalid icon (Group %d, Icon %d)"
-L["CONDITIONORMETA_CHECKINGINVALID_GROUP"] = "Warning! Group %d is checking an invalid icon (Group %d, Icon %d)"
 L["WARN_DRMISMATCH"] = [[Warning! You are checking the diminishing returns on spells from two different known categories.
 
 All spells must be from the same diminishing returns category for the icon to function properly. The following categories and spells were detected:]]
@@ -204,33 +180,31 @@ L["FROMNEWERVERSION"] = "You have imported data that was created in a newer vers
 -- ICONMENU
 -- -------------
 
-L["ICONMENU_CHOOSENAME2"] = "Choose spell(s) to check"
+L["ICONMENU_CHOOSENAME3"] = "What to track"
 
-L["ICONMENU_CHOOSENAME_WPNENCH"] = "Choose enchant(s) to check"
-L["ICONMENU_CHOOSENAME_WPNENCH_DESC"] = [=[Enter the name(s) the weapon enchants you want this icon to monitor. You can add multiple entries by separating them with semicolons (;).
+L["ICONMENU_CHOOSENAME_WPNENCH_DESC"] = [=[Enter the name(s) the weapon imbues you want this icon to monitor. You can add multiple entries by separating them with semicolons (;).
 
-|cFFFF5959IMPORTANT|r: Enchant names must be entered exactly as they appear on the tooltip of your weapon while the enchant is active (e.g. "%s", not "%s").]=]
+|cFFFF5959IMPORTANT|r: Imbue names must be entered exactly as they appear on the tooltip of your weapon while the imbue is active (e.g. "%s", not "%s").]=]
 
-L["ICONMENU_CHOOSENAME_ITEMSLOT2"] = "Choose item(s) to check"
 L["ICONMENU_CHOOSENAME_ITEMSLOT_DESC"] = [=[Enter the Name, ID, or equipment slot of what you want this icon to monitor. You can add multiple entries (any combination of names, IDs, and equipment slots) by separating them with semicolons (;).
 
 Equipment slots are numbered indexes that correspond to an equipped item. If you change the item equipped in that slot, the icon will reflect that.
 
 |cff7fffffShift-click|r items and chat links or drag items to insert them into this editbox.]=]
 
-L["ICONMENU_CHOOSENAME_MULTISTATE"] = "Choose spell to check"
-L["ICONMENU_CHOOSENAME_ORBLANK"] = "|cff7fffffOR|r leave blank to track all"
+L["ICONMENU_CHOOSENAME_ORBLANK"] = "(leave |cff7fffffblank|r to track all)"
 L["ICONMENU_ENABLE"] = "Enabled"
 L["ICONMENU_ENABLE_DESC"] = "Icons will only function when they are enabled."
---L["CHOOSENAME_EQUIVS_TOOLTIP"] = [[You can select predefined sets of buffs, debuffs, spell casts, diminishing returns, or dispel types (Magic, Curse, etc.) from this menu to insert into the "%s" editbox.]]
-L["CHOOSENAME_DIALOG_DDDEFAULT"] = "Predefined Spell Sets/Dispel Types"
+L["ICONMENU_ENABLE_GROUP_DESC"] = "Groups will only function when they are enabled."
+L["ICONMENU_ENABLE_PROFILE"] = "Enabled for profile"
+L["ICONMENU_ENABLE_PROFILE_DESC"] = "Uncheck to disable the |cff00c300global|r group for the current profile."
+
 L["CHOOSENAME_DIALOG"] = [=[Enter the Name or ID of what you want this icon to monitor. You can add multiple entries (any combination of names, IDs, and equivalencies) by separating them with semicolons (;).
 
 You can omit a spell from an equivalency that you used by prefixing it with a dash, e.g. "Slowed; -Dazed".
 
 You can |cff7fffffShift-click|r spells/items/chat links or drag spells/items to insert them into this editbox.]=]
 L["CHOOSENAME_DIALOG_PETABILITIES"] = "|cFFFF5959PET ABILITIES|r must use SpellIDs."
-L["CHOOSENAME_DIALOG_MSCD"] = [=[Enter the Name or ID of what you want this icon to monitor. Only the first spell/item will be checked - semicolon-delimited lists are not valid for this icon type.]=]
 
 L["CHOOSEICON"] = "Choose an icon to check"
 L["CHOOSEICON_DESC"] = [=[|cff7fffffClick|r to choose an icon/group.
@@ -251,17 +225,17 @@ L["REQFAILED_ALPHA"] = "Opacity when failed"
 L["CONDITIONALPHA_METAICON"] = "Failed Conditions"
 L["CONDITIONALPHA_METAICON_DESC"] = [[This opacity will be used when conditions fail.
 
-This setting will be ignored if the icon is already hidden due to its %s settings.
+This setting will be ignored if the icon is already hidden due to another %s setting.
 
 Conditions can be configured in the %q tab.]]
 
 
-L["DURATIONALPHA_DESC"] = [[Set the opacity level that the icon should display at when these duration requirements fail.
+L["DURATIONALPHA_DESC"] = [[Set the opacity level that the icon should display at when the duration requirements fail.
 
-This setting will be ignored if the icon is already hidden due to its %s settings.]]
-L["STACKALPHA_DESC"] = [[Set the opacity level that the icon should display at when these stack requirements fail.
+This setting will be ignored if the icon is already hidden due to another %s setting.]]
+L["STACKALPHA_DESC"] = [[Set the opacity level that the icon should display at when the stack requirements fail.
 
-This setting will be ignored if the icon is already hidden due to its %s settings.]]
+This setting will be ignored if the icon is already hidden due to another %s setting.]]
 
 
 
@@ -298,7 +272,7 @@ L["ICONMENU_DOTWATCH_DESC"] = [[Attempts to track the buffs and debuffs that you
 
 Useful for tracking multi-dotting.
 
-This icon type MUST be used as a Group Controller - it cannot be a standalone icon.]]
+This icon type works best when used as a group controller.]]
 L["ICONMENU_DOTWATCH_GCREQ"] = "Must be a group controller"
 L["ICONMENU_DOTWATCH_GCREQ_DESC"] = [[This icon type must be a group controller in order to function. You cannot use it as a standalone icon.
 
@@ -307,10 +281,31 @@ L["ICONMENU_DOTWATCH_AURASFOUND_DESC"] = "Set the icon opacity level for when an
 L["ICONMENU_DOTWATCH_NOFOUND_DESC"] = "Set the icon opacity level for when none of the tracked buffs/debuffs are found."
 
 
-L["ICONMENU_BUFFCHECK"] = "Buff/Debuff Check"
-L["ICONMENU_BUFFCHECK_DESC"] = [[Checks if a buff is absent from any unit that you check.
 
-Use this icon type to check for missing raid buffs.
+L["ICONMENU_GUARDIAN"] = "Guardians"
+L["ICONMENU_GUARDIAN_DESC"] = [[Tracks your active guardians. These are minor units like Wild Imps for Warlocks.
+
+This icon type works best when used as a group controller.]]
+L["ICONMENU_GUARDIAN_TRIGGER"] = "Triggered by: %s"
+L["ICONMENU_GUARDIAN_CHOOSENAME_DESC"] = [[Enter the Name or NPC ID of the guardians you want this icon to monitor.
+
+You can add multiple entries (any combination of names and IDs) by separating them with semicolons (;).]]
+
+L["ICONMENU_GUARDIAN_EMPOWERED"] = "Empowered"
+L["ICONMENU_GUARDIAN_UNEMPOWERED"] = "Unempowered"
+
+L["ICONMENU_GUARDIAN_DUR"] = "Duration to Show"
+L["ICONMENU_GUARDIAN_DUR_GUARDIAN"] = "Guardian Only"
+L["ICONMENU_GUARDIAN_DUR_EMPOWER"] = "Empower Only"
+L["ICONMENU_GUARDIAN_DUR_EITHER"] = "Empower First"
+L["ICONMENU_GUARDIAN_DUR_EITHER_DESC"] = "If empowered, the duration of empower will be used if it is less than the remaining duration of the guardian. Otherwise, the duration of the guardian will be used."
+
+
+
+L["ICONMENU_BUFFCHECK"] = "Missing Buffs/Debuffs"
+L["ICONMENU_BUFFCHECK_DESC"] = [[Checks if an aura is absent from any of the units being watched.
+
+Use this icon type for things like checking for missing raid buffs.
 
 Most other situations should use the %q icon type.]]
 
@@ -319,19 +314,13 @@ L["ICONMENU_REACTIVE_DESC"] = [[Tracks the usability of reactive abilities.
 
 Reactive abilities are things like %s, %s, and %s - abilities that are only usable when certain conditions are met.]]
 
-L["ICONMENU_WPNENCHANT"] = "Weapon Enchant"
-L["ICONMENU_WPNENCHANT_DESC"] = [=[Tracks temporary weapon enchants.]=]
+L["ICONMENU_WPNENCHANT"] = "Weapon Imbue"
+L["ICONMENU_WPNENCHANT_DESC"] = [=[Tracks temporary weapon imbues.]=]
 
 L["ICONMENU_TOTEM"] = "Totem"
+L["ICONMENU_STATUE"] = "Monk Statue"
 L["ICONMENU_TOTEM_DESC"] = [[Tracks your totems.]]
-L["ICONMENU_RUNEOFPOWER_DESC"] = [[Tracks the runes from the %s talent.]]
-L["ICONMENU_MUSHROOMS"] = "%s"
-L["ICONMENU_MUSHROOMS_DESC"] = [[Tracks a %s.]]
-
-L["ICONMENU_MULTISTATECD"] = "Multi-state Ability"
-L["ICONMENU_MULTISTATECD_DESC"] = [[Tracks an ability with multiple states.
-
-This should be used when you want to track the multiple states and textures of a cooldown such as %s or %s.]]
+L["ICONMENU_TOTEM_GENERIC_DESC"] = [[Tracks your %s.]]
 
 
 L["ICONMENU_UNITCOOLDOWN"] = "Unit Cooldown"
@@ -403,12 +392,12 @@ L["ICONMENU_META_ICONMENUTOOLTIP"] = "(%d |4Icon:Icons;)"
 
 
 L["ICONTYPE_DEFAULT_HEADER"] = "Instructions"
-L["ICONTYPE_DEFAULT_INSTRUCTIONS"] = [[To get started configuring this icon, select an icon type from the %q dropdown menu above.
+L["ICONTYPE_DEFAULT_INSTRUCTIONS"] = [[To get started, select an icon type from the %q dropdown menu above.
 
-Remember that icons will only work when TellMeWhen is in its locked state, so type '/tmw' when you are finished with configuration.
+Icons only work when TellMeWhen is locked, so type '/tmw' when you are finished.
 
 
-As you configure TellMeWhen, make sure to read the tooltips for each setting. These tooltips often contain important information about the how the setting works!]]
+As you configure TellMeWhen, make sure to read the tooltips for each setting. These tooltips contain important information about the how the setting works!]]
 
 
 L["ICONMENU_VIEWREQ"] = "Incompatible Group Display Method"
@@ -420,19 +409,35 @@ Change the group's display method or create a new group to use this icon type.]]
 
 
 
-L["ICONMENU_SHOWWHEN"] = "Show States & Opacity"
-L["ICONMENU_SHOWWHEN_SHOWWHEN_WRAP"] = "Show when %s|r"
+L["ICONMENU_SHOWWHEN"] = "Opacity & Color"
 L["ICONMENU_SHOWWHEN_OPACITYWHEN_WRAP"] = "Opacity when %s|r"
-L["ICONMENU_SHOWWHEN_SHOW_GENERIC_DESC"] = "Set whether this icon should show for this icon state."
 L["ICONMENU_SHOWWHEN_OPACITY_GENERIC_DESC"] = "Set the opacity level that the icon should show at in this icon state."
 L["ICONMENU_USABLE"] = "Usable"
 L["ICONMENU_UNUSABLE"] = "Unusable"
 
+L["ICONMENU_ALLSPELLS"] = "All Spells Usable"
+L["ICONMENU_ALLSPELLS_DESC"] = "This state is active when all of the spells being tracked by this icon are ready on a particular unit."
+L["ICONMENU_ANYSPELLS"] = "Any Spells Usable"
+L["ICONMENU_ANYSPELLS_DESC"] = "This state is active when at least one of the spells being tracked by this icon is ready on a particular unit."
+L["ICONMENU_UNUSABLE_DESC"] = "This state is active when the above states are also not active. States with an opacity of 0% will never be active."
+
+L["ICONMENU_READY"] = "Ready"
+L["ICONMENU_NOTREADY"] = "Not Ready"
+L["ICONMENU_ONCOOLDOWN"] = "On Cooldown"
+L["ICONMENU_OORANGE"] = "Out of Range"
+L["ICONMENU_OOPOWER"] = "Out of Power"
+L["ICONMENU_OO_F"] = "Out of %s"
+
+L["ICONMENU_STATECOLOR"] = "Icon Tint & Texture"
+L["ICONMENU_STATECOLOR_DESC"] = [[|cff7fffffClick|r to set the tint of the icon's texture in this icon state.
+
+White is normal. Any other color will tint the texture to that color.
+
+You can also override the texture displayed on the icon while in this state.]]
+
 
 L["ICONMENU_COUNTING"] = "Timer running"
-L["ICONMENU_COUNTING_DESC"] = "Show the icon when the icon's timer is active."
 L["ICONMENU_NOTCOUNTING"] = "Timer not running"
-L["ICONMENU_NOTCOUNTING_DESC"] = "Show the icon when the icon's timer is not active."
 
 
 L["ICONMENU_BUFFTYPE"] = "Buff or Debuff"
@@ -441,16 +446,15 @@ L["ICONMENU_DEBUFF"] = "Debuff"
 L["ICONMENU_BOTH"] = "Either"
 
 L["ICONMENU_CHECKNEXT"] = "Expand sub-metas"
-L["ICONMENU_CHECKNEXT_DESC"] = [[Checking this box will cause this icon to expand all the icons of any meta icons that it might be checking at any level instead of just checking sub-meta icons as if they were just another normal icon.
+L["ICONMENU_CHECKNEXT_DESC"] = [[Checking this box will cause any meta icons being checked to be expanded into their component icons, repeating until no meta icons remain.
 
-In addition, this icon will not show any icons that have already been shown by another meta icon that updates before this one. Update order can be changed in the main and group options.]]
+In addition, this icon will not show any icons that have already been shown by another meta icon that updates before this one.]]
 
 L["ICONMENU_DISPEL"] = "Dispel Type"
-L["ICONMENU_CASTS"] = "Spell Casts"
 L["ICONMENU_DRS"] = "Diminishing Returns"
 
 L["ICONMENU_CUSTOMTEX"] = "Custom Texture"
-L["ICONMENU_CUSTOMTEX_DESC"] = [[You may override the texture shown by this icon on the following ways:
+L["ICONMENU_CUSTOMTEX_DESC"] = [[You may override the texture shown by this icon in the following ways:
 
 |cff00d1ffSpell Texture|r
 Enter the Name or ID of the spell that has the texture that you want to use.
@@ -474,7 +478,7 @@ L["ICONMENU_CUSTOMTEX_MOPAPPEND_DESC"] = [[|cff00d1ffTroubleshooting|r
 L["ICONMENU_COMPONENTICONS"] = "Component Icons & Groups"
 
 
-L["ICONMENU_UNITSTOWATCH"] = "Unit(s) to watch"
+L["ICONMENU_UNITSTOWATCH"] = "Who to watch"
 L["ICONMENU_UNITS"] = "Units"
 L["ICONMENU_UNIT_DESC"] = [[Enter the units to watch in this box. Units can be inserted from the suggestion list at the right, or advanced users can type in their own units.
 
@@ -498,6 +502,7 @@ L["ICONMENU_PETTARGET"] = "Pet's target"
 L["ICONMENU_MOUSEOVER"] = "Mouseover"
 L["ICONMENU_MOUSEOVERTARGET"] = "Mouseover's target"
 L["ICONMENU_VEHICLE"] = "Vehicle"
+L["ICONMENU_NAMEPLATE"] = "Nameplate"
 L["ICONMENU_GROUPUNIT_DESC"] = [[Group is a special unit in TellMeWhen that will track raid members if you are in a raid, or party members if you are in a party.
 
 There will never be any duplicated units if you are in a raid (whereas tracking "player; party; raid" has overlap when in a raid, causing party members to be checked twice.)]]
@@ -513,6 +518,10 @@ L["ICONMENU_PRESENT"] = "Present"
 L["ICONMENU_ABSENT"] = "Absent"
 --L["ICONMENU_ALWAYS"] = "Always"
 
+L["ICONMENU_ABSENTEACH"] = "Absent for Each Unit"
+L["ICONMENU_ABSENTEACH_DESC"] = [[Set the icon opacity level for each unit that does not have a spell cast present.
+
+If this is not set to Hidden and at least one unit being checked exists, the %s setting won't be used.]]
 L["ICONMENU_ABSENTONANY"] = "Any Absent"
 L["ICONMENU_ABSENTONANY_DESC"] = "Set the icon opacity level for when any unit being checked is missing all of the buffs/debuffs being checked."
 L["ICONMENU_PRESENTONALL"] = "All Present"
@@ -523,15 +532,16 @@ L["ICONMENU_PRESENTONANY_DESC"] = "Set the icon opacity level for when any unit 
 L["ICONMENU_ABSENTONALL"] = "All Absent"
 L["ICONMENU_ABSENTONALL_DESC"] = "Set the icon opacity level for when all units being checked are missing all of the buffs/debuffs being checked."
 
-L["ICONMENU_CNDTSHOWWHEN"] = "Show when conditions"
 L["ICONMENU_FAIL2"] = "Conditions Fail"
 L["ICONMENU_SUCCEED2"] = "Conditions Succeed"
 L["ICONMENU_ONFAIL"] = "On Fail"
 L["ICONMENU_ONSUCCEED"] = "On Succeed"
 
-L["ICONMENU_CASTSHOWWHEN"] = "Show when a cast is"
 L["ICONMENU_ONLYINTERRUPTIBLE"] = "Only Interruptible"
 L["ICONMENU_ONLYINTERRUPTIBLE_DESC"] = "Check this box to only show spell casts that are interruptible"
+
+L["ICONMENU_NOPOCKETWATCH"] = "Blank Texture for Unknown"
+L["ICONMENU_NOPOCKETWATCH_DESC"] = "Check this box to show no texture instead of the Pocketwatch texture."
 
 L["ICONMENU_ONLYMINE"] = "Only cast by me"
 L["ICONMENU_ONLYMINE_DESC"] = "Check this option to cause this icon to only check for buffs/debuffs that you cast"
@@ -556,12 +566,14 @@ L["ICONMENU_ALLOWGCD"] = "Allow Global Cooldown"
 L["ICONMENU_ALLOWGCD_DESC"] = [[Check this option to allow the timer to react to and show the global cooldown instead of simply ignoring it.]]
 
 
-L["ICONMENU_SHOWPBAR_DESC"] = "Shows a bar that is overlaid across the top half of the icon that will indicate the power still needed to cast the spell (or the power that you have when 'Fill bars up' is checked)"
-L["ICONMENU_SHOWCBAR_DESC"] = "Shows a bar that is overlaid across the bottom half of the icon that will indicate the cooldown/duration remaining (or the time that has passed if 'Fill bars up' is checked)"
+L["ICONMENU_SHOWPBAR_DESC"] = "Shows a bar across the top half of the icon that will display the power still needed to cast the spell."
+L["ICONMENU_SHOWCBAR_DESC"] = "Shows a bar across the bottom half of the icon that will display the icon's timer."
+L["ICONMENU_REVERSEBARS"] = "Flip"
+L["ICONMENU_REVERSEBARS_DESC"] = "Flips the origin point from the left to the right."
 L["ICONMENU_INVERTBARS"] = "Fill bar up"
-L["ICONMENU_INVERTCBAR_DESC"] = "Check this option to cause the overlay bar to fill up to cover the whole width of the icon as duration reaches zero."
-L["ICONMENU_INVERTPBAR_DESC"] = "Check this option to cause the overlay bar to fill up to cover the whole width of the icon as power become sufficient."
-L["ICONMENU_INVERTBARDISPLAYBAR_DESC"] = "Check this option to cause the bar to fill up to cover its whole width as duration reaches zero."
+L["ICONMENU_INVERTCBAR_DESC"] = "Causes the bar to fill up as duration reaches zero."
+L["ICONMENU_INVERTPBAR_DESC"] = "Causes the bar to fill up as power become sufficient."
+L["ICONMENU_INVERTBARDISPLAYBAR_DESC"] = "Causes the bar to fill up as its value reaches zero."
 L["ICONMENU_OFFS"] = "Offset"
 L["ICONMENU_FAKEMAX"] = "Artificial Maximum"
 L["ICONMENU_FAKEMAX_DESC"] = [[Set an artificial maximum value for the timer.
@@ -573,7 +585,7 @@ L["ICONMENU_BAROFFS"] = [[This amount will be added to the bar in order to offse
 
 Useful for custom indicators of when you should begin casting a spell to prevent a buff from falling off, or to indicate the power required to cast a spell and still have some left over for an interrupt.]]
 
-L["ICONMENU_BAR_COLOR_BACKDROP"] = "Backdrop Color/Opacity"
+L["ICONMENU_BAR_COLOR_BACKDROP"] = "Backdrop Color"
 L["ICONMENU_BAR_COLOR_BACKDROP_DESC"] = "Configure the color and opacity of the backdrop beind the bar."
 
 L["ICONMENU_BAR_COLOR_START"] = "Start Color"
@@ -582,15 +594,6 @@ L["ICONMENU_BAR_COLOR_MIDDLE"] = "Halfway Color"
 L["ICONMENU_BAR_COLOR_MIDDLE_DESC"] = "Color of the bar when the cooldown/duration is halfway complete."
 L["ICONMENU_BAR_COLOR_COMPLETE"] = "Completion Color"
 L["ICONMENU_BAR_COLOR_COMPLETE_DESC"] = "Color of the bar when the cooldown/duration is complete."
-L["ICONMENU_ENABLECOLORS"] = "Enable Color Overrides"
-L["ICONMENU_ENABLECOLORS_DESC"] = [[Check this setting to allow the configuration and usage of the three color settings below.
-
-If left unchecked, the color settings in TellMeWhen's main options will be used.]]
-L["ICONMENU_ENABLECOLORS_HELP"] = [[Hey there!
-
-I just wanted to let you know that you can easily copy these colors to other bar-style icons by |cff7fffffright-clicking and dragging|r this icon to another.]]
-L["ICONMENU_COPYCOLORS_BARDISPLAY"] = "Copy Bar Colors"
-L["ICONMENU_COPYCOLORS_BARDISPLAY_DESC"] = "Copies the three bar colors of %s to %s."
 
 L["ICONMENU_REACT"] = "Unit Reaction"
 L["ICONMENU_FRIEND"] = "Friendly"
@@ -635,9 +638,7 @@ L["FIRE"] = "Fire"
 L["EARTH"] = "Earth"
 L["WATER"] = "Water"
 L["AIR"] = "Air"
-L["MUSHROOMS"] = "Mushrooms to check"
 L["MUSHROOM"] = "Mushroom %d"
-L["RUNESOFPOWER"] = "Runes to check"
 L["RUNEOFPOWER"] = "Rune %d"
 L["GENERICTOTEM"] = "Totem %d"
 L["RUNES"] = "Rune(s) to check"
@@ -656,9 +657,7 @@ L["ICONMENU_SHOWTTTEXT_STACKS_DESC"] = "Causes the buff/debuff's stacks to be re
 L["ICONMENU_SHOWTTTEXT_FIRST"] = "First non-zero variable"
 L["ICONMENU_SHOWTTTEXT_FIRST_DESC"] = [[Causes the first non-zero variable assoeciated with the buff/debuff to be reported as the icon's stacks.
 
-Usually this will be the correct variable if you desire one of the aura's variables.
-
-If tracking %s, you need to explicitly watch for Variable #1]]
+Usually this will be the correct variable if you desire one of the aura's variables.]]
 L["ICONMENU_SHOWTTTEXT_VAR"] = "Only Variable #%d"
 L["ICONMENU_SHOWTTTEXT_VAR_DESC"] = [[Causes only this variable to be reported as the icon's stacks.
 
@@ -734,12 +733,10 @@ L["ICONMENU_STACKS_MIN_DESC"] = "Minimum number of stacks needed to show the ico
 L["ICONMENU_STACKS_MAX_DESC"] = "Maximum number of stacks allowed to show the icon"
 
 L["DURATION"] = "Duration"
-L["DURATIONPERC"] = "Duration Percentage"
 L["DURATIONPANEL_TITLE2"] = "Duration Requirements"
 L["ICONMENU_DURATION_MIN_DESC"] = "Minimum duration needed to show the icon, in seconds"
 L["ICONMENU_DURATION_MAX_DESC"] = "Maximum duration allowed to show the icon, in seconds"
 
-L["CONDITION_TIMERS_HEADER"] = "Timers"
 L["CONDITION_TIMERS_SUCCEED_DESC"] = "Duration of a timer to set on the icon when conditions begin succeeding"
 L["CONDITION_TIMERS_FAIL_DESC"] = "Duration of a timer to set on the icon when conditions begin failing"
 
@@ -765,6 +762,8 @@ L["ICONMENU_HIDEUNEQUIPPED"] = "Hide when slot lacks weapon"
 L["ICONMENU_HIDEUNEQUIPPED_DESC"] = "Check this to force the icon to be hidden if the weapon spot being checked does not have a weapon in it, or if that slot has a shield or an off-hand frill."
 L["ICONMENU_USEACTIVATIONOVERLAY"] = "Check activation border"
 L["ICONMENU_USEACTIVATIONOVERLAY_DESC"] = "Check this to cause the presence of the sparkly yellow border around an action to force the icon to act as usable."
+L["ICONMENU_ONLYACTIVATIONOVERLAY"] = "Require activation border"
+L["ICONMENU_ONLYACTIVATIONOVERLAY_DESC"] = "Check this to require the presence of the sparkly yellow border around an action to allow the icon to act as usable."
 L["ICONMENU_ONLYEQPPD"] = "Only if equipped"
 L["ICONMENU_ONLYEQPPD_DESC"] = "Check this to make the icon show only if the item is equipped."
 L["ICONMENU_SHOWSTACKS"] = "Show stacks"
@@ -813,16 +812,17 @@ When unlocked, you can move/size icon groups and right click individual icons to
 You can also type /tellmewhen or /tmw to lock/unlock.]]
 L["UIPANEL_MAINOPT"] = "Main Options"
 L["UIPANEL_GROUPS"] = "Groups"
+L["UIPANEL_GROUPS_DROPDOWN"] = "Select or Create a Group..."
+L["UIPANEL_GROUPS_DROPDOWN_DESC"] = [[Use this menu to load other groups to configure, or to create a new group.
+
+You can also |cff7fffffRight-click|r an icon on your screen to load that icon's group.]]
 L["UIPANEL_GROUPS_GLOBAL"] = "|cff00c300Global|r Groups"
-L["UIPANEL_GROUPS_DESC"] = "Settings for each group in this TellMeWhen profile."
-L["UIPANEL_GROUPS_GLOBAL_DESC"] = "Settings for the groups that are available to all your TellMeWhen profiles on this WoW account."
 
 L["UIPANEL_PROFILES"] = "Profiles"
 
-L["UIPANEL_GROUPTYPE"] = "Group Display Method"
-L["UIPANEL_GROUPTYPE_DESC"] = "Choose how you would like icons within this group to be displayed."
+L["UIPANEL_GROUPTYPE"] = "Display Method"
 L["UIPANEL_GROUPTYPE_ICON"] = "Icon"
-L["UIPANEL_GROUPTYPE_ICON_DESC"] = [[Displays the icons in the group using TellMeWhen's traditional icon display.]]
+L["UIPANEL_GROUPTYPE_ICON_DESC"] = [[Displays the icons in the2 group using TellMeWhen's traditional icon display.]]
 L["UIPANEL_GROUPTYPE_BAR"] = "Bar"
 L["UIPANEL_GROUPTYPE_BAR_DESC"] = [[Displays the icons in the group with progress bars attached to the icons.]]
 L["UIPANEL_GROUPTYPE_BARV"] = "Vertical Bar"
@@ -843,11 +843,8 @@ L["UIPANEL_BAR_BORDERCOLOR_DESC"] = "Change the color of the icon and bar border
 
 
 L["UIPANEL_ICONS"] = "Icons"
-L["UIPANEL_COLORS"] = "Colors"
-L["UIPANEL_COLORS_DESC"] = "Settings that control the coloring/tinting of icons based on their attributes."
-L["UIPANEL_ENABLEGROUP"] = "Enable Group"
-L["UIPANEL_ENABLEGROUP_FORPROFILE"] = "Enable Group for profile %s"
 L["UIPANEL_GROUPNAME"] = "Rename Group"
+L["UIPANEL_DIMENSIONS"] = "Dimensions"
 L["UIPANEL_ROWS"] = "Rows"
 L["UIPANEL_COLUMNS"] = "Columns"
 L["UIPANEL_GROUPALPHA"] = "Group Opacity"
@@ -859,25 +856,22 @@ Set this setting to 0 if you want to hide the entire group will still allowing i
 
 L["UIPANEL_ONLYINCOMBAT"] = "Only show in combat"
 L["UIPANEL_SPEC"] = "Dual Spec"
-L["UIPANEL_SPEC_DESC"] = "Checks whether you are in your primary or secondary specialization."
-L["UIPANEL_TREE"] = "Talent Tree"
 L["UIPANEL_SPECIALIZATION"] = "Talent Specialization"
 L["UIPANEL_SPECIALIZATIONROLE"] = "Specialization Role"
 L["UIPANEL_SPECIALIZATIONROLE_DESC"] = "Checks the role (tank, heal, or DPS) that your current talent specialization fulfils."
-L["UIPANEL_TREE_DESC"] = "Check to allow this group to show when this talent tree is active, or uncheck to cause it to hide when it is not active."
+L["UIPANEL_TREE_DESC"] = "Check to allow this group to show when this specialization is active, or uncheck to cause it to hide when it is not active."
 L["TREEf"] = "Tree: %s"
 L["UIPANEL_ROLE_DESC"] = "Check to allow this group to show when your current specialization serves this role."
 L["ROLEf"] = "Role: %s"
 L["UIPANEL_PTSINTAL"] = "Points in talent"
 L["UIPANEL_TALENTLEARNED"] = "Talent learned"
+L["UIPANEL_PVPTALENTLEARNED"] = "PvP Talent learned"
 L["UIPANEL_GLYPH"] = "Glyph active"
 L["UIPANEL_GLYPH_DESC"] = "Checks if you have a particular glyph active."
 L["UIPANEL_PRIMARYSPEC"] = "Primary Spec"
 L["UIPANEL_SECONDARYSPEC"] = "Secondary Spec"
 L["UIPANEL_GROUPRESET"] = "Reset Position"
 L["UIPANEL_TOOLTIP_GROUPRESET"] = "Reset this group's position and scale"
-L["UIPANEL_ALLRESET"] = "Reset all"
-L["UIPANEL_TOOLTIP_ALLRESET"] = "Reset ALL SETTINGS of ALL ICONS AND GROUPS, as well as any other settings."
 L["UIPANEL_LOCKUNLOCK"] = "Lock/Unlock AddOn"
 L["UIPANEL_COMBATCONFIG"] = "Allow config in combat"
 L["UIPANEL_COMBATCONFIG_DESC"] = [[Enable this to allow configuration of TellMeWhen while in combat.
@@ -888,34 +882,57 @@ This option is account-wide: all of your profiles will share this setting.
 
 |cffff5959Changes will only be reflected after you |cff7fffffreload your UI|cffff5959.|r]]
 L["UIPANEL_BARTEXTURE"] = "Bar Texture"
-L["UIPANEL_BARIGNOREGCD"] = "Bars Ignore GCD"
-L["UIPANEL_BARIGNOREGCD_DESC"] = "If checked, cooldown bars will not change values if the cooldown triggered is a global cooldown"
-L["UIPANEL_CLOCKIGNOREGCD"] = "Timers Ignore GCD"
-L["UIPANEL_CLOCKIGNOREGCD_DESC"] = "If checked, timers and the cooldown clock will not trigger from a global cooldown"
+L["UIPANEL_USE_PROFILE"] = "Use Profile Setting"
+L["UIPANEL_PERFORMANCE"] = "Performance"
 L["UIPANEL_UPDATEINTERVAL"] = "Update Interval"
 L["UIPANEL_TOOLTIP_UPDATEINTERVAL"] = [[Sets how often (in seconds) icons are checked for show/hide, alpha, conditions, etc.
 
-Zero is as fast as possible. Lower values may have a slight impact on framerate for low-end computers.]]
+Zero is as fast as possible (every frame). Lower values may have a slight impact on framerate for low-end computers.]]
 L["UIPANEL_EFFTHRESHOLD"] = "Buff Efficiency Threshold"
-L["UIPANEL_EFFTHRESHOLD_DESC"] = "Sets the minimum number of buffs/debuffs to switch to a more efficient mode of checking them when there are a high number. Note that once the number of auras being checked exceeds this number, older auras will be prioritized instead of priority based on the order in which they were entered."
-L["UIPANEL_ICONSPACINGX"] = "Horizontal Icon Spacing"
-L["UIPANEL_ICONSPACINGY"] = "Vertical Icon Spacing"
-L["UIPANEL_ICONSPACING_DESC"] = "Distance that icons within a group are away from each other"
-L["UIPANEL_ADDGROUP"] = "+ Add Another Group +"
-L["UIPANEL_ADDGROUP_DESC"] = "The new group will be assigned the next available groupID"
+L["UIPANEL_EFFTHRESHOLD_DESC"] = [[Sets a threshold based on the number of buffs/debuffs configured to be checked by buff/debuff icons.
+
+When this threshold is surpassed by an icon's configuration, two things will happen:
+
+|cff7fffff1)|r The icon will switch to a scanning method that is faster for high amounts of data (but slower for low amounts).
+
+|cff7fffff2)|r As a consequence of #1, scanning order will be based on the order of buffs/debuff as they are shown on unit frames, instead of priority based on the order in which they were entered in configuration.
+
+The default for this setting is 15. ]]
+
+
+L["UIPANEL_ENABLEBACKUP"] = "Maintain Backup Settings"
+L["UIPANEL_ENABLEBACKUP_DESC"] = [[When enabled, TellMeWhen will also save your settings in TellMeWhen_Options' settings.
+
+If TellMeWhen's settings become unreadable, which can happen occasionally to any addon settings when WoW doesn't exit properly, it is likely that this second copy of your settings will be just fine. TellMeWhen will automatically restore this copy when this happens.
+
+This process does require that TMW save and load your settings twice, which can cause slightly longer load times. If you already maintain backups on your computer of your WoW addon settings, you can turn this off.]]
+
+L["UIPANEL_ENABLEIMPORTBACKUP"] = "Enable Fresh Import Source"
+L["UIPANEL_ENABLEIMPORTBACKUP_DESC"] = [[When enabled, TellMeWhen creates a copy of your settings when TellMeWhen_Options is loaded.
+
+This copy can be used as an import source for icons, groups, and other data that will reflect the state of your settings before any changes were made in the current session.
+
+This does not impact CPU usage, but will slightly increase memory usage of TellMeWhen_Options and therefore can have a negative impact on older systems with 2GB of RAM or less.]]
+
+
+L["UIPANEL_ICONSPACING"] = "Icon Spacing"
+L["UIPANEL_ICONSPACINGX"] = "Horizontal"
+L["UIPANEL_ICONSPACINGY"] = "Vertical"
+L["UIPANEL_ICONSPACING_DESC"] = "Distance between each icon within the group."
+L["UIPANEL_ADDGROUP2"] = "New %s Group"
+L["UIPANEL_ADDGROUP2_DESC"] = "|cff7fffffClick|r to add a new %s group."
 L["UIPANEL_DELGROUP"] = "Delete this Group"
-L["UIPANEL_DELGROUP_DESC2"] = "Hold |cff7fffffCtrl|r to bypass confirmation."
-L["UIPANEL_GROUPMOVEUP"] = "Move up"
-L["UIPANEL_GROUPMOVEUP_DESC"] = "Shifts this group's groupID up by one"
-L["UIPANEL_GROUPMOVEDOWN"] = "Move Down"
-L["UIPANEL_GROUPMOVEDOWN_DESC"] = "Shifts this group's groupID down by one"
-L["UIPANEL_TOOLTIP_ENABLEGROUP"] = "Show and enable this group"
-L["UIPANEL_TOOLTIP_ENABLEGROUP_GLOBAL_DESC"] = "Show and enable this group for this profile. Changing this setting will not affect your other profiles."
+
+
+L["CONFIRM_HEADER"] = "Are you sure?"
+
+L["CONFIRM_DELGROUP"] = "Delete Group"
+L["CONFIRM_DELETE_GENERIC_DESC"] = "%s will be deleted."
+
+
 L["UIPANEL_TOOLTIP_ROWS"] = "Set the number of rows in this group"
 L["UIPANEL_TOOLTIP_COLUMNS"] = "Set the number of columns in this group"
 L["UIPANEL_TOOLTIP_ONLYINCOMBAT"] = "Check to cause this group to only be shown in combat"
-L["UIPANEL_TOOLTIP_PRIMARYSPEC"] = "Check to show this group while your primary spec is active"
-L["UIPANEL_TOOLTIP_SECONDARYSPEC"] = "Check to show this group while your secondary spec is active"
 
 
 L["UIPANEL_DRAWEDGE"] = "Highlight timer edge"
@@ -930,124 +947,96 @@ L["UIPANEL_HIDEBLIZZCDBLING_DESC"] = [[Disables Blizzard's pulse effect on coold
 This effect was added by Blizzard in patch 6.2.]]
 
 
+L["UIPANEL_SHOWCONFIGWARNING"] = "Show config mode warning"
+
+L["UIPANEL_ALLOWSCALEIE"] = "Allow Icon Editor Scaling"
+L["UIPANEL_ALLOWSCALEIE_DESC"] = [[By default, resizing the Icon Editor is disabled in order to achieve a clean, pixel-perfect layout.
+
+If you don't care about this and would rather be able to resize it yourself, enable this setting.]]
+
 L["UIPANEL_WARNINVALIDS"] = "Warn about invalid icons"
+L["UIPANEL_WARNINVALIDS_DESC"] = [[If this setting is enabled, TellMeWhen when warn you when it detects invalid configurations in your icons.
 
-L["UIPANEL_DRDURATION"] = "DR Duration"
-L["UIPANEL_DRDURATION_DESC"] = [[Set the duration that diminishing returns last.
-
-The official time stated by Blizzard is 15 seconds, but in many cases, this can be too short and will cause your DR icons to report completed DR when it isn't quite done. You may wish to add a second or two to compensate for that. TellMeWhen's default is 17 seconds.
-
-This option is account-wide: all of your profiles will share this setting.]]
+It is HIGHLY RECOMMENDED that you keep this setting enabled, as some of these configuration errors can cause particularly poor performance]]
 
 
 L["UIPANEL_GROUPSORT"] = "Icon Sorting"
-L["UIPANEL_GROUPSORT_DESC"] = "Contains settings for sorting an positioning icons within a group based on their atributes."
-L["UIPANEL_GROUPSORT_METHODNAME"] = "Icon Sort Priority %d"
-L["UIPANEL_GROUPSORT_METHODNAME_DESC"] = "This will be used as the number %d priority when sorting icons to be positioned within a group."
-L["UIPANEL_GROUPSORT_SORTASCENDING"] = "Low"
-L["UIPANEL_GROUPSORT_SORTASCENDING_DESC"] = "Check to sort this attribute from low to high values."
-L["UIPANEL_GROUPSORT_SORTDESCENDING"] = "High"
-L["UIPANEL_GROUPSORT_SORTDESCENDING_DESC"] = "Check to sort this attribute from high to low values."
 
-L["UIPANEL_GROUPSORT_METHODDISABLED_DESC"] = "|TInterface\\AddOns\\TellMeWhen\\Textures\\Alert:0:2|tThis sort method is disabled because a method above it is sorting by Icon ID, so this method will never be reached and used in sorting."
+L["UIPANEL_GROUPSORT_ALLDESC"] = [[|cff7fffffClick|r to change the direction of this sort priority.
+|cff7fffffClick-and-drag|r to rearrange.
+
+Drag to the bottom to delete.]]
+
+L["UIPANEL_GROUPSORT_ADD"] = "Add Priority"
+L["UIPANEL_GROUPSORT_ADD_DESC"] = "Add a new icon sorting priority to this group."
+L["UIPANEL_GROUPSORT_ADD_NOMORE"] = "No Available Priorities"
+L["UIPANEL_GROUPSORT_PRESETS"] = "Choose Preset..."
+L["UIPANEL_GROUPSORT_PRESETS_DESC"] = "Choose from a list of preset sorting priorities to apply to this icon."
 
 L["UIPANEL_GROUPSORT_id"] = "Icon ID"
 L["UIPANEL_GROUPSORT_id_DESC"] = "Sorts the group by the ID numbers of its icons."
+L["UIPANEL_GROUPSORT_id_1"] = "Low IDs first"
+L["UIPANEL_GROUPSORT_id_-1"] = "High IDs first"
+
 L["UIPANEL_GROUPSORT_duration"] = "Duration"
 L["UIPANEL_GROUPSORT_duration_DESC"] = "Sorts the group by the duration remaining on its icons."
-L["UIPANEL_GROUPSORT_alpha"] = "Opacity (Ignore %s)"
-L["UIPANEL_GROUPSORT_alpha_DESC"] = "Sorts the group by the opacity of its icons, ignoring whether or not icons are hidden by the %s setting."
-L["UIPANEL_GROUPSORT_visiblealpha"] = "Opacity (Respect %s)"
-L["UIPANEL_GROUPSORT_visiblealpha_DESC"] = "Sorts the group by the opacity of its icons, using whatever opacity the icon is actually visible at."
-L["UIPANEL_GROUPSORT_shown"] = "Shown (Ignore %s)"
-L["UIPANEL_GROUPSORT_shown_DESC"] = "Sorts the group by whether or not an icon is shown, ignoring whether or not icons are hidden by the %s setting."
-L["UIPANEL_GROUPSORT_visibleshown"] = "Shown (Respect %s)"
-L["UIPANEL_GROUPSORT_visibleshown_DESC"] = "Sorts the group by whether or not an icon is visible to you."
+L["UIPANEL_GROUPSORT_duration_1"] = "Low duration first"
+L["UIPANEL_GROUPSORT_duration_-1"] = "High duration first"
+
+L["UIPANEL_GROUPSORT_alpha"] = "Opacity"
+L["UIPANEL_GROUPSORT_alpha_DESC"] = "Sorts the group by the opacity of its icons."
+L["UIPANEL_GROUPSORT_alpha_1"] = "Low opacity first"
+L["UIPANEL_GROUPSORT_alpha_-1"] = "High opacity first"
+
+L["UIPANEL_GROUPSORT_value"] = "Value"
+L["UIPANEL_GROUPSORT_value_DESC"] = "Sorts the group by progress bar value. This is the value that the %s icon type provides."
+L["UIPANEL_GROUPSORT_value_1"] = "Low value first"
+L["UIPANEL_GROUPSORT_value_-1"] = "High value first"
+
+L["UIPANEL_GROUPSORT_valuep"] = "Value Percent"
+L["UIPANEL_GROUPSORT_valuep_DESC"] = "Sorts the group by progress bar value percentage. This is the value that the %s icon type provides."
+L["UIPANEL_GROUPSORT_valuep_1"] = "Low value % first"
+L["UIPANEL_GROUPSORT_valuep_-1"] = "High value % first"
+
+L["UIPANEL_GROUPSORT_shown"] = "Shown"
+L["UIPANEL_GROUPSORT_shown_DESC"] = "Sorts the group by whether or not an icon is shown."
+L["UIPANEL_GROUPSORT_shown_1"] = "Hidden icons first"
+L["UIPANEL_GROUPSORT_shown_-1"] = "Shown icons first"
+
 L["UIPANEL_GROUPSORT_stacks"] = "Stacks"
 L["UIPANEL_GROUPSORT_stacks_DESC"] = "Sorts the group by the stacks of each icon."
+L["UIPANEL_GROUPSORT_stacks_1"] = "Low stacks first"
+L["UIPANEL_GROUPSORT_stacks_-1"] = "High stacks first"
+
+L["UIPANEL_GROUPSORT_fakehidden"] = "%s"
+L["UIPANEL_GROUPSORT_fakehidden_DESC"] = "Sorts the group by the state of the %q setting."
+L["UIPANEL_GROUPSORT_fakehidden_1"] = "Always hidden last"
+L["UIPANEL_GROUPSORT_fakehidden_-1"] = "Always hidden first"
+
+
+L["UIPANEL_GROUP_QUICKSORT_DEFAULT"] = "Sort by ID"
+L["UIPANEL_GROUP_QUICKSORT_DURATION"] = "Sort by Duration"
+L["UIPANEL_GROUP_QUICKSORT_SHOWN"] = "Shown icons first"
 
 
 
-L["COLORNAMES"] = "Class Colored Names"
-L["COLORNAMES_DESC"] = "Check in order to attempt to color the names of units in text displays and text icon event handlers."
-L["ALWAYSSUBLINKS"] = "Always Substitute Links"
-L["ALWAYSSUBLINKS_DESC"] = "By default, spell/item links will only be substituted into text event outputs. Check this setting to cause links to be substituted everywhere, including icon bind/label text."
 
-
-L["COLOR_DEFAULT"] = "*Global Colors*"
-L["COLOR_RESET_DESC"] = "Reset this setting to default values"
 L["COLOR_MSQ_COLOR"] = "Color Masque border"
 L["COLOR_MSQ_COLOR_DESC"] = "Checking this will cause the border of a Masque skin (if the skin you are using has a border) to be colored."
 L["COLOR_MSQ_ONLY"] = "Only color Masque border"
 L["COLOR_MSQ_ONLY_DESC"] = "Checking this will cause ONLY the border of a Masque skin (if the skin you are using has a border) to colored. Icons will NOT be colored"
-L["COLOR_IGNORE_GCD"] = "Colors ignore GCD"
-L["COLOR_IGNORE_GCD_DESC"] = "Checking this will prevent icon colors from changing simply because of the global cooldown."
-L["COLOR_OVERRIDEDEFAULT"] = "Use"
-L["COLOR_OVERRIDEDEFAULT_DESC"] = "Check this to override the *Global Colors* settings and use this setting instead."
-L["COLOR_HEADER_DEFAULT"] = [[These colors will be used for any icon type that does not override them in the type's color settings.
-
-Solid white causes no change in the texture. Solid black will cause the texture to be sold black. Any gray or color in between will tint the icon.]]
-L["COLOR_HEADER"] = [[These colors will be used for %s icons if their %q settings are checked.
-
-Solid white causes no change in the texture. Solid black will cause the texture to be sold black. Any gray or color in between will tint the icon.]]
-L["COLOR_DESATURATE"] = "Grey"
-L["COLOR_DESATURATE_DESC"] = "Check to desaturate the icon when this color is used, removing all color and making the icon grayscale."
-L["COLOR_COLOR"] = "Color"
 
 
-L["COLOR_CBC"] 		 = "Cooldown Bar - Complete"	-- cooldown bar complete
-L["COLOR_CBC_DESC"]  = "Color of the cooldown/duration overlay bar when the cooldown/duration is complete"	-- cooldown bar complete
-L["COLOR_CBM"] 		 = "Cooldown Bar - Half"	-- cooldown bar middle
-L["COLOR_CBM_DESC"]  = "Color of the cooldown/duration overlay bar when the cooldown/duration is half complete"	-- cooldown bar middle
-L["COLOR_CBS"] 		 = "Cooldown Bar - Start"	-- cooldown bar start
-L["COLOR_CBS_DESC"]  = "Color of the cooldown/duration overlay bar when the cooldown/duration has just begun"	-- cooldown bar start
 
-L["COLOR_OOR"]		 = "Out of Range"	-- out of range
-L["COLOR_OOR_DESC"]	 = "Color of the icon when you are not in range to use an ability."	-- out of range
-L["COLOR_OOM"]		 = "Out of Mana"	-- out of mana
-L["COLOR_OOM_DESC"]	 = "Color of the icon when you lack the power to use an ability."	-- out of mana
-L["COLOR_OORM"] 	 = "Out of Range & Mana"	-- out of range and mana
-L["COLOR_OORM_DESC"] = "Color of the icon when you lack the power and are not in range to use an ability."	-- out of range and mana
+L["COLOR_OVERRIDE_GROUP"] = "Override Group Color"
+L["COLOR_OVERRIDE_GROUP_DESC"] = [[Check to configure color independent of the color specified for the icon's group.]]
 
-L["COLOR_CTA"]		 = "Counting, Timer Shown, Always Shown"	-- counting with timer always
-L["COLOR_CTA_DESC"]	 = [[Color of the icon when:
+L["COLOR_USECLASS"] = "Use Class Colors"
+L["COLOR_USECLASS_DESC"] = [[Check to color the bar using the class colors of the unit being checked.]]
 
-The timer is active (unusable/present),
-%q is enabled,
-Both %q settings are checked]]
+L["COLOR_OVERRIDE_GLOBAL"] = "Override Global Color"
+L["COLOR_OVERRIDE_GLOBAL_DESC"] = [[Check to configure colors independent of the globally defined colors.]]
 
-L["COLOR_COA"]		 = "Counting, Timer Hidden, Always Shown"	-- counting withOUT timer always
-L["COLOR_COA_DESC"]	 = [[Color of the icon when:
-
-The timer is active (unusable/present),
-%q is disabled,
-Both %q settings are checked]]
-
-L["COLOR_CTS"]		 = "Counting, Timer Shown, Sometimes Shown"	-- counting with timer somtimes
-L["COLOR_CTS_DESC"]	 = [[Color of the icon when:
-
-The timer is active (unusable/present),
-%q is enabled,
-Only one %q setting is checked]]
-
-L["COLOR_COS"]		 = "Counting, Timer Hidden, Sometimes Shown"	-- counting withOUT timer somtimes
-L["COLOR_COS_DESC"]	 = [[Color of the icon when:
-
-The timer is active (unusable/present),
-%q is disabled,
-Only one %q setting is checked]]
-
-L["COLOR_NA"]		 = "Finished, Always Shown"	-- not counting always
-L["COLOR_NA_DESC"]	 = [[Color of the icon when:
-
-The timer is finished (usable/absent),
-Both %q settings are checked]]
-
-L["COLOR_NS"]		 = "Finished, Sometimes Shown"	-- not counting somtimes
-L["COLOR_NS_DESC"]	 = [[Color of the icon when:
-
-The timer is finished (usable/absent),
-Only one %q setting is checked]]
 
 
 L["FONTCOLOR"] = "Font Color"
@@ -1059,25 +1048,23 @@ L["ALPHA"] = "Opacity"
 
 L["RESET_ICON"] = "Reset"
 L["RESET_ICON_DESC"] = "Resets all of this icon's settings to default values."
-L["UNDO_ICON"] = "Undo"
-L["UNDO_ICON_DESC"] = "Undo the last change made to this icon's settings."
-L["REDO_ICON"] = "Redo"
-L["REDO_ICON_DESC"] = "Redo the last change made to this icon's settings."
+L["UNDO"] = "Undo"
+L["UNDO_DESC"] = "Undo the last change made to these settings."
+L["REDO"] = "Redo"
+L["REDO_DESC"] = "Redo the last change made to these settings."
 L["BACK_IE"] = "Back"
 L["BACK_IE_DESC"] = "Load the last icon that was edited\r\n\r\n%s |T%s:0|t."
 L["FORWARDS_IE"] = "Forwards"
 L["FORWARDS_IE_DESC"] = "Load the next icon that was edited\r\n\r\n%s |T%s:0|t."
 
-L["UIPANEL_MAIN_DESC"] = "Contains the main settings for the group."
-
 L["UIPANEL_FONTFACE"] = "Font Face"
 L["UIPANEL_FONT_DESC"] = "Chose the font to be used by the stack text on icons."
 L["UIPANEL_FONT_SIZE"] = "Font Size"
-L["UIPANEL_FONT_SIZE_DESC"] = "Change the size of the font used for stack text on icons. If Masque is used and the set skin has a font size defined, then this value will be ignored."
+L["UIPANEL_FONT_SIZE_DESC2"] = "Change the size of the font."
 L["UIPANEL_FONT_SHADOW"] = "Shadow Offset"
 L["UIPANEL_FONT_SHADOW_DESC"] = "Change the offset amount of the shadow behind the text. Set to zero to disable the shadow."
 L["UIPANEL_FONT_OUTLINE"] = "Font Outline"
-L["UIPANEL_FONT_OUTLINE_DESC"] = "Sets the outline style for the stack text on icons."
+L["UIPANEL_FONT_OUTLINE_DESC2"] = "Sets the outline style of the text display."
 L["OUTLINE_NO"] = "No Outline"
 L["OUTLINE_THIN"] = "Thin Outline"
 L["OUTLINE_THICK"] = "Thick Outline"
@@ -1107,47 +1094,52 @@ L["UIPANEL_FONT_JUSTIFY_DESC"] = "Set the horizontal justification (Left/Center/
 L["UIPANEL_FONT_JUSTIFYV"] = "Vertical Justification"
 L["UIPANEL_FONT_JUSTIFYV_DESC"] = "Set the vertical justification (Top/Center/Bottom) for this text display."
 L["UIPANEL_POSITION"] = "Position"
-L["UIPANEL_POSITION_DESC"] = "Contains settings that control the position of the group on your screen."
-L["UIPANEL_POINT"] = "Point"
-L["UIPANEL_POINT_DESC"] = "The point on the group that will be anchored"
-L["UIPANEL_RELATIVETO"] = "Relative To"
+L["UIPANEL_POINT"] = "Group Point"
+L["UIPANEL_POINT2_DESC"] = "Anchor the %s of the group to the anchor target."
+L["UIPANEL_RELATIVETO"] = "Anchor Target"
 L["UIPANEL_RELATIVETO_DESC"] = "Type '/framestack' to toggle a tooltip that contains a list of all the frames that your mouse is over, and their names, to put into this dialog."
 L["UIPANEL_RELATIVETO_DESC_GUIDINFO"] = "The current value is the unique identifier of another group. It was set when this group was right-click dragged to another group and the Anchor To option was chosen."
-L["UIPANEL_RELATIVEPOINT"] = "Relative Point"
-L["UIPANEL_RELATIVEPOINT_DESC"] = "The point that the group will be anchored to"
-L["CHECKORDER"] = "Update Order"
-L["CHECKORDER_ICONDESC"] = "Sets the order in which icons within this group will be updated. This really only matters if you are using the feature of meta icons to check sub-metas."
-L["CHECKORDER_GROUPDESC"] = "Sets the order in which groups will be updated. This really only matters if you are using the feature of meta icons to check sub-metas."
+L["UIPANEL_RELATIVEPOINT"] = "Target Point"
+L["UIPANEL_RELATIVEPOINT2_DESC"] = "Anchor the group to the %s of the anchor target."
 L["ASCENDING"] = "Ascending"
 L["DESCENDING"] = "Descending"
 L["UIPANEL_SCALE"] = "Scale"
 L["UIPANEL_LEVEL"] = "Frame Level"
-L["UIPANEL_STRATA"] = "Frame Strata"
+L["UIPANEL_LEVEL_DESC"] = "The level within the group's strata that it should be drawn on."
+L["UIPANEL_STRATA"] = "Strata"
+L["UIPANEL_STRATA_DESC"] = "The layer of the UI that the group should be drawn on."
 L["UIPANEL_LOCK"] = "Lock Position"
 L["UIPANEL_LOCK_DESC"] = "Lock this group, preventing movement or sizing by dragging the group or the scale tab."
 
 L["LAYOUTDIRECTION"] = "Layout Direction"
-L["LAYOUTDIRECTION_DESC"] = "Sets the direction that icons will layout in the group."
-L["LAYOUTDIRECTION_1"] = "Right then Down"
-L["LAYOUTDIRECTION_2"] = "Left then Down"
-L["LAYOUTDIRECTION_3"] = "Left then Up"
-L["LAYOUTDIRECTION_4"] = "Right then Up"
-L["LAYOUTDIRECTION_5"] = "Down then Right"
-L["LAYOUTDIRECTION_6"] = "Down then Left"
-L["LAYOUTDIRECTION_7"] = "Up then Left"
-L["LAYOUTDIRECTION_8"] = "Up then Right"
+
+L["UP"] = "Up"
+L["DOWN"] = "Down"
+L["LEFT"] = "Left"
+L["RIGHT"] = "Right"
+
+L["ICONMENU_SHRINKGROUP"] = "Shrink Group"
+L["ICONMENU_SHRINKGROUP_DESC"] = [[If this setting is enabled, the bounding box of the group will be dynamically adjusted so that it will exactly fit all of the visible icons within.
+
+The origin of the group's layout direction will form one corner of the group, and the edges of the icon furthest from that point will form the other.
+
+When used in conjunction with both the Shown icon sorting rule and fine-tuned Position settings above, you can create a group that is dynamically centered.]]
+
+L["LAYOUTDIRECTION_PRIMARY_DESC"] = "Make the primary layout direction of icons expand in the %s direction."
+L["LAYOUTDIRECTION_SECONDARY_DESC"] = "Make successive rows/columns of icons expand in the %s direction."
 
 
 L["TEXTLAYOUTS"] = "Text Layouts"
+L["TEXTLAYOUTS_DESC"] = "Define text layouts that can be applied to any of your icons."
 L["TEXTLAYOUTS_TAB"] = "Text Displays"
 L["TEXTLAYOUTS_HEADER_LAYOUT"] = "Text Layout"
---L["TEXTLAYOUTS_HEADER_DISPLAY"] = "Text Display"
+L["TEXTLAYOUTS_HEADER_DISPLAY"] = "Text Display"
 L["TEXTLAYOUTS_fSTRING"] = "Display %s"
 L["TEXTLAYOUTS_fSTRING2"] = "Display %d: %s"
 L["TEXTLAYOUTS_fSTRING3"] = "Text Display: %s"
 L["TEXTLAYOUTS_fLAYOUT"] = "Text Layout: %s"
 L["TEXTLAYOUTS_UNNAMED"] = "<no name>"
-L["TEXTLAYOUTS_DEFAULTS_WRAPPER"] = "Default: %s"
+L["TEXTLAYOUTS_DEFAULTS_WRAPPER"] = "|cff666666Default:|r %s"
 L["TEXTLAYOUTS_LAYOUTSETTINGS"] = "Layout Settings"
 L["TEXTLAYOUTS_LAYOUTSETTINGS_DESC"] = "Click to configure the text layout %q."
 
@@ -1175,29 +1167,24 @@ L["TEXTLAYOUTS_CHOOSELAYOUT_DESC"] = "Pick the text layout to use for this icon.
 L["TEXTLAYOUTS_ADDLAYOUT"] = "Create New Layout"
 L["TEXTLAYOUTS_ADDLAYOUT_DESC"] = "Create a new text layout that you can configure and apply to your icons."
 L["TEXTLAYOUTS_DELETELAYOUT"] = "Delete Layout"
-L["TEXTLAYOUTS_DELETELAYOUT_DESC"] = [[Click to delete this text layout.
-
-Hold |cff7fffffCtrl|r to bypass confirmation.]]
+L["TEXTLAYOUTS_DELETELAYOUT_DESC2"] = [[Click to delete this text layout.]]
 L["TEXTLAYOUTS_ADDANCHOR"] = "Add Anchor"
 L["TEXTLAYOUTS_ADDANCHOR_DESC"] = [[Click to add another text anchor.]]
 L["TEXTLAYOUTS_DELANCHOR"] = "Delete Anchor"
 L["TEXTLAYOUTS_DELANCHOR_DESC"] = [[Click to delete this text anchor.]]
 
-L["TEXTLAYOUTS_DELETELAYOUT_CONFIRM_BASE"] = "Are you sure you want to delete the layout %q?"
 L["TEXTLAYOUTS_DELETELAYOUT_CONFIRM_NUM2"] = "|cFFFF2929The following profiles use this layout in their icons. If you delete this layout, they will fall back on using a default layout:|r"
 L["TEXTLAYOUTS_DELETELAYOUT_CONFIRM_LISTING"] = "%s: ~%d |4icon:icons;"
 
-L["TEXTLAYOUTS_USEDBY_HEADER"] = "The following profiles use this layout in their icons:"
-L["TEXTLAYOUTS_USEDBY_NONE"] = "This layout is not used by any TellMeWhen profiles on this WoW account."
+L["TEXTLAYOUTS_USEDBY_HEADER"] = "The following profiles use this layout:"
+L["TEXTLAYOUTS_USEDBY_NONE"] = "This layout is not used by any of your TellMeWhen profiles."
 
 L["TEXTLAYOUTS_LAYOUTDISPLAYS"] = [[Displays:
 %s]]
 L["TEXTLAYOUTS_ADDSTRING"] = "Add Text Display"
 L["TEXTLAYOUTS_ADDSTRING_DESC"] = "Adds a new text display to this text layout."
 L["TEXTLAYOUTS_DELETESTRING"] = "Delete Text Display"
-L["TEXTLAYOUTS_DELETESTRING_DESC"] = [[Deletes this text display from this text layout.
-
-Hold |cff7fffffCtrl|r to bypass confirmation.]]
+L["TEXTLAYOUTS_DELETESTRING_DESC2"] = [[Deletes this text display from this text layout.]]
 L["TEXTLAYOUTS_STRINGUSEDBY"] = "Used %d |4time:times;."
 L["TEXTLAYOUTS_CLONELAYOUT"] = "Clone layout"
 L["TEXTLAYOUTS_CLONELAYOUT_DESC"] = "Click to create a copy of this layout that you can edit separately."
@@ -1238,7 +1225,10 @@ L["TEXTLAYOUTS_SKINAS_DESC"] = [[Choose the Masque element that you wish to skin
 L["TEXTLAYOUTS_SKINAS_NONE"] = "None"
 L["TEXTLAYOUTS_SKINAS_COUNT"] = "Stack Text"
 L["TEXTLAYOUTS_SKINAS_HOTKEY"] = "Binding Text"
-L["TEXTLAYOUTS_DISABLEDBYSKIN"] = "This setting cannot be changed if you have a Masque skin set for this text display."
+
+L["TEXTLAYOUTS_SKINAS_SKINNEDINFO"] = [[This text display is set to be skinned by Masque.
+
+As a result, none of the settings below will have any effect when this layout is used on TellMeWhen icons that are skinned by Masque.]]
 
 L["TEXTLAYOUTS_SETGROUPLAYOUT"] = "Text Layout"
 L["TEXTLAYOUTS_SETGROUPLAYOUT_DESC"] = [[Set the text layout that all icons of this group will use.
@@ -1251,15 +1241,45 @@ L["TEXTLAYOUTS_POSITIONSETTINGS"] = "Position Settings"
 L["TEXTLAYOUTS_RESETSKINAS"] = "The %q setting has been reset for font string %q in order to prevent conflicts with the new setting for font string %q."
 
 
-L["TEXTLAYOUTS_POINT_DESC"] = "The point on the text display that will be anchored to the object"
-L["TEXTLAYOUTS_RELATIVEPOINT_DESC"] = "The point on the object that will be anchored to"
 L["TEXTLAYOUTS_RELATIVETO_DESC"] = "The object that the text will be anchored to"
+L["TEXTLAYOUTS_POINT2"] = "Text Point"
+L["TEXTLAYOUTS_POINT2_DESC"] = "Anchor the %s of the text display to the anchor target."
+L["TEXTLAYOUTS_RELATIVEPOINT2_DESC"] = "Anchor the text display to the %s of the anchor target."
+
+
+L["TEXTLAYOUTS_SIZE_AUTO"] = "Auto"
+L["TEXTLAYOUTS_DEGREES"] = "%d Degrees"
 
 
 L["TEXTLAYOUTS_ERR_ANCHOR_BADINDEX"] = "Layout error: Text display #%d is trying to anchor to text display #%d, but #%d doesn't exist, so text display #%d won't work."
 L["TEXTLAYOUTS_ERR_ANCHOR_BADANCHOR"] = "This text layout doesn't work with this group's display method. Choose a different text layout. (Missing anchor: %s)"
 
 L["UIPANEL_ANCHORNUM"] = "Anchor %d"
+
+L["CONFIRM_DELLAYOUT"] = "Delete Layout"
+
+
+L["COLORPICKER_HUE"] = "Hue"
+L["COLORPICKER_HUE_DESC"] = "Set the color's hue."
+L["COLORPICKER_SATURATION"] = "Saturation"
+L["COLORPICKER_SATURATION_DESC"] = "Set the color's saturation."
+L["COLORPICKER_BRIGHTNESS"] = "Brightness"
+L["COLORPICKER_BRIGHTNESS_DESC"] = "Set the color's brightness (sometimes referred to as the value)."
+L["COLORPICKER_OPACITY"] = "Opacity"
+L["COLORPICKER_OPACITY_DESC"] = "Set the color's opacity (sometimes referred to as the alpha)."
+L["COLORPICKER_DESATURATE"] = "Desaturate"
+L["COLORPICKER_DESATURATE_DESC"] = "Desaturate the texture before applying the color, allowing you to recolor the texture instead of tinting it."
+
+L["COLORPICKER_SWATCH"] = "Color"
+L["COLORPICKER_ICON"] = "Preview"
+
+L["COLORPICKER_STRING"] = "Hex String"
+L["COLORPICKER_STRING_DESC"] = "Get or set the (A)RGB hexadecimal representation of the current color."
+
+L["COLORPICKER_RECENT"] = "Recent Colors"
+L["COLORPICKER_RECENT_DESC"] = [[|cff7fffffClick|r to load this color.
+|cff7fffffRight-Click|r to remove from this list.]]
+
 
 -- -------------
 -- CONDITION PANEL
@@ -1281,7 +1301,9 @@ L["CONDITIONPANEL_ANDOR"] = "And / Or"
 L["CONDITIONPANEL_ANDOR_DESC"] = "|cff7fffffClick|r to toggle between logical operators AND and OR"
 L["CONDITIONPANEL_POWER"] = "Primary Resource"
 L["CONDITIONPANEL_PERCENT"] = "Percent"
-L["CONDITIONPANEL_ABSOLUTE"] = "Absolute"
+L["CONDITIONPANEL_PERCENTOFMAXHP"] = "Percent of Max Health"
+L["CONDITIONPANEL_PERCENTOFCURHP"] = "Percent of Current Health"
+L["CONDITIONPANEL_ABSOLUTE"] = "Current"
 L["CONDITIONPANEL_MAX"] = "Max"
 L["CONDITIONPANEL_COMBO"] = "Combo Points"
 L["CONDITIONPANEL_ALTPOWER"] = "Alt. Power"
@@ -1301,7 +1323,7 @@ L["CONDITIONPANEL_ICON_DESC"] = [=[The condition checks whether the icon specifi
 
 If you don't want to display the icon being checked, check %q in the icon editor of that icon.
 
-The group of the icon being checked must be shown in order to check the icon, even if the condition is set to false.]=]
+The group of the icon being checked must be shown in order to check the icon, even if the condition is set to hidden.]=]
 
 L["CONDITIONPANEL_ICONSHOWNTIME"] = "Icon Shown Time"
 L["CONDITIONPANEL_ICONSHOWNTIME_DESC"] = [=[The condition checks how long the icon specified has been shown.
@@ -1321,21 +1343,17 @@ The group of the icon being checked must be shown in order to check the icon.]=]
 
 
 L["CONDITIONPANEL_RUNES"] = "Rune Count"
-L["CONDITIONPANEL_RUNES_DESC3"] = [=[Use this condition type to only show the icon when the desired number of runes are available.]=]
-L["CONDITIONPANEL_RUNES_CHECK_DESC"] = [=[Check this rune to count this rune type into the total count for the condition.]=]
-
-L["CONDITIONPANEL_RUNES_DESC_GENERIC"] = [=[Each rune is a check button. Check each rune to have it be counted into the conditions.
-
-The runes in the first row will not match death runes. The runes in the second row are the death rune version of each rune above.]=]
+L["CONDITIONPANEL_RUNES_DESC3"] = [=[Use this condition type to check when the desired number of runes are available.]=]
+L["CONDITIONPANEL_RUNES_CHECK_DESC"] = [=[Check to count this rune type into the total count for the condition.]=]
 
 
 L["CONDITIONPANEL_RUNESRECH"] = "Recharging Rune Count"
-L["CONDITIONPANEL_RUNESRECH_DESC"] = [=[Use this condition type to only show the icon when the desired number of runes are recharging.]=]
+L["CONDITIONPANEL_RUNESRECH_DESC"] = [=[Use this condition type to check when the desired number of runes are recharging.]=]
 
 
 
 L["CONDITIONPANEL_RUNESLOCK"] = "Locked Rune Count"
-L["CONDITIONPANEL_RUNESLOCK_DESC"] = [=[Use this condition type to only show the icon when the desired number of runes are locked (awaiting recharge).]=]
+L["CONDITIONPANEL_RUNESLOCK_DESC"] = [=[Use this condition type to check when the desired number of runes are locked (awaiting recharge).]=]
 
 
 
@@ -1343,6 +1361,7 @@ L["CONDITIONPANEL_RUNESLOCK_DESC"] = [=[Use this condition type to only show the
 L["CONDITIONPANEL_PVPFLAG"] = "Unit is PvP Flagged"
 L["CONDITIONPANEL_LEVEL"] = "Unit Level"
 L["CONDITIONPANEL_CLASS"] = "Unit Class"
+L["CONDITIONPANEL_UNITRACE"] = "Unit Race"
 L["CONDITIONPANEL_UNITSPEC"] = "Unit Specialization"
 L["CONDITIONPANEL_UNITSPEC_CHOOSEMENU"] = "Choose Specs..."
 L["CONDITIONPANEL_UNITSPEC_DESC"] = [[This condition ONLY works for:
@@ -1350,13 +1369,13 @@ L["CONDITIONPANEL_UNITSPEC_DESC"] = [[This condition ONLY works for:
 |cff7fffff-|r Battleground enemies
 |cff7fffff-|r Arena enemies
 
-It does NOT work for: |TInterface\AddOns\TellMeWhen\Textures\Alert:0:2|t
+It does NOT work for: |TInterface/AddOns/TellMeWhen/Textures/Alert:0:2|t
 |cff7fffff-|r Group members
 |cff7fffff-|r Any other players]]
 L["CONDITIONPANEL_CLASSIFICATION"] = "Unit Classification"
 L["CONDITIONPANEL_CLASSIFICATION_DESC"] = "Checks the rare/elite/world boss status of a unit."
 L["CONDITIONPANEL_ROLE"] = "Unit Group Role"
-L["CONDITIONPANEL_ROLE_DESC"] = "Checks the assigned role of the player in your group/raid"
+L["CONDITIONPANEL_ROLE_DESC"] = "Checks the assigned role of a player in your group/raid"
 L["CONDITIONPANEL_RAIDICON"] = "Unit Raid Icon"
 L["CONDITIONPANEL_RAIDICON_DESC"] = "Checks the raid marker icon assigned to a unit."
 L["CONDITIONPANEL_BITFLAGS_CHOOSEMENU_RAIDICON"] = "Choose Icons..."
@@ -1375,11 +1394,21 @@ Players in melee range pull aggro at 110%
 Players at range pull aggro at 130%
 Players with aggro have a raw threat percentage of 255%]]
 L["CONDITIONPANEL_CASTCOUNT"] = "Spell Cast Count"
-L["CONDITIONPANEL_CASTCOUNT_DESC"] = [[Checks the number of times that a unit has cast a certain spell.]]
+L["CONDITIONPANEL_CASTCOUNT_DESC"] = [[Checks the number of times that a unit has cast a certain spell.
+
+If you would like more advanced functionality, use a Counter notification with appropriate triggers, and then check that counter in your condition instead.]]
 L["CONDITIONPANEL_CASTTOMATCH"] = "Spell to Match"
 L["CONDITIONPANEL_CASTTOMATCH_DESC"] = [[Enter a spell name here to make the condition only pass if the spell cast matches it exactly.
 
 You can leave this blank to check for any and all spell casts/channels]]
+
+L["CONDITIONPANEL_LASTCAST"] = "Last Ability Used"
+L["CONDITIONPANEL_LASTCAST_ISSPELL"] = "Matches"
+L["CONDITIONPANEL_LASTCAST_ISNTSPELL"] = "Doesn't Match"
+
+L["CONDITIONPANEL_OVERLAYED"] = "Spell activation overlay"
+L["CONDITIONPANEL_OVERLAYED_DESC"] = "Checks if a given spell has the activation overlay effect (the sparkly yellow border on your action bars)."
+
 L["CONDITIONPANEL_INTERRUPTIBLE"] = "Interruptible"
 L["CONDITIONPANEL_NAME"] = "Unit Name"
 L["CONDITIONPANEL_NAMETOMATCH"] = "Name to Match"
@@ -1414,6 +1443,8 @@ L["CONDITIONPANEL_MANAUSABLE"] = "Spell Usable (Mana/Energy/etc.)"
 L["CONDITIONPANEL_MANAUSABLE_DESC"] = [[Checks if a spell is usable base on how much primary resource (mana/energy/rage/focus/runic power/etc.) you have.
 
 Does not check usability based on secondary resources (runes/holy power/chi/etc.)]]
+L["CONDITIONPANEL_SPELLCOST"] = "Spell Cost"
+L["CONDITIONPANEL_SPELLCOST_DESC"] = "Checks the cost of a spell. Units are mana/rage/energy/etc."
 L["CONDITIONPANEL_SPELLRANGE"] = "Spell in range of unit"
 L["CONDITIONPANEL_ITEMRANGE"] = "Item in range of unit"
 L["CONDITIONPANEL_AUTOCAST"] = "Pet spell autocasting"
@@ -1421,7 +1452,6 @@ L["CONDITIONPANEL_AUTOCAST_DESC"] = "Checks if the specified pet spell is autoca
 L["CONDITIONPANEL_PETMODE"] = "Pet attack mode"
 L["CONDITIONPANEL_PETMODE_DESC"] = "Checks the attack mode of your current pet."
 L["CONDITIONPANEL_PETMODE_NONE"] = "No Pet"
-L["CONDITIONPANEL_PETTREE"] = "Pet talent tree"
 L["CONDITIONPANEL_PETSPEC"] = "Pet specialization"
 L["CONDITIONPANEL_PETSPEC_DESC"] = "Checks the specialization of your current pet."
 L["CONDITIONPANEL_TRACKING"] = "Tracking active"
@@ -1439,7 +1469,9 @@ L["LUACONDITION"] = "Lua (Advanced)"
 L["LUACONDITION2"] = "Lua Condition"
 L["LUACONDITION_DESC"] = [[This condition type allows you to evaluate Lua code to determine the state of a condition.
 
-The input is not an 'if .. then' statement, nor is it a function closure. It is a regular statement to be evaluated, e.g. 'a and b or c'.  If complex functionality is required, use a call to a function, e.g. 'CheckStuff()', that is defined externally (perhaps using TMW's Lua snippets feature).
+If your input is a regular statement to be evaluated, e.g. 'a and b or c', you don't need a return statement.
+
+If you have any control blocks (e.g. if/then), you'll need return statements.
 
 To get a reference to this icon/group, use "thisobj". To insert a reference to another icon by GUID, shift click that icon while this editbox has focus.
 
@@ -1449,7 +1481,7 @@ If more help is needed (but not help about how to write Lua code), open a ticket
 L["CONDITIONPANEL_OLD"] = "<|cffff1300OLD|r>"
 L["CONDITIONPANEL_OLD_DESC"] = "<|cffff1300OLD|r> - There is a newer/better version of this condition available."
 L["CONDITIONPANEL_BITFLAGS_CHOOSEMENU_TYPES"] = "Choose Types..."
-L["CONDITIONPANEL_BITFLAGS_CHOOSECLASS"] = "Choose Classes..."
+L["CONDITIONPANEL_BITFLAGS_CHOOSERACE"] = "Choose Races..."
 L["CONDITIONPANEL_BITFLAGS_CHOOSECLASS"] = "Choose Classes..."
 L["CONDITIONPANEL_BITFLAGS_SELECTED"] = "|cff7fffffSelected|r:"
 L["CONDITIONPANEL_BITFLAGS_NOT"] = "Not"
@@ -1535,12 +1567,21 @@ L["ENCOUNTERTOCHECK_DESC_BIGWIGS"] = "Enter all or part of the name of the encou
 L["ENCOUNTERTOCHECK_DESC_DBM"] = "Enter all or part of the name of the encounter. This is displayed in chat on pull/wipe/kill, and also in the Encounter Journal."
 
 
+L["CONDITIONPANEL_LOC_CONTINENT"] = "Continent"
+L["CONDITIONPANEL_BITFLAGS_CHOOSEMENU_CONTINENT"] = "Choose Continents..."
+L["CONDITIONPANEL_LOC_ZONE"] = "Zone"
+L["CONDITIONPANEL_LOC_ZONE_LABEL"] = "Enter Zones to check"
+L["CONDITIONPANEL_LOC_ZONE_DESC"] = "Enter the zones that you would like to check for. Separate multiple zones with semicolons."
+L["CONDITIONPANEL_LOC_SUBZONE"] = "Sub-Zone"
+L["CONDITIONPANEL_LOC_SUBZONE_LABEL"] = "Enter Sub-Zones to check"
+L["CONDITIONPANEL_LOC_SUBZONE_DESC"] = "Checks your current sub-zone. Note that sometimes, you may not be in a sub-zone."
+L["CONDITIONPANEL_LOC_SUBZONE_BOXDESC"] = "Enter the sub-zones that you would like to check for. Separate multiple sub-zones with semicolons."
+
 
 L["AURA"] = "Aura"
 L["SEAL"] = "Seal"
 L["ASPECT"] = "Aspect"
 L["SHAPESHIFT"] = "Shapeshift"
-L["PRESENCE"] = "Presence"
 L["SPEED"] = "Unit Speed"
 L["SPEED_DESC"] = [[This refers to the current movement speed of the unit. If the unit is not moving, it is zero.  If you wish to track the maximum run speed of the unit, use the 'Unit Run Speed' condition instead.]]
 L["RUNSPEED"] = "Unit Run Speed"
@@ -1596,6 +1637,9 @@ L["CNDT_TOTEMNAME_DESC"] = [[Set blank to track any totems of the selected type.
 
 Enter a totem name, or a list of names separated by semicolons, to only check certain totems.]]
 L["GCD_ACTIVE"] = "GCD active"
+L["RESOURCE_FRAGMENTS"] = "%s Fragments"
+L["ICONMENU_VALUEFRAGMENTS"] = "Track Fragments"
+L["ICONMENU_VALUEFRAGMENTS_DESC"] = "Enable to track more granular fragments of the selected resource. Primarily used for Soul Shards."
 L["BURNING_EMBERS_FRAGMENTS"] = "Burning Ember 'Fragments'"
 L["BURNING_EMBERS_FRAGMENTS_DESC"] = [[Each whole Burning Ember consists of 10 fragments.
 
@@ -1611,6 +1655,8 @@ L["CNDTCAT_RESOURCES"] = "Resources"
 L["CNDTCAT_CURRENCIES"] = "Currencies"
 L["CNDTCAT_ARCHFRAGS"] = "Archaeology Fragments"
 L["CNDTCAT_MISC"] = "Miscellaneous"
+L["CNDTCAT_TALENTS"] = "Class and Talents"
+L["CNDTCAT_LOCATION"] = "Group and Location"
 
 L["CONDITIONPANEL_MOUNTED"] = "Mounted"
 L["CONDITIONPANEL_EQUALS"] = "Equals"
@@ -1636,6 +1682,9 @@ L["NUMAURAS_DESC"] = [[This condition checks the number of an aura active - not 
 L["TOOLTIPSCAN"] = "Aura Variable"
 L["TOOLTIPSCAN_DESC"] = "This condition type will allow you to check the first variable associated with an aura. Numbers are provided by Blizzard API and do not necessarily match numbers found on the tooltip of the aura. There is also no guarantee that a number will be obtained for an aura. In most practical cases, though, the correct number will be checked."
 
+L["TOOLTIPSCAN2"] = "Tooltip Number #%d"
+L["TOOLTIPSCAN2_DESC"] = "This condition type will allow you to check a number found in the tooltip of an aura."
+
 L["INCHEALS"] = "Unit Incoming heals"
 L["INCHEALS_DESC"] = [[Checks the total amount of healing that is incoming to the unit (HoTs and casts in progress).
 
@@ -1649,7 +1698,7 @@ L["CNDT_RANGE_PRECISE"] = "%d yds. (|cff00c322Precise|r)"
 L["CNDT_RANGE_IMPRECISE"] = "%d yds. (|cffff1300Imprecise|r)"
 
 
-L["CODESNIPPET_RENAME"] = "Code Snippet Name"
+L["CODESNIPPET_RENAME"] = "Snippet Name"
 L["CODESNIPPET_RENAME_DESC"] = [[Choose a name for this snippet so it can be easily identified by you.
 
 Names don't have to be unique.]]
@@ -1658,39 +1707,41 @@ L["CODESNIPPET_ORDER_DESC"] = [[Set the order in which this snippet should be ru
 
 %s and %s will be mixed together based on this value when they are run.
 
-Decimal amounts are valid. Consistent order is not guarenteed if two snippets share the same order.]]
+Decimal amounts are valid. Consistent order is not guaranteed if two snippets share the same order.]]
 L["CODESNIPPET_CODE"] = "Lua Code to Run"
-L["CODESNIPPET_CODE_DESC"] = [[Set the Lua code that will be ran by this snippet when TellMeWhen is intialized.]]
 
 L["CODESNIPPET_AUTORUN"] = "Auto-run at login"
+L["CODESNIPPET_AUTORUN_DESC"] = "If enabled, this snippet will be run when TMW_INITIALIZE fires (which happens during PLAYER_LOGIN, but before any icons or groups are created)."
 
 L["CODESNIPPETS"] = "Lua Code Snippets"
-L["CODESNIPPETS_TITLE"] = "Lua Snippets (Advanced)"
+L["CODESNIPPETS_TITLE"] = "Lua Snippets"
+L["CODESNIPPETS_DESC_SHORT"] = "Write chunks of Lua code that will be ran when TellMeWhen is being initialized."
 L["CODESNIPPETS_DESC"] = [[This feature allows you to write chunks of Lua code that will be ran when TellMeWhen is being initialized.
 
 It is an advanced feature for those who have experience with Lua (or for those who have been given a snippet by another TellMeWhen user).
 
-Uses might include writing custom functions for use in Lua conditions (be sure to define those in TMW.CNDT.Env).
+Uses might include writing custom functions for use in Lua conditions.
 
-Snippets can be defined either per-profile or globally (global snippets will run for all profiles).]]
+Snippets can be defined either per-profile or globally (global snippets will run for all profiles).
+
+To insert a reference to a TellMeWhen icon in your code, |cff7fffffshift-click|r that icon.]]
 L["CODESNIPPET_GLOBAL"] = "Global Snippets"
 L["CODESNIPPET_PROFILE"] = "Profile Snippets"
 
-L["CODESNIPPET_ADD"] = "Create new Snippet"
+L["CODESNIPPET_EDIT_DESC"] = "|cff7fffffClick|r to edit this snippet."
+
+L["CODESNIPPET_ADD2"] = "New %s Snippet"
+L["CODESNIPPET_ADD2_DESC"] = "|cff7fffffClick|r to add a new %s snippet."
 L["CODESNIPPET_DELETE"] = "Delete Snippet"
-L["CODESNIPPET_DELETE_DESC"] = [[Click to delete this code snippet.
-
-Hold |cff7fffffCtrl|r to bypass confirmation.]]
 L["CODESNIPPET_DELETE_CONFIRM"] = "Are you sure you want to delete the code snippet %q?"
+
 L["CODESNIPPET_RUNNOW"] = "Run Snippet Now"
-L["CODESNIPPET_RUNNOW_DESC"] = [[Click to run this code snippet.
+L["CODESNIPPET_RUNNOW_DESC"] = "|cff7fffffClick|r to run this snippet's code."
 
-Hold |cff7fffffCtrl|r to bypass confirmation if the snippet has already been ran.]]
-L["CODESNIPPET_RUNNOW_CONFIRM"] = [[Are you sure you want to run the code snippet %s again?
+L["CODESNIPPET_RUNAGAIN"] = "Run Snippet Again"
+L["CODESNIPPET_RUNAGAIN_DESC"] = [[This snippet has already run once this session.
 
-(It has already been run at least once this session)
-
-You can hold |cff7fffffCtrl|r when clicking the %s button to bypass confirmation.]]
+|cff7fffffClick|r to run it again.]]
 
 L["CODESNIPPETS_DEFAULTNAME"] = "New Snippet"
 
@@ -1710,13 +1761,49 @@ L["ICONGROUP"] = "Icon: %s (Group: %s)"
 L["fGROUP"] = "Group: %s"
 L["fICON"] = "Icon: %s"
 L["ICON"] = "Icon"
+L["GROUP"] = "Group"
 L["DISABLED"] = "Disabled"
 L["COPYPOSSCALE"] = "Copy position/scale only"
 L["COPYGROUP"] = "Copy Group"
-L["OVERWRITEGROUP"] = "|cFFFF5959Overwrite|r Group: %s"
-L["MAKENEWGROUP"] = "|cff59ff59Create|r New Group"
 L["MAKENEWGROUP_PROFILE"] = "|cff59ff59Create|r New Profile Group"
 L["MAKENEWGROUP_GLOBAL"] = "|cff59ff59Create|r New |cff00c300Global|r Group"
+
+
+
+L["PROFILES_SET"] = "Change Profile..."
+L["PROFILES_SET_LABEL"] = "Current Profile"
+L["PROFILES_SET_DESC"] = "Select another profile to switch to."
+
+L["PROFILES_NEW"] = "New Profile"
+L["PROFILES_NEW_DESC"] = "Enter the name of a new profile, and press enter to create it."
+L["PROFILES_COPY"] = "Copy a Profile..."
+L["PROFILES_COPY_DESC"] = [[Select another profile to copy from. The current profile will be overwritten by the chosen profile.
+
+You can undo this action up until the next time you log out or reload by using the %q option in the %q menu below.]]
+L["PROFILES_COPY_CONFIRM"] = "Copy Profile"
+L["PROFILES_COPY_CONFIRM_DESC"] = "The profile %q will be overwritten by a copy of the profile %q."
+L["PROFILES_DELETE"] = "Delete a Profile..."
+L["PROFILES_DELETE_DESC"] = [[Select a profile to be deleted.
+
+You can undo this action up until the next time you log out or reload by using the %q option in the %q menu below.]]
+L["PROFILES_DELETE_CONFIRM"] = "Delete Profile"
+L["PROFILES_DELETE_CONFIRM_DESC"] = "The profile %q will be deleted."
+
+
+
+
+L["TABGROUP_ICON_DESC"] = "Configure TellMeWhen Icons."
+L["TABGROUP_GROUP_DESC"] = "Configure TellMeWhen Groups."
+L["TABGROUP_MAIN_DESC"] = "Configure general TellMeWhen settings."
+
+
+L["CLICK_TO_EDIT"] = [[|cff7fffffClick|r to edit.]]
+
+L["GROUPSELECT_TOOLTIP"] = [[|cff7fffffClick|r to edit.
+
+|cff7fffffClick-and-drag|r to reorder or change domain.]]
+
+L["GROUP_UNAVAILABLE"] = "|TInterface/PaperDollInfoFrame/UI-GearManager-LeaveItem-Transparent:20|t This group cannot be shown due to its overly-restrictive spec/role settings."
 
 
 --[=[L["CNDT_SLIDER_DESC_BASE"] = [[|cff7fffffMousewheel|r to adjust.
@@ -1738,17 +1825,11 @@ L["IconModule_TimerBar_OverlayTimerBar"] = "Timer Bar Overlay"
 L["IconModule_PowerBar_OverlayPowerBar"] = "Power Bar Overlay"
 L["IconModule_Texture_ColoredTexture"] = "Icon Texture"
 L["IconModule_CooldownSweepCooldown"] = "Cooldown Sweep"
-L["IconModule_TimerBar_BarDisplayTimerBar"] = "Timer Bar (Bar display)"
+L["IconModule_TimerBar_BarDisplayTimerBar"] = "Timer Bar"
 L["IconModule_SelfIcon"] = "Icon"
 
 
-L["IE_SIMPLEGS"] = "Full Options"
-L["IE_SIMPLEGS_DESC"] = [[Check to display TMW's full main options in this tab.
-
-Uncheck to only display the options of the group of the currently loaded icon in this tab.]]
-
-L["GROUPADDONSETTINGS"] = "Group Settings"
-L["GROUPADDONSETTINGS_DESC"] = [[Configure settings for this group, other groups, and all other general addon settings.]]
+L["ADDONSETTINGS_DESC"] = [[Configure all general addon settings.]]
 L["GROUPSETTINGS_DESC"] = [[Configure settings for this group.]]
 L["CONDITIONS"] = "Conditions"
 L["ICONCONDITIONS_DESC"] = "Configure conditions that allow you to fine-tune when this icon is shown."
@@ -1777,10 +1858,9 @@ L["UNITCONDITIONS_STATICUNIT_TARGET_DESC"] = "Causes the condition to check the 
 L["VALIDITY_CONDITION_DESC"] = "A target of a condition of"
 L["VALIDITY_CONDITION2_DESC"] = "The #%d condition of"
 L["VALIDITY_META_DESC"] = "The #%d icon checked by meta icon"
-L["VALIDITY_ONICONSHOWHIDE_DESC"] = "The target of the #%d icon event of"
 L["VALIDITY_ISINVALID"] = "is invalid."
 
-L["MAIN"] = "Main"
+L["MAIN"] = "General"
 L["MAIN_DESC"] = "Contains the main options for this icon."
 L["UNNAMED"] = "(Unnamed)"
 L["NOTYPE"] = "<No Icon Type>"
@@ -1813,6 +1893,7 @@ L["DT_DOC_LocType"] = "Returns the type of the control loss effect that the icon
 L["DT_DOC_IsShown"] = "Returns whether or not an icon is shown."
 L["DT_DOC_Opacity"] = "Returns the opacity of an icon. Return value is between 0 and 1."
 L["DT_DOC_Duration"] = "Returns the current duration remaining on the icon. It is recommended that you format this with [TMWFormatDuration]"
+L["DT_DOC_MaxDuration"] = "Returns the maximum duration of the icon. This is the duration when the timer started, not the current duration."
 L["DT_DOC_Spell"] = "Returns the spell or item that the icon is showing data for."
 L["DT_DOC_Stacks"] = "Returns the current stacks of the icon"
 L["DT_DOC_Unit"] = "Returns the unit or the name of the unit that the icon is checking. Best use in conjunction with the [Name] tag."
@@ -1826,9 +1907,12 @@ L["DT_INSERTGUID_GENERIC_DESC"] = [[If you would like one icon to display inform
 L["SENDSUCCESSFUL"] = "Sent successfully"
 L["MESSAGERECIEVE"] = "%s has sent you some TellMeWhen data! You can import this data into TellMeWhen using the %q button, located at the bottom of the icon editor."
 L["MESSAGERECIEVE_SHORT"] = "%s has sent you some TellMeWhen data!"
+L["CONFIGPANEL_COMM_HEADER"] = "Communication"
 L["ALLOWCOMM"] = "Allow in-game sharing"
-L["ALLOWCOMM_DESC"] = "Allow other TellMeWhen users to send you data."
-L["ALLOWVERSIONWARN"] = "Notify of new version"
+L["ALLOWCOMM_DESC"] = [[Allow other TellMeWhen users to send you data.
+
+You will need to reload your UI or log out before you will be able to receive any data.]]
+L["ALLOWVERSIONWARN"] = "Notify of new versions"
 L["NEWVERSION"] = "A new version of TellMeWhen is available: %s"
 L["PLAYER_DESC"] = "The 'player' unit is you."
 
@@ -1838,7 +1922,6 @@ L["IMPORT_EXPORT_DESC"] = [[Click the button to the right to import and export i
 
 Importing to or from a string, or exporting to another player, will require the use of this editbox. See the tooltips within the dropdown menu for details.]]
 L["IMPORT_EXPORT_BUTTON_DESC"] = "Click this button to import and export icons, groups, and profiles."
-L["IMPORT_EXPORT_DESC_INLINE"] = "Import and Export profiles, groups, icons to or from strings, other players, other profiles, or a backup of your settings."
 
 L["IMPORT_HEADING"] = "Import"
 L["IMPORT_FROMLOCAL"] = "From Profile"
@@ -1860,9 +1943,7 @@ L["EXPORT_TOSTRING"] = "To String"
 L["EXPORT_TOCOMM"] = "To Player"
 L["EXPORT_TOGUILD"] = "To Guild"
 L["EXPORT_TORAID"] = "To Raid"
-L["EXPORT_TOCOMM_DESC"] = [[Type a player's name into the editbox and choose this option to send the data to them. They must be somebody that you can whisper (same faction, server, online), and they must have TellMeWhen v4.0.0+
-
-You can also type "GUILD" or "RAID" (case-sensitive) to send to your entire guild or raid group.]]
+L["EXPORT_TOCOMM_DESC"] = [[Type a player's name into the editbox and choose this option to send the data to them. They must be somebody that you can whisper (same faction, server, online).]]
 L["EXPORT_TOSTRING_DESC"] = "A string containing the necessary data will be pasted into the editbox.  Press Ctrl+C to copy it, and then paste it wherever you want to share it."
 L["EXPORT_SPECIALDESC2"] = "Other TellMeWhen users can only import this data if they have version %s"
 L["EXPORT_f"] = "Export %s"
@@ -1880,7 +1961,6 @@ L["IMPORT_NEWGUIDS"] = [[The data you just imported conflicted with the unique i
 New unique identifiers have been assigned to the imported data. Icons that you import in the future that are supposed to reference the new data may not function as desired - they will instead reference the old icons that conflicted with the new data.
 
 If you intended to replace existing data, please re-import it to the correct location.]]
-L["IMPORT_NEWGUIDS_ICON"] = "Text Layout: %s"
 
 
 L["CONFIGPANEL_TIMER_HEADER"] = "Timer Sweep"
@@ -1890,9 +1970,7 @@ L["CONFIGPANEL_PBAR_HEADER"] = "Power Bar Overlay"
 L["CONFIGPANEL_CLEU_HEADER"] = "Combat Events"
 L["CONFIGPANEL_CNDTTIMERS_HEADER"] = "Condition Timers"
 
-L["CONFIGPANEL_BACKDROP_HEADER"] = "Backdrop"
-L["CONFIGPANEL_BACKDROP_ALPHA"] = "Backdrop Opacity"
-L["CONFIGPANEL_BACKDROP_ALPHA_DESC"] = "Set the opacity of the backdrop underneath the bar."
+L["CONFIGPANEL_BACKDROP_HEADER"] = "Bar Backdrop"
 
 
 
@@ -1926,7 +2004,6 @@ L["SUG_DISPELTYPES"] = "Dispel Types"
 L["SUG_BUFFEQUIVS"] = "Buff Equivalencies"
 L["SUG_DEBUFFEQUIVS"] = "Debuff Equivalencies"
 L["SUG_OTHEREQUIVS"] = "Other Equivalencies"
-L["SUG_MSCDONBARS"] = "Valid multi-state cooldowns"
 L["SUG_PLAYERSPELLS"] = "Your spells"
 L["SUG_CLASSSPELLS"] = "Known PC/pet spells"
 L["SUG_NPCAURAS"] = "Known NPC buffs/debuffs"
@@ -1951,7 +2028,7 @@ L["SUG_INSERTERROR"] = "%s to insert error message"
 
 L["SUG_INSERTNAME_INTERFERE"] = [[%s to insert as a name
 
-|TInterface\AddOns\TellMeWhen\Textures\Alert:0:2|t|cffffa500CAUTION: |TInterface\AddOns\TellMeWhen\Textures\Alert:0:2|t|cffff1111
+|TInterface/AddOns/TellMeWhen/Textures/Alert:0:2|t|cffffa500CAUTION: |TInterface/AddOns/TellMeWhen/Textures/Alert:0:2|t|cffff1111
 This spell interferes with an equivalency.
 It probably won't be tracked if inserted by name.
 You should insert by ID instead.|r]]
@@ -1960,8 +2037,8 @@ L["SUG_PATTERNMATCH_FISHINGLURE"] = "Fishing Lure %(%+%d+ Fishing Skill%)" -- en
 L["SUG_PATTERNMATCH_WEIGHTSTONE"] = "Weighted %(%+%d+ Damage%)"
 L["SUG_PATTERNMATCH_SHARPENINGSTONE"] = "Sharpened %(%+%d+ Damage%)"
 
-L["SUG_ATBEGINING"] = "Suggester: Match beginning"
-L["SUG_ATBEGINING_DESC"] = "If checked, the suggestion list will only display spells that start with the same name as the spell that is being typed in. Otherwise, it will match any part of a spell."
+L["SUG_MODULE_FRAME_LIKELYADDON"] = "Guessed source: %s"
+
 
 L["SUG_FIRSTHELP_DESC"] = [[The suggestion list speeds up configuration.
 
@@ -1992,7 +2069,9 @@ L["EVENT_CATEGORY_CONDITION"] = "Conditions"
 L["EVENT_CATEGORY_MISC"] = "Miscellaneous"
 L["EVENT_CATEGORY_VISIBILITY"] = "Visibility"
 L["EVENT_CATEGORY_TIMER"] = "Timer"
+L["EVENT_CATEGORY_CHARGES"] = "Charges"
 L["EVENT_CATEGORY_CHANGED"] = "Data Changed"
+L["EVENT_CATEGORY_STACKS"] = "Stacks"
 L["EVENT_CATEGORY_CLICK"] = "Interaction"
 
 L["SOUND_EVENT_ONSHOW"] = "On Show"
@@ -2006,6 +2085,12 @@ L["SOUND_EVENT_ONSTART_DESC"] = [[This event triggers when the cooldown becomes 
 
 L["SOUND_EVENT_ONFINISH"] = "On Finish"
 L["SOUND_EVENT_ONFINISH_DESC"] = [[This event triggers when the cooldown becomes usable, the buff/debuff falls off, etc.]]
+
+L["SOUND_EVENT_ONCHARGELOST"] = "On Charge Spent"
+L["SOUND_EVENT_ONCHARGELOST_DESC"] = [[This event triggers when a charge of the ability being tracked is used.]]
+
+L["SOUND_EVENT_ONCHARGEGAINED"] = "On Charge Gained"
+L["SOUND_EVENT_ONCHARGEGAINED_DESC"] = [[This event triggers when a charge of the ability being tracked is gained.]]
 
 L["SOUND_EVENT_ONALPHAINC"] = "On Opacity Increase"
 L["SOUND_EVENT_ONALPHAINC_DESC"] = [[This event triggers when the opacity of an icon increases.
@@ -2024,30 +2109,22 @@ L["SOUND_EVENT_ONSPELL"] = "On Spell Changed"
 L["SOUND_EVENT_ONSPELL_DESC"] = [[This event triggers when the spell/item/etc. that that the icon is displaying information for has changed.]]
 
 L["SOUND_EVENT_ONSTACK"] = "On Stacks Changed"
+L["SOUND_EVENT_ONSTACKINC"] = "On Stacks Increased"
+L["SOUND_EVENT_ONSTACKDEC"] = "On Stacks Decreased"
 L["SOUND_EVENT_ONSTACK_DESC"] = [[This event triggers when the stacks of whatever the icon is tracking has changed.
 
 This includes the amount of diminishment for %s icons.]]
 
-L["SOUND_EVENT_ONDURATION"] = "On Duration Changed"
-L["SOUND_EVENT_ONDURATION_DESC"] = [[This event triggers when the duration of the icon's timer changes.
+L["SOUND_EVENT_ONDURATION"] = "On Duration Threshold"
+L["SOUND_EVENT_ONDURATION_DESC"] = [[This event triggers when the duration of the icon's timer changes past some threshold.
 
-Because this event occurs every time the icon is updated while a timer is running, you must set a condition, and the event will only occur when the state of that condition changes.]]
+To use this trigger, you must set a condition, and the event will only occur when the state of that condition changes.]]
 
 L["SOUND_EVENT_ONCLEU"] = "On Combat Event"
 L["SOUND_EVENT_ONCLEU_DESC"] = [[This event triggers when the icon processes a combat event.]]
 
 L["SOUND_EVENT_ONUIERROR"] = "On Combat Error Event"
 L["SOUND_EVENT_ONUIERROR_DESC"] = [[This event triggers when the icon processes a combat event error.]]
-
-L["SOUND_EVENT_ONICONSHOW"] = "On Other Icon Show"
-L["SOUND_EVENT_ONICONSHOW_DESC"] = [[This event triggers when another icon (not this icon) is shown.
-
-Configure the icon that should be watched using the event settings below.]]
-
-L["SOUND_EVENT_ONICONHIDE"] = "On Other Icon Hide"
-L["SOUND_EVENT_ONICONHIDE_DESC"] = [[This event triggers when another icon (not this icon) is hidden.
-
-Configure the icon that should be watched using the event settings below.]]
 
 L["SOUND_EVENT_ONLEFTCLICK"] = "On Left Click"
 L["SOUND_EVENT_ONLEFTCLICK_DESC"] = [[This event triggers when you |cff7fffffLeft-click|r the icon while icons are locked.]]
@@ -2067,7 +2144,6 @@ This may also be thought of as a "soft reset" of the icon.
 
 This event may be useful in creating a default state for the icon.]]
 
-L["SOUND_EVENT_GLOBALDESC"] = "Events are checked from top to bottom in this list. If an event is triggered that has a sound to play, no events below that event will play a sound."
 L["SOUND_EVENT_NOEVENT"] = "Unconfigured Event"
 L["SOUND_EVENT_DISABLEDFORTYPE"] = "Not available"
 L["SOUND_EVENT_DISABLEDFORTYPE_DESC2"] = [[This event is not available for the current icon configuration.
@@ -2082,17 +2158,19 @@ L["SOUND_EVENT_WHILECONDITION_DESC"] = "This notification will trigger for as lo
 
 L["SOUND_SOUNDTOPLAY"] = "Sound to Play"
 L["SOUND_CUSTOM"] = "Custom sound file"
-L["SOUND_CUSTOM_DESC"] = [[Insert the path to a custom sound to play. Here are some examples, where "file" is the name of your sound, and "ext" is the file's extension (ogg or mp3 only!):
+L["SOUND_CUSTOM_DESC"] = [[Insert the path to a custom sound to play. You can also input a numeric Sound Kit ID.
 
-- "CustomSounds\file.ext": a file placed in a new folder named "CustomSounds" that is in WoW's root directory (the same location as Wow.exe, Interface and WTF folders, etc)
+Here are some examples, where "file" is the name of your sound, and "ext" is the file's extension (ogg or mp3 only!):
 
-- "Interface\AddOns\file.ext": a loose file in the AddOns folder
+- "CustomSounds/file.ext": a file placed in a new folder named "CustomSounds" that is in WoW's root directory (the same location as Wow.exe, Interface and WTF folders, etc)
+
+- "Interface/AddOns/file.ext": a loose file in the AddOns folder
 
 - "file.ext": a loose file in WoW's root directory
 
 NOTE: WoW must be restarted before it will recognize files that did not exist when it was started up.]]
 L["SOUND_TAB"] = "Sound"
-L["SOUND_TAB_DESC"] = "Configure a sound to be played. You can use a LibSharedMedia sound, or a custom sound file that you specify."
+L["SOUND_TAB_DESC"] = "Plays a LibSharedMedia sound or a custom sound file."
 
 L["EVENTS_TAB"] = "Notifications"
 L["EVENTS_TAB_DESC"] = "Configure triggers for sounds, text ouput, and animations."
@@ -2115,16 +2193,6 @@ L["EVENTS_CHANGETRIGGER"] = "Change Trigger"
 
 L["EVENTS_SETTINGS_HEADER"] = "Trigger Settings"
 
-L["EVENTS_INSTRUCTIONS"] = [[In this tab, you can configure extra functionality for this icon with notifications that include sounds, animations, and text outputs.
-
-These effects are triggered by an event of your choosing. Most events are triggered in response to a change in the icon's status, but there are other events too.
-
-There are also notifications that will persist while a condition set evalutes to true.
-
-To get started configuring these notifications, click the button to the left and chose the combination of trigger and effect that you would like.
-
-The settings for the trigger and the effect will then appear, and you can configure them as desired.]]
-
 L["EVENTS_SETTINGS_ONLYSHOWN"] = "Only handle if icon is shown"
 L["EVENTS_SETTINGS_ONLYSHOWN_DESC"] = "Prevents the notification from being handled if the icon is not shown."
 
@@ -2141,14 +2209,16 @@ L["EVENTS_SETTINGS_PASSINGCNDT_DESC"] = "Prevents the notification from being ha
 L["EVENTS_SETTINGS_CNDTJUSTPASSED"] = "And it just began passing"
 L["EVENTS_SETTINGS_CNDTJUSTPASSED_DESC"] = "Prevents the notification from being handled unless the condition configured above has just begun succeeding."
 
-L["EVENTS_SETTINGS_PASSTHROUGH"] = "Continue to lower events"
+L["EVENTS_SETTINGS_PASSTHROUGH"] = "Continue to lower notifications"
 L["EVENTS_SETTINGS_PASSTHROUGH_DESC"] = [[Check to allow another event-triggered notification to be handled after this one.
 
-If left unchecked, the icon will not process any more events after this event if it successfully processes and outputs/displays something.
+If left unchecked, the icon will not process any more notifications after this notifications if it successfully processes and outputs/displays something.
 
-Exeptions may apply, see individual event descriptions for details.]]
+Exeptions may apply, see individual trigger descriptions for details.]]
 
 
+
+L["CONFIGPANEL_MEDIA_HEADER"] = "Media"
 
 L["SOUND_CHANNEL"] = "Sound Channel"
 L["SOUND_CHANNEL_DESC"] = [[Choose the sound channel and volume setting that you would like to use to play sounds.
@@ -2173,11 +2243,11 @@ You can also change the sound channel that TellMeWhen is configured to use in Te
 L["SOUNDERROR1"] = "File must have an extension!"
 L["SOUNDERROR2"] = [[Custom WAV files are not supported by WoW 4.0+
 
-(Sounds build into WoW will still work, though)]]
+(Sounds built into WoW will still work, though)]]
 L["SOUNDERROR3"] = "Only OGG and MP3 files are supported!"
 
 L["ANN_TAB"] = "Text"
-L["ANN_TAB_DESC"] = [[Configure text to be outputted. Destinations include Blizzard text channels, UI frames, and other AddOns.]]
+L["ANN_TAB_DESC"] = [[Outputs text to chat channels, UI frames, or other AddOns.]]
 L["HELP_ANN_LINK_INSERTED"] = [[The link you just inserted might look strange, but this is how it must be formatted with DogTag.
 
 Changing the color code if you are outputting to a Blizzard channel will break the link.]]
@@ -2212,13 +2282,13 @@ L["ERRORS_FRAME_DESC"] = "Outputs the text to the standard errors frame that nor
 
 
 L["ANIM_TAB"] = "Animation"
-L["ANIM_TAB_DESC"] = [[Configure an animation to be played. Some will affect this icon while others will affect your entire screen.]]
+L["ANIM_TAB_DESC"] = [[Animate this icon or your entire screen.]]
 L["ANIM_ANIMTOUSE"] = "Animation To Use"
 L["ANIM_ANIMSETTINGS"] = "Settings"
 
-L["ANIM_SECONDS"] = "%s Seconds"
-L["ANIM_PIXELS"] = "%s Pixels"
-L["ANIM_DURATION"] = "Animation Duration"
+L["ANIM_SECONDS"] = "%s sec."
+L["ANIM_PIXELS"] = "%s px."
+L["ANIM_DURATION"] = "Duration"
 L["ANIM_DURATION_DESC"] = "Set how long the animation should last after it is triggered."
 L["ANIM_PERIOD"] = "Flash Period"
 L["ANIM_PERIOD_DESC"] = [[Set how long each flash should take - the time that the flash is shown or fading in.
@@ -2228,7 +2298,7 @@ L["ANIM_MAGNITUDE"] = "Shake Magnitude"
 L["ANIM_MAGNITUDE_DESC"] = "Set how violent the shake should be."
 L["ANIM_THICKNESS"] = "Border Thickness"
 L["ANIM_THICKNESS_DESC"] = "Set how thick the border should be."
-L["ANIM_SIZE_ANIM"] = "Border Outset Amount"
+L["ANIM_SIZE_ANIM"] = "Border Outset"
 L["ANIM_SIZE_ANIM_DESC"] = "Set how big the entire border should be."
 L["ANIM_ALPHASTANDALONE"] = "Opacity"
 L["ANIM_ALPHASTANDALONE_DESC"] = "Set the opacity of the animation."
@@ -2278,12 +2348,14 @@ L["ANIM_ICONCLEAR_DESC"] = "Stops all animations that are playing on the current
 L["ANIM_ANCHOR_NOT_FOUND"] = "Couldn't find frame named %q to anchor an animation to. Is this frame not used by the icon's current view?"
 
 
-L["EVENTHANDLER_LUA_TAB"] = "Lua (Advanced)"
-L["EVENTHANDLER_LUA_TAB_DESC"] = [[Configure a Lua script to be executed. This is an advanced feature for those who have knowledge of the Lua programming language.]]
+L["EVENTHANDLER_LUA_TAB"] = "Lua"
+L["EVENTHANDLER_LUA_TAB_DESC"] = [[Advanced users with Lua programming experience can write a script to be executed.]]
 L["EVENTHANDLER_LUA_LUAEVENTf"] = "Lua Event: %s"
 L["EVENTHANDLER_LUA_LUA"] = "Lua"
 L["EVENTHANDLER_LUA_CODE"] = "Lua Code to Execute"
 L["EVENTHANDLER_LUA_CODE_DESC"] = "Type the Lua code that should be executed when the event is triggered here."
+
+L["LUA_INSERTGUID_TOOLTIP"] = "|cff7fffffShift-click|r to insert a reference to this icon into your code."
 
 L["CONDITIONPANEL_COUNTER_DESC"] = "Check the value of a counter that has been established and modified by the \"Counter\" Notification handler"
 L["CONDITION_COUNTER"] = "Counter to check"
@@ -2312,10 +2384,10 @@ L["OPERATION_TSTOP"] = "Stop"
 L["OPERATION_TSTOP_DESC"] = "Stops and resets the timer to 0."
 
 L["EVENTHANDLER_COUNTER_TAB"] = "Counter"
-L["EVENTHANDLER_COUNTER_TAB_DESC"] = "Configure a numerical counter to be modified or set. This counter can be checked in Conditions and displayed as text with DogTags."
+L["EVENTHANDLER_COUNTER_TAB_DESC"] = "Set, increment, or decrement a counter. You can check it in Conditions and display it with DogTags."
 
 L["EVENTHANDLER_TIMER_TAB"] = "Timer"
-L["EVENTHANDLER_TIMER_TAB_DESC"] = "Configure a stopwatch-style timer. This timer can be checked in Conditions and displayed as text with DogTags."
+L["EVENTHANDLER_TIMER_TAB_DESC"] = "Start or stop a stopwatch-style timer. You can check it in Conditions and display it with DogTags."
 
 L["EVENTS_SETTINGS_COUNTER_HEADER"] = "Counter Settings"
 L["EVENTS_SETTINGS_TIMER_HEADER"] = "Timer Settings"
@@ -2445,33 +2517,6 @@ L["CLEU_PARTY_KILL"] = "Party Kill"
 L["CLEU_PARTY_KILL_DESC"] = "Occurs when someone in your party kills something."
 
 
--- Multistrike strings
-L["CLEU_RANGE_DAMAGE_MULTISTRIKE"] = "Ranged Damage Multistrike" -- custom event
-L["CLEU_RANGE_DAMAGE_MULTISTRIKE_DESC"] = [[Occurs when your auto shot multistrikes.
-
-This will occur at the same time as the %q event.]]
-L["CLEU_SWING_DAMAGE_MULTISTRIKE"] = "Swing Damage Multistrike" -- custom event
-L["CLEU_SWING_DAMAGE_MULTISTRIKE_DESC"] = [[Occurs when your normal melee attacks multistrike.
-
-This will occur at the same time as the %q event.]]
-L["CLEU_SPELL_DAMAGE_MULTISTRIKE"] = "Spell Damage Multistrike" -- custom event
-L["CLEU_SPELL_DAMAGE_MULTISTRIKE_DESC"] = [[Occurs when a spell multistrikes.
-
-This will occur at the same time as the %q event.]]
-L["CLEU_SPELL_PERIODIC_DAMAGE_MULTISTRIKE"] = "Periodic Damage Multistrike" -- custom event
-L["CLEU_SPELL_PERIODIC_DAMAGE_MULTISTRIKE_DESC"] = [[Occurs when a DoT multistrikes.
-
-This will occur at the same time as the %q event.]]
-L["CLEU_SPELL_HEAL_MULTISTRIKE"] = "Heal Multistrike" -- custom event
-L["CLEU_SPELL_HEAL_MULTISTRIKE_DESC"] = [[Occurs when a heal multistrikes.
-
-This will occur at the same time as the %q event.]]
-L["CLEU_SPELL_PERIODIC_HEAL_MULTISTRIKE"] = "Periodic Heal Multistrike" -- custom event
-L["CLEU_SPELL_PERIODIC_HEAL_MULTISTRIKE_DESC"] = [[Occurs when a HoT multistrikes.
-
-This will occur at the same time as the %q event.]]
-
-
 
 L["CLEU_CAT_CAST"] = "Casts"
 L["CLEU_CAT_SWING"] = "Melee/Ranged"
@@ -2550,6 +2595,13 @@ L["CLEU_DESTUNITS_DESC"] = "Choose the destination units that you would like the
 --L["CLEU_FLAGS_DEST"] = "Destination Exclusions"
 L["CLEU_FLAGS_SOURCE"] = "Exclusions"
 L["CLEU_FLAGS_DEST"] = "Exclusions"
+L["CLEU_HEADER_SOURCE"] = "Source Unit(s)"
+L["CLEU_HEADER_DEST"] = "Destination Unit(s)"
+L["CLEU_CONDITIONS_SOURCE"] = "Source Conditions"
+L["CLEU_CONDITIONS_DEST"] = "Destination Conditions"
+L["CLEU_CONDITIONS_DESC"] = [[Configure conditions that each unit will have to pass in order to be checked.
+
+These conditions are only available when you entered units to check and all those units entered are unitIDs - names cannot be used with these conditions.]]
 L["CLEU_FLAGS_DESC"] = "Contains a list of attributes that can be used to exclude certain units from triggering the icon. If an exclusion is checked, and a unit has that attribute, the icon will not process the event that the unit was part of."
 
 L["CLEU_TIMER"] = "Timer to set on event"
@@ -2587,7 +2639,7 @@ E.g. "%s: 10"
 
 Inserting from the suggestion list automatically adds the duration from the tooltip.]]
 
-L["HELP_POCKETWATCH"] = [[|TInterface\Icons\INV_Misc_PocketWatch_01:20|t -- The pocket watch texture.
+L["HELP_POCKETWATCH"] = [[|TInterface/Icons/INV_Misc_PocketWatch_01:20|t -- The pocket watch texture.
 This texture is being used because the first valid spell being checked was entered by name and isn't in your spellbook.
 
 The correct texture will be used once you have seen the spell as you play.
@@ -2596,16 +2648,23 @@ To see the correct texture now, change the first spell being checked into a Spel
 
 L["HELP_NOUNITS"] = [[You must enter at least one unit!]]
 L["HELP_NOUNIT"] = [[You must enter a unit!]]
-L["HELP_ONLYONEUNIT"] = [[Conditions only accept one unit, but you have entered %d |4unit:units;.]]
-L["HELP_MS_NOFOUND"] = [[The ability %q could not be found on your action bars.
+L["HELP_ONLYONEUNIT"] = [[Conditions only accept one unit, but you have entered %d |4unit:units;.
 
-Ensure that the ability is on your action bars, in its default state, and that it is not only a macro that is putting the spell on your action bars. Otherwise, this icon will not function properly.]]
+If you need to check many units, consider using a separate icon with an Icon Shown condition to reference that icon.]]
 
 L["HELP_BUFF_NOSOURCERPPM"] = [[It looks like you are trying to track %s, which is a buff that uses the RPPM system.
 
 Due to a Blizzard bug, this buff can't be tracked if you have the %q setting enabled.
 
 Please disable this setting if you want this buff to be tracked properly.]]
+
+L["HELP_COOLDOWN_VOIDBOLT"] = [[|TInterface/Icons/ability_ironmaidens_convulsiveshadows:20|t It looks like you are trying to track the cooldown of %s.
+
+Unfortunately, due to the way Blizzard made this spell, it won't work.
+
+|T1386548:20|t Instead, you need to track the cooldown of %s.
+
+Add a condition to check for the %s buff if you only want the icon while it is actually %s.]]
 
 L["HELP_IMPORT_CURRENTPROFILE"] = [[Trying to move or copy an icon from this profile to another icon slot?
 
@@ -2629,8 +2688,6 @@ L["HELP_CNDT_ANDOR_FIRSTSEE"] = [[You can choose whether both conditions are req
 
 |cff7fffffClick|r this setting between your conditions to change this behavior if you wish to do so.]]
 
-L["HELP_SIMPLEGSTAB"] = "Click to toggle between group-only options and full main options."
-
 L["HELP_SCROLLBAR_DROPDOWN"] = [[Some of TellMeWhen's dropdown menus have scrollbars.
 
 You will need to scroll down to see everything in this menu.
@@ -2642,17 +2699,9 @@ You can also use your mouse wheel.]]
 L["IMPORT_ICON_DISABLED_DESC"] = "You must be editing an icon to be able to import an icon."
 
 
-L["CHANGELOG_INFO"] = [[Welcome to TellMeWhen v%s!
-
-Take a moment to check out what has changed in this version.
-
-You can view this any time with the following command:
-
-/tmw changelog
-
-Close this window when you are ready to edit your icon.]]
-L["CHANGELOG_MSG"] = "Thanks for helping to test TellMeWhen %s! Type /tmw changelog to see what has changed."
-L["CHANGELOG_OKAY_OPENIE"] = "Okay, now open the Icon Editor"
+L["CHANGELOG_INFO2"] = [[Welcome to TellMeWhen v%s!
+<br/><br/>
+When you're done checking out what has changed, click the %s tab or %s tab at the bottom to start configuring TellMeWhen.]]
 
 
 L["TOPLEFT"] = "Top Left"
@@ -2671,7 +2720,7 @@ L["STRATA_MEDIUM"] = "Medium"
 L["STRATA_HIGH"] = "High"
 L["STRATA_DIALOG"] = "Dialog"
 L["STRATA_FULLSCREEN"] = "Fullscreen"
-L["STRATA_FULLSCREEN_DIALOG"] = "Fullscreen Dialog"
+L["STRATA_FULLSCREEN_DIALOG"] = "Full Dialog"
 L["STRATA_TOOLTIP"] = "Tooltip"
 
 
@@ -2680,7 +2729,7 @@ L["IMPORT_LUA_DESC"] = [[The data you are importing contains the following Lua c
 You should be wary of importing any Lua code from untusted sources because it can be used for malicious purposes. Most of the time it is completely safe, but there are people out there who would use it to do you wrong.
 
 Review the code and confirm that it is either coming from a source that you trust or that it isn't doing things like sending mail or accepting trades on your behalf.]]
-L["IMPORT_LUA_DESC2"] = "|TInterface\\AddOns\\TellMeWhen\\Textures\\Alert:0:2|t Be sure to review the parts of the code in red, which are common words/phrases that could indicate malicious activity. |TInterface\\AddOns\\TellMeWhen\\Textures\\Alert:0:2|t"
+L["IMPORT_LUA_DESC2"] = "|TInterface/AddOns/TellMeWhen/Textures/Alert:0:2|t Be sure to review the parts of the code in red, which are common words/phrases that could indicate malicious activity. |TInterface/AddOns/TellMeWhen/Textures/Alert:0:2|t"
 L["IMPORT_LUA_CONFIRM"] = "Ok, import this"
 L["IMPORT_LUA_DENY"] = "Abort import operation"
 
@@ -2701,24 +2750,26 @@ L["Disoriented"] = "Disoriented"
 L["Silenced"] = "Silenced"
 L["Rooted"] = "Rooted"
 L["Shatterable"] = "Shatterable"
-L["IncreasedStats"] = "Increased Stats"
-L["IncreasedCrit"] = "Increased Crit Chance"
-L["IncreasedMastery"] = "Increased Mastery"
-L["IncreasedAP"] = "Increased Attack Power"
-L["IncreasedSP"] = "Increased Spellpower"
-L["IncreasedHaste"] = "Increased Haste"
 L["DamageShield"] = "Damage Shield"
 --L["BurstHaste"] = "Heroism/Bloodlust" -- defined in static formats
-L["BonusStamina"] = "Increased Stamina"
 L["ReducedHealing"] = "Reduced Healing"
 L["DefensiveBuffs"] = "Defensive Buffs"
+L["DefensiveBuffsSingle"] = "Targeted Defensive Buffs"
+L["DefensiveBuffsAOE"] = "AOE Defensive Buffs"
 L["MiscHelpfulBuffs"] = "Misc. Helpful Buffs"
 L["SpeedBoosts"] = "Speed Boosts"
 L["DamageBuffs"] = "Damage Buffs"
-L["IncreasedVersatility"] = "Increased Versatility"
-L["IncreasedMultistrike"] = "Increased Multistrike"
 
 -- Deprecated
+--L["IncreasedVersatility"] = "Increased Versatility"
+--L["IncreasedMultistrike"] = "Increased Multistrike"
+--L["IncreasedStats"] = "Increased Stats"
+--L["IncreasedCrit"] = "Increased Crit Chance"
+--L["IncreasedMastery"] = "Increased Mastery"
+--L["IncreasedAP"] = "Increased Attack Power"
+--L["IncreasedSP"] = "Increased Spellpower"
+--L["IncreasedHaste"] = "Increased Haste"
+--L["BonusStamina"] = "Increased Stamina"
 -- L["BurstManaRegen"] = "Burst Mana Regen"
 --L["DontMelee"] = "Don't Melee"
 --L["MovementSlowed"] = "Movement Slowed"
@@ -2735,8 +2786,6 @@ L["IncreasedMultistrike"] = "Increased Multistrike"
 
 L["Heals"] = "Player Heals"
 L["PvPSpells"] = "PvP Crowd Control, etc."
-L["Tier11Interrupts"] = "Tier 11 Interruptibles"
-L["Tier12Interrupts"] = "Tier 12 Interruptibles"
 
 L["GCD"] = "Global Cooldown"
 
@@ -2747,6 +2796,7 @@ L["Poison"] = "Poison"
 L["Enraged"] = "Enrage"
 
 L["normal"] = "Normal"
+L["minus"] = "Minion"
 L["rare"] = "Rare"
 L["elite"] = "Elite"
 L["rareelite"] = "Rare Elite"
@@ -2787,18 +2837,3 @@ Creature types must be typed exactly as they appear in the creature's tooltip.
 
 The condition will pass if any types are matched.]]
 
-
-L["CREATURETYPE_1"] = "Beast"
-L["CREATURETYPE_2"] = "Dragonkin"
-L["CREATURETYPE_3"] = "Demon"
-L["CREATURETYPE_4"] = "Elemental"
-L["CREATURETYPE_5"] = "Giant"
-L["CREATURETYPE_6"] = "Undead"
-L["CREATURETYPE_7"] = "Humanoid"
-L["CREATURETYPE_8"] = "Critter"
-L["CREATURETYPE_9"] = "Mechanical"
-L["CREATURETYPE_10"] = "Not specified"
-L["CREATURETYPE_11"] = "Totem"
-L["CREATURETYPE_12"] = "Non-combat Pet"
-L["CREATURETYPE_13"] = "Gas Cloud"
-L["CREATURETYPE_14"] = "Wild Pet"

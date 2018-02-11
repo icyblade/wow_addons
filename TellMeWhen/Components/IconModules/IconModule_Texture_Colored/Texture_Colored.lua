@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -23,105 +23,99 @@ local bitband = bit.band
 
 local OnGCD = TMW.OnGCD
 
-local ColorGCD, ColorMSQ, OnlyMSQ
+local ColorMSQ, OnlyMSQ
 
 local Texture_Colored = TMW:NewClass("IconModule_Texture_Colored", "IconModule_Texture")
 
+TMW:RegisterDatabaseDefaults({
+	profile = {
+		ColorMSQ = false,
+		OnlyMSQ  = false,
+	}
+})
+
+if LMB then
+	Texture_Colored:RegisterConfigPanel_ConstructorFunc(9, "TellMeWhen_Main_Texture_Colored", function(self)
+		self:SetTitle(L["DOMAIN_PROFILE"] .. ": " .. "Masque")
+		
+		self:BuildSimpleCheckSettingFrame({
+			numPerRow = 1,
+			function(check)
+				check:SetTexts(L["COLOR_MSQ_COLOR"], L["COLOR_MSQ_COLOR_DESC"])
+				check:SetSetting("ColorMSQ")
+			end,
+			function(check)
+				check:SetTexts(L["COLOR_MSQ_ONLY"], L["COLOR_MSQ_ONLY_DESC"])
+				check:SetSetting("OnlyMSQ")
+
+				check:CScriptAdd("ReloadRequested", function()
+					check:SetEnabled(TMW.db.profile.ColorMSQ)
+				end)
+			end,
+		})
+	end):SetPanelSet("profile")
+end
+
+
 function Texture_Colored:SetupForIcon(icon)
-	self.Colors = icon.typeData.Colors
-	self.ShowWhen = icon.ShowWhen
 	self.ShowTimer = icon.ShowTimer
-	self:UPDATE(icon)
+	self:STATE(icon, icon.attributes.calculatedState)
+end
+
+function Texture_Colored:VarTexChanged()
+	local icon = self.icon
+	self:STATE(icon, icon.attributes.calculatedState)
 end
 
 local COLOR_UNLOCKED = {
-	r=1,
-	b=1,
-	g=1,
-	Gray=false,
+	Color = "ffffffff",
+	Texture = "",
+	Gray = false,
 }
-function Texture_Colored:UPDATE(icon)
-	local attributes = icon.attributes
-	local duration, inrange, nomana, charges = attributes.duration, attributes.inRange, attributes.noMana, attributes.charges
---[[
-	OOR	=	{r=0.5,	g=0.5,	b=0.5	},	-- out of range
-	OOM	=	{r=0.5,	g=0.5,	b=0.5	},	-- out of mana
-	OORM=	{r=0.5,	g=0.5,	b=0.5	},	-- out of range and mana
-
-	CTA	=	{r=1,	g=1,	b=1		},	-- counting with timer always
-	COA	=	{r=1,	g=1,	b=1		},	-- counting withOUT timer always
-	CTS	=	{r=1,	g=1,	b=1		},	-- counting with timer somtimes
-	COS	=	{r=1,	g=1,	b=1		},	-- counting withOUT timer somtimes
-
-	NA	=	{r=1,	g=1,	b=1		},	-- not counting always
-	NS	=	{r=1,	g=1,	b=1		},	-- not counting somtimes]]
-
+function Texture_Colored:STATE(icon, stateData)
 	local color
-	if not TMW.Locked then
-		color = COLOR_UNLOCKED
-	elseif inrange == false and nomana then
-		color = self.Colors.OORM
-	elseif inrange == false then
-		color = self.Colors.OOR
-	elseif nomana then
-		color = self.Colors.OOM
+	if not TMW.Locked or not stateData then
+		color = "ffffffff"
 	else
+		color = stateData.Color
+	end
 
-		local s
-
-		
-		if not duration or duration == 0 or (ColorGCD and icon:OnGCD(duration)) or (charges and charges > 0) then
-			s = "N" -- Not counting
-		else
-			s = "C" -- Counting
-			
-			--if s == "C" then
-				if self.ShowTimer then
-					s = s .. "T" -- Timer
-				else
-					s = s .. "O" -- nOtimer
-				end
-			--end
-		end
-		
-		--if (self.ShowWhen or "always") == "always" then
-		if (bitband(self.ShowWhen or 0x3, 0x3)) == 0x3 then
-			s = s .. "A" -- Always
-		else
-			s = s .. "S" -- Sometimes
-		end
-		
-		--assert(self.Colors[s])
-		
-		color = self.Colors[s]
+	local texture = stateData.Texture
+	if texture and texture ~= "" then
+		texture = TMW.COMMON.Textures:EvaluateTexturePath(texture, self, "VarTexChanged")
+		self.texture:SetTexture(texture)
+	else
+		self.texture:SetTexture(icon.attributes.texture)
 	end
 	
-	local texture = self.texture
-	local r, g, b, d = color.r, color.g, color.b, color.Gray
+	local c = TMW:StringToCachedRGBATable(color)
 	
 	if not (LMB and OnlyMSQ) then
-		texture:SetVertexColor(r, g, b, 1)
+		self.texture:SetVertexColor(c.r, c.g, c.b, 1)
 	else
-		texture:SetVertexColor(1, 1, 1, 1)
+		self.texture:SetVertexColor(1, 1, 1, 1)
 	end
-	texture:SetDesaturated(d)
+
+	self.texture:SetDesaturated(c.flags and c.flags.desaturate or false)
 	
 	if LMB and ColorMSQ then
-		local iconnt = icon.normaltex
-		if iconnt then
-			iconnt:SetVertexColor(r, g, b, 1)
+		-- This gets set by IconModule_IconContainer_Masque
+		local normaltex = icon.normaltex
+		if normaltex then
+			normaltex:SetVertexColor(c.r, c.g, c.b, 1)
 		end
 	end
 end
 
-Texture_Colored:SetDataListner("INRANGE", Texture_Colored.UPDATE)
-Texture_Colored:SetDataListner("NOMANA", Texture_Colored.UPDATE)
-Texture_Colored:SetDataListner("DURATION", Texture_Colored.UPDATE)
-Texture_Colored:SetDataListner("SPELLCHARGES", Texture_Colored.UPDATE)
+Texture_Colored:SetDataListener("CALCULATEDSTATE", Texture_Colored.STATE)
 
+
+function Texture_Colored:TEXTURE(icon, texture)
+	self:STATE(icon, icon.attributes.calculatedState)
+end
+Texture_Colored:SetDataListener("TEXTURE")
 
 TMW:RegisterCallback("TMW_GLOBAL_UPDATE", function()
 	ColorMSQ = TMW.db.profile.ColorMSQ
 	OnlyMSQ = TMW.db.profile.OnlyMSQ
-	ColorGCD = TMW.db.profile.ColorGCD
 end)

@@ -1,9 +1,10 @@
 --[[--------------------------------------------------------------------------
-  Copyright (c) 2007, James Whitehead II  
+  Copyright (c) 2007-2017, James Whitehead II
   All rights reserved.
-  
+
   WowLua is an interactive interpreter for World of Warcraft
 --------------------------------------------------------------------------]]--
+
 local addon = ...
 local version = GetAddOnMetadata("WowLua", "Version") or "SVN"
 WowLua = {
@@ -134,11 +135,11 @@ end
 
 function WowLua:ProcessLine(text)
 	WowLuaFrameCommandEditBox:SetText("")
-	
+
 	if processSpecialCommands(text) then
 		return
 	end
-	
+
 	-- escape any color codes:
 	local output = text:gsub("\124", "\124\124")
 
@@ -208,7 +209,7 @@ function WowLua:RunScript(text)
 	-- escape any color codes:
 	local output = text:gsub("\124", "\124\124")
 
-	if text == L.RELOAD_COMMAND then 
+	if text == L.RELOAD_COMMAND then
 		ReloadUI()
 	end
 
@@ -247,7 +248,7 @@ end
 function WowLua:Initialize(frame)
 	WowLua:OnSizeChanged(frame)
 	table.insert(UISpecialFrames, "WowLuaFrame")
-	PlaySound("igMainMenuOpen");
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPEN);
 	self:UpdateButtons()
 end
 
@@ -330,7 +331,7 @@ function WowLua:GetUndoPage()
 	WowLua:Queue(WowLuaFrameEditBox:GetText())
 
 	local item = self.queue[self.queuePos-1]
-	if item then 
+	if item then
 		self.queuePos = self.queuePos-1
 		return item
 	end
@@ -354,7 +355,7 @@ function WowLua:Button_New(button)
 		dialog.data = "Button_New"
 		return
 	end
-	
+
 	-- Create a new page and display it
 	local entry, num = WowLua:CreateNewPage()
 
@@ -381,7 +382,7 @@ function WowLua.OpenDropDownInitialize()
 		text = L.OPEN_MENU_TITLE,
 		isTitle = 1
 	}
-	
+
 	for page, entry in ipairs(WowLua_DB.pages) do
 		UIDropDownMenu_AddButton{
 			text = entry.name,
@@ -395,7 +396,7 @@ StaticPopupDialogs["WOWLUA_SAVE_AS"] = {
 	text = L.SAVE_AS_TEXT,
 	button1 = TEXT(OKAY),
 	button2 = TEXT(CANCEL),
-	OnAccept = function(self)		
+	OnAccept = function(self)
 		local name = self:GetName().."EditBox"
 		local button = _G[name]
 		local text = button:GetText()
@@ -484,7 +485,7 @@ function WowLua:Button_Delete(button)
 		dialog.data = "Button_Delete"
 		return
 	end
-	
+
 	local page, entry = self:GetCurrentPage()
 	if self:GetNumPages() == 1 then
 		self:Button_New()
@@ -492,7 +493,7 @@ function WowLua:Button_Delete(button)
 	end
 
 	self:DeletePage(page)
-	
+
 	if page > 1 then page = page - 1 end
 	local entry = self:SelectPage(page)
 	WowLuaFrameEditBox:SetText(entry.content)
@@ -567,7 +568,7 @@ end
 function WowLua:UpdateButtons()
 	local current = self:GetCurrentPage()
 	local max = self:GetNumPages()
-	
+
 	if current == 1 then
 		WowLuaButton_Previous:Disable()
 	else
@@ -579,7 +580,7 @@ function WowLua:UpdateButtons()
 	else
 		WowLuaButton_Next:Enable()
 	end
-	
+
 	self.indent.indentEditbox(WowLuaFrameEditBox)
 
 	if self:IsPageLocked(current) then
@@ -615,7 +616,7 @@ function WowLua:Button_Run()
 
 	-- Run the script, if there is an error then highlight it
 	if text then
-		-- Add the current state of the page to the queue 
+		-- Add the current state of the page to the queue
 		WowLua:Queue(text)
 
 		local succ,err = WowLua:RunScript(text)
@@ -635,7 +636,7 @@ function WowLua:Button_Run()
 			end
 
 			local nextLine = select(2, text:find("\n", start))
-			
+
 			WowLuaFrameEditBox:SetFocus()
 			WowLuaFrameEditBox:SetCursorPosition(start - 1)
 		end
@@ -653,7 +654,7 @@ function WowLua:Button_Close()
 		dialog.data = "Button_Close"
 		return
 	end
-	
+
 	HideUIPanel(WowLuaFrame)
 end
 
@@ -702,7 +703,7 @@ function WowLua:OnSizeChanged(frame)
 	else
 		bg2:Hide()
 	end
-		
+
 	if bg3w and bg3w > 0 then
 		bg3:SetWidth(bg3w)
 		bg3:SetTexCoord(0, (bg3w / 256), 0, 1)
@@ -723,7 +724,7 @@ function WowLua:OnSizeChanged(frame)
 		local parent = WowLuaFrameResizeBar:GetParent()
 		local cursorY = select(2, GetCursorPosition())
 		local newPoint = select(5, WowLuaFrameResizeBar:GetPoint())
-		local maxPoint = parent:GetHeight() - 175; 
+		local maxPoint = parent:GetHeight() - 175;
 
 		if newPoint < 100 then
 			newPoint = 100
@@ -751,7 +752,7 @@ function WowLua:ResizeBar_OnUpdate(frame, elapsed)
 	local parent = frame:GetParent()
 	local cursorY = select(2, GetCursorPosition())
 	local newPoint = frame.anchorStart - (frame.cursorStart - cursorY)/frame:GetEffectiveScale()
-	local maxPoint = parent:GetHeight() - 175; 
+	local maxPoint = parent:GetHeight() - 175;
 
 	if newPoint < 100 then
 		newPoint = 100
@@ -767,7 +768,7 @@ end
 function WowLua:OnVerticalScroll(scrollFrame)
 	local offset = scrollFrame:GetVerticalScroll();
 	local scrollbar = getglobal(scrollFrame:GetName().."ScrollBar");
-	
+
 	scrollbar:SetValue(offset);
 	local min, max = scrollbar:GetMinMaxValues();
 	local display = false;
@@ -792,7 +793,7 @@ end
 
 function WowLua:UpdateLineNums(highlightNum)
 	-- highlightNum is the line number indicated by the error message
-	if highlightNum then 
+	if highlightNum then
 		WowLua.highlightNum = highlightNum
 	else
 		highlightNum = WowLua.highlightNum
@@ -805,7 +806,7 @@ function WowLua:UpdateLineNums(highlightNum)
 	local linetest = WowLuaFrameEditBoxLineTest
 	local linescroll = WowLuaFrameLineNumScrollFrame
 
-	local width = editbox:GetWidth() 
+	local width = editbox:GetWidth()
 	local text = editbox:GetText(true)
 
 	local linetext = ""
@@ -823,7 +824,7 @@ function WowLua:UpdateLineNums(highlightNum)
 			linetest:SetText(line:gsub("|", "||"))
 			local testwidth = linetest:GetWidth()
 			if testwidth >= width then
-				linetext = linetext .. string.rep("\n", testwidth / width) 
+				linetext = linetext .. string.rep("\n", testwidth / width)
 			end
 		end
 	end
@@ -844,18 +845,11 @@ function WowLua:UpdateLineNums(highlightNum)
 end
 
 local function canScroll(scroll, direction)
-	local num, displayed, currScroll = scroll:GetNumMessages(),
-					   scroll:GetNumLinesDisplayed(),
-					   scroll:GetCurrentScroll();
-	if ( direction == "up" and
-	     (
-		num == displayed or
-		num == ( currScroll + displayed )
-	      )
-	) then
-		return false;
-	elseif ( direction == "down" and currScroll == 0 ) then
-		return false;
+	if direction == "up" then
+		return not scroll:AtTop()
+	end
+	if direction == "down" then
+		return not scroll:AtBottom()
 	end
 	return true;
 end
@@ -863,21 +857,21 @@ end
 function WowLua:UpdateScrollingMessageFrame(frame)
 	local name = frame:GetName();
 	local display = false;
-	
+
 	if ( canScroll(frame, "up") ) then
 		getglobal(name.."UpButton"):Enable();
 		display = true;
 	else
 		getglobal(name.."UpButton"):Disable();
 	end
-	
+
 	if ( canScroll(frame, "down") ) then
 		getglobal(name.."DownButton"):Enable();
 		display = true;
 	else
 		getglobal(name.."DownButton"):Disable();
 	end
-	
+
 	if ( display ) then
 		getglobal(name.."UpButton"):Show();
 		getglobal(name.."DownButton"):Show();
@@ -928,7 +922,7 @@ SlashCmdList["WOWLUA"] = function(txt)
 	end
 
 	WowLuaFrame:Show()
-	
+
 	if processSpecialCommands(txt) then
 		return
 	end
@@ -959,7 +953,7 @@ SlashCmdList["WOWLUARUN"] = function(txt, editbox)
         else
             -- Call the function
             local succ, err = pcall(func)
-        
+
             if not succ then
                 printf("|cFF33FF99WowLua|r: Error while running page '%s': %s", txt, err)
             end

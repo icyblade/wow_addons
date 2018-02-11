@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -26,11 +26,13 @@ Type.menuIcon = "Interface\\Icons\\spell_shadow_darksummoning"
 Type.AllowNoName = true
 Type.hasNoGCD = true
 
+local STATE_RUNNING = TMW.CONST.STATE.DEFAULT_SHOW
+local STATE_EXPIRED = TMW.CONST.STATE.DEFAULT_HIDE
 
 -- AUTOMATICALLY GENERATED: UsesAttributes
-Type:UsesAttributes("spell")
-Type:UsesAttributes("alpha")
+Type:UsesAttributes("state")
 Type:UsesAttributes("start, duration")
+Type:UsesAttributes("spell")
 Type:UsesAttributes("texture")
 -- END AUTOMATICALLY GENERATED: UsesAttributes
 
@@ -57,10 +59,9 @@ Type:RegisterConfigPanel_XMLTemplate(100, "TellMeWhen_ChooseName", {
 	SUGType = "uierror",
 })
 
-Type:RegisterConfigPanel_XMLTemplate(165, "TellMeWhen_WhenChecks", {
-	text = L["ICONMENU_SHOWWHEN"],
-	[0x2] = { text = "|cFF00FF00" .. L["ICONMENU_COUNTING"], 	 },
-	[0x1] = { text = "|cFFFF0000" .. L["ICONMENU_NOTCOUNTING"],  },
+Type:RegisterConfigPanel_XMLTemplate(165, "TellMeWhen_IconStates", {
+	[STATE_RUNNING] = { text = "|cFF00FF00" .. L["ICONMENU_COUNTING"],    },
+	[STATE_EXPIRED] = { text = "|cFFFF0000" .. L["ICONMENU_NOTCOUNTING"], },
 })
 
 Type:RegisterConfigPanel_XMLTemplate(150, "TellMeWhen_UIErrorOptions")
@@ -72,7 +73,14 @@ Type:RegisterIconEvent(5, "OnUIErrorEvent", {
 })
 
 
-local function UIError_OnEvent(icon, _, message)
+local function UIError_OnEvent(icon, _, messageType, message)
+	-- TODO: consider updating this icon type to store the messageType as config instead
+	-- of the literal messages? Not sure if this is safe though - no indication that
+	-- the messageType numbers are going to be stable from patch to patch.
+	-- Its likely, but not a risk I want to take until we can be sure that they aren't going to shift around.
+	-- Plus, the configuration would have to be a massive dropdown if we were to use the IDs, 
+	-- which is a usability nightmare. Letting the user type them in manually (and use the SUG, of course)
+	-- does seem better from a usability standpoint.
 
 	if icon.CLEUNoRefresh then
 		-- Don't handle the event if CLEUNoRefresh is set and the icon's timer is still running.
@@ -124,17 +132,15 @@ local function UIError_OnUpdate(icon, time)
 	local duration = attributes.duration
 
 	if time - start > duration then
-		-- The timer is not running. Use the timer-not-running alpha value.
 		icon:SetInfo(
-			"alpha; start, duration",
-			icon.UnAlpha,
+			"state; start, duration",
+			STATE_EXPIRED,
 			0, 0
 		)
 	else
-		-- The timer is running. Use the timer-is-running alpha value.
 		icon:SetInfo(
-			"alpha; start, duration",
-			icon.Alpha,
+			"state; start, duration",
+			STATE_RUNNING,
 			start, duration
 		)
 	end
@@ -172,7 +178,7 @@ TMW:RegisterCallback("TMW_OPTIONS_LOADED", function()
 	local Messages = {}
 	function Module:OnInitialize()
 		for k, v in pairs(_G) do
-			if type(k) == "string" and (strfind(k, "^SPELL_FAILED_") or strfind(k, "^ERR_")) and type(v) == "string" and #v >= 5 then
+			if type(v) == "string" and type(k) == "string" and strfind(k, "^ERR_") and #v >= 5 then
 				Messages[k] = strlower(v)
 			end
 		end

@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -52,6 +52,12 @@ TMW:RegisterUpgrade(51022, {
 })
 
 
+local colorSettingNames = {
+	"TimerBar_StartColor",
+	"TimerBar_MiddleColor",
+	"TimerBar_CompleteColor",
+}
+
 function TimerBar_Overlay:SetupForIcon(sourceIcon)
 	self.Invert = sourceIcon.InvertCBar
 	self.Offset = sourceIcon.CBarOffs or 0
@@ -64,7 +70,12 @@ function TimerBar_Overlay:SetupForIcon(sourceIcon)
 	if not sourceIcon.typeData then
 		error("sourceIcon.typeData was nil. Why did this happen? (Please tell Cybeloras)")
 	end
-	self:SetColors(sourceIcon.typeData.Colors.CBS, sourceIcon.typeData.Colors.CBM, sourceIcon.typeData.Colors.CBC)
+	
+
+	self:SetColors(
+		TMW:GetColors(colorSettingNames, "TimerBar_EnableColors",
+		              sourceIcon:GetSettings(), sourceIcon.group:GetSettings(), TMW.db.global)
+	)
 	
 	self:UpdateValue(true)
 end

@@ -1,4 +1,4 @@
-﻿-- --------------------
+-- --------------------
 -- TellMeWhen
 -- Originally by Nephthys of Hyjal <lieandswell@yahoo.com>
 
@@ -14,6 +14,7 @@
 if not TMW then return end
 
 local TMW = TMW
+local print = TMW.print
 local L = TMW.L
 local LSM = LibStub("LibSharedMedia-3.0")
 local _, pclass = UnitClass("Player")
@@ -24,18 +25,18 @@ local pairs, wipe, _G =
 local PowerBarColor = PowerBarColor
 
 local defaultPowerTypes = {
-	ROGUE		= SPELL_POWER_ENERGY,
-	PRIEST		= SPELL_POWER_MANA,
-	DRUID		= SPELL_POWER_MANA,
-	WARRIOR		= SPELL_POWER_RAGE,
-	MAGE		= SPELL_POWER_MANA,
-	WARLOCK		= SPELL_POWER_MANA,
-	PALADIN		= SPELL_POWER_MANA,
-	SHAMAN		= SPELL_POWER_MANA,
-	HUNTER		= SPELL_POWER_FOCUS,
-	DEATHKNIGHT = SPELL_POWER_RUNIC_POWER,
-	MONK 		= SPELL_POWER_ENERGY,
-    DEMONHUNTER = SPELL_POWER_RAGE, -- ICY: demonhunter
+	ROGUE		= Enum.PowerType.Energy,
+	PRIEST		= Enum.PowerType.Mana,
+	DRUID		= Enum.PowerType.Mana,
+	WARRIOR		= Enum.PowerType.Rage,
+	MAGE		= Enum.PowerType.Mana,
+	WARLOCK		= Enum.PowerType.Mana,
+	PALADIN		= Enum.PowerType.Mana,
+	SHAMAN		= Enum.PowerType.Mana,
+	HUNTER		= Enum.PowerType.Focus,
+	DEATHKNIGHT = Enum.PowerType.RunicPower,
+	MONK 		= Enum.PowerType.Energy,
+	DEMONHUNTER = Enum.PowerType.Fury,
 }
 local defaultPowerType = defaultPowerTypes[pclass]
 
@@ -54,6 +55,7 @@ function PowerBar:OnNewInstance(icon)
 	self.texture:SetAllPoints()
 	bar:SetStatusBarTexture(self.texture)
 	
+	-- TODO: share the PowerBarColor table with the value icon type.
 	local colorinfo = PowerBarColor[defaultPowerType]
 	if not colorinfo then
 		error("No PowerBarColor was found for class " .. pclass .. "! Is the defaultPowerType for the class not defined?")
@@ -72,7 +74,11 @@ function PowerBar:OnEnable()
 	local attributes = icon.attributes
 	
 	self.bar:Show()
-	self.texture:SetTexture(LSM:Fetch("statusbar", TMW.db.profile.TextureName))
+	local texture = icon.group.TextureName
+	if texture == "" then
+		texture = TMW.db.profile.TextureName
+	end
+	self.texture:SetTexture(LSM:Fetch("statusbar", texture))
 	
 	self:SPELL(icon, attributes.spell)
 end
@@ -118,142 +124,16 @@ function PowerBar:SetSpell(spell)
 	end
 end
 
-
-
-
-
-local costs = {
-    [SPELL_POWER_MANA] = {
-        MANA_COST_LARGE:gsub("%%s", "(.-)"), -- = "%s Mana";
-        MANA_COST_LARGE_PER_TIME:gsub("%%s", "(.-)"), -- = "%s Mana, plus %s per sec";
-        MANA_COST_LARGE_PER_TIME_NO_BASE:gsub("%%s", "(.-)"), -- = "%s Mana per sec";
-        nil,
-    },
-    [SPELL_POWER_RAGE] = {
-        RAGE_COST:gsub("%%d", "(%%d+)"), -- = "%d Rage";
-
-        -- In deDE, this string is "%1$d Wut und %2$d pro Sek." wtf...
-        GetLocale() == "deDE" and RAGE_COST_PER_TIME:gsub("%%%d%$d", "(%%d+)") or nil, -- = "%d Rage, plus %d per sec";
-        GetLocale() ~= "deDE" and RAGE_COST_PER_TIME:gsub("%%d", "(%%d+)") or nil, -- = "%d Rage, plus %d per sec";
-
-
-        RAGE_COST_PER_TIME_NO_BASE:gsub("%%d", "(%%d+)"), -- = "%d Rage per sec";
-        nil,
-    },
-    [SPELL_POWER_FOCUS] = {
-        FOCUS_COST:gsub("%%d", "(%%d+)"), -- = "%d Focus";
-        FOCUS_COST_PER_TIME:gsub("%%d", "(%%d+)"), -- = "%d Focus, plus %d per sec";
-        FOCUS_COST_PER_TIME_NO_BASE:gsub("%%d", "(%%d+)"), -- = "%d Focus per sec";
-        nil,
-    },
-    [SPELL_POWER_ENERGY] = {
-        ENERGY_COST:gsub("%%d", "(%%d+)"), -- = "%d Energy";
-        ENERGY_COST_PER_TIME:gsub("%%d", "(%%d+)"), -- = "%d Energy, plus %d per sec";
-        ENERGY_COST_PER_TIME_NO_BASE:gsub("%%d", "(%%d+)"), -- = "%d Energy per sec";
-        nil,
-    },
-    [SPELL_POWER_RUNIC_POWER] = {
-        RUNIC_POWER_COST:gsub("%%d", "(%%d+)"), -- = "%d Runic Power";
-        RUNIC_POWER_COST_PER_TIME:gsub("%%d", "(%%d+)"), -- = "%d Runic Power, plus %d per sec";
-        RUNIC_POWER_COST_PER_TIME_NO_BASE:gsub("%%d", "(%%d+)"), -- = "%d Runic Power per sec";
-        nil,
-    },
-    [SPELL_POWER_SOUL_SHARDS] = {
-        SOUL_SHARDS_COST:gsub("%%d", "(%%d+)"), -- = "%d Soul |4Shard:Shards;";
-        SOUL_SHARDS_COST_PER_TIME:gsub("%%d", "(%%d+)"), -- = "%d Soul Shards, plus %d per sec";
-        SOUL_SHARDS_COST_PER_TIME_NO_BASE:gsub("%%d", "(%%d+)"), -- = "%d Soul Shards per sec";
-        nil,
-    },
-    [SPELL_POWER_HOLY_POWER] = {
-        HOLY_POWER_COST:gsub("%%d", "(%%d+)"), -- = "%d Holy Power";
-        nil,
-    },
-    [SPELL_POWER_CHI] = {
-        CHI_COST:gsub("%%d", "(%%d+)"), -- = "%d Chi";
-        CHI_COST_PER_TIME:gsub("%%d", "(%%d+)"), -- = "%d Chi, plus %d per sec";
-        CHI_COST_PER_TIME_NO_BASE:gsub("%%d", "(%%d+)"), -- = "%d Chi per sec";
-        nil,
-    },
-    -- ICY: this resource has been removed
-    --[[[SPELL_POWER_SHADOW_ORBS] = {
-        SHADOW_ORBS_COST, -- = "All Shadow Orbs";
-        SHADOW_ORBS_COST_PER_TIME:gsub("%%d", "(%%d+)"), -- = "%d Shadow Orbs, plus %d per sec";
-        SHADOW_ORBS_COST_PER_TIME_NO_BASE:gsub("%%d", "(%%d+)"), -- = "%d Shadow Orbs per sec";
-        nil,
-    },]]
-    -- ICY: this resource has been removed
-    --[[[SPELL_POWER_BURNING_EMBERS] = {
-        BURNING_EMBERS_COST:gsub("%%d", "(%%d+)"), -- = "%d Burning |4Ember:Embers;";
-        BURNING_EMBERS_COST_PER_TIME:gsub("%%d", "(%%d+)"), -- = "%d Burning Ember, plus%d per sec";
-        BURNING_EMBERS_COST_PER_TIME_NO_BASE:gsub("%%d", "(%%d+)"), -- = "%d Burning Ember per sec";
-        nil,
-    },]]
-    -- ICY: this resource has been removed
-    --[[[SPELL_POWER_DEMONIC_FURY] = {
-        DEMONIC_FURY_COST:gsub("%%d", "(%%d+)"), -- = "%d Demonic Fury";
-        DEMONIC_FURY_COST_PER_TIME:gsub("%%d", "(%%d+)"), -- = "%d Demonic Fury, plus %d per sec";
-        DEMONIC_FURY_COST_PER_TIME_NO_BASE:gsub("%%d", "(%%d+)"), -- = "%d Demonic Fury per sec";
-        nil,
-    },]]
-}
-
-
-
-local Parser, LT1, LT2 = TMW:GetParser()
-
-function PowerBar:ScanForCost(spellID)
-	if not spellID then
-		return nil
-	end
-
-	Parser:SetOwner(UIParent, "ANCHOR_NONE")
-
-	-- Prior to WoW 6.2, this function took a spell link and used Parser:SetHyperlink().
-	-- In 6.2, setting a spell by hyperlink specifically omits the cost from the tooltip.
-	-- In order to get the cost, we need to set it by ID.
-	Parser:SetSpellByID(spellID)
-
-	local costString = LT2:GetText()
-
-	if not costString then
-		-- Apparently this can happen sometimes.
-		-- There are some obscure spells that it happens to all the time
-		-- (because they really only have one line in their tooltip), but these spells aren't player spells.
-		return 0, 0
-	end
-
-	for powerType, strings in pairs(costs) do
-	    for _, string in pairs(strings) do
-	        local amount = costString:match("^" .. string .. "$")
-
-	        if amount then 
-	            amount = amount:gsub("[^0-9]", "")
-	            amount = tonumber(amount)
-
-		        return amount, powerType
-	        end
-	    end
-	end
-
-	return 0, 0
-end
-
-
-
-
-
-
-
 function PowerBar:UpdateCost()
 	local bar = self.bar
 	local spell = self.spell
 	
 	if spell then
-		local cost, powerType = self:ScanForCost(self.spellID)
+		local cost, costData = TMW.GetSpellCost(spell)
 		
 		if cost then
-		
-			cost = powerType == SPELL_POWER_HOLY_POWER and 3 or cost or 0 -- holy power hack: always use a max of 3
+			local powerType = costData.type
+			cost = powerType == (Enum.PowerType.HolyPower) and 3 or cost or 0 -- holy power hack: always use a max of 3
 			self.Max = cost
 			bar:SetMinMaxValues(0, cost)
 			self.__value = nil -- the displayed value might change when we change the max, so force an update
@@ -327,7 +207,7 @@ end
 function PowerBar:SPELL(icon, spellChecked)
 	self:SetSpell(spellChecked)
 end
-PowerBar:SetDataListner("SPELL")
+PowerBar:SetDataListener("SPELL")
 
 
 TMW:RegisterCallback("TMW_LOCK_TOGGLED", function(event, Locked)
