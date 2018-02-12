@@ -32,7 +32,7 @@ local wow_600 = wow_ver >= 60000
 local wow_700 = wow_ver >= 70000
 local petHappinessEvent = "UNIT_HAPPINESS"
 if wow_400 then
-	petHappinessEvent = "UNIT_POWER"
+	petHappinessEvent = "UNIT_POWER_UPDATE"
 end
 local partyChangedEvent = "PARTY_MEMBERS_CHANGED"
 if wow_500 then

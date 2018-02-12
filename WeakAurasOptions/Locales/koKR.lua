@@ -156,14 +156,14 @@ local L = WeakAuras.L
 콤마와 공백을 사용해 여러 이벤트를 선택할 수 있습니다.
 
 |cFF4444FF예제:|r
-UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED]=]
+UNIT_POWER_UPDATE, UNIT_AURA PLAYER_TARGET_CHANGED]=]
 	L["Custom trigger status tooltip"] = [=[
 사용자 설정 활성 조건을 확인할 이벤트를 선택하세요.
 상태 형식 조건이면 특정 이벤트는 독립 변수없이 WeakAuras에 의해 불러와집니다.
 콤마와 공백을 사용해 여러 이벤트를 선택할 수 있습니다.
 
 |cFF4444FF예제:|r
-UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED]=]
+UNIT_POWER_UPDATE, UNIT_AURA PLAYER_TARGET_CHANGED]=]
 	L["Custom Untrigger"] = "사용자 설정 비활성 조건"
 	L["Debuff Type"] = "약화 효과 유형"
 	L["Default"] = "기본"

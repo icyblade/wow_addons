@@ -142,13 +142,13 @@ If the animation's duration is set to |cFF00CC0010%|r, and the display's trigger
 可用逗號分隔多個事件。
 
 |cFF4444FF例如:|r
-UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED]=]
+UNIT_POWER_UPDATE, UNIT_AURA PLAYER_TARGET_CHANGED]=]
 	L["Custom trigger status tooltip"] = [=[選擇自訂觸發要檢查的事件。
 因為這是狀態類型的觸發，所指定的事件必須不用加參數就能夠被 WeakAuras 呼叫。
 可用逗號分隔多個事件。
 
 |cFF4444FF例如:|r
-UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED]=]
+UNIT_POWER_UPDATE, UNIT_AURA PLAYER_TARGET_CHANGED]=]
 	L["Custom Untrigger"] = "自訂取消觸發"
 	L["Debuff Type"] = "減益效果類型"
 	L["Default"] = "預設"

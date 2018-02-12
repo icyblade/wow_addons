@@ -140,12 +140,12 @@ local L = WeakAuras.L
 	L["Custom trigger event tooltip"] = [=[Напишите события, которые будут вызывать проверку вашего триггера. Несколько событий должны быть разделены запятыми или пробелами.
 
 |cFF4444FFПример:|r
-UNIT_POWER  UNIT_AURA, PLAYER_TARGET_CHANGED]=]
+UNIT_POWER_UPDATE  UNIT_AURA, PLAYER_TARGET_CHANGED]=]
 	L["Custom trigger status tooltip"] = [=[Напишите события, которые будут вызывать проверку вашего триггера. Несколько событий должны быть разделены запятыми или пробелами.
 Поскольку это триггер состояния, указанные события могут быть переданы WeakAuras без ожидаемых аргументов.
 
 |cFF4444FFПример:|r
-UNIT_POWER  UNIT_AURA, PLAYER_TARGET_CHANGED]=]
+UNIT_POWER_UPDATE  UNIT_AURA, PLAYER_TARGET_CHANGED]=]
 	L["Custom Untrigger"] = "Свой детриггер"
 	L["Debuff Type"] = "Тип дебаффа"
 	L["Default"] = "По умолчанию"

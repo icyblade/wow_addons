@@ -168,7 +168,7 @@ Choisissez quels évènements peuvent activer le déclencheur.
 Plusieurs évènements peuvent être spécifiés avec des virgules ou des espaces.
 
 |cFF4444FFPar exemple:|r
-UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED
+UNIT_POWER_UPDATE, UNIT_AURA PLAYER_TARGET_CHANGED
 ]=]
 	L["Custom trigger status tooltip"] = [=[
 Choisissez quels évènements peuvent activer le déclencheur.
@@ -176,7 +176,7 @@ Comme c'est un déclencheur de type statut, les évènements spécifiés peuvent
 Plusieurs évènements peuvent être spécifiés avec des virgules ou des espaces.
 
 |cFF4444FFPar exemple:|r
-UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED
+UNIT_POWER_UPDATE, UNIT_AURA PLAYER_TARGET_CHANGED
 ]=]
 	L["Custom Untrigger"] = "Désactivation personnalisée"
 	L["Debuff Type"] = "Type d'affaiblissement"

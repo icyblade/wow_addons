@@ -33,11 +33,11 @@ if isDruid then
 	end
 end
 
--- Parnic: support for Cataclysm; UNIT_MANA changed to UNIT_POWER
+-- Parnic: support for Cataclysm; UNIT_MANA changed to UNIT_POWER_UPDATE
 local wow_400 = select(4, GetBuildInfo()) >= 40000
 local mpEvents = "DruidMana;UNIT_MANA#$unit;UNIT_MAXMANA#$unit"
 if wow_400 then
-	mpEvents = "DruidMana;UNIT_POWER#$unit;UNIT_MAXPOWER#$unit"
+	mpEvents = "DruidMana;UNIT_POWER_UPDATE#$unit;UNIT_MAXPOWER#$unit"
 end
 
 DogTag:AddTag("Unit", "DruidMP", {

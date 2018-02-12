@@ -493,7 +493,7 @@ for _, data in pairs(specialPowers) do
 	--local category = class == pclass and L["Power"] or nil
 	--local noDoc = class ~= pclass
 
-	local specialPowerEvents = "UNIT_POWER#player#" .. data.eventPowerIdentifier .. ";UNIT_MAXPOWER#player#" .. data.eventPowerIdentifier .. ";UNIT_DISPLAYPOWER#player"
+	local specialPowerEvents = "UNIT_POWER_UPDATE#player#" .. data.eventPowerIdentifier .. ";UNIT_MAXPOWER#player#" .. data.eventPowerIdentifier .. ";UNIT_DISPLAYPOWER#player"
 
 	DogTag:AddTag("Unit", tag, {
 		code = function()

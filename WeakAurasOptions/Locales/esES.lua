@@ -180,7 +180,7 @@ Escoje qué eventos quieres que chequeen el disparador personalizado.
 Múltiples eventos pueden ser especificados, sepáralos con comas o espacios.
 
 |cFF4444FFPor Ejemplo:|r
-UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED
+UNIT_POWER_UPDATE, UNIT_AURA PLAYER_TARGET_CHANGED
 ]=]
 	L["Custom trigger status tooltip"] = [=[
 Escoje qué eventos quieres que chequeen el disparador personalizado.
@@ -188,7 +188,7 @@ Ya que éste es un Disparador del tipo Estado, los eventos especificados pueden 
 Múltiples eventos pueden ser especificados, sepáralos con comas o espacios.
 
 |cFF4444FFPor Ejemplo:|r
-UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED
+UNIT_POWER_UPDATE, UNIT_AURA PLAYER_TARGET_CHANGED
 ]=]
 	L["Custom Untrigger"] = "Disparador No-Personalizado"
 	L["Debuff Type"] = "Tipo de Perjuicio"

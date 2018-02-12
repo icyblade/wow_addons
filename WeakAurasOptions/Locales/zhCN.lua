@@ -150,13 +150,13 @@ local L = WeakAuras.L
 如果有多个事件,可以用逗号或空白分隔。
 
 |cFF4444FF例：|r
-UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED]=]
+UNIT_POWER_UPDATE, UNIT_AURA PLAYER_TARGET_CHANGED]=]
 	L["Custom trigger status tooltip"] = [=[选择用于检查自订触发的事件。
 因为这一个是状态触发器, 指定的事件 可以被 WeakAuras 调用, 而不需指定参数.
 如果有多个事件,可以用逗号或空白分隔。
 
 |cFF4444FF例：|r
-UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED]=]
+UNIT_POWER_UPDATE, UNIT_AURA PLAYER_TARGET_CHANGED]=]
 	L["Custom Untrigger"] = "自定义失效触发器"
 	L["Debuff Type"] = "减益类型"
 	L["Default"] = "默认"

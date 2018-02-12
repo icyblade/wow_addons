@@ -149,14 +149,14 @@ Si la duración de la animación es |cFF00CC0010%|r, y el disparador del aura es
 Múltiples eventos pueden ser especificados. Sepáralos con comas o espacios.
 
 |cFF4444FFPor Ejemplo:|r
-UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED
+UNIT_POWER_UPDATE, UNIT_AURA PLAYER_TARGET_CHANGED
 ]=]
 	L["Custom trigger status tooltip"] = [=[Escoje qué eventos quieres que revise el desencadenador personalizado.
 Ya que éste es un desencadenador de estado, los eventos especificados pueden ser invocados por WeakAuras sin ningún argumento.
 Múltiples eventos pueden ser especificados. Sepáralos con comas o espacios.
 
 |cFF4444FFPor Ejemplo:|r
-UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED]=]
+UNIT_POWER_UPDATE, UNIT_AURA PLAYER_TARGET_CHANGED]=]
 	L["Custom Untrigger"] = "Desencadenador No-Personalizado"
 	L["Debuff Type"] = "Tipo de perjuicio"
 	L["Default"] = "Estándar"
