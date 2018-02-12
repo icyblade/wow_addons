@@ -1,0 +1,9 @@
+## Interface: 80000
+## Title: IcyGDump
+## Notes: Dump _G
+## Version: 1.0.0
+## Dependencies: IcyCore
+## Author: Icyblade
+## SavedVariables: Icy_G
+
+IcyGDump.lua
