@@ -248,12 +248,12 @@ function _G._detalhes:Start()
 			
 			self.listener:RegisterEvent ("PLAYER_REGEN_DISABLED")
 			self.listener:RegisterEvent ("PLAYER_REGEN_ENABLED")
-			self.listener:RegisterEvent ("SPELL_SUMMON")
+			-- self.listener:RegisterEvent ("SPELL_SUMMON")
 			self.listener:RegisterEvent ("UNIT_PET")
 
-			self.listener:RegisterEvent ("PARTY_MEMBERS_CHANGED")
+			-- self.listener:RegisterEvent ("PARTY_MEMBERS_CHANGED")
 			self.listener:RegisterEvent ("GROUP_ROSTER_UPDATE")
-			self.listener:RegisterEvent ("PARTY_CONVERTED_TO_RAID")
+			-- self.listener:RegisterEvent ("PARTY_CONVERTED_TO_RAID")
 			
 			self.listener:RegisterEvent ("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
 			

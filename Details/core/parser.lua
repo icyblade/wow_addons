@@ -319,7 +319,6 @@
 	
 	------------------------------------------------------------------------------------------------
 	--> early checks and fixes
-
 		if (who_serial == "") then
 			if (who_flags and _bit_band (who_flags, OBJECT_TYPE_PETS) ~= 0) then --> � um pet
 				--> pets must have a serial
@@ -2586,10 +2585,10 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 	
 	AlternatePowerEnableFrame:SetScript ("OnEvent", function (self, event)
 		if (event == "UNIT_POWER_BAR_SHOW") then
-			AlternatePowerMonitorFrame:RegisterEvent ("UNIT_POWER")
+			AlternatePowerMonitorFrame:RegisterEvent ("UNIT_POWER_UPDATE")
 			AlternatePowerEnableFrame.IsRunning = true
 		elseif (AlternatePowerEnableFrame.IsRunning and (event == "ENCOUNTER_END" or event == "PLAYER_REGEN_ENABLED")) then -- and not InCombatLockdown()
-			AlternatePowerMonitorFrame:UnregisterEvent ("UNIT_POWER")
+			AlternatePowerMonitorFrame:UnregisterEvent ("UNIT_POWER_UPDATE")
 			AlternatePowerEnableFrame.IsRunning = false
 		end
 	end)
@@ -4682,29 +4681,23 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 	
 	-- ~parserstart ~startparser
 	
-	
-	
-	function _detalhes:OnParserEvent (evento, time, token, hidding, who_serial, who_name, who_flags, who_flags2, alvo_serial, alvo_name, alvo_flags, alvo_flags2, ...)
-		local funcao = token_list [token]
-
---		if (token == "COMBATANT_INFO") then
---			print ("COMBATANT_INFO", evento, time, token, hidding, who_serial, who_name, who_flags, who_flags2, alvo_serial, alvo_name, alvo_flags, alvo_flags2)
---		end
-		
---		if (who_name == "Ditador") then
---			print (token, alvo_name, ...)
---		end
-		
+	local function icy_detalhes_OnParserEvent_dummy(time, token, hidding, who_serial, who_name, who_flags, who_flags2, alvo_serial, alvo_name, alvo_flags, alvo_flags2, ...)
+		local funcao = token_list[token]
 		if (funcao) then
-			--if (token ~= "SPELL_AURA_REFRESH" and token ~= "SPELL_AURA_REMOVED" and token ~= "SPELL_AURA_APPLIED") then
-			--	print ("running func:", token)
-			--end
 			return funcao (nil, token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, ...)
 		else
 			return
 		end
-		
 	end
+
+
+	function _detalhes:OnParserEvent(event, ...)
+		-- ICY: patch
+		if event == "COMBAT_LOG_EVENT_UNFILTERED" then
+			return icy_detalhes_OnParserEvent_dummy(CombatLogGetCurrentEventInfo())
+		end
+	end
+
 	_detalhes.parser_frame:SetScript ("OnEvent", _detalhes.OnParserEvent)
 
 	function _detalhes:UpdateParser()
