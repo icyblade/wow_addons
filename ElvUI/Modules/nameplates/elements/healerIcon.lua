@@ -8,6 +8,9 @@ local UnitName = UnitName
 local gsub = gsub
 
 function mod:UpdateElement_HealerIcon(frame)
+	if not (frame.UnitType) then
+		return
+	end
 	if (self.db.units[frame.UnitType].enable == false) then
 		return;
 	end

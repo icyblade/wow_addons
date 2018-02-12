@@ -312,6 +312,9 @@ function mod:ResetNameplateFrameLevel(frame)
 end
 
 function mod:SetTargetFrame(frame)
+	if not (frame.unit) then
+		return
+	end
 	--Match parent's frame level for targetting purposes. Best time to do it is here.
 	local plateLevel = mod:GetPlateFrameLevel(frame)
 	local targetExists = UnitExists("target")
@@ -404,6 +407,9 @@ function mod:DISPLAY_SIZE_CHANGED()
 end
 
 function mod:CheckUnitType(frame)
+	if not (frame.displayedUnit) then
+		return
+	end
 	local role = UnitGroupRolesAssigned(frame.unit)
 	local CanAttack = UnitCanAttack(self.playerUnitToken, frame.displayedUnit)
 
@@ -662,6 +668,9 @@ local function HidePlayerNamePlate()
 end
 
 function mod:UpdateElement_All(frame, unit, noTargetFrame, filterIgnore)
+	if not (frame.UnitType) then
+		return
+	end
 	if(self.db.units[frame.UnitType].healthbar.enable or (self.db.displayStyle ~= "ALL") or (frame.isTarget and self.db.alwaysShowTargetHealth)) then
 		mod:UpdateElement_MaxHealth(frame)
 		mod:UpdateElement_Health(frame)
@@ -804,12 +813,15 @@ function mod:OnEvent(event, unit, ...)
 		mod:UpdateElement_RaidIcon(self)
 	elseif(event == "UNIT_MAXPOWER") then
 		mod:UpdateElement_MaxPower(self)
-	elseif(event == "UNIT_POWER" or event == "UNIT_POWER_FREQUENT" or event == "UNIT_DISPLAYPOWER") then
+	elseif(event == "UNIT_POWER_UPDATE" or event == "UNIT_POWER_FREQUENT" or event == "UNIT_DISPLAYPOWER") then
+		if not (self.displayedUnit) then
+			return 
+		end
 		local powerType, powerToken = UnitPowerType(self.displayedUnit)
 		local arg1 = ...
 		self.PowerToken = powerToken
 		self.PowerType = powerType
-		if(event == "UNIT_POWER" or event == "UNIT_POWER_FREQUENT") then
+		if(event == "UNIT_POWER_UPDATE" or event == "UNIT_POWER_FREQUENT") then
 			if mod.ClassBar and arg1 == powerToken then
 				mod:ClassBar_Update()
 			end
@@ -863,7 +875,7 @@ function mod:RegisterEvents(frame, unit)
 		end
 
 		if(self.db.units[frame.UnitType].powerbar.enable) then
-			frame:RegisterUnitEvent("UNIT_POWER", unit, displayedUnit)
+			frame:RegisterUnitEvent("UNIT_POWER_UPDATE", unit, displayedUnit)
 			frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", unit, displayedUnit)
 			frame:RegisterUnitEvent("UNIT_DISPLAYPOWER", unit, displayedUnit)
 			frame:RegisterUnitEvent("UNIT_MAXPOWER", unit, displayedUnit)

@@ -11,6 +11,9 @@ local DETECTION_BUFF = GetSpellInfo(203761) --Detector
 local DETECTION_BUFF2 = GetSpellInfo(213486) --Demonic Vision
 
 function mod:UpdateElement_Detection(frame)
+	if not (frame.UnitType) then
+		return
+	end
 	if not (self.db.units[frame.UnitType].detection and self.db.units[frame.UnitType].detection.enable) then
 		return;
 	end

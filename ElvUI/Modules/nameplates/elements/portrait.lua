@@ -10,6 +10,9 @@ local UnitIsVisible = UnitIsVisible
 local SetPortraitTexture = SetPortraitTexture
 
 function mod:UpdateElement_Portrait(frame, trigger)
+	if not (frame.UnitType) then
+		return
+	end
 	if not (self.db.units[frame.UnitType].portrait and (self.db.units[frame.UnitType].portrait.enable or trigger)) then
 		return;
 	end

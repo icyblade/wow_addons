@@ -138,6 +138,9 @@ function mod:AuraFilter(frame, frameNum, index, buffType, minDuration, maxDurati
 end
 
 function mod:UpdateElement_Auras(frame)
+	if not (frame.UnitType) then
+		return
+	end
 	local hasBuffs, hasDebuffs, showAura = false, false
 	local filterType, buffType, buffTypeLower, index, frameNum, maxAuras, minDuration, maxDuration, priority
 

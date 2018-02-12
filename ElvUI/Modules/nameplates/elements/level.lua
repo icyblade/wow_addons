@@ -9,6 +9,9 @@ local GetCreatureDifficultyColor = GetCreatureDifficultyColor
 local UnitLevel = UnitLevel
 
 function mod:UpdateElement_Level(frame)
+	if not (frame.UnitType) then
+		return
+	end
 	if(not self.db.units[frame.UnitType].showLevel and frame.UnitType ~= "PLAYER") then return end
 	if frame.UnitType == "PLAYER" and not self.db.units[frame.UnitType].showLevel then frame.Level:SetText() return end
 	local level = UnitLevel(frame.displayedUnit)

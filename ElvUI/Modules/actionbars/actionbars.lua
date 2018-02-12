@@ -419,10 +419,12 @@ function AB:PLAYER_REGEN_ENABLED()
 		self:UpdateMicroBarVisibility()
 		AB.NeedsUpdateMicroBarVisibility = nil
 	end
+	--[[
 	if AB.NeedsAdjustMaxStanceButtons then
 		AB:AdjustMaxStanceButtons(AB.NeedsAdjustMaxStanceButtons) --sometimes it holds the event, otherwise true. pass it before we nil it.
 		AB.NeedsAdjustMaxStanceButtons = nil
 	end
+	]]
 	self:UnregisterEvent('PLAYER_REGEN_ENABLED')
 end
 
@@ -487,7 +489,7 @@ end
 function AB:ReassignBindings(event)
 	if event == "UPDATE_BINDINGS" then
 		self:UpdatePetBindings();
-		self:UpdateStanceBindings();
+		-- self:UpdateStanceBindings();
 	end
 
 	self:UnregisterEvent("PLAYER_REGEN_DISABLED")
@@ -589,7 +591,7 @@ function AB:UpdateButtonSettings()
 	end
 
 	self:UpdatePetBindings()
-	self:UpdateStanceBindings()
+	-- self:UpdateStanceBindings()
 	for _, bar in pairs(self["handledBars"]) do
 		self:UpdateButtonConfig(bar, bar.bindButtons)
 	end
@@ -598,9 +600,9 @@ function AB:UpdateButtonSettings()
 		self:PositionAndSizeBar('bar'..i)
 	end
 
-	self:AdjustMaxStanceButtons()
+	-- self:AdjustMaxStanceButtons()
 	self:PositionAndSizeBarPet()
-	self:PositionAndSizeBarShapeShift()
+	-- self:PositionAndSizeBarShapeShift()
 end
 
 function AB:GetPage(bar, defaultPage, condition)
@@ -787,8 +789,8 @@ function AB:DisableBlizzard()
 	MultiBarRight:SetParent(UIHider)
 
 	--Look into what this does
-	ArtifactWatchBar:SetParent(UIHider)
-	HonorWatchBar:SetParent(UIHider)
+	-- ArtifactWatchBar:SetParent(UIHider)
+	-- HonorWatchBar:SetParent(UIHider)
 
 	-- Hide MultiBar Buttons, but keep the bars alive
 	for i=1,12 do
@@ -834,9 +836,9 @@ function AB:DisableBlizzard()
 
 	MainMenuBar:EnableMouse(false)
 	MainMenuBar:SetAlpha(0)
-	MainMenuExpBar:UnregisterAllEvents()
-	MainMenuExpBar:Hide()
-	MainMenuExpBar:SetParent(UIHider)
+	-- MainMenuExpBar:UnregisterAllEvents()
+	-- MainMenuExpBar:Hide()
+	-- MainMenuExpBar:SetParent(UIHider)
 
 	for i=1, MainMenuBar:GetNumChildren() do
 		local child = select(i, MainMenuBar:GetChildren())
@@ -847,9 +849,9 @@ function AB:DisableBlizzard()
 		end
 	end
 
-	ReputationWatchBar:UnregisterAllEvents()
-	ReputationWatchBar:Hide()
-	ReputationWatchBar:SetParent(UIHider)
+	-- ReputationWatchBar:UnregisterAllEvents()
+	-- ReputationWatchBar:Hide()
+	-- ReputationWatchBar:SetParent(UIHider)
 
 	MainMenuBarArtFrame:UnregisterEvent("ACTIONBAR_PAGE_CHANGED")
 	MainMenuBarArtFrame:UnregisterEvent("ADDON_LOADED")
@@ -1201,7 +1203,7 @@ function AB:Initialize()
 		self:CreateBar(i)
 	end
 	self:CreateBarPet()
-	self:CreateBarShapeShift()
+	-- self:CreateBarShapeShift()
 	self:CreateVehicleLeave()
 
 	self:UpdateButtonSettings()

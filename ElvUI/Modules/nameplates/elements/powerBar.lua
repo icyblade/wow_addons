@@ -11,12 +11,18 @@ local UnitPower = UnitPower
 local UnitPowerMax = UnitPowerMax
 
 function mod:UpdateElement_MaxPower(frame)
+	if not (frame.displayedUnit) then
+		return
+	end
 	local maxValue = UnitPowerMax(frame.displayedUnit, frame.PowerType);
 	frame.PowerBar:SetMinMaxValues(0, maxValue);
 end
 
 local temp = {r = 1, b = 1, g = 1}
 function mod:UpdateElement_Power(frame)
+	if not (frame.UnitType) then
+		return
+	end
 	self:UpdateElement_MaxPower(frame)
 
 	local curValue = UnitPower(frame.displayedUnit, frame.PowerType);

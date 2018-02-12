@@ -15,6 +15,9 @@ local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 -- GLOBALS: CUSTOM_CLASS_COLORS
 
 function mod:UpdateElement_Name(frame, triggered)
+	if not (frame.UnitType) then
+		return
+	end
 	local name = UnitName(frame.displayedUnit)
 
 	if not triggered then

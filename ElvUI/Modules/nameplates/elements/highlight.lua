@@ -18,6 +18,9 @@ local function HighlightUpdate(self)
 end
 
 function mod:UpdateElement_Highlight(frame)
+	if not (frame.UnitType) then
+		return
+	end
 	if frame:IsShown() and frame.unit and UnitIsUnit("mouseover", frame.unit) and (frame.NameOnlyChanged or (not self.db.units[frame.UnitType].healthbar.enable and self.db.units[frame.UnitType].showName)) and not frame.isTarget then
 		frame.Name.NameOnlyGlow:Show()
 		frame.Highlight:Show()

@@ -7,6 +7,9 @@ local mod = E:GetModule('NamePlates')
 local UnitClassification = UnitClassification
 
 function mod:UpdateElement_Elite(frame)
+	if not (frame.UnitType) then
+		return
+	end
 	if not self.db.units[frame.UnitType].eliteIcon then return; end
 
 	local icon = frame.Elite

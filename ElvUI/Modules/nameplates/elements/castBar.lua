@@ -59,6 +59,9 @@ function mod:UpdateElement_CastBarOnUpdate(elapsed)
 end
 
 function mod:UpdateElement_Cast(frame, event, ...)
+	if not (frame.UnitType) then
+		return
+	end
 	if(self.db.units[frame.UnitType].castbar.enable ~= true) then return end
 
 	local arg1 = ...;

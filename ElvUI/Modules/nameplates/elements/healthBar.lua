@@ -26,6 +26,9 @@ local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 -- GLOBALS: CUSTOM_CLASS_COLORS
 
 function mod:UpdateElement_HealthColor(frame)
+	if not (frame.UnitType) then
+		return
+	end
 	if(not frame.HealthBar:IsShown()) then return end
 
 	local r, g, b;
@@ -149,6 +152,9 @@ end
 
 function mod:UpdateElement_HealPrediction(frame)
 	local unit = frame.displayedUnit or frame.unit
+	if not (unit) then
+		return
+	end
 	local myIncomingHeal = UnitGetIncomingHeals(unit, 'player') or 0
 	local allIncomingHeal = UnitGetIncomingHeals(unit) or 0
 	local absorb = UnitGetTotalAbsorbs(unit) or 0
@@ -212,11 +218,17 @@ end
 
 
 function mod:UpdateElement_MaxHealth(frame)
+	if not (frame.displayedUnit) then
+		return
+	end
 	local maxHealth = UnitHealthMax(frame.displayedUnit);
 	frame.HealthBar:SetMinMaxValues(0, maxHealth)
 end
 
 function mod:UpdateElement_Health(frame)
+	if not (frame.UnitType) then
+		return
+	end
 	local health = UnitHealth(frame.displayedUnit);
 	local _, maxHealth = frame.HealthBar:GetMinMaxValues()
 
