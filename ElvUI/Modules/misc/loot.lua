@@ -377,6 +377,7 @@ function M:LoadLoot()
 
 	-- Fuzz
 	LootFrame:UnregisterAllEvents()
+	LootFrame:SetScript("OnEvent", nil);
 	tinsert(UISpecialFrames, 'ElvLootFrame')
 
 	E.PopupDialogs["CONFIRM_LOOT_DISTRIBUTION"].OnAccept = function(self, data)
