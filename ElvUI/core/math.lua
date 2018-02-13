@@ -150,10 +150,6 @@ function E:GetScreenQuadrant(frame)
 	if not frame:GetCenter() then
 		return "UNKNOWN", frame:GetName()
 	end
-	if (x == nil or y == nil or screenWidth == nil or screenHeight == nil) then
-		print(frame)
-		print(x, y, screenWidth, screenHeight)
-	end
 
 	if (x > (screenWidth / 3) and x < (screenWidth / 3)*2) and y > (screenHeight / 3)*2 then
 		point = "TOP"
