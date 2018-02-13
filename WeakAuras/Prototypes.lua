@@ -2791,7 +2791,7 @@ WeakAuras.event_prototypes = {
       "PLAYER_TARGET_CHANGED",
       "UNIT_POWER_FREQUENT",
       "RUNE_POWER_UPDATE",
-      "RUNE_TYPE_UPDATE"
+      -- "RUNE_TYPE_UPDATE"
     },
     force_events = "SPELL_UPDATE_USABLE",
     name = L["Action Usable"],
@@ -3363,7 +3363,7 @@ WeakAuras.event_prototypes = {
     type = "status",
     events = {
       "RUNE_POWER_UPDATE",
-      "RUNE_TYPE_UPDATE",
+      -- "RUNE_TYPE_UPDATE",
       "RUNE_COOLDOWN_READY",
       "RUNE_COOLDOWN_CHANGED",
       "RUNE_COOLDOWN_STARTED",

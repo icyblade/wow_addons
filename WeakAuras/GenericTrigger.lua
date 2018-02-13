@@ -1301,7 +1301,7 @@ do
     cdReadyFrame:RegisterEvent("SPELL_UPDATE_COOLDOWN");
     cdReadyFrame:RegisterEvent("SPELL_UPDATE_CHARGES");
     cdReadyFrame:RegisterEvent("RUNE_POWER_UPDATE");
-    cdReadyFrame:RegisterEvent("RUNE_TYPE_UPDATE");
+    -- cdReadyFrame:RegisterEvent("RUNE_TYPE_UPDATE");
     cdReadyFrame:RegisterEvent("UNIT_SPELLCAST_SENT");
     cdReadyFrame:RegisterEvent("PLAYER_TALENT_UPDATE");
     cdReadyFrame:RegisterEvent("PLAYER_PVP_TALENT_UPDATE");
