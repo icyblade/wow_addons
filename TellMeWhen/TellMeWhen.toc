@@ -25,6 +25,7 @@
 ## SavedVariables: TellMeWhenDB
 ## X-Embeds: LibStub, Ace3, LibSharedMedia-3.0, LibDataBroker-1.1, DRData-1.0, LibDogTag-3.0, LibDogTag-Unit-3.0, LibDogTag-Stats-3.0, LibSpellRange-1.0, LibOO-1.0, LibRangeCheck-2.0, LibBabble-CreatureType-3.0, LibBabble-Race-3.0
 ## X-Category: Combat
+## RequiredDeps: IcyCore
 
 #@no-lib-strip@
 Lib\LibStub\LibStub.lua

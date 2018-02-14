@@ -1,0 +1,2 @@
+SendAddonMessage = C_ChatInfo.SendAddonMessage
+RegisterAddonMessagePrefix = C_ChatInfo.RegisterAddonMessagePrefix
