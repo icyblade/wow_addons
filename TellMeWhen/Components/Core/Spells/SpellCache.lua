@@ -26,6 +26,7 @@ local Cache
 local CurrentItems = {}
 local NumCachePerFrame = 200
 local IsCaching
+local disableCache = true  -- ICY: temporary fix for client crash due to invalid DBC file
 
 
 SpellCache.CONST = {
@@ -161,7 +162,7 @@ TMW:RegisterCallback("TMW_OPTIONS_LOADED", function()
 	Cache = TMW.IE.db.locale.SpellCache
 
 	if TMW.IE.db.locale.IncompleteSpellCache
-	or TMW.IE.db.locale.SpellCacheWoWVersion ~= clientBuild
+	or TMW.IE.db.locale.SpellCacheWoWVersion ~= clientBuild and (not disableCache)
 	then
 		TMW.IE.db.locale.IncompleteSpellCache = true
 		
