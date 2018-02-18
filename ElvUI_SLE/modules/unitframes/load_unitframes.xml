@@ -1,0 +1,9 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">	
+	<Script file='unitframes.lua'/>
+	<Include file='units\load_units.xml'/>
+	<Script file='offline.lua'/>
+	<Script file='dead.lua'/>
+	<Script file='statusbars.lua'/>
+	<Script file='roleIcons.lua'/>
+	<Script file='pvpIcon.lua'/>
+</Ui>

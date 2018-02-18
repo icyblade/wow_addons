@@ -1,0 +1,8 @@
+## Interface: 70200
+## Author: p3lim
+## Version: 19
+## Title: Lib: Processable
+## Notes: Library that lets you easily check if you can process resources
+## OptionalDeps: LibStub
+
+embed.xml
