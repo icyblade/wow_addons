@@ -14,3 +14,16 @@ frame:SetScript("OnEvent", function(self, event, ...)
 		end
 	end
 end)
+
+
+-- patch /script, /run, /dump
+RunScript=function(a) loadstring(a)() end
+SlashCmdList["SCRIPT"] = function(msg)
+    loadstring(msg)()
+end
+SlashCmdList["RUN"] = function(msg)
+    loadstring(msg)()
+end
+SlashCmdList["DUMP"] = function(msg)
+    loadstring("DevTools_Dump({"..msg.."})")()
+end
