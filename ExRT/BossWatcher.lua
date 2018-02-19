@@ -2766,12 +2766,16 @@ local function CLEUParser(self,_,timestamp,event,hideCaster,sourceGUID,sourceNam
 	-- SPELL_BUILDING_HEAL
 end
 
+local function icy_module_main_COMBAT_LOG_EVENT_UNFILTERED_dummy(...)
+	CLEUParser(self, nil, CombatLogGetCurrentEventInfo())	
+end
+
 function module.main:COMBAT_LOG_EVENT_UNFILTERED(_,timestamp,...)
 	if not module.db.timeFix then
-		module.db.timeFix = {GetTime(),timestamp}
+		module.db.timeFix = {GetTime(), GetTime()}
 	end
-	module.main.COMBAT_LOG_EVENT_UNFILTERED = CLEUParser
-	CLEUParser(self,nil,timestamp,...)
+	module.main.COMBAT_LOG_EVENT_UNFILTERED = icy_module_main_COMBAT_LOG_EVENT_UNFILTERED_dummy
+	icy_module_main_COMBAT_LOG_EVENT_UNFILTERED_dummy(...)
 	module:RegisterEvents('COMBAT_LOG_EVENT_UNFILTERED')
 end
 
@@ -3433,6 +3437,7 @@ function BWInterfaceFrameLoad()
 				TLframe[i]:SetPoint("TOPLEFT",(i-1)*tlWidth,0)
 				TLframe[i]:SetScript("OnEnter",TimeLinePieceOnEnter)
 				TLframe[i]:SetScript("OnLeave",ELib.Tooltip.Hide)
+				TLframe[i]:Hide()  -- ICY: TODO
 			end
 		end
 		TLframe.texture = TLframe:CreateTexture(nil, "BACKGROUND",nil,0)
