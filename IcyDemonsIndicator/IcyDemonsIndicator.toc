@@ -1,0 +1,12 @@
+## Interface: 80100
+## Title: IcyDemonsIndicator
+## Notes: Indicate expire time of demons of demonology warlock.
+## Version: 1.0.0
+## Dependencies: IcyCore
+## Author: Icyblade
+## SavedVariables: IDI_SETTINGS
+
+libs\LibCandyBar-3.0\LibCandyBar-3.0.lua
+
+IcyDemonsIndicator.lua
+bar.lua
