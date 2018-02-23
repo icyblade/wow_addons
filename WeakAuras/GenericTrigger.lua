@@ -828,7 +828,7 @@ function GenericTrigger.Add(data, region)
               end
 
               for index, event in ipairs(trigger_events) do
-                frame:RegisterEvent(event);
+                -- frame:RegisterEvent(event);  -- ICY: TODO
                 aceEvents:RegisterMessage(event, HandleEvent, frame)
               end
             end
