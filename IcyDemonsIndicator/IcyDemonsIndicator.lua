@@ -16,6 +16,19 @@ IcyDemonsIndicator.valid_demons_db = {
     ['Pet-17252'] = {icon=GetSpellTexture(30146), duration=INFINITY},  -- Felguard
     ['Creature-17252'] = {icon=GetSpellTexture(108501), duration=25},  -- Grimoire of Service
     ['Creature-135816'] = {icon=GetSpellTexture(264119), duration=15},  -- Vilefiend
+    
+    -- Nether Portal
+    ['Creature-136397'] = {icon=GetSpellTexture(112868), duration=15},  -- Prince Malchezaar from Nether Portal
+    ['Creature-136398'] = {icon=GetSpellTexture(112868), duration=15},  -- Illidari Satyr from Nether Portal
+    ['Creature-136399'] = {icon=GetSpellTexture(112868), duration=15},  -- Vicious Hellhound from Nether Portal
+    ['Creature-136401'] = {icon=GetSpellTexture(112868), duration=15},  -- Eye of Gul'dan from Nether Portal
+    ['Creature-136402'] = {icon=GetSpellTexture(112868), duration=15},  -- Ur'zul from Nether Portal
+    ['Creature-136403'] = {icon=GetSpellTexture(112868), duration=15},  -- Void Terror from Nether Portal
+    ['Creature-136404'] = {icon=GetSpellTexture(112868), duration=15},  -- Bilescourge from Nether Portal
+    ['Creature-136405'] = {icon=GetSpellTexture(112868), duration=15},  -- Eredar Brute from Nether Portal
+    ['Creature-136406'] = {icon=GetSpellTexture(112868), duration=15},  -- Shivarra from Nether Portal
+    ['Creature-136407'] = {icon=GetSpellTexture(112868), duration=15},  -- Wrathguard from Nether Portal
+    ['Creature-136408'] = {icon=GetSpellTexture(112868), duration=15},  -- Darkhound from Nether Portal
 }
 
 
