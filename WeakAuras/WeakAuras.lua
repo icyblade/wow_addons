@@ -1014,6 +1014,7 @@ function WeakAuras.CreateTalentCache()
     end
   end
 
+  --[[
   for tier = 1, MAX_PVP_TALENT_TIERS do
     for column = 1, MAX_PVP_TALENT_COLUMNS do
       local _, talentName, talentIcon = GetPvpTalentInfo(tier, column, 1);
@@ -1023,6 +1024,7 @@ function WeakAuras.CreateTalentCache()
       end
     end
   end
+  ]]
 end
 
 local frame = CreateFrame("FRAME", "WeakAurasFrame", UIParent);

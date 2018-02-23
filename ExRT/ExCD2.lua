@@ -9645,6 +9645,7 @@ do
 						--------> /ExCD2
 					end
 				end
+				--[[
 				for i=0,17 do
 					local row,col = (i-i%3)/3+1,i%3+1
 				
@@ -9654,6 +9655,7 @@ do
 						data.talentsIDs[row+7] = t_id
 					end
 				end
+				]]
 				InspectItems(name, inspectedName, moduleInspect.db.inspectID)
 				
 				UpdateAllData() 	--------> ExCD2

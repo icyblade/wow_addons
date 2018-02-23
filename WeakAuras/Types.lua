@@ -527,6 +527,7 @@ do
 end
 
 WeakAuras.pvp_talent_types = {};
+--[[
 do
   local numTalents, numTiers, numColumns =  MAX_PVP_TALENT_TIERS * MAX_PVP_TALENT_COLUMNS, MAX_PVP_TALENT_TIERS, MAX_PVP_TALENT_COLUMNS
   local talentId, tier, column = 1, 1, 1
@@ -543,6 +544,7 @@ do
     tier = 1
   end
 end
+]]
 
 -- GetTotemInfo() only works for the first 5 totems
 WeakAuras.totem_types = {};
