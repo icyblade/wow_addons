@@ -27,7 +27,7 @@ local function LoadSkin()
 		PlayerTalentFrame,
 		PlayerTalentFrameInset,
 		PlayerTalentFrameTalents,
-		PlayerTalentFramePVPTalents.Talents
+		-- PlayerTalentFramePVPTalents.Talents
 	}
 
 	for _, object in pairs(objects) do
@@ -78,8 +78,10 @@ local function LoadSkin()
 
 	hooksecurefunc('PlayerTalentFrame_UpdateTabs', function()
 		for i=1, 4 do
-			local point, anchor, anchorPoint, x = _G['PlayerTalentFrameTab'..i]:GetPoint()
-			_G['PlayerTalentFrameTab'..i]:Point(point, anchor, anchorPoint, x, -4)
+			if _G['PlayerTalentFrameTab'..i] then
+				local point, anchor, anchorPoint, x = _G['PlayerTalentFrameTab'..i]:GetPoint()
+				_G['PlayerTalentFrameTab'..i]:Point(point, anchor, anchorPoint, x, -4)
+			end
 		end
 	end)
 
@@ -307,6 +309,7 @@ local function LoadSkin()
 	end
 
 	--Skin talent rows and buttons
+	--[[
 	for i = 1, MAX_PVP_TALENT_TIERS do
 		local row = PlayerTalentFramePVPTalents.Talents["Tier"..i]
 		row.Bg:Hide()
@@ -340,8 +343,10 @@ local function LoadSkin()
 			button.bg.SelectedTexture:Point("BOTTOMRIGHT", button, "BOTTOMRIGHT", -10, 1)
 		end
 	end
+	]]
 
 	--Apply color to chosen talents
+	--[[
 	hooksecurefunc("PVPTalentFrame_Update", function(self)
 		for i = 1, MAX_PVP_TALENT_TIERS do
 			for j = 1, MAX_PVP_TALENT_COLUMNS do
@@ -392,6 +397,7 @@ local function LoadSkin()
 
 	-- Tutorial
 	S:HandleCloseButton(PlayerTalentFramePVPTalents.TutorialBox.CloseButton)
+	]]
 end
 
 S:AddCallbackForAddon("Blizzard_TalentUI", "Talent", LoadSkin)

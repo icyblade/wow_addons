@@ -365,6 +365,7 @@ function CNDT:PLAYER_TALENT_UPDATE()
 
 
 	wipe(Env.PvpTalentMap)
+	--[[
 	for tier = 1, MAX_PVP_TALENT_TIERS do
 		for column = 1, MAX_PVP_TALENT_TIERS do
 			local id, name, icon, selected, available, _, unlocked = GetPvpTalentInfo(tier, column, 1)
@@ -375,6 +376,7 @@ function CNDT:PLAYER_TALENT_UPDATE()
 			end
 		end
 	end
+	]]
 end
 ConditionCategory:RegisterCondition(9,	 "TALENTLEARNED", {
 	text = L["UIPANEL_TALENTLEARNED"],
