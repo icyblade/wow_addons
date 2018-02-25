@@ -449,7 +449,8 @@ function B:UpdateSlot(bagID, slotID)
 	elseif (clink) then
 		local iLvl, itemEquipLoc, itemClassID, itemSubClassID
 		slot.name, _, _, _, _, _, _, _, itemEquipLoc, _, _, itemClassID, itemSubClassID = GetItemInfo(clink);
-		iLvl = GetDetailedItemLevelInfo(clink)
+		-- iLvl = GetDetailedItemLevelInfo(clink)
+		iLvl = Item:CreateFromBagAndSlot(bagID, slotID):GetCurrentItemLevel()
 
 		local isQuestItem, questId, isActiveQuest = GetContainerItemQuestInfo(bagID, slotID);
 		local r, g, b
