@@ -811,11 +811,13 @@ function CA:Update_Gear()
 				end
 			end
 			if ItemLink then
-				if not ItemLink:find('%[%]') then -- sometimes itemLink is malformed so we need to update when crashed
+				if not ItemLink:find('%[%]') or string.find(ItemLink, "item:[0-9]+") then -- sometimes itemLink is malformed so we need to update when crashed
+					-- ICY: item name will be missing in current alpha build, so we gotta check itemID
 
 					ItemData = { T.split(':', ItemLink) }
 
 					_, _, Slot.ItemRarity, BasicItemLevel, _, _, _, _, ItemType = T.GetItemInfo(ItemLink)
+					BasicItemLevel = Item:CreateFromEquipmentSlot(Slot.ID):GetCurrentItemLevel()
 					R, G, B = T.GetItemQualityColor(Slot.ItemRarity)
 
 					--<< Legion - Artifact Weapon Detection >>--
