@@ -828,7 +828,9 @@ function GenericTrigger.Add(data, region)
               end
 
               for index, event in ipairs(trigger_events) do
-                -- frame:RegisterEvent(event);  -- ICY: TODO
+                if string.sub(event, 1, string.len('WA_')) ~= 'WA_' then
+                  frame:RegisterEvent(event);
+                end
                 aceEvents:RegisterMessage(event, HandleEvent, frame)
               end
             end
@@ -1422,7 +1424,7 @@ do
       WeakAuras.ScanEvents("SPELL_CHARGES_CHANGED", id, chargesDifference, charges or 0);
     end
     spellCharges[id] = charges
-    WeakAuras.ScanEvents("SPELL_COOLDOWN_READY", id, nil);
+    WeakAuras.ScanEvents("SPELL_UPDATE_COOLDOWN", id, nil);
   end
 
   local function SpellCooldownFinished(id)
@@ -1435,7 +1437,7 @@ do
       WeakAuras.ScanEvents("SPELL_CHARGES_CHANGED", id, chargesDifference, charges or 0);
     end
     spellCharges[id] = charges
-    WeakAuras.ScanEvents("SPELL_COOLDOWN_READY", id, nil);
+    WeakAuras.ScanEvents("SPELL_UPDATE_COOLDOWN", id, nil);
   end
 
   local function ItemCooldownFinished(id)

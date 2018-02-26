@@ -1768,11 +1768,7 @@ WeakAuras.event_prototypes = {
     type = "status",
     events = function(trigger, untrigger)
       local events = {
-        "SPELL_COOLDOWN_READY",
-        "SPELL_COOLDOWN_CHANGED",
-        "SPELL_COOLDOWN_STARTED",
-        "COOLDOWN_REMAINING_CHECK",
-        "WA_DELAYED_PLAYER_ENTERING_WORLD"
+        "SPELL_UPDATE_COOLDOWN"
       };
       if (trigger.use_showgcd) then
         tinsert(events, "GCD_START");
@@ -2784,9 +2780,7 @@ WeakAuras.event_prototypes = {
   ["Action Usable"] = {
     type = "status",
     events = {
-      "SPELL_COOLDOWN_READY",
-      "SPELL_COOLDOWN_CHANGED",
-      "SPELL_COOLDOWN_STARTED",
+      "SPELL_UPDATE_COOLDOWN",
       "SPELL_UPDATE_USABLE",
       "PLAYER_TARGET_CHANGED",
       "UNIT_POWER_FREQUENT",
