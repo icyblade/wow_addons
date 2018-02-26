@@ -413,35 +413,6 @@ ConditionCategory:RegisterCondition(9,	 "PTSINTAL", {
 	max = 5,
 })
 
-
-ConditionCategory:RegisterCondition(10,	 "PVPTALENTLEARNED", {
-	text = L["UIPANEL_PVPTALENTLEARNED"],
-
-	bool = true,
-	
-	unit = PLAYER,
-	name = function(editbox)
-		editbox:SetTexts(L["SPELLTOCHECK"], L["CNDT_ONLYFIRST"])
-	end,
-	useSUG = "pvptalents",
-	icon = function() return select(3, GetPvpTalentInfo(1, 1, 1)) end,
-	tcoords = CNDT.COMMON.standardtcoords,
-	funcstr = function(ConditionObject, c)
-		-- this is handled externally because PvpTalentMap is so extensive a process,
-		-- and if it ends up getting processed in an OnUpdate condition, it could be very bad.
-		CNDT:RegisterEvent("PLAYER_TALENT_UPDATE")
-		CNDT:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", "PLAYER_TALENT_UPDATE")
-		CNDT:PLAYER_TALENT_UPDATE()
-	
-		return [[BOOLCHECK( PvpTalentMap[LOWER(c.NameFirst)] )]]
-	end,
-	events = function(ConditionObject, c)
-		return
-			ConditionObject:GenerateNormalEventString("PLAYER_TALENT_UPDATE"),
-			ConditionObject:GenerateNormalEventString("ACTIVE_TALENT_GROUP_CHANGED")
-	end,
-})
-
 ConditionCategory:RegisterCondition(11,	 "GLYPH", {
 	text = L["UIPANEL_GLYPH"],
 	tooltip = L["UIPANEL_GLYPH_DESC"],
