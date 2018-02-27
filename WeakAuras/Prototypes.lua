@@ -3740,13 +3740,12 @@ WeakAuras.event_prototypes = {
         "UNIT_SPELLCAST_STOP",
         "UNIT_SPELLCAST_DELAYED",
         "UNIT_SPELLCAST_INTERRUPTIBLE",
-        "UNIT_SPELLCAST_NOT_INTERRUPTIBLE",
-        "CAST_REMAINING_CHECK"
+        "UNIT_SPELLCAST_NOT_INTERRUPTIBLE"
       };
       AddUnitChangeEvents(trigger.unit, result);
       return result;
     end,
-    force_events = "CAST_REMAINING_CHECK",
+    force_events = "UNIT_SPELLCAST_START",
     name = L["Cast"],
     init = function(trigger)
       trigger.unit = trigger.unit or "";
