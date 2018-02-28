@@ -1,4 +1,4 @@
-## Interface: 70000
+## Interface: 80100
 ## Title: Lib: Diminishing Returns Data-1.0
 ## Notes: Database of Diminishing return categories and general data
 ## Author: Mayen

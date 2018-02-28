@@ -1,4 +1,4 @@
-## Interface: 50001
+## Interface: 80100
 ## Title: oUF Trinkets
 ## Notes: Adds PvP trinket status to oUF frames.
 ## Author: Elv

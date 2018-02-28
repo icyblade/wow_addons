@@ -1,4 +1,4 @@
-## Interface: 50001
+## Interface: 80100
 ## Title: oUF Arena Spec Icons
 ## Notes: Adds spec icons to arena frames.
 ## Author: Elv

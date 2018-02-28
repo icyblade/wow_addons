@@ -1,4 +1,4 @@
-## Interface: 40300
+## Interface: 80100
 ## Author: Darth Predator
 ## Version: 1.0
 ## Title: Lib UIButtons 1.0

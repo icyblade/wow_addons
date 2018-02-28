@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80100
 ## LoadOnDemand: 1
 ## Title: Lib: DogTag-Unit-3.0
 ## Notes: A library to provide unit-oriented tags to LibDogTag-3.0

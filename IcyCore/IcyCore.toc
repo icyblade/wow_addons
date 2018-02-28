@@ -1,4 +1,4 @@
-## Interface: 80000
+## Interface: 80100
 ## Title: IcyCore
 ## Notes: Core functions of icyUI
 ## Version: 1.0.0

@@ -4,6 +4,7 @@
 ## Notes: Exorsus Raid Tools
 ## SavedVariables: VExRT
 ## Version: 3910
+## RequiredDeps: IcyCore
 core.lua
 Functions.lua
 embeds.xml

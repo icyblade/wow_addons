@@ -1,4 +1,4 @@
-## Interface: 80000
+## Interface: 80100
 ## Title: MySlot
 ## Notes: Myslot is for transferring settings between accounts. Feedback farmer1992@gmail.com
 ## Notes-deDE: Myslot is for transferring settings between accounts. Feedback farmer1992@gmail.com

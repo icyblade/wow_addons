@@ -1,4 +1,4 @@
-## Interface: 30100
+## Interface: 80100
 ## Title: oUF Debuff Highlight
 ## Notes: Adds Debuff Highlighting to oUF.
 ## Author: Ammo

@@ -1,4 +1,4 @@
-## Interface: 60200
+## Interface: 80100
 ## Title: oUF Dead Indicator for S&E
 ## Notes: Dead indicator for oUF frames in S&L.
 ## Author: Darth Predator

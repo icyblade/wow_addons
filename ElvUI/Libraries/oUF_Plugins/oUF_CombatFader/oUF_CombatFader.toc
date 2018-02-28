@@ -1,4 +1,4 @@
-## Interface: 40200
+## Interface: 80100
 ## Title: oUF Combat Fader
 ## Notes: Adds combat fade ability to oUF
 ## Author: Elv

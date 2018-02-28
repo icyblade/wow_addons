@@ -1,4 +1,4 @@
-## Interface: 70000
+## Interface: 80100
 ## LoadOnDemand: 1
 ## Title: Lib: DogTag-Stats-3.0
 ## Notes: A library to provide tags for player combat stats to LibDogTag-3.0
