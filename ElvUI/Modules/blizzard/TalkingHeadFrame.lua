@@ -56,6 +56,10 @@ local function InitializeTalkingHead()
 	end
 end
 
+function TalkingHeadFrame_OnAnimFinished()
+	return
+end
+
 function B:PositionTalkingHead()
 	if IsAddOnLoaded("Blizzard_TalkingHeadUI") then
 		InitializeTalkingHead()

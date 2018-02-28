@@ -12,7 +12,7 @@
 	<Include file="LibFishing-1.0\lib.xml" />
 	<Script file="oUF_OfflineSLE\oUF_OfflineSLE.lua"/>
 	<Script file="oUF_DeadSLE\oUF_DeadSLE.lua"/>
-	<Script file="LibKitUITags-1.0\LibKitUITags-1.0.lua"/>
+	<Script file="LibKitUITags-1.0\LibTitTags-1.0.lua"/>
 	<Script file="LibKituiConditions-1.0\LibKituiConditions-1.0.lua"/>
 	<Script file="LibRealmInfo\LibRealmInfo.lua"/>
 	<Include file="LibProcessable\LibProcessable.lua"/>
