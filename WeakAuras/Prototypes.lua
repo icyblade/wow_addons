@@ -3881,7 +3881,7 @@ WeakAuras.event_prototypes = {
     type = "status",
     events = function(trigger, untrigger)
       local events = {};
-      tinsert(events,  "CONDITIONS_CHECK");
+      -- tinsert(events,  "CONDITIONS_CHECK");
       if (trigger.use_incombat ~= nil) then
         tinsert(events, "PLAYER_REGEN_ENABLED");
         tinsert(events, "PLAYER_REGEN_DISABLED");
@@ -3906,11 +3906,11 @@ WeakAuras.event_prototypes = {
       end
 
       if (trigger.use_mounted ~= nil) then
-        tinsert(events, "MOUNTED_UPDATE");
+        tinsert(events, "COMPANION_UPDATE");
       end
 
       if (trigger.use_HasPet ~= nil) then
-        tinsert(events, "PET_UPDATE");
+        tinsert(events, "PET_BAR_UPDATE");
         tinsert(events, "UNIT_PET");
       end
 
@@ -3920,7 +3920,7 @@ WeakAuras.event_prototypes = {
 
       return events;
     end,
-    force_events = "CONDITIONS_CHECK",
+    force_events = "PLAYER_REGEN_ENABLED",
     name = L["Conditions"],
     init = function(trigger)
       if(trigger.use_mounted ~= nil) then
