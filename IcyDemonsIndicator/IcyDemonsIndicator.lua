@@ -126,7 +126,7 @@ function IcyDemonsIndicator:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
             end
         end
     elseif combat_event == 'SPELL_CAST_SUCCESS' and spellId == 265187 then
-        -- demon commander, +15s
+        -- Demon Commander, +15s
         for _, bar in pairs(self.BarPool) do
             local remaining = bar.remaining
             bar:Pause()
@@ -134,6 +134,22 @@ function IcyDemonsIndicator:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
             bar.remaining = remaining + 15
             bar:Start()
         end
+    elseif combat_event == 'SPELL_INSTAKILL' and spellId == 196278 then
+        -- Implosion
+        for _, bar in pairs(self.BarPool) do
+            if bar.GUID == destGUID then
+                bar:Stop()
+            end
+        end
+        self:SortAllBars()
+    elseif (combat_event == 'SPELL_AURA_APPLIED' or combat_event == 'SPELL_AURA_APPLIED_DOSE') and spellId == 267549 then
+        -- Power Siphon
+        for _, bar in pairs(self.BarPool) do
+            if bar.GUID == destGUID then
+                bar:Stop()
+            end
+        end
+        self:SortAllBars()
     end
 end
 
