@@ -10,7 +10,7 @@ local INFINITY = 24*3600*100
 
 
 IcyDemonsIndicator.valid_demons_db = {
-    ['Creature-55659'] = {icon=GetSpellTexture(205145), base_duration=10}, -- Wild Imps
+    ['Creature-55659'] = {icon=GetSpellTexture(205145), base_duration=11.5}, -- Wild Imps
     ['Vehicle-98035'] = {icon=GetSpellTexture(104316), duration=8},  -- Dreadstalkers
     ['Creature-135002'] = {icon=GetSpellTexture(265187), duration=15},  -- Demon Commander
     ['Pet-17252'] = {icon=GetSpellTexture(30146), duration=INFINITY},  -- Felguard
@@ -100,7 +100,8 @@ end
 
 
 function IcyDemonsIndicator:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
-    _, combat_event, _, sourceGUID, _, _, _, destGUID, _, _, _, spellId = CombatLogGetCurrentEventInfo()
+    timestamp, combat_event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
+    
     if sourceGUID ~= UnitGUID('player') then
         return
     end
