@@ -1,0 +1,17 @@
+## Interface: 70300
+## Title: Advanced Interface Options
+## Author: Stanzilla, Semlar
+## Version: 1.2.2
+## Notes: Restores access to removed interface options in Legion
+## X-Category: Interface Enhancements
+## X-Website: http://www.curse.com/addons/wow/advancedinterfaceoptions
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: AdvancedInterfaceOptionsSaved
+
+semlib\semlib.xml
+cvars.lua
+basicOptions.lua
+browser.lua
+
+tempfix.lua

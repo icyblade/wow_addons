@@ -1,0 +1,12 @@
+tag 0eee875b0371227f04cfaf8845527cb7aea0e4d4 1.2.2
+Author:	Benjamin Staneck <staneck@gmail.com>
+Date:	Tue Sep 26 16:23:38 2017 +0200
+
+commit f4f51f3da3640d252c7e16aeb3ae0b67eb7e19a7
+Author: semlar <teslagraafs@gmail.com>
+Date:   Mon Sep 25 23:24:57 2017 -0400
+
+    Fixed an issue caused by the last fix
+    
+    It turns out pcall has a second argument
+
