@@ -5,5 +5,4 @@
 ## Author: Icyblade
 
 IcyCore.lua
-IcyPatch.xml
 IcyPatch.lua
