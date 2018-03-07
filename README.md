@@ -1,4 +1,4 @@
 # wow_addons
-Addons of World of Warcraft
+Addons of World of Warcraft Alpha/Beta Tests
 
-Disclaimer: 所有插件的所有权归插件原作者所有
+As Blizzard has tried to intervene addon hacks during Battle for Azeroth Alpha three times(since the first Alpha build to build 26175), I decide to shut down ALL addon supports of Alpha/Beta tests FOREVER, as Blizzard wishes.
