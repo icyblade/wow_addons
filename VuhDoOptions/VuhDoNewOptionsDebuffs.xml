@@ -1,0 +1,94 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Frame name="VuhDoNewOptionsDebuffsTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentRadioPanel">
+				<Size>
+					<AbsDimension x="115" y="231" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="-10" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<CheckButton name="$parentStandardRadioButton" checked="true" text="VUHDO_I18N_STANDARD" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-3" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsDebuffsStandard";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K263);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentCustomRadioButton" text="VUHDO_I18N_CUSTOM" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-41" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsDebuffsCustom";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K264);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentCustomVisualsRadioButton" text="VUHDO_I18N_VISUALS" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-79" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsDebuffsCustomVisuals";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K529);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentContentPanel">
+				<Size>
+					<AbsDimension x="428" y="345" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="VuhDoNewOptionsDebuffsStandard" setAllPoints="true" inherits="VuhDoNewOptionsDebuffsStandardTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsDebuffsCustom" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsDebuffsCustomTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsDebuffsCustomVisuals" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsDebuffsCustomVisualsTemplate">
+					</Frame>
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

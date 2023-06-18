@@ -1,0 +1,357 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Frame name="VuhDoNewOptionsPanelBarsTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="428" y="345" />
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER" relativeTo="UIParent">
+				<Offset>
+					<AbsDimension x="0" y="0" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Frames>
+
+			<Frame name="$parentTexturePanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="351" y="89" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="88" y="-23" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Button name="$parentTextureCombo" inherits="VuhDoScrollComboBoxTemplate">
+						<Size>
+							<AbsDimension x="200" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_setComboModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.barTexture", VUHDO_STATUS_BARS);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K076);
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<Frame name="$parentTextureLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_BAR_TEXTURE" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentExampleTexture" inherits="VuhDoTextureSelectTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="216" y="-12" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.barTexture", VUHDO_STATUS_BARS);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentTextureSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="320" y="50" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-45" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.barTexture");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_TEXTURE_NUM, 1, 18);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K077);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+
+			<Frame name="$parentCustomPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="440" y="120" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="30" y="-125" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_CUSTOM_SETTINGS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentManaBarHeightSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="200" y="50" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.manaBarHeight");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_MANA_BAR_HEIGHT, 0, 40);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K081);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentIndicatorLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="120" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-70" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_CUSTOM_HEALTH_BAR_BOUQUET" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentIndicatorCombo" inherits="VuhDoScrollComboBoxTemplate">
+						<Size>
+							<AbsDimension x="200" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-100" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_setComboModel(self, "VUHDO_INDICATOR_CONFIG.BOUQUETS.HEALTH_BAR_PANEL.#PNUM#", VUHDO_BOUQUET_SLOTS_COMBO_MODEL);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K483);
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<Frame name="$parentSideLeftWidthSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="200" y="50" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="226" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.sideLeftWidth");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_SIDE_LEFT_WIDTH, 1, 50);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K508);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentSideRightWidthSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="200" y="50" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="226" y="-68" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.sideRightWidth");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_SIDE_RIGHT_WIDTH, 1, 50);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K507);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentMiscPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="160" y="120" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="220" y="-270" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_MISCELLANEOUS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentDamageFlashCheckButton" text="VUHDO_I18N_DAMAGE_FLASH" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="30" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.isDamFlash");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K472);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentFlashSensivitySlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="130" y="50" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-68" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.damFlashFactor");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_SENSIVITY, 0.05, 1, "", 0.05);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K363);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.isDamFlash", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentColorPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="150" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="65" y="-255" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_BAR_COLOR" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentGradientRadioButton" text="VUHDO_I18N_GRADIENT" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_INDICATOR_CONFIG.BOUQUETS.HEALTH_BAR", VUHDO_I18N_DEF_BOUQUET_BAR_HEALTH);
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentClassColRadioButton" text="VUHDO_I18N_CLASS_COL" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-68" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_INDICATOR_CONFIG.BOUQUETS.HEALTH_BAR", VUHDO_I18N_DEF_BOUQUET_BAR_HEALTH_CLASS_COLOR);
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentSolidRadioButton" text="VUHDO_I18N_SOLIDD" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-106" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_INDICATOR_CONFIG.BOUQUETS.HEALTH_BAR", VUHDO_I18N_DEF_BOUQUET_BAR_HEALTH_SOLID);
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+		</Frames>
+	</Frame>
+</Ui>

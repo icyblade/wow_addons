@@ -1,0 +1,115 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Frame name="VuhDoNewOptionsColorsPowersTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentPowerTypesPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="249" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="146" y="-72" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_POWER_TYPES" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentManaTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-50" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_POWER_TYPE_COLORS.##0");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_MANA, VUHDO_I18N_MANA);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K158);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentRageTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-88" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_POWER_TYPE_COLORS.##1");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_RAGE, VUHDO_I18N_RAGE);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K159);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentEnergyTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-126" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_POWER_TYPE_COLORS.##3");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_ENERGY, VUHDO_I18N_ENERGY);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K160);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentRunicTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-164" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_POWER_TYPE_COLORS.##6");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_RUNES, VUHDO_I18N_RUNES);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K161);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentFocusTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-202" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_POWER_TYPE_COLORS.##2");
+								VUHDO_lnfInitColorSwatch(self, "Energy", "Energy");
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

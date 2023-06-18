@@ -1,0 +1,273 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<Script file="VuhDoNewOptionsColorsClasses.lua" />
+
+	<Frame name="VuhDoNewOptionsColorsClassesTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentClassColorsPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="230" y="314" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="80" y="-64" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<CheckButton name="$parentPetClassCheckButton" text="VUHDO_I18N_PET_CLASS" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="119" y="-273" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_USER_CLASS_COLORS.petClassColor");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K228);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_CLASS_COLORS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentWarriorsTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_USER_CLASS_COLORS.##20");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_WARRIORS, VUHDO_I18N_WARRIORS);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K229);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentRoguesTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-78" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_USER_CLASS_COLORS.##21");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_ROGUES, VUHDO_I18N_ROGUES);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K230);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentHuntersTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-116" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_USER_CLASS_COLORS.##22");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_HUNTERS, VUHDO_I18N_HUNTERS);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K231);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentPaladinTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-154" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_USER_CLASS_COLORS.##23");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_PALADINS, VUHDO_I18N_PALADINS);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K232);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentWarlocksTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="119" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_USER_CLASS_COLORS.##25");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_WARLOCKS, VUHDO_I18N_WARLOCKS);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K233);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentShamansTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="119" y="-78" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_USER_CLASS_COLORS.##26");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_SHAMANS, VUHDO_I18N_SHAMANS);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K234);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentDruidsTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="119" y="-116" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_USER_CLASS_COLORS.##27");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_DRUIDS, VUHDO_I18N_DRUIDS);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K235);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentPriestsTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="119" y="-154" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_USER_CLASS_COLORS.##28");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_PRIESTS, VUHDO_I18N_PRIESTS);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K236);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentMagesTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-192" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_USER_CLASS_COLORS.##24");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_MAGES, VUHDO_I18N_MAGES);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K237);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentDeathKnightsTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="119" y="-192" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_USER_CLASS_COLORS.##29");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_DEATH_KNIGHT, VUHDO_I18N_DEATH_KNIGHT);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K238);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentMonksTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-230" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_USER_CLASS_COLORS.##30");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_MONKS, VUHDO_I18N_MONKS);
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentPetsTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="119" y="-230" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_USER_CLASS_COLORS.##40");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_PETS, VUHDO_I18N_PETS);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K239);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Button name="$parentImportButton" text="Import Blizz" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-273" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self:SetAttribute("model", "VUHDO_USER_CLASS_COLORS");
+							</OnLoad>
+							<OnClick>VUHDO_importBlizzClassColors(self);</OnClick>
+						</Scripts>
+					</Button>
+
+				</Frames>
+
+			</Frame>
+
+		</Frames>
+	</Frame>
+</Ui>

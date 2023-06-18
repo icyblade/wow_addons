@@ -1,0 +1,164 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+	<Script file="VuhDoLookAndFeelStandardShare.lua" />
+
+	<Frame name="VuhDoLnfShareDialog" frameStrata="FULLSCREEN_DIALOG" toplevel="true" hidden="true" parent="UIParent" movable="true" enableMouse="true" enableKeyboard="true" inherits="VuhDoFrameTemplate">
+		<Size>
+			<AbsDimension x="236" y="120" />
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+		<Frames>
+			<Frame name="$parentRootPane" setallpoints="true" inherits="VuhDoPanelTemplate">
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="Share with..." inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnMouseUp>VuhDoLnfShareDialog:StopMovingOrSizing()</OnMouseUp>
+							<OnMouseDown>VuhDoLnfShareDialog:StartMoving()</OnMouseDown>
+						</Scripts>
+					</Frame>
+
+					<Button name="$parentBuddyCombo" inherits="VuhDoEditComboBoxTemplate">
+						<Size>
+							<AbsDimension x="200" y="1" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOP">
+								<Offset>
+									<AbsDimension x="15" y="-50" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+
+						<Scripts>
+							<OnLoad>
+								self.isScrollable = true;
+								VUHDO_setComboModel(self, "VUHDO_SELECTED_COMBO_BUDDY", VUHDO_BUDDY_NAME_MODEL);
+								VUHDO_hookBuddyUpdater(_G[self:GetName() .. "ScrollPanel"]);
+								VUHDO_lnfSetTooltip(self, nil);
+								self:SetAttribute("functor", function()
+									if (VUHDO_optionsExecShare(self:GetParent():GetParent())) then
+										self:GetParent():Hide();
+										_G[self:GetParent():GetParent():GetName() .. "TransmitPane"]:Show();
+									end
+								end);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "EditBox");
+								VUHDO_SELECTED_COMBO_BUDDY = VUHDO_NONE_SELECTED_BUDDY;
+								VUHDO_lnfComboBoxInitFromModel(self);
+							</OnShow>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentOkayButton" inherits="VuhDoOkayButtonTemplate">
+						<Anchors>
+							<Anchor point="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="13" y="15"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								if (VUHDO_optionsExecShare(self:GetParent():GetParent())) then
+									self:GetParent():Hide();
+									_G[self:GetParent():GetParent():GetName() .. "TransmitPane"]:Show();
+								end
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentCancelButton" inherits="VuhDoCancelButtonTemplate">
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset>
+									<AbsDimension x="-13" y="15"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VuhDoLnfShareDialog:Hide();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+			<Frame name="$parentTransmitPane" hidden="true" setallpoints="true" inherits="VuhDoPanelTemplate">
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="Sending..." inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnMouseUp>VuhDoLnfShareDialog:StopMovingOrSizing()</OnMouseUp>
+							<OnMouseDown>VuhDoLnfShareDialog:StartMoving()</OnMouseDown>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentProgressBar" inherits="VuhDoProgressBar">
+						<Size>
+							<AbsDimension x="200" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-25" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Frame>
+
+					<Button name="$parentCancelButton" inherits="VuhDoCancelButtonTemplate">
+						<Anchors>
+							<Anchor point="BOTTOM">
+								<Offset>
+									<AbsDimension x="0" y="15"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_sendAbortMessage(VUHDO_SELECTED_COMBO_BUDDY);
+								VUHDO_removeCommsData(VUHDO_SELECTED_COMBO_BUDDY);
+								VUHDO_Msg("Transmission aborted. Next retry in about 60 sec.");
+								self:GetParent():Hide();
+								_G[self:GetParent():GetParent():GetName() .. "RootPane"]:Show();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:SetScript("OnKeyDown", function(anInstance, aKey)
+					if (aKey == "ESCAPE") then
+						self:Hide();
+					end
+				end);
+			</OnLoad>
+			<OnShow>
+				_G[self:GetName() .. "RootPane"]:Show();
+				_G[self:GetName() .. "RootPaneTitleLabelLabel"]:SetText("Share " .. (VUHDO_CURRENT_PROFILE or ""));
+				_G[self:GetName() .. "TransmitPane"]:Hide();
+			</OnShow>
+		</Scripts>
+	</Frame>
+</Ui>

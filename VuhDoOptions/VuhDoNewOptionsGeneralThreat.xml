@@ -1,0 +1,289 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Frame name="VuhDoNewOptionsGeneralThreatTemplate" virtual="true">
+		<Frames>
+
+			<Frame name="$parentAggroPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="280" y="130" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="125" y="-180" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentRefreshSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="128" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="130" y="-41" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.THREAT.AGGRO_REFRESH_MS")
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_REFRESH_AGGRO, 100, 1000, " " .. VUHDO_I18N_MSEC, 50);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K183);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<EditBox name="$parentLeftEditBox" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="50" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="130" y="-79" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.THREAT.AGGRO_TEXT_LEFT");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K184);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_CONFIG.THREAT.AGGRO_USE_TEXT", false);
+							</OnLoad>
+						</Scripts>
+					</EditBox>
+
+					<CheckButton name="$parentTextCheckButton" text="VUHDO_I18N_TEXT" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-79" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.THREAT.AGGRO_USE_TEXT");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K185);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentTankModeCheckButton" text="VUHDO_I18N_TANK_MODE" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.THREAT.IS_TANK_MODE");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K419);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<EditBox name="$parentRightEditBox" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="50" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="210" y="-79" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.THREAT.AGGRO_TEXT_RIGHT");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K188);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_CONFIG.THREAT.AGGRO_USE_TEXT", false);
+							</OnLoad>
+						</Scripts>
+					</EditBox>
+
+					<Frame name="$parentLeftLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="50" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="130" y="-70" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_LEFT" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentRightLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="50" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="219" y="-70" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_RIGHT" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentAggroLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_CHECK_FOR_AGGRO" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentShieldPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="74" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="313" y="-26" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<CheckButton name="$parentShielBarCheckButton" text="VUHDO_I18N_ENABLE" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.SHOW_SHIELD_BAR");
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="Shield Bar" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentIncomingPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="244" y="112" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="43" y="-26" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<CheckButton name="$parentOwnCheckButton" text="VUHDO_I18N_SHOW_OWN_HEAL" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.SHOW_OWN_INCOMING");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K063);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentShowCheckButton" text="VUHDO_I18N_OTHERS" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.SHOW_INCOMING");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K216);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentLifeTextCheckButton" text="VUHDO_I18N_LIFE_TEXT" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="133" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.SHOW_TEXT_OVERHEAL");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K217);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentOverhealCheckButton" text="VUHDO_I18N_SHOW_OVERHEAL" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="133" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.SHOW_OVERHEAL");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K062);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_SHOW_INC" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+			</Frame>
+
+		</Frames>
+	</Frame>
+</Ui>

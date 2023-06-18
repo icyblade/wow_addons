@@ -1,0 +1,134 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Frame name="VuhDoNewOptionsSpellTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentRadioPanel">
+				<Size>
+					<AbsDimension x="115" y="231" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="-10" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<CheckButton name="$parentMouseRadioButton" checked="true" text="VUHDO_I18N_MOUSE" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-3" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsSpellMouse";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K198);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentLocalKeysRadioButton" text="VUHDO_I18N_KEYBOARD_LOCAL" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-41" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsSpellKeysLocal";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K512);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentKeysGlobalRadioButton" text="VUHDO_I18N_KEYBOARD_GLOBAL" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-79" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsSpellKeys";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K199);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentFireRadioButton" text="VUHDO_I18N_MISC" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-117" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsSpellFire";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K200);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentHostileRadioButton" text="VUHDO_I18N_HOSTILE" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-155" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsSpellHostile";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K349);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentContentPanel">
+				<Size>
+					<AbsDimension x="428" y="345" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="VuhDoNewOptionsSpellMouse" setAllPoints="true" inherits="VuhDoNewOptionsSpellMouseTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsSpellKeysLocal" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsSpellKeysLocalTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsSpellKeysLocalMacroEdit" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsSpellKeysLocalMacroEditTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsSpellKeys" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsSpellKeysTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsSpellFire" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsSpellFireTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsSpellHostile" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsSpellHostileTemplate">
+					</Frame>
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

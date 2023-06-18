@@ -1,0 +1,189 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Frame name="VuhDoNewOptionsToolsTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentRadioPanel">
+				<Size>
+					<AbsDimension x="115" y="231" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="-10" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentLoadSaveLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="100" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-8" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_LOAD_SAVE" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentProfilesRadioButton" checked="true" text="VUHDO_I18N_PROFILES" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-23" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsToolsSkins";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K164);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentKeyLayoutsRadioButton" text="VUHDO_I18N_KEY_LAYOUTS" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-58" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsToolsKeyLayouts";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K525);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentExportRadioButton" text="VUHDO_I18N_EXPORT" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-96" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsToolsExport";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K526);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentShareRadioButton" text="Share" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-134" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsToolsShare";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, "Setup sharing / communication properties for transmitting data from other VuhDo users.");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentMiscLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="100" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-174" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_MISCELLANEOUS" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentWizardRadioButton" text="VUHDO_I18N_PANEL_WIZARD" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-189" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsToolsWizard";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K265);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentResetRadioButton" text="VUHDO_I18N_RESET" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-227" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsToolsReset";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K477);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentContentPanel">
+				<Size>
+					<AbsDimension x="428" y="345" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="VuhDoNewOptionsToolsSkins" setAllPoints="true" inherits="VuhDoNewOptionsToolsSkinsTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsToolsKeyLayouts" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsToolsKeyLayoutsTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsToolsExport" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsToolsExportTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsToolsShare" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsToolsShareTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsToolsWizard" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsToolsWizardTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsToolsReset" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsToolsResetTemplate">
+					</Frame>
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

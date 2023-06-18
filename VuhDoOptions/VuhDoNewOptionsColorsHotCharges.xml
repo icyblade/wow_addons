@@ -1,0 +1,206 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Frame name="VuhDoNewOptionsColorsHotChargesTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentHotChargesPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="250" y="180" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="50" y="-75" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_HOT_CHARGES" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentHot1Texture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-50" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.HOT_CHARGE_2");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_2ND_CHARGE, VUHDO_I18N_2ND_CHARGE);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K243);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentHot2Texture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-88" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.HOT_CHARGE_3");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_3RD_CHARGE, VUHDO_I18N_3RD_CHARGE);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K244);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentHot3Texture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-126" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.HOT_CHARGE_4");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_4TH_CHARGE, VUHDO_I18N_4TH_CHARGE);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K245);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<CheckButton name="$parentTextCheckButton" text="VUHDO_I18N_TEXT_COLOR" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="133" y="-88" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.HOTS.useColorText");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K241);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentBackgroundCheckButton" text="VUHDO_I18N_BACK_COLOR" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="133" y="-126" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.HOTS.useColorBack");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K242);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentBarColorsPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="140" y="180" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="330" y="-120" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_HOT_BARS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentHot1Texture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="20" y="-50" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.HOT6");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_BAR_1, VUHDO_I18N_BAR_1);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K246);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "TitleString");
+								VUHDO_lnfColorSwatchInitFromModel(self);
+								VUHDO_colorsHotsSetSwatchHotName(self, 6);
+							</OnShow>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentHot2Texture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="20" y="-88" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.HOT7");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_BAR_2, VUHDO_I18N_BAR_2);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K247);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "TitleString");
+								VUHDO_lnfColorSwatchInitFromModel(self);
+								VUHDO_colorsHotsSetSwatchHotName(self, 7);
+							</OnShow>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentHot3Texture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="20" y="-126" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.HOT8");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_BAR_3, VUHDO_I18N_BAR_3);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K248);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "TitleString");
+								VUHDO_lnfColorSwatchInitFromModel(self);
+								VUHDO_colorsHotsSetSwatchHotName(self, 8);
+							</OnShow>
+						</Scripts>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+		</Frames>
+	</Frame>
+</Ui>

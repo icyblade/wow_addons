@@ -1,0 +1,278 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Frame name="VuhDoNewOptionsColorsTargetsTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentTextPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="249" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="63" y="-72" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_TEXT" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentEnemyRadioButton" text="VUHDO_I18N_FRIEND_FOE" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-50" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.TARGET.modeText", 1);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K532);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentClassColorRadioButton" text="VUHDO_I18N_CLASS_COL" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-88" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.TARGET.modeText", 3);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K533);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentSolidRadioButton" text="VUHDO_I18N_SOLIDD" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-164" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.TARGET.modeText", 2);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K534);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentColorsPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="249" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="196" y="-72" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_TARGET" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentFriendlyTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-50" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.TARGET_FRIEND");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_FIENDLY, VUHDO_I18N_FIENDLY);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K532);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentNeutralTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-88" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.TARGET_NEUTRAL");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_NEUTRAL, VUHDO_I18N_NEUTRAL);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K532);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentEnemyTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-126" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.TARGET_ENEMY");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_ENEMY, VUHDO_I18N_ENEMY);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K532);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentSolidTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-164" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.TARGET");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_SOLIDD, VUHDO_I18N_SOLIDD);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K534);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentTappedTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-202" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.TAPPED");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_TAPPED, VUHDO_I18N_TAPPED);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K536);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentBackgroundPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="249" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="328" y="-72" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_BACKGROUND" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentEnemyRadioButton" text="VUHDO_I18N_FRIEND_FOE" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-50" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.TARGET.modeBack", 1);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K532);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentClassColorRadioButton" text="VUHDO_I18N_CLASS_COL" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-88" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.TARGET.modeBack", 3);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K533);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentGradientRadioButton" text="VUHDO_I18N_GRADIENT" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-126" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.TARGET.modeBack", 4);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K535);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentSolidRadioButton" text="VUHDO_I18N_SOLIDD" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-164" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.TARGET.modeBack", 2);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K534);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+		</Frames>
+	</Frame>
+</Ui>

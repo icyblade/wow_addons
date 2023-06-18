@@ -1,0 +1,355 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsToolsReset.lua" />
+
+	<Frame name="VuhDoNewOptionsToolsResetTemplate" virtual="true">
+		<Frames>
+
+			<Frame name="$parentColorsPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="165" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_COLORS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentClassColorsButton" text="VUHDO_I18N_CLASS_COLORS" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_newOptionsToolsResetClassColorsClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentDebuffColorsButton" text="VUHDO_I18N_DEBUFF_COLORS" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-78" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_newOptionsToolsResetDebuffColorsClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentRaidIconColorsButton" text="VUHDO_I18N_RAID_ICON" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-116" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_newOptionsToolsResetRaidIconColorsColorsClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentBuffsHotsPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="127" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="166" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_BUFFS_HOTS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentBuffWatchButton" text="VUHDO_I18N_BUFF_WATCH" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_newOptionsToolsResetBuffWatchClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentCustomDebuffsButton" text="VUHDO_I18N_CUSTOM_DEBUFFS" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-78" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_newOptionsToolsResetCustomDebuffsClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentBouquetsPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="127" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="312" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_BOUQUETS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentDefaultBouquetsButton" text="VUHDO_I18N_DEFAULT_BOUQUETS" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_newOptionsToolsResetDefaultBouquetsClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentIndicatorsButton" text="VUHDO_I18N_INDICATORS" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-78" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_newOptionsToolsResetIndicatorsClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentAllPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="89" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-200" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_BUFF_ALL" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentEverythingButton" text="VUHDO_I18N_EVERYTHING" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_newOptionsToolsResetEverythingClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentMiscPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="203" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="166" y="-162" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_MISC" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentLangueageButton" text="VUHDO_I18N_LANGUAGE" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_newOptionsToolsResetLanguageClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentPanelPositionsButton" text="VUHDO_I18N_PANEL_POSITIONS" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-78" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_newOptionsToolsResetPanelPositionsClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentPerPanelButton" text="VUHDO_I18N_PER_PANEL_SETTINGS" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-116" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_newOptionsToolsResetPerPanelClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentSpellsButton" text="VUHDO_I18N_KEY_LAYOUTS" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-154" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_newOptionsToolsResetSpellsClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+
+		</Frames>
+	</Frame>
+</Ui>
+

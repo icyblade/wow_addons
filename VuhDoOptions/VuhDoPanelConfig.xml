@@ -1,0 +1,333 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+
+	<Script file="VuhDoPanelConfig.lua" />
+
+	<Frame name="VuhDoGrpOrdTemplate" movable="true" hidden="true" inherits="VuhDoFrameTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="80" y="100" />
+		</Size>
+
+		<Frames>
+			<Frame name="$parentInsTxuL" hidden="true">
+				<Size>
+					<AbsDimension x="5" y="100" />
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT">
+						<Offset>
+							<AbsDimension x="-5" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<Texture name="$parentTxu" setAllPoints="true" file="Interface\AddOns\VuhDo\Images\white_square_16_16">
+							<Color r="1" g="1" b="0" a="1"/>
+							<TexCoords left="0" right="1" top="0" bottom="1" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnShow>
+						VUHDO_UIFrameFlash(self, 0.15, 0.3, 10000, true, 0, 0);
+					</OnShow>
+					<OnHide>
+						VUHDO_UIFrameFlashStop(self);
+					</OnHide>
+				</Scripts>
+			</Frame>
+
+			<Button name="$parentChsBtn" inherits="VuhDoButtonTemplate" text="VUHDO_I18N_CHOOSE">
+				<Size>
+					<AbsDimension x="66" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="7" y="-46" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>VUHDO_panelSetupChooseGroupOnClick(self)</OnClick>
+				</Scripts>
+			</Button>
+
+			<Frame name="$parentDrgLbl1">
+				<Size>
+					<AbsDimension x="80" y="20" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-8" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLbl" inherits="VuDoButtonFontDark" text="VUHDO_I18N_DRAG">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="11" />
+							</FontHeight>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Frame name="$parentRmvLbl">
+				<Size>
+					<AbsDimension x="68" y="16" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="8" y="-78" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLbl" inherits="VuDoButtonFontDark" text="VUHDO_I18N_REMOVE" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="8" />
+							</FontHeight>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Frame name="$parentRmvTxu">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="53" y="-74" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<Texture name="$parentTxu" setAllPoints="true" file="Interface\AddOns\VuhDo\Images\icon_x_round">
+							<TexCoords left="0" right="1" top="0" bottom="1" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnMouseDown>VUHDO_panelSetupRemoveGroupOnClick(self)</OnMouseDown>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentDrgLbl2">
+				<Size>
+					<AbsDimension x="80" y="20" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-22" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLbl" inherits="VuDoButtonFontDark" text="VUHDO_I18N_ME">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="11" />
+							</FontHeight>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Frame name="$parentDrgTxu">
+				<Size>
+					<AbsDimension x="70" y="40" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="5" y="-5" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnMouseDown>VUHDO_panelSetupGroupDragOnMouseDown(self)</OnMouseDown>
+					<OnMouseUp>VUHDO_panelSetupGroupDragOnMouseUp(self)</OnMouseUp>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentInsTxuR" hidden="true">
+				<Size>
+					<AbsDimension x="5" y="100" />
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<Texture name="$parentTxu" setAllPoints="true" file="Interface\AddOns\VuhDo\Images\white_square_16_16">
+							<Color r="1" g="1" b="0" a="1"/>
+							<TexCoords left="0" right="1" top="0" bottom="1" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnShow>
+						VUHDO_UIFrameFlash(self, 0.15, 0.3, 10000, true, 0, 0);
+					</OnShow>
+					<OnHide>
+						VUHDO_UIFrameFlashStop(self);
+					</OnHide>
+				</Scripts>
+			</Frame>
+		</Frames>
+	</Frame>
+
+	<Frame name="VuhDoGrpSelTemplate" inherits="VuhDoFrameTemplate" hidden="true" virtual="true">
+		<Size>
+			<AbsDimension x="80" y="100" />
+		</Size>
+		<Frames>
+
+			<Frame name="$parentTypeLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="63" y="18" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="7" y="-3" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" inherits="VuDoButtonFontDark" text="VUHDO_I18N_TYPE" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="8" />
+							</FontHeight>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Button name="$parentTyCombo" inherits="VuhDoComboBoxTemplate" id="1">
+				<Size>
+					<AbsDimension x="82" y="1" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="6" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnShow>
+						VUHDO_groupSelectTypeComboSetModel(self);
+						VUHDO_lnfPatchFont(self, "Text");
+						VUHDO_lnfComboBoxInitFromModel(self);
+					</OnShow>
+					<OnLoad>
+						self:SetScale(0.85);
+						VUHDO_setComboModel(self, "INTERNAL_MODEL_CURRENT_TYPE_COMBO",
+							{
+								{ VUHDO_ID_TYPE_GROUP, VUHDO_I18N_GROUP },
+								{ VUHDO_ID_TYPE_CLASS, VUHDO_I18N_CLASS },
+								{ VUHDO_ID_TYPE_SPECIAL, VUHDO_I18N_SPECIAL },
+							}
+						);
+						self:SetAttribute("custom_function_post", VUHDO_panelConfigNotifyTypeSelect);
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Frame name="$parentValueLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="63" y="15" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="7" y="-33" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" inherits="VuDoButtonFontDark" text="VUHDO_I18N_VALUE" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="8" />
+							</FontHeight>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Button name="$parentVlCombo" inherits="VuhDoComboBoxTemplate" id="1">
+				<Size>
+					<AbsDimension x="82" y="1" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="6" y="-63" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:SetScale(0.85);
+						self:SetAttribute("custom_function_post", VUHDO_panelConfigNotifyValueSelect);
+					</OnLoad>
+					<OnShow>
+						VUHDO_groupSelectValueComboSetModel(self);
+						VUHDO_lnfPatchFont(self, "Text");
+						VUHDO_lnfComboBoxInitFromModel(self);
+					</OnShow>
+				</Scripts>
+			</Button>
+
+			<Button name="$parentOkayButton" inherits="VuhDoButtonTemplate" text="VUHDO_I18N_OKAY">
+				<Size>
+					<AbsDimension x="70" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="5" y="-70" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>VUHDO_groupSelectOkayOnClick(self)</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+	</Frame>
+
+</Ui>

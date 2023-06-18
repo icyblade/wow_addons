@@ -1,0 +1,8 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+  <Include file ="lib\AceTimer-3.0\AceTimer-3.0.xml"/>
+  <Script file = "LibRetail.lua"/>
+  <Script file = "C_Timer.lua"/>
+  <Script file = "TimeUtil.lua"/>
+  <Script file = "SmoothStatusBar.lua"/>
+</Ui>

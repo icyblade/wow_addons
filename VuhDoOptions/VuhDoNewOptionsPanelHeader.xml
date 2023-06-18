@@ -1,0 +1,329 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Frame name="VuhDoNewOptionsPanelHeaderTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentHeaderBgPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="381" y="198" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="72" y="-35" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentHeightSlider" inherits="VuhDoVSliderTemplate">
+						<Size>
+							<AbsDimension x="18" y="128" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="318" y="-42" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.headerHeight");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_SIZE, 1, 100);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K095);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.showHeaders", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentSpacingSlider" inherits="VuhDoVSliderTemplate">
+						<Size>
+							<AbsDimension x="18" y="128" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="258" y="-42" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.headerSpacing");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_SPACING, 1, 50);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K096);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.showHeaders", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<CheckButton name="$parentShowCheckButton" text="VUHDO_I18N_SHOW" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.showHeaders");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K097);
+							</OnLoad>
+							<OnClick>
+								VUHDO_lnfCheckButtonUpdateModel(self);
+								VUHDO_lnfCheckButtonClicked(self);
+								VUHDO_newOptionsShowHeadersEnableClicked(self);
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentTextureSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="220" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-121" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.HEADER.barTexture");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_TEXTURE_NUM, 1, 18);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K098);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.showHeaders", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Button name="$parentTextureCombo" inherits="VuhDoScrollComboBoxTemplate">
+						<Size>
+							<AbsDimension x="200" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="37" y="-102" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_setComboModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.HEADER.barTexture", VUHDO_STATUS_BARS);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K099);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.showHeaders", false);
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<Frame name="$parentHeadersLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_HEADERS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentExampleTexture" inherits="VuhDoTextureSelectTexture">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="124" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.HEADER.barTexture");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.showHeaders", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentWidthSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="220" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-159" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.headerWidth");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_WIDTH, 0, 100, "%");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K100);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.showHeaders", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentTextPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="335" y="120" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="93" y="-260" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTextSizeSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="128" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-78" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.HEADER.textSize");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_TEXT_SIZE, 1, 32);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K101);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.showHeaders", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Button name="$parentFontCombo" inherits="VuhDoComboBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="150" y="-81" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_setComboModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.HEADER.font", VUHDO_FONTS);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K195);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.showHeaders", false);
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<Frame name="$parentClassColorsTextLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="116" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="118" y="-12" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_TEXT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentClassColorsCheckButton" text="VUHDO_I18N_CLASS_COL" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="118" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.classColorsHeader");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K102);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.showHeaders", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentClassColorsBackLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="116" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="225" y="-12" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_BACKGROUND" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentClassColorsBackCheckButton" text="VUHDO_I18N_CLASS_COL" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="225" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.classColorsBackHeader");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K196);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.showHeaders", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentHeaderTextLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_HEADER_TEXT" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentTextColorTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.HEADER");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_HEADER, VUHDO_I18N_HEADER);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K103);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.showHeaders", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+				</Frames>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnShow>VUHDO_RESET_SIZES = true</OnShow>
+			<OnHide>VUHDO_RESET_SIZES = false</OnHide>
+		</Scripts>
+	</Frame>
+</Ui>

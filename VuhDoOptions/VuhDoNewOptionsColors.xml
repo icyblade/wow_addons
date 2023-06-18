@@ -1,0 +1,201 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Frame name="VuhDoNewOptionsColorsTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentRadioPanel">
+				<Size>
+					<AbsDimension x="115" y="231" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="-10" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<CheckButton name="$parentStatesRadioButton" checked="true" text="VUHDO_I18N_STATES" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-3" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsColorsStates";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K028);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentModesRadioButton" text="VUHDO_I18N_MODES" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-41" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsColorsModes";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K029);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentPowersRadioButton" text="VUHDO_I18N_POWERS" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-79" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsColorsPowers";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K157);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentHotsRadioButton" text="VUHDO_I18N_HOTS" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-117" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsColorsHots";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K224);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentHot2RadioButton" text="VUHDO_I18N_HOTS_2" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-155" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsColorsHotCharges";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K225);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentClassesRadioButton" text="VUHDO_I18N_CLASSES" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-193" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsColorsClasses";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K226);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentRaidIconsRadioButton" text="VUHDO_I18N_RAID_ICON" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-231" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsColorsRaidIcons";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K411);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentTargetsRadioButton" text="VUHDO_I18N_TARGET" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-269" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsColorsTargets";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K537);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentContentPanel">
+				<Size>
+					<AbsDimension x="428" y="345" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="VuhDoNewOptionsColorsStates" setAllPoints="true" inherits="VuhDoNewOptionsColorsStatesTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsColorsModes" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsColorsModesTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsColorsPowers" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsColorsPowersTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsColorsHots" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsColorsHotsTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsColorsHotCharges" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsColorsHotChargesTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsColorsClasses" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsColorsClassesTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsColorsRaidIcons" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsColorsRaidIconsTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsColorsTargets" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsColorsTargetsTemplate">
+					</Frame>
+				</Frames>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnShow>
+				VUHDO_IS_PANEL_CONFIG = true;
+				VUHDO_CONFIG_SHOW_RAID = true;
+				VUHDO_initDynamicPanelModels();
+				VUHDO_reloadUI(false);
+			</OnShow>
+			<OnHide>
+				VUHDO_IS_PANEL_CONFIG = false;
+				VUHDO_CONFIG_SHOW_RAID = false;
+				VUHDO_initDynamicPanelModels();
+				VUHDO_reloadUI(false);
+			</OnHide>
+		</Scripts>
+	</Frame>
+</Ui>

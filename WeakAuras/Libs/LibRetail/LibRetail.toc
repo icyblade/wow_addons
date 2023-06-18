@@ -1,0 +1,11 @@
+## Interface: 50400
+## Title: Lib: Retail
+## Notes: Ports many functions from retail WoW API
+## Author: Maczuga
+## X-Category: Library
+## X-License: MIT
+## Version: 1.0.0
+
+LibStub\LibStub.lua
+
+LibRetail.xml

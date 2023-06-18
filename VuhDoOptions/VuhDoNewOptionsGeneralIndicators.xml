@@ -1,0 +1,239 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsGeneralIndicators.lua" />
+
+
+	<Frame name="VuhDoMoreButtonsTexturePanel" virtual="true">
+		<Size>
+			<AbsDimension x="150" y="60" />
+		</Size>
+		<Frames>
+			<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="120" y="18" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="5" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" text="Textomat" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Button name="$parentCombo" inherits="VuhDoScrollComboBoxTemplate">
+				<Size>
+					<AbsDimension x="200" y="1" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-25" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+
+			<Frame name="$parentTexture" inherits="VuhDoTextureSelectTexture">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="30" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Frame>
+
+		</Frames>
+	</Frame>
+
+	<Frame name="VuhDoBouquetSlotTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="145" y="64" />
+		</Size>
+		<Frames>
+
+			<Frame name="$parentSelectLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="149" y="18" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="50" y="-18" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture name="$parentTexture" file="Interface\AddOns\VuhDo\Images\white_square_16_16">
+							<Color r="1" g="1" b="1" a="0.9"/>
+							<Size>
+								<AbsDimension x="60" y="8" />
+							</Size>
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="LEFT">
+									<Offset>
+										<AbsDimension x="0" y="-3" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<FontString name="$parentLabel" text="" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="LEFT">
+									<Offset>
+										<AbsDimension x="0" y="-3" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Button name="$parentSelectComboBox" hidden="false" inherits="VuhDoScrollComboBoxTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="-5" y="-52" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						VUHDO_setComboModel(self, "VUHDO_BOUQUETS.SELECTED", VUHDO_BOUQET_COMBO_MODEL);
+						VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K464);
+						self:SetAttribute("custom_function_post", VUHDO_notifyBouquetSelect);
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Button name="$parentEditButton" text="VUHDO_I18N_EDIT_BUTTON" inherits="VuhDoButtonTemplate">
+				<Size>
+					<AbsDimension x="60" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="10" y="7" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						VUHDO_generalIndicatorsEditButtonClicked(self);
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="$parentMoreButton" text="VUHDO_I18N_MORE_BUTTON" inherits="VuhDoButtonTemplate">
+				<Size>
+					<AbsDimension x="60" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="10" y="-7" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						local tMorePanel = _G[self:GetParent():GetName() .. "MorePanel"];
+						if (tMorePanel:IsShown()) then
+							tMorePanel:Hide();
+						else
+							VUHDO_hideAllMorePanels();
+							tMorePanel:Show();
+						end
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Frame name="$parentMorePanel" frameStrata="FULLSCREEN_DIALOG" clampedToScreen="true" hidden="true" inherits="VuhDoWhitePanelTemplate">
+				<Size>
+					<AbsDimension x="170" y="60" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="-3" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Button name="$parentDoneButton" text="VUHDO_I18N_DONE_BUTTON" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="60" y="24" />
+						</Size>
+						<Anchors>
+							<Anchor point="BOTTOM" relativePoint="BOTTOM">
+								<Offset>
+									<AbsDimension x="0" y="5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								local tMorePanel = _G[self:GetParent():GetName()];
+								tMorePanel:Hide();
+							</OnClick>
+						</Scripts>
+					</Button>
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentSchema">
+				<Size>
+					<AbsDimension x="128" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="-25" y="-4" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentTexture"></Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+
+		</Frames>
+	</Frame>
+
+	<Frame name="VuhDoNewOptionsGeneralIndicatorsTemplate" virtual="true">
+		<Frames>
+
+			<Frame name="$parentSlotsPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="515" y="390" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="13" y="-13" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnShow>
+						VUHDO_newOptionsIndicatorsBuildScrollChild(self);
+					</OnShow>
+				</Scripts>
+			</Frame>
+
+		</Frames>
+	</Frame>
+</Ui>

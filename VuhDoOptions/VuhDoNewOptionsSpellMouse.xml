@@ -1,0 +1,534 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsSpellMouse.lua" />
+
+	<Frame name="VuhDoNewOptionsSpellMouseEditBoxTemplate" virtual="true">
+		 <Size>
+			<AbsDimension x="200" y="34" />
+		</Size>
+		<Frames>
+			<Frame name="$parentLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="200" y="18" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" text="" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<EditBox name="$parentEditBox" inherits="VuhDoEditBoxTemplate">
+				<Size>
+					<AbsDimension x="200" y="22" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-13" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnTextChanged>
+						VUHDO_lnfEditBoxUpdateModel(self);
+						VUHDO_newOptionsSpellEditBoxCheckSpell(self);
+					</OnTextChanged>
+					<OnShow>
+						VUHDO_lnfPatchFont(self, "Hint");
+						VUHDO_lnfPatchFont(self, "");
+						VUHDO_lnfEditBoxInitFromModel(self);
+						VUHDO_newOptionsSpellEditBoxCheckSpell(self);
+					</OnShow>
+				</Scripts>
+			</EditBox>
+		</Frames>
+	</Frame>
+
+	<Frame name="VuhDoNewOptionsSpellMouseTemplate" virtual="true">
+		<Frames>
+
+			<Frame name="VuhDoNewOptionsSpellMouseKeyPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="239" y="365" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="265" y="-17" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_MOUSE_KEY" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentAdviceLabel1" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="226" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="16" y="-311" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_NAME_TIP" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentAdviceLabel2" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="226" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="16" y="-322" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_SPELL_STATIC" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentAdviceLabel3" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="226" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="16" y="-336" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_IN_MACROS_USE" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<ScrollFrame name="$parentScrollPanel" inherits="VuhDoScrollPanelTemplate">
+						<Size>
+							<AbsDimension x="245" y="277" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<ScrollChild>
+							<Frame name="$parentChild">
+								<Size>
+									<AbsDimension x="18" y="553" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="0" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Frames>
+								</Frames>
+							</Frame>
+						</ScrollChild>
+						<Scripts>
+							<OnLoad>
+								VUHDO_newOptionsSpellMouseScrollPanelOnLoad(_G[self:GetName() .. "Child"]);
+							</OnLoad>
+						</Scripts>
+					</ScrollFrame>
+				</Frames>
+			</Frame>
+
+			<Frame name="VuhDoNewOptionsSpellMouseWheelPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="239" y="110" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="13" y="-295" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_MOUSE_WHEEL" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentUpLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="200" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="20" y="-27" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_UP" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentUp1EditBox" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="200" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="20" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxCheckSpell(self);
+							</OnTextChanged>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Hint");
+								VUHDO_lnfPatchFont(self, "");
+								VUHDO_lnfEditBoxInitFromModel(self);
+								VUHDO_newOptionsSpellEditBoxCheckSpell(self);
+							</OnShow>
+						</Scripts>
+					</EditBox>
+
+					<EditBox name="$parentDown2EditBox" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="200" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="20" y="-73" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxCheckSpell(self);
+							</OnTextChanged>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Hint");
+								VUHDO_lnfPatchFont(self, "");
+								VUHDO_lnfEditBoxInitFromModel(self);
+								VUHDO_newOptionsSpellEditBoxCheckSpell(self);
+							</OnShow>
+						</Scripts>
+					</EditBox>
+
+					<Frame name="$parentDownLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="200" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="20" y="-60" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_DOWN" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentModifierPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="239" y="268" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="13" y="-17" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentShiftLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="100" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="123" y="-165" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_SHIFT" inherits="VuDoDarkTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentStrgLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="100" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="123" y="-51" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_CTRL" inherits="VuDoDarkTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentAltLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="99" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-89" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_ALT" inherits="VuDoDarkTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentAltShiftRadioButton" text="VUHDO_I18N_PLUS_SHIFT" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-189" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_lnfRadioButtonClicked(self);
+								VUHDO_newOptionsSpellSetModifier("altshift");
+							</OnClick>
+							<OnLoad>
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K146);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentStrgRadioButton" text="" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="123" y="-75" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_lnfRadioButtonClicked(self);
+								VUHDO_newOptionsSpellSetModifier("ctrl");
+							</OnClick>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K147);
+								VUHDO_lnfCheckButtonOnLoad(self);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentStrgShiftRadioButton" text="VUHDO_I18N_PLUS_SHIFT" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="123" y="-113" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_lnfRadioButtonClicked(self);
+								VUHDO_newOptionsSpellSetModifier("ctrlshift");
+							</OnClick>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K148);
+								VUHDO_lnfCheckButtonOnLoad(self);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentAltStrgShiftRadioButton" text="VUHDO_I18N_PLUS_CTRL_SHIFT" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-227" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_lnfRadioButtonClicked(self);
+								VUHDO_newOptionsSpellSetModifier("altctrlshift");
+							</OnClick>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K149);
+								VUHDO_lnfCheckButtonOnLoad(self);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_KEY_MODIFIES" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentNoneRadioButton" checked="true" text="VUHDO_I18N_KEY_NONE" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-37" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_lnfRadioButtonClicked(self);
+								VUHDO_newOptionsSpellSetModifier("");
+							</OnClick>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K150);
+								VUHDO_lnfCheckButtonOnLoad(self);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentAltRadioButton" text="" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-113" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_lnfRadioButtonClicked(self);
+								VUHDO_newOptionsSpellSetModifier("alt");
+							</OnClick>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K151);
+								VUHDO_lnfCheckButtonOnLoad(self);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentShiftRadioButton" text="" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="123" y="-189" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_lnfRadioButtonClicked(self);
+								VUHDO_newOptionsSpellSetModifier("shift");
+							</OnClick>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K152);
+								VUHDO_lnfCheckButtonOnLoad(self);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentAltCtrlRadioButton" text="VUHDO_I18N_PLUS_CTRL" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-151" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_lnfRadioButtonClicked(self);
+								VUHDO_newOptionsSpellSetModifier("altctrl");
+							</OnClick>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K153);
+								VUHDO_lnfCheckButtonOnLoad(self);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+				</Frames>
+			</Frame>
+
+		</Frames>
+		<Scripts>
+			<OnShow>VUHDO_newOptionsSpellSetModifier(VUHDO_CURR_SPELL_MODIFIER)</OnShow>
+		</Scripts>
+	</Frame>
+</Ui>

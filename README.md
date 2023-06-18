@@ -1,0 +1,16 @@
+# AddOns for World of Warcraft Mist of Pandaria (5.4.8)
+
+## Credits
+ - [Details](https://github.com/cyberc0re/MoP-Details)
+ - [ElvUI](https://github.com/ElvUI-MoP/ElvUI-5.4.8)
+ - [ElvUI_Enhanced](https://github.com/ElvUI-MoP/ElvUI_Enhanced-5.4.8)
+ - [ElvUI_AddOnSkins](https://github.com/ElvUI-MoP/ElvUI_AddOnSkins-5.4.8)
+ - [ElvUI_EnhancedFriendsList](https://github.com/ElvUI-MoP/ElvUI_EnhancedFriendsList-5.4.8)
+ - [Parrot](https://www.curseforge.com/wow/addons/parrot/download/734832)
+ - [ReforgeLite](https://www.wowace.com/projects/reforgelite/files/792829/download)
+ - [TidyPlates](https://www.curseforge.com/wow/addons/tidy-plates/download/817067)
+ - [TidyPlates: ThreatPlates](https://www.curseforge.com/wow/addons/tidy-plates-threat-plates/download/651158)
+ - [TradeSkillMaster](https://github.com/mrrosh/TradeSkillMaster_MoP)
+ - [VuhDo](https://www.curseforge.com/wow/addons/vuhdo/download/736623)
+ - [WeakAuras2](https://github.com/Maczuga/WeakAuras2-MoP)
+ - [WowLua](https://www.curseforge.com/wow/addons/wowlua/download/556770)

@@ -1,0 +1,313 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsDebuffsCustomVisuals.lua" />
+
+	<Frame name="VuhDoNewOptionsDebuffsCustomVisualsTemplate" virtual="true">
+		<Frames>
+
+			<Frame name="$parentPositionPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="240" y="205" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_POSITION" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentScaleSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="160" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="18" y="-32" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.scale");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_ICON_SCALE, 0.2, 1.5, "x", 0.05);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K270);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentHotIconsTexture" inherits="VuhDoBarExampleTexture">
+						<Size>
+							<AbsDimension x="100" y="44" />
+						</Size>
+
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="50" y="-70" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentTitleString" text="VUHDO_I18N_IHEALTH_BARI" inherits="VuDoWhiteFontTemplate">
+									<Size>
+										<AbsDimension x="0" y="0" />
+									</Size>
+									<Anchors>
+										<Anchor point="CENTER">
+											<Offset>
+												<AbsDimension x="0" y="0" />
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Frames>
+
+							<CheckButton name="$parentTopLeftRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="-10" y="10" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.point", "TOPLEFT");
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K351);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentTopRightRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="75" y="10" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.point", "TOPRIGHT");
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K352);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentBottomLeftRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="-10" y="-24" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.point", "BOTTOMLEFT");
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K353);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentBottomRightRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="75" y="-24" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.point", "BOTTOMRIGHT");
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K354);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+						</Frames>
+						<Scripts>
+							<OnShow>VUHDO_lnfPatchFont(self, "TitleString")</OnShow>
+						</Scripts>
+					</Frame>
+
+
+					<Frame name="$parentYAdjustSlider" inherits="VuhDoVSliderTemplate">
+						<Size>
+							<AbsDimension x="18" y="125" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="200" y="-25q" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.yAdjust");
+								VUHDO_lnfSliderOnLoad(self, "Y", -100, 100, "%", 2);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K355);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentXAdjustSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="160" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="18" y="-125" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.xAdjust");
+								VUHDO_lnfSliderOnLoad(self, "X", -100, 100, "%", 2);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K356);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentMaxDebuffsSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="160" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="18" y="-163" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.max_num");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_MAX_NO_DE_BUFFS, 0, 5, "", 1);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K271);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentTextPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="168" y="131" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-250" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_TEXT_OPTIONS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentTimerButton" text="VUHDO_I18N_TIMER" inherits="VuhDoFontButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="34" y="-43" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.TIMER_TEXT");
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentStacksButton" text="VUHDO_I18N_APPLIANCES" inherits="VuhDoFontButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="34" y="-81" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.COUNTER_TEXT");
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentMiscPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="70" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="280" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<CheckButton name="$parentFadeCheckButton" text="No Fade" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-27" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.isNoRangeFade");
+								VUHDO_lnfSetTooltip(self, "Disable fading debuff icons when player is out of range");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="Misc" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+			</Frame>
+
+
+		</Frames>
+	</Frame>
+</Ui>
+

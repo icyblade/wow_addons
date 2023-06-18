@@ -1,0 +1,5 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="MiniMapLocation.lua"/>
+	<Script file="MiniMapButtonGrabber.lua"/>
+	<Script file="FogClear.lua"/>
+</Ui>

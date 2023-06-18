@@ -1,0 +1,430 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsSpellKeysLocal.lua" />
+
+	<Frame name="VuhDoInternalMacroSlotContainer" virtual="true" inherits="VuhDoPanelTemplate">
+		<Size>
+			<AbsDimension x="455" y="45" />
+		</Size>
+		<Frames>
+
+			<EditBox name="$parentEditBox" inherits="VuhDoEditBoxTemplate">
+				<Size>
+					<AbsDimension x="180" y="22" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="10" y="-13" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnTextChanged>
+						VUHDO_lnfEditBoxUpdateModel(self);
+						VUHDO_newOptionsSpellEditBoxCheckSpell(self, true);
+						VUHDO_updateEditButton(self:GetParent());
+					</OnTextChanged>
+					<OnEditFocusLost>
+						self:HighlightText(0, 0);
+						VUHDO_checkTypeChange(self:GetParent());
+					</OnEditFocusLost>
+					<OnEditFocusGained>
+						VUHDO_setOriginalType(self:GetParent());
+						if (not VUHDO_lmFocusSet) then
+							VUHDO_lmFocusSet = true;
+							VUHDO_newOptionsKeyLocalSelectItem(self:GetParent(), false);
+							VUHDO_lmFocusSet = false;
+						end
+						self:HighlightText();
+					</OnEditFocusGained>
+					<OnShow>
+						VUHDO_lnfPatchFont(self, "Hint");
+						VUHDO_lnfPatchFont(self, "");
+						VUHDO_lnfEditBoxInitFromModel(self);
+						VUHDO_newOptionsSpellEditBoxCheckSpell(self);
+					</OnShow>
+				</Scripts>
+			</EditBox>
+
+			<Button name="$parentEditButton" text="VUHDO_I18N_EDIT_BUTTON" inherits="VuhDoButtonTemplate">
+				<Size>
+					<AbsDimension x="60" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="195" y="-8" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						VUHDO_spellKeysLocalEditMacroClicked(self:GetParent());
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="$parentAssignment1Button" text="" inherits="VuhDoAssignButtonTemplate">
+				<Size>
+					<AbsDimension x="190" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="260" y="-8" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						VUHDO_newOptionsKeyLocalSelectItem(self:GetParent(), true);
+						_G[self:GetParent():GetName() .. "EditBox"]:ClearFocus();
+						VUHDO_spellsKeysLocalStartAssignment(self);
+					</OnClick>
+				</Scripts>
+			</Button>
+
+		</Frames>
+		<Scripts>
+			<OnMouseDown>VUHDO_newOptionsKeyLocalSelectItem(self, true)</OnMouseDown>
+		</Scripts>
+	</Frame>
+
+	<Frame name="VuhDoNewOptionsSpellKeysLocalTemplate" enableKeyboard="true" virtual="true">
+		<Frames>
+
+			<Frame name="VuhDoNewOptionsSpellKeysLocalPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="469" y="365" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="13" y="-13" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_LOCAL_KEY_ASSIGNMENTS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentNameLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="400" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-25" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_S_M_C_OR_CONSTANT" justifyH="LEFT" inherits="VuDoButtonFontDark">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentAssignLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="400" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="-13" y="-25" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_CURRENT_ASSIGNMENT" justifyH="RIGHT" inherits="VuDoButtonFontDark">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+
+					<ScrollFrame name="$parentScrollPanel" inherits="VuhDoScrollPanelTemplate">
+						<Size>
+							<AbsDimension x="475" y="277" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-44" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<ScrollChild>
+							<Frame name="$parentChild">
+								<Size>
+									<AbsDimension x="18" y="553" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="0" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Frames>
+								</Frames>
+							</Frame>
+						</ScrollChild>
+						<Scripts>
+							<OnShow>
+								VUHDO_keyboardlocalSpellsScrollPanelOnShow(_G[self:GetName() .. "Child"]);
+							</OnShow>
+						</Scripts>
+					</ScrollFrame>
+
+					<Button name="$parentAddButton" text="VUHDO_I18N_ADD" inherits="VuhDoAddItemButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="BOTTOM" relativePoint="BOTTOM" >
+								<Offset>
+									<AbsDimension x="-55" y="7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_spellsKeysLocalAddClicked(self);
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentRemoveButton" text="VUHDO_I18N_REMOVE" inherits="VuhDoRemoveItemButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="BOTTOM" relativePoint="BOTTOM">
+								<Offset>
+									<AbsDimension x="55" y="7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_spellsKeysLocalRemoveClicked(self);
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentClearBindingButton" alpha="0.5" text="VUHDO_I18N_CLEAR_BINDING" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
+								<Offset>
+									<AbsDimension x="-7" y="7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_spellsKeysLocalClearBindingClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentHintLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="400" y="18" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-60" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" text="" justifyH="LEFT" inherits="VuDoButtonFontDark">
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+		</Frames>
+		<Scripts>
+			<OnKeyDown function="VUHDO_spellsKeysLocalAssignKey"/>
+			<OnHide>VUHDO_spellsKeysLocalStopAssignment();</OnHide>
+		</Scripts>
+
+	</Frame>
+
+	<Frame name="VuhDoNewOptionsSpellKeysLocalMacroEditTemplate" hidden="true" virtual="true">
+		<Frames>
+
+			<Frame name="VuhDoNewOptionsSpellKeysLocalMacroPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="469" y="365" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="13" y="-13" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_MACRO_EDITOR" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentFileLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="400" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-20" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="" justifyH="LEFT" inherits="VuDoButtonFontDark">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<ScrollFrame name="$parentScrollFrame" inherits="VuhDoScrollPanelTemplate">
+						<Size>
+							<AbsDimension x="475" y="277"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-44"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<ScrollChild>
+							<EditBox name="$parentEditBox" multiLine="true" autoFocus="true">
+								<Size>
+									<AbsDimension x="460" y="277"/>
+								</Size>
+								<Color r="0" g="0" b="0" />
+								<Scripts>
+								<OnCursorChanged function="ScrollingEdit_OnCursorChanged"/>
+								<OnTextChanged>
+									ScrollingEdit_OnTextChanged(self, self:GetParent());
+								</OnTextChanged>
+								<OnUpdate>
+									ScrollingEdit_OnUpdate(self, elapsed, self:GetParent());
+								</OnUpdate>
+								</Scripts>
+								<FontString inherits="VuDoMacroEditFont"/>
+							</EditBox>
+						</ScrollChild>
+					</ScrollFrame>
+
+					<Button name="$parentAcceptButton" text="VUHDO_I18N_ACCEPT" inherits="VuhDoAddItemButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="BOTTOM" relativePoint="BOTTOM" >
+								<Offset>
+									<AbsDimension x="-55" y="7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_spellsKeysLocalAcceptMacroClicked(self);
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentDiscardButton" text="VUHDO_I18N_DISCARD" inherits="VuhDoRemoveItemButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="BOTTOM" relativePoint="BOTTOM">
+								<Offset>
+									<AbsDimension x="55" y="7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_spellsKeysLocalDiscardMacroClicked(self);
+							</OnClick>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentHintLabel1" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="400" y="18" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-55" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" justifyH="LEFT" text="VUHDO_I18N_LKA_HINT_1" inherits="VuDoButtonFontDark">
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Frame name="$parentHintLabel2" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="400" y="18" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-65" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" justifyH="LEFT" text="VUHDO_I18N_LKA_HINT_2" inherits="VuDoButtonFontDark">
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+		</Frames>
+	</Frame>
+</Ui>

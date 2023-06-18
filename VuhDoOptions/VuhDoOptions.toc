@@ -1,0 +1,74 @@
+## Interface: 50400
+## Title: VuhDo ['vu:du:] - Options
+## Author: Iza@Gilneas
+## Version: 3.53
+## Notes: VuhDo Options
+## SavedVariables: VUHDO_OPTIONS_SETTINGS
+## SavedVariablesPerCharacter: VUHDO_GLOBAL_ICONS, VUHDO_GI_SCAN_IDX
+## DefaultState: Enabled
+## Dependencies: VuhDo
+## LoadOnDemand: 0
+
+Libs\ChatThrottleLib\ChatThrottleLib.xml
+
+VuhDoLookAndFeel.xml
+VuhDoLookAndFeelStandardFont.xml
+VuhDoLookAndFeelStandardShare.xml
+
+VuhDoPanelConfig.xml
+VuhDoNewColorPicker.xml
+VuhDoNewOptionsGeneralAoeAdvice.xml
+VuhDoNewOptionsGeneralBasic.xml
+VuhDoNewOptionsGeneralBouquet.xml
+VuhDoNewOptionsGeneralScan.xml
+VuhDoNewOptionsGeneralThreat.xml
+VuhDoNewOptionsGeneralMisc.xml
+VuhDoNewOptionsGeneralCluster.xml
+VuhDoNewOptionsGeneralIndicators.xml
+VuhDoNewOptionsGeneral.xml
+VuhDoNewOptionsSpellMouse.xml
+VuhDoNewOptionsSpellKeys.xml
+VuhDoNewOptionsSpellKeysLocal.xml
+VuhDoNewOptionsSpellFire.xml
+VuhDoNewOptionsSpellHostile.xml
+VuhDoNewOptionsSpell.xml
+VuhDoNewOptionsPanelBasic.xml
+VuhDoNewOptionsPanelSize.xml
+VuhDoNewOptionsPanelBars.xml
+VuhDoNewOptionsPanelHeader.xml
+VuhDoNewOptionsPanelTarget.xml
+VuhDoNewOptionsPanelTooltip.xml
+VuhDoNewOptionsPanelText.xml
+VuhDoNewOptionsPanelMisc.xml
+VuhDoNewOptionsPanelHotBars.xml
+VuhDoNewOptionsPanelHots.xml
+VuhDoNewOptionsPanelPanel.xml
+VuhDoNewOptionsColorsClasses.xml
+VuhDoNewOptionsColorsHots.xml
+VuhDoNewOptionsColorsHotCharges.xml
+VuhDoNewOptionsColorsStates.xml
+VuhDoNewOptionsColorsModes.xml
+VuhDoNewOptionsColorsPowers.xml
+VuhDoNewOptionsColorsRaidIcons.xml
+VuhDoNewOptionsColorsTargets.xml
+VuhDoNewOptionsColors.xml
+VuhDoNewOptionsBuffs.xml
+VuhDoNewOptionsBuffsGeneric.xml
+VuhDoNewOptionsBuffsRebuff.xml
+VuhDoNewOptionsBuffsAppearance.xml
+VuhDoNewOptionsBuffsColors.xml
+VuhDoNewOptionsDebuffs.xml
+VuhDoNewOptionsDebuffsStandard.xml
+VuhDoNewOptionsDebuffsCustom.xml
+VuhDoNewOptionsDebuffsCustomVisuals.xml
+VuhDoNewOptionsTools.xml
+VuhDoNewOptionsToolsSkins.xml
+VuhDoNewOptionsToolsKeyLayouts.xml
+VuhDoNewOptionsToolsExport.xml
+VuhDoNewOptionsToolsReset.xml
+VuhDoNewOptionsToolsShare.xml
+VuhDoNewOptionsToolsWizard.xml
+VuhDoNewOptionsMove.xml
+VuhDoNewOptionsTabbedFrame.xml
+
+VuhDoBuffWatchSetup.xml

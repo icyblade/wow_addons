@@ -1,0 +1,710 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsSpellKeys.lua" />
+
+	<Frame name="VuhDoNewOptionsSpellKeysTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentAdviceLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="266" y="36" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="135" y="-19" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" inherits="VuDoDefaultFontTemplate" text="VUHDO_I18N_SPELL_ADVICE">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Frame name="$parentKeyBindingsPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="502" y="268" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="24" y="-90" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="$parentKeyNoLabel1" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_1_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentSpellNameEditBox1" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="46" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL1");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<Frame name="$parentKeyBindingLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" inherits="VuDoDefaultTitleFontTemplate" text="VUHDO_I18N_KEY_BINDINGS">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentKeyNoLabel9" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="264" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_9_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentSpellNameEditBox9" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="297" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL9");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<EditBox name="$parentSpellNameEditBox10" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="297" y="-59" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL10");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<Frame name="$parentKeyNoLabel2" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-59" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_2_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentKeyNoLabel10" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="264" y="-59" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_10_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentSpellNameEditBox2" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="46" y="-59" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL2");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<EditBox name="$parentSpellNameEditBox11" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="297" y="-87" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL11");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<Frame name="$parentKeyNoLabel3" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-87" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_3_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentKeyNoLabel11" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="264" y="-87" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_11_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentSpellNameEditBox3" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="46" y="-87" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL3");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<EditBox name="$parentSpellNameEditBox13" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="297" y="-146" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL13");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<Frame name="$parentKeyNoLabel5" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-146" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_5_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentKeyNoLabel13" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="264" y="-146" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_13_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentSpellNameEditBox5" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="46" y="-146" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL5");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<EditBox name="$parentSpellNameEditBox12" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="297" y="-118" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL12");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<Frame name="$parentKeyNoLabel6" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-174" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_6_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentKeyNoLabel14" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="264" y="-174" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_14_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentSpellNameEditBox4" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="46" y="-118" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL4");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<EditBox name="$parentSpellNameEditBox14" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="297" y="-174" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL14");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<Frame name="$parentKeyNoLabel4" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-118" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_4_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentKeyNoLabel12" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="264" y="-118" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_12_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentSpellNameEditBox6" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="46" y="-174" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL6");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<EditBox name="$parentSpellNameEditBox15" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="297" y="-202" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL15");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<Frame name="$parentKeyNoLabel7" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-202" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_7_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentKeyNoLabel15" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="264" y="-202" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_15_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentSpellNameEditBox7" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="46" y="-202" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL7");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<EditBox name="$parentSpellNameEditBox16" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="297" y="-230" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL16");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<Frame name="$parentKeyNoLabel8" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-230" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_8_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentKeyNoLabel16" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="27" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="264" y="-230" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_16_DOT" inherits="VuDoDefaultFontTemplate" justifyH="LEFT">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentSpellNameEditBox8" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="181" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="46" y="-230" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELLS_KEYBOARD.SPELL8");
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

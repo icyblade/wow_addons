@@ -1,0 +1,176 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Frame name="VuhDoNewOptionsPanelSizeTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentSizePanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="500" y="384" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-16" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+
+				<Frames>
+
+					<Frame name="$parentScaleSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="288" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="194" y="-325" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.scale");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_PANEL_SCALE, 0.3, 2.5, "x", 0.05);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K339);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentSpacingXSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="288" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="194" y="-107" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.columnSpacing");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_X_SPACING, 0, 50, "");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K112);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentSpacingYSlider" inherits="VuhDoVSliderTemplate">
+						<Size>
+							<AbsDimension x="18" y="228" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="156" y="-124" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.rowSpacing");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_Y_SPACING, 0, 50, "");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K113);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentBorderGapYSlider" inherits="VuhDoVSliderTemplate">
+						<Size>
+							<AbsDimension x="18" y="228" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="91" y="-90" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.borderGapY");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_Y_GAP, 0, 50, "");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K114);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentBorderGapXSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="288" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="129" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.borderGapX");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_X_GAP, 0, 50, "");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K115);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentButtonHeightSlider" inherits="VuhDoVSliderTemplate">
+						<Size>
+							<AbsDimension x="18" y="300" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="34" y="-52" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.barHeight");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_BAR_HEIGHT, 1, 150, "");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K116);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentButtonWidthSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="410" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="72" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.SCALING.barWidth");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_BAR_WIDTH, 1, 250, "");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K117);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentSizeLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" inherits="VuDoDefaultTitleFontTemplate" text="VUHDO_I18N_BUTTON_SIZE">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+				</Frames>
+			</Frame>
+		</Frames>
+
+		<Scripts>
+			<OnShow>VUHDO_RESET_SIZES = true</OnShow>
+			<OnHide>VUHDO_RESET_SIZES = false</OnHide>
+		</Scripts>
+	</Frame>
+</Ui>

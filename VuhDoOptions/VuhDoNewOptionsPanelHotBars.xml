@@ -1,0 +1,522 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Frame name="VuhDoHotBarDemoTexture1" virtual="true">
+		<Size>
+			<AbsDimension x="80" y="12" />
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentTexture" setAllPoints="true" file="interface\AddOns\VuhDoOptions\Images\blue_dk_square_16_16">
+					<TexCoords left="0" right="1" top="0" bottom="1" />
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString name="$parentLabel" setAllPoints="true" inherits="VuDoDefaultFontTemplate" text="" justifyH="CENTER">
+					<Color r="1" g="1" b="1" />
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnShow>
+				VUHDO_lnfPatchFont(self, "Label");
+				VUHDO_squareDemoOnShow(self);
+			</OnShow>
+		</Scripts>
+	</Frame>
+
+	<Frame name="VuhDoHotBarDemoTexture2" virtual="true">
+		<Size>
+			<AbsDimension x="80" y="12" />
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentTexture" setAllPoints="true" file="interface\AddOns\VuhDoOptions\Images\blue_lt_square_16_16">
+					<TexCoords left="0" right="1" top="0" bottom="1" />
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString name="$parentLabel" setAllPoints="true" inherits="VuDoDefaultFontTemplate" text="" justifyH="CENTER">
+					<Color r="0.4" g="0.4" b="1" />
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnShow>
+				VUHDO_lnfPatchFont(self, "Label");
+				VUHDO_squareDemoOnShow(self);
+			</OnShow>
+		</Scripts>
+	</Frame>
+
+	<Frame name="VuhDoHotBarDemoTexture3" virtual="true">
+		<Size>
+			<AbsDimension x="80" y="12" />
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentTexture" setAllPoints="true" file="interface\AddOns\VuhDo\Images\white_square_16_16">
+					<TexCoords left="0" right="1" top="0" bottom="1" />
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString name="$parentLabel" setAllPoints="true" inherits="VuDoDefaultFontTemplate" text="" justifyH="CENTER">
+					<Color r="0.4" g="0.4" b="1" />
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnShow>
+				VUHDO_squareDemoOnShow(self);
+				VUHDO_lnfPatchFont(self, "Label");
+			</OnShow>
+		</Scripts>
+	</Frame>
+
+	<Frame name="VuhDoNewOptionsPanelHotBarsTemplate" virtual="true">
+		<Frames>
+
+			<Frame name="$parentHotsPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="220" y="330" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="25" y="-25" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentSizeSlider" inherits="VuhDoVSliderTemplate">
+						<Size>
+							<AbsDimension x="18" y="265" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="188" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.HOTS.BARS.width");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_SIZE, 1, 100, "%", 0.5);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K318);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentBarsEdgesTexture" frameStrata="DIALOG" inherits="VuhDoBarExampleTexture">
+						<Size>
+							<AbsDimension x="100" y="64" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="37" y="-42" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentTexture1" inherits="VuhDoHotBarDemoTexture1">
+								<Anchors>
+									<Anchor point="TOP">
+										<Offset>
+											<AbsDimension x="0" y="-2" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</Frame>
+							<Frame name="$parentTexture2" inherits="VuhDoHotBarDemoTexture2">
+								<Anchors>
+									<Anchor point="CENTER">
+										<Offset>
+											<AbsDimension x="0" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</Frame>
+							<Frame name="$parentTexture3" inherits="VuhDoHotBarDemoTexture3">
+								<Anchors>
+									<Anchor point="BOTTOM">
+										<Offset>
+											<AbsDimension x="0" y="2" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</Frame>
+
+						</Frames>
+					</Frame>
+
+					<CheckButton name="$parentBarsEdgesRadioButton" inherits="VuhDoRadioBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="7" y="-58" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.HOTS.BARS.radioValue", 1);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+
+					<Frame name="$parentBarsCenterTexture" frameStrata="DIALOG" inherits="VuhDoBarExampleTexture">
+						<Size>
+							<AbsDimension x="100" y="64" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="37" y="-112" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentTexture1" inherits="VuhDoHotBarDemoTexture1">
+								<Anchors>
+									<Anchor point="CENTER">
+										<Offset>
+											<AbsDimension x="0" y="12" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</Frame>
+							<Frame name="$parentTexture2" inherits="VuhDoHotBarDemoTexture2">
+								<Anchors>
+									<Anchor point="CENTER">
+										<Offset>
+											<AbsDimension x="0" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</Frame>
+							<Frame name="$parentTexture3" inherits="VuhDoHotBarDemoTexture3">
+								<Anchors>
+									<Anchor point="CENTER">
+										<Offset>
+											<AbsDimension x="0" y="-12" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</Frame>
+
+						</Frames>
+					</Frame>
+
+					<CheckButton name="$parentBarsCenterRadioButton" inherits="VuhDoRadioBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="7" y="-128" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.HOTS.BARS.radioValue", 2);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentBarsUpTexture" frameStrata="DIALOG" inherits="VuhDoBarExampleTexture">
+						<Size>
+							<AbsDimension x="100" y="64" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="37" y="-182" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentTexture1" inherits="VuhDoHotBarDemoTexture1">
+								<Anchors>
+									<Anchor point="TOP">
+										<Offset>
+											<AbsDimension x="0" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</Frame>
+							<Frame name="$parentTexture2" inherits="VuhDoHotBarDemoTexture2">
+								<Anchors>
+									<Anchor point="TOP">
+										<Offset>
+											<AbsDimension x="0" y="-12" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</Frame>
+							<Frame name="$parentTexture3" inherits="VuhDoHotBarDemoTexture3">
+								<Anchors>
+									<Anchor point="TOP">
+										<Offset>
+											<AbsDimension x="0" y="-24" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</Frame>
+						</Frames>
+					</Frame>
+
+					<CheckButton name="$parentBarsUpRadioButton" inherits="VuhDoRadioBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="7" y="-198" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.HOTS.BARS.radioValue", 3);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentBarsDownTexture" frameStrata="DIALOG" inherits="VuhDoBarExampleTexture">
+						<Size>
+							<AbsDimension x="100" y="64" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="37" y="-252" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentTexture1" inherits="VuhDoHotBarDemoTexture1">
+								<Anchors>
+									<Anchor point="BOTTOM">
+										<Offset>
+											<AbsDimension x="0" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</Frame>
+							<Frame name="$parentTexture2" inherits="VuhDoHotBarDemoTexture2">
+								<Anchors>
+									<Anchor point="BOTTOM">
+										<Offset>
+											<AbsDimension x="0" y="12" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</Frame>
+							<Frame name="$parentTexture3" inherits="VuhDoHotBarDemoTexture3">
+								<Anchors>
+									<Anchor point="BOTTOM">
+										<Offset>
+											<AbsDimension x="0" y="24" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</Frame>
+						</Frames>
+					</Frame>
+
+					<CheckButton name="$parentBarsDownRadioButton" inherits="VuhDoRadioBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="7" y="-268" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.HOTS.BARS.radioValue", 4);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentHotsLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" inherits="VuDoDefaultTitleFontTemplate" text="VUHDO_I18N_HOT_BARS">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentHotOrderPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="270" y="155" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="255" y="-25" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_HOT_ORDER" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentSlot6Container" inherits="VuhDoHotSlotContainer">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-39" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Frame>
+
+					<Frame name="$parentSlot7Container" inherits="VuhDoHotSlotContainer">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-73" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Frame>
+
+					<Frame name="$parentSlot8Container" inherits="VuhDoHotSlotContainer">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-107" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Frame>
+
+					<Frame name="$parentMineLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="152" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="180" y="-20" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_SHOW_OWN_HEAL" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentOthersLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="152" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="225" y="-20" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_OTHERS" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentOrientationPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="130" y="152" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="265" y="-203" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="Orientation" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentInvertCheckButton" text="VUHDO_I18N_INV_GROWTH" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_INDICATOR_CONFIG.CUSTOM.HOT_BARS.invertGrowth");
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentVerticalCheckButton" text="VUHDO_I18N_VERTICAL" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_INDICATOR_CONFIG.CUSTOM.HOT_BARS.vertical");
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentTurnAxisCheckButton" text="VUHDO_I18N_TURN_AXIS" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-107" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_INDICATOR_CONFIG.CUSTOM.HOT_BARS.turnAxis");
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+		</Frames>
+	</Frame>
+</Ui>

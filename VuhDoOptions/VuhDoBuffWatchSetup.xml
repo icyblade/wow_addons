@@ -1,0 +1,265 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+
+	<Script file="VuhDoBuffWatchSetup.lua" />
+
+	<Frame name="VuhDoBuffSetupPanelTemplate" inherits="VuhDoPanelTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="229" y="46" />
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset>
+					<AbsDimension x="0" y="0" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<Frame name="$parentBuffTexture">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="42" y="-6" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<Texture name="$parentTexture" setAllPoints="true" file="interface\icons\spell_holy_prayeroffortitude">
+							<TexCoords left="0" right="1" top="0" bottom="1" />
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Frame name="$parentBuffNameLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="100" y="16" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="82" y="-1" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" text="VUHDO_I18N_BUFF_NAME" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<CheckButton name="$parentMissingCheckButton" inherits="VuhDoCheckBoxTemplate">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="75" y="-16" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+				</Scripts>
+			</CheckButton>
+
+			<Frame name="$parentMissingTexture" inherits="VuhDoColorSwatchTexture">
+				<Size>
+					<AbsDimension x="78" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="102" y="-16" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_MISSING, VUHDO_I18N_MISSING);
+					</OnLoad>
+				</Scripts>
+			</Frame>
+
+
+			<CheckButton name="$parentEnableCheckButton" inherits="VuhDoCheckBoxTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="4" y="-8" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						VUHDO_lnfCheckButtonClicked(self);
+						VUHDO_buffChanged(self);
+					</OnClick>
+					<OnShow>
+					</OnShow>
+				</Scripts>
+			</CheckButton>
+
+			<Button name="$parentUpButton" text="VUHDO_I18N_UP" inherits="VuhDoButtonTemplate">
+				<Size>
+					<AbsDimension x="40" y="20" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-4" y="-2" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K387);
+					</OnLoad>
+					<OnClick>
+						VUHDO_buffUpButtonClicked(self);
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="$parentDownButton" text="VUHDO_I18N_DOWN" inherits="VuhDoButtonTemplate">
+				<Size>
+					<AbsDimension x="40" y="20" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="-4" y="2" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K388);
+					</OnLoad>
+					<OnClick>
+						VUHDO_buffDownButtonClicked(self);
+					</OnClick>
+				</Scripts>
+			</Button>
+
+		</Frames>
+	</Frame>
+
+
+	<Frame name="VuhDoBuffSetupDedicatedPanelTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="229" y="33" />
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset>
+					<AbsDimension x="16" y="-83" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<Frame name="$parentDedicatedComboBox" inherits="VuhDoComboBoxTemplate" id="1">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="15" y="-3" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:SetAttribute("custom_function", VUHDO_buffWatchSetupDedicatedChanged);
+					</OnLoad>
+				</Scripts>
+			</Frame>
+		</Frames>
+	</Frame>
+
+	<Frame name="VuhDoBuffSetupUniqueSingleTargetPanelTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="229" y="55" />
+		</Size>
+		<Frames>
+			<EditBox name="$parentPlayerNameEditBox" inherits="VuhDoEditBoxTemplate">
+				<Size>
+					<AbsDimension x="170" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="10" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnShow>VUHDO_lnfPatchFont(self, "Hint"); VUHDO_lnfPatchFont(self, "");</OnShow>
+					<OnTextChanged>
+						VUHDO_buffChanged(self);
+					</OnTextChanged>
+				</Scripts>
+			</EditBox>
+
+			<Frame name="$parentPlayerNameLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="180" y="22" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="10" y="-3" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" text="VUHDO_I18N_BUFF_ON_PLAYER" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+	</Frame>
+
+
+	<Frame name="VuhDoBuffSetupFilterTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="229" y="33" />
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset>
+					<AbsDimension x="16" y="-83" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<Frame name="$parentComboBox" inherits="VuhDoComboBoxTemplate" id="1">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="15" y="-3" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:SetAttribute("custom_function", VUHDO_buffWatchSetupFilterChanged);
+					</OnLoad>
+				</Scripts>
+			</Frame>
+		</Frames>
+	</Frame>
+
+</Ui>
+

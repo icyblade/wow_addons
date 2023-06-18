@@ -1,0 +1,235 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsGeneralAoeAdvice.lua" />
+
+	<Frame name="VuhDoAoeItemTemplate" virtual="true" inherits="VuhDoPanelTemplate">
+		<Size>
+			<AbsDimension x="240" y="45" />
+		</Size>
+		<Frames>
+
+			<CheckButton name="$parentEnableCheckButton" inherits="VuhDoCheckBoxTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="4" y="-8" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+
+			<Frame name="$parentSpellTexture">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="42" y="-6" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<Texture name="$parentTexture" setAllPoints="true" file="interface\icons\spell_holy_prayeroffortitude">
+							<TexCoords left="0" right="1" top="0" bottom="1" />
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Frame name="$parentSpellNameLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="100" y="16" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="82" y="-3" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Frame name="$parentHealedSlider" inherits="VuhDoHSliderTemplate">
+				<Size>
+					<AbsDimension x="150" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="82" y="-13" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						VUHDO_lnfSliderOnLoad(self, "", 5000, 1000000, " " .. VUHDO_I18N_HP, 5000);
+						VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K538);
+					</OnLoad>
+				</Scripts>
+			</Frame>
+
+		</Frames>
+		<Scripts>
+		</Scripts>
+	</Frame>
+
+	<Frame name="VuhDoNewOptionsGeneralAoeAdviceTemplate" virtual="true">
+		<Frames>
+
+			<Frame name="$parentGeneralPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="460" y="114" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_GENERAL" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentKnownOnlyCheckButton" text="VUHDO_I18N_KNOWN_ONLY" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.AOE_ADVISOR.knownOnly");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K539);
+							</OnLoad>
+							<OnClick>
+								VUHDO_lnfCheckButtonUpdateModel(self);
+								VUHDO_lnfCheckButtonClicked(self);
+								VUHDO_newOptionsAoeAdvicePopulate(self:GetParent():GetParent());
+							</OnClick>
+
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentSubIncomingCheckButton" text="VUHDO_I18N_MINUS_INCOMING" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="236" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.AOE_ADVISOR.subInc");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K540);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentCastTimeOnlyCheckButton" text="VUHDO_I18N_CAST_TIME_ONLY" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="236" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.AOE_ADVISOR.subIncOnlyCastTime");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K547);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_CONFIG.AOE_ADVISOR.subInc", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentGroupWiseCheckButton" text="per Group" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="346" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.AOE_ADVISOR.isGroupWise");
+								VUHDO_lnfSetTooltip(self, "Spells directed the target's group (instead of the raid = Prayer of Healing) will be shown per group.");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentCooldownCheckButton" text="VUHDO_I18N_COOLDOWN" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="126" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.AOE_ADVISOR.isCooldown");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K541);
+							</OnLoad>
+							<OnClick>
+								VUHDO_lnfCheckButtonUpdateModel(self);
+								VUHDO_lnfCheckButtonClicked(self);
+								VUHDO_newOptionsAoeAdvicePopulate(self:GetParent():GetParent());
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentRefreshSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="205" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-74" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.AOE_ADVISOR.refresh")
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_REFRESH_RATE, 100, 3000, " " .. VUHDO_I18N_MSEC, 100);
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+		</Frames>
+		<Scripts>
+			<OnShow>
+				VUHDO_newOptionsAoeAdvicePopulate(self);
+			</OnShow>
+		</Scripts>
+	</Frame>
+</Ui>

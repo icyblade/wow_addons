@@ -1,0 +1,300 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+
+	<Script file="VuhDoBuffWatch.lua" />
+	<Script file="VuhDoBuffWatchBuilder.lua" />
+
+	<Frame name="VuhDoBuffSelectDropdown" inherits="UIDropDownMenuTemplate" clampedToScreen="true" id="1" hidden="true">
+		<Scripts>
+			<OnLoad>
+				VUHDO_buffSelectDropdownOnLoad();
+		 </OnLoad>
+		</Scripts>
+	</Frame>
+
+	<Button name="VuhDoSmartCastGlassButton" inherits="SecureUnitButtonTemplate">
+		<Scripts>
+			<OnLoad>self:RegisterForClicks("LeftButtonDown", "MiddleButtonDown", "RightButtonDown", "Button4Down", "Button5Down");
+				self:SetScript("PreClick", VUHDO_execSmartBuffPre);
+				self:SetScript("PostClick", VUHDO_execSmartBuffPost);
+			</OnLoad>
+		</Scripts>
+	</Button>
+
+	<Frame name="VuhDoBuffSwatchPanelTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="75" y="24" />
+		</Size>
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<Color r="0" g="0" b="0" />
+
+			<BackgroundInsets>
+				<AbsInset left="0" right="0" top="0" bottom="0" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="8" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="8" />
+			</EdgeSize>
+		</Backdrop>
+		<Frames>
+
+			<Button name="$parentGlassButton" setAllPoints="true" inherits="SecureUnitButtonTemplate,SecureHandlerEnterLeaveTemplate,SecureHandlerShowHideTemplate">
+				<Scripts>
+					<OnLoad>
+						self:RegisterForClicks("AnyDown");
+						self:SetScript("PreClick", VuhDoBuffPreClick);
+						self:SetScript("PostClick", VuhDoBuffPostClick)
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Frame name="$parentGroupLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="50" y="16" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="3" y="1" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" inherits="SystemFont_Tiny" text="">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="8" />
+							</FontHeight>
+							<Color r="1" g="0.898" b="0.4" />
+							<Shadow>
+								<Color r="0" g="0" b="0" />
+								<Offset>
+									<AbsDimension x="1" y="-1" />
+								</Offset>
+							</Shadow>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Frame name="$parentMessageLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="28" y="15" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="43" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" inherits="SystemFont_Tiny" text="" justifyH="RIGHT">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="8" />
+							</FontHeight>
+							<Color r="1" g="0.7" b="0.2" />
+							<Shadow>
+								<Color r="0" g="0" b="0" />
+								<Offset>
+									<AbsDimension x="1" y="-1" />
+								</Offset>
+							</Shadow>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Frame name="$parentTimerLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="50" y="10" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="3" y="-12" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" inherits="SystemFont_Tiny" text="">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="8" />
+							</FontHeight>
+							<Color r="1" g="0.7" b="0.2" />
+							<Shadow>
+								<Color r="0" g="0" b="0" />
+								<Offset>
+									<AbsDimension x="1" y="-1" />
+								</Offset>
+							</Shadow>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Frame name="$parentCounterLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="28" y="10" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="43" y="-12" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" inherits="SystemFont_Tiny" text="" justifyH="RIGHT">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="8" />
+							</FontHeight>
+							<Color r="1" g="0.7" b="0.2" />
+							<Shadow>
+								<Color r="0" g="0" b="0" />
+								<Offset>
+									<AbsDimension x="1" y="-1" />
+								</Offset>
+							</Shadow>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+	</Frame>
+
+	<Frame name="VuhDoBuffWatchBuffTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="30" y="30" />
+		</Size>
+		<Frames>
+			<Frame name="$parentBuffNameLabel" inherits="VuhDoLabelFrameTemplate" >
+				<Size>
+					<AbsDimension x="120" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="30" y="-3" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" font="SystemFont_Tiny" text="" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="9" />
+							</FontHeight>
+							<Color r="1" g="0.82" b="0" />
+							<Shadow>
+								<Color r="0" g="0" b="0" />
+								<Offset>
+									<AbsDimension x="1" y="-1" />
+								</Offset>
+							</Shadow>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Button name="$parentIconTexture">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<Layers>
+					<Layer>
+						<Texture name="$parentTexture" setAllPoints="true">
+							<TexCoords left="0" right="1" top="0" bottom="1" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnMouseDown>VUHDO_buffWatchOnMouseDown(self:GetParent():GetParent())</OnMouseDown>
+					<OnMouseUp>VUHDO_buffWatchOnMouseUp(self:GetParent():GetParent())</OnMouseUp>
+				</Scripts>
+			</Button>
+		</Frames>
+	</Frame>
+
+	<Frame name="VuhDoBuffWatchMainFrameTemplate" virtual="true" toplevel="true" frameStrata="MEDIUM"
+			movable="true" parent="UIParent" enableMouse="true">
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+				<BackgroundInsets>
+					<AbsInset left="5" right="5" top="5" bottom="5" />
+				</BackgroundInsets>
+				<TileSize>
+					<AbsValue val="16" />
+				</TileSize>
+				<EdgeSize>
+					<AbsValue val="16" />
+				</EdgeSize>
+		</Backdrop>
+		<Frames>
+			<Frame name="$parentInfoLabel" hidden="true" inherits="VuhDoLabelFrameTemplate" >
+				<Size>
+					<AbsDimension x="120" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="CENTER">
+						<Offset>
+							<AbsDimension x="0" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" font="SystemFont_Tiny" text="VuhDo - BuffWatch" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="9" />
+							</FontHeight>
+							<Color r="1" g="0.82" b="0" />
+							<Shadow>
+								<Color r="0" g="0" b="0" />
+								<Offset>
+									<AbsDimension x="1" y="-1" />
+								</Offset>
+							</Shadow>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+
+		<Scripts>
+			<OnMouseDown>VUHDO_buffWatchOnMouseDown(self)</OnMouseDown>
+			<OnMouseUp>VUHDO_buffWatchOnMouseUp(self)</OnMouseUp>
+		</Scripts>
+
+	</Frame>
+
+</Ui>
+

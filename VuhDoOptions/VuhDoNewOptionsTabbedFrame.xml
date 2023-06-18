@@ -1,0 +1,380 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsTabbedFrame.lua" />
+
+	<Frame name="VuhDoNewOptionsTabbedFrame" hidden="true" toplevel="true" movable="true" parent="UIParent" enableMouse="true" frameStrata="DIALOG" inherits="VuhDoFrameTemplate">
+		<Size>
+			<AbsDimension x="648" y="420" />
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER" relativeTo="UIParent">
+				<Offset>
+					<AbsDimension x="0" y="0" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Frames>
+
+			<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="223" y="18" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="5" y="17" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" text="VUHDO_I18N_VUHDO_OPTIONS" inherits="VuDoDarkTitleFontTemplate">
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnShow>_G[self:GetName() .. "Label"]:SetText(VUHDO_I18N_VUHDO_OPTIONS .. " " .. VUHDO_VERSION)</OnShow>
+				</Scripts>
+			</Frame>
+
+			<Frame name="$parentPanelNumLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="140" y="17" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="120" y="17" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" text="" hidden="true" inherits="VuDoBigWhiteFontTemplate">
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Frame name="$parentTabsPanel">
+				<Size>
+					<AbsDimension x="298" y="56" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="6" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<CheckButton name="$parentGeneralRadioButton" checked="true" text="VUHDO_I18N_GENERAL_SHORT" inherits="VuhDoTabStopButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="5" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_newOptionsTabbedClickedClicked(self); VUHDO_lnfRadioButtonClicked(self)</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentColorsRadioButton" text="VUHDO_I18N_COLORS" inherits="VuhDoTabStopButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="245" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_newOptionsTabbedClickedClicked(self); VUHDO_lnfRadioButtonClicked(self)</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentToolsRadioButton" text="VUHDO_I18N_TOOLS" inherits="VuhDoTabStopButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="293" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_newOptionsTabbedClickedClicked(self); VUHDO_lnfRadioButtonClicked(self)</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentMoveRadioButton" text="VUHDO_I18N_MOVE" inherits="VuhDoTabStopButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="341" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_newOptionsTabbedClickedClicked(self); VUHDO_lnfRadioButtonClicked(self)</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentSpellsRadioButton" text="VUHDO_I18N_SPELLS" inherits="VuhDoTabStopButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="53" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_newOptionsTabbedClickedClicked(self); VUHDO_lnfRadioButtonClicked(self)</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentPanelsRadioButton" text="VUHDO_I18N_PANELS" inherits="VuhDoTabStopButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="197" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_newOptionsTabbedClickedClicked(self); VUHDO_lnfRadioButtonClicked(self)</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentBuffsRadioButton" text="VUHDO_I18N_BUFFS" inherits="VuhDoTabStopButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="101" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_newOptionsTabbedClickedClicked(self); VUHDO_lnfRadioButtonClicked(self)</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentDebuffsRadioButton" text="VUHDO_I18N_DEBUFFS" inherits="VuhDoTabStopButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="149" y="-5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_newOptionsTabbedClickedClicked(self); VUHDO_lnfRadioButtonClicked(self)</OnClick>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentContentPanel" setAllPoints="true">
+				<Frames>
+					<Frame name="VuhDoNewOptionsGeneral" setAllPoints="true" inherits="VuhDoNewOptionsGeneralTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsSpell" hidden="true"  setAllPoints="true" inherits="VuhDoNewOptionsSpellTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsPanelPanel" hidden="true"  setAllPoints="true" inherits="VuhDoNewOptionsPanelPanelTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsColors" hidden="true"  setAllPoints="true" inherits="VuhDoNewOptionsColorsTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsMove" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsMoveTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsBuffs" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsBuffsTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsDebuffs" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsDebuffsTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsTools" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsToolsTemplate">
+					</Frame>
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentOkayCancelPanel" inherits="VuhDoPanelAppendBottomTemplate">
+				<Size>
+					<AbsDimension x="245" y="40" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="7" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Button name="$parentOkayButton" inherits="VuhDoOkayButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="130" y="5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_tabbedPanelOkayClicked(self)</OnClick>
+							<OnLoad>
+								 VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K154);
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentCancelButton" inherits="VuhDoCancelButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="20" y="5" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_tabbedPanelCancelClicked()</OnClick>
+						<OnLoad>
+							 VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K155);
+						</OnLoad>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				VUHDO_initOptionsSettings();
+			</OnLoad>
+			<OnMouseDown>VUHDO_tabbedFrameOnMouseDown(self)</OnMouseDown>
+			<OnMouseUp>VUHDO_tabbedFrameOnMouseUp(self)</OnMouseUp>
+			<OnShow>
+				self:SetScale(VUHDO_OPTIONS_SETTINGS.scale);
+				VuhDoNewOptionsScaleSlider:Show();
+				VuhDoNewOptionsPanelBarsTexturePanelTextureSliderSlider:SetMinMaxValues(1, #VUHDO_STATUS_BARS);
+				VuhDoNewOptionsPanelHeaderHeaderBgPanelTextureSliderSlider:SetMinMaxValues(1, #VUHDO_STATUS_BARS);
+
+				VUHDO_IS_CONFIG = true;
+				if (DESIGN_MISC_PANEL_NUM == nil) then
+					VUHDO_newOptionsPanelFindDefaultPanel();
+				end
+				VUHDO_newOptionsBufferVars();
+				if (VUHDO_CONFIG["IS_CLIQUE_COMPAT_MODE"]) then
+					VuhDoNewOptionsTabbedFrameTabsPanelSpellsRadioButton:Hide();
+				end
+				VUHDO_commsSetReceiveModeEnabled(true);
+				collectgarbage('collect');
+			</OnShow>
+			<OnHide>
+				VuhDoNewOptionsScaleSlider:Hide();
+				VUHDO_IS_CONFIG = false;
+				VUHDO_IS_PANEL_CONFIG = false;
+				VUHDO_CONFIG_SHOW_RAID = false;
+				VUHDO_reloadUI(false);
+				collectgarbage('collect');
+			</OnHide>
+			<OnUpdate>
+				VUHDO_optionsOnUpdate();
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="VuhDoNewOptionsScaleSlider" hidden="true">
+		<Size>
+			<AbsDimension x="12" y="100" />
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="VuhDoNewOptionsTabbedFrame" relativePoint="TOPRIGHT">
+				<Offset>
+					<AbsDimension x="2" y="-5" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+
+		<Frames>
+			<Slider name="$parentSlider" setallpoints="true" enableMouse="true" minValue="0" maxValue="100" defaultValue="0" valueStep="1" orientation="VERTICAL">
+				<Backdrop bgFile="Interface\AddOns\VuhDoOptions\Images\blue_lt_square_16_16" edgeFile="Interface\AddOns\VuhDoOptions\Images\panel_edges_3" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="1" right="1" top="1" bottom="1" />
+					</BackgroundInsets>
+					<TileSize>
+						<AbsValue val="8" />
+					</TileSize>
+					<EdgeSize>
+						<AbsValue val="8" />
+					</EdgeSize>
+				</Backdrop>
+				<Layers>
+					<Layer>
+						<FontString name="$parentTitle" inherits="VuDoDefaultFontTemplate" text="">
+							<Anchors>
+								<Anchor point="BOTTOM" relativePoint="TOP">
+									<Offset>
+										<AbsDimension x="0" y="4" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="$parentValue" text="" inherits="GameFontNormal" font="Interface\AddOns\VuhDo\Fonts\ariblk.ttf" >
+							<FontHeight>
+								<AbsValue val="6" />
+							</FontHeight>
+							<Color r="0.4" g="0.4" b="1" />
+							<Shadow>
+								<Color r="0.4" g="0.4" b="1" a="0" />
+									<Offset>
+										 <AbsDimension x="0" y="0" />
+									</Offset>
+							</Shadow>
+							<Anchors>
+								<Anchor point="TOP" relativePoint="BOTTOM">
+									<Offset>
+										<AbsDimension x="0" y="-2" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<ThumbTexture name="$parentThumb" file="Interface\AddOns\VuhDoOptions\Images\slider_thumb_v">
+					<Size>
+						<AbsDimension x="12" y="12" />
+					</Size>
+				</ThumbTexture>
+				<Scripts>
+					<OnValueChanged>
+					  if not self._onsetting then
+					    self._onsetting = true;
+					    self:SetValue(self:GetValue());
+					    value = self:GetValue()
+					    self._onsetting = false;
+					  else return; end
+						VUHDO_lnfSliderUpdateModel(self);
+						VUHDO_lnfSliderOnValueChanged(self:GetParent());
+					</OnValueChanged>
+					<OnMouseUp>
+						VuhDoNewOptionsTabbedFrame:SetScale(VUHDO_OPTIONS_SETTINGS.scale);
+					</OnMouseUp>
+					<OnShow>VUHDO_lnfPatchFont(self, "Title"); VUHDO_lnfPatchFont(self, "Value"); VUHDO_lnfSliderInitFromModel(self)</OnShow>
+					<OnEnter>VUHDO_lnfShowTooltip(self:GetParent())</OnEnter>
+					<OnLeave>VUHDO_lnfHideTooltip(self:GetParent())</OnLeave>
+				</Scripts>
+			</Slider>
+		</Frames>
+		<Scripts>
+			<OnEnter>VUHDO_lnfShowTooltip(self)</OnEnter>
+			<OnLeave>VUHDO_lnfHideTooltip(self)</OnLeave>
+			<OnLoad>
+				VUHDO_lnfSetModel(self, "VUHDO_OPTIONS_SETTINGS.scale");
+				VUHDO_lnfSliderOnLoad(self, "", 0.5, 2, "", 0.05);
+				VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K480);
+			</OnLoad>
+			<OnShow>
+				VUHDO_updateGlobalIconList();
+			</OnShow>
+		</Scripts>
+	</Frame>
+</Ui>
+

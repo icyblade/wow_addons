@@ -1,0 +1,150 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsToolsExport.lua" />
+
+	<Frame name="VuhDoNewOptionsToolsExportTemplate" virtual="true">
+		<Frames>
+
+			<Frame name="$parentExportCuDePanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="285" y="163" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="30" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_EXPORT_CUSTOM_DEBUFFS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentSelectProfileLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="149" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="123" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_EXPORT_TO_PROFILE" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentProfileComboBox" inherits="VuhDoComboBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="123" y="-48" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_setComboModel(self, "VUHDO_CUSTOM_DEBUFF_PROFILE", VUHDO_PROFILE_TABLE_MODEL);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K494);
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<CheckButton name="$parentSelectedRadioButton" text="VUHDO_I18N_SELECTED" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-45" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_EXPORT_CUDE_TO_RADIO_VALUE", 3);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K496);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentOwnRadioButton" text="VUHDO_I18N_THIS_TOONS" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-83" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_EXPORT_CUDE_TO_RADIO_VALUE", 2);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K495);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentAllRadioButton" text="VUHDO_I18N_ALL" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-121" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_EXPORT_CUDE_TO_RADIO_VALUE", 1);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K497);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Button name="$parentReplaceButton" text="VUHDO_I18N_REPLACE" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="175" y="-83" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_profilesReplaceCudeClicked(self, true)</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentAddButton" text="VUHDO_I18N_ADD" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="175" y="-121" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_profilesReplaceCudeClicked(self, false)</OnClick>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+
+		</Frames>
+	</Frame>
+</Ui>

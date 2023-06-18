@@ -1,0 +1,877 @@
+Version 3.53.
+
+
+Bugfixes:
+-- Fixed client side slider bug
+
+
+Improvements:
+
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.52.
+
+
+Bugfixes:
+-- Fixed a bug in loading profiles via command line
+
+
+Improvements:
+
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.51.
+
+
+Bugfixes:
+
+
+Improvements:
+-- Added custom debuffs for 5.4 raid content
+
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.50.
+
+
+Bugfixes:
+-- Fixes to Chi Burst AoE advice (Thanks to Merlin52626)
+-- Minor bugfixes
+
+
+Improvements:
+
+
+Changes:
+-- Upated toc for patch 5.4
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.44.
+
+
+Bugfixes:
+-- Minor bugfixes
+
+
+Improvements:
+
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.43.
+
+
+Bugfixes:
+-- Fixed possible taint in debuff handling
+-- Minor bugfixes
+
+
+Improvements:
+
+
+Changes:
+-- Some checkboxes Options=>General=>Misc changed to "enable"
+	instead of "disable" style
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.41.
+
+
+Bugfixes:
+-- Minor bugfixes
+
+
+Improvements:
+
+
+Changes:
+
+
+Features:
+-- Added new bouquet item "Statusbar: Overshielded"
+
+
+--------------------------------------------------------------
+Version 3.40.
+
+
+Bugfixes:
+-- Some bugfixes from 3.39
+
+
+Improvements:
+
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.39.
+
+
+Bugfixes:
+-- Minor bugfixes
+-- Fixed color picker color code
+
+
+Improvements:
+-- Smarter dynamic memory allocation
+-- Creation of some ui elements if needed only to reduce memory usage
+
+
+Changes:
+-- Using all opaque texture for panel background now. May need
+   to adjust opacity (options=>panels=>general)
+-- Revamped Options=>Move and other UI elemets a bit
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.38.
+
+
+Bugfixes:
+-- Minor bugfixes
+
+
+Improvements:
+-- major memory optimizations
+-- minor performance optimizations
+-- Two VuhDo panels colliding should not lead to a short stutter
+   anymore
+
+
+Changes:
+
+
+Features:
+-- Color picker for single target direction arrow w/o range
+	(options=>colors=states)
+-- HoT bars can now be vertical, inverted, have axis turned
+ 	 (options=>panels=>hot bars)
+-- Bouquet item for showing shields as standalone bar
+-- You can have your target or focus as separate panel group now
+   (options=>Move, "Special" => "Target", "Focus")
+
+--------------------------------------------------------------
+Version 3.37.
+
+
+Bugfixes:
+-- Fixed bug when sharing profiles
+
+
+Improvements:
+-- Power Word: Solace will now be recognized
+-- Major code cleanup and memory optimizations
+-- Added monk abilities to default bouquet "tank cooldowns extd"
+
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.36.
+
+
+Bugfixes:
+-- Fixed a bug where custom debuff icons could remain in wrong size
+-- Minor bugfixes
+
+
+Improvements:
+-- Added some more ignore by... debuffs
+
+Changes:
+
+Features:
+-- Added option to not fade debuff icons when player gets out of range
+   (Options=>Debuffs=>Visuals)
+
+
+--------------------------------------------------------------
+Version 3.35.
+
+
+Bugfixes:
+-- Fixed irrelevant debuffs showing by icon
+-- Fixed possible gvar taint issue
+-- Minor bugfix
+
+
+Improvements:
+-- Minor optimizations
+-- Added some Mage buffs to BuffWatch
+
+
+Changes:
+
+Features:
+
+--------------------------------------------------------------
+Version 3.34.
+
+
+Bugfixes:
+-- Minor bugfix
+
+Improvements:
+
+
+Changes:
+
+Features:
+
+--------------------------------------------------------------
+Version 3.33.
+
+
+Bugfixes:
+-- Shield status hot icon now working as configured
+-- Fixed some talent spells not being recognized
+-- Fixed alive units showing dead BGs sometimes
+-- Added Dark intent to stamina buff
+
+
+Improvements:
+-- Added custom debuffs for 5.2 raids
+-- Updated debuff ignore list
+
+
+Changes:
+
+Features:
+
+--------------------------------------------------------------
+Version 3.32.
+
+
+Bugfixes:
+-- Fixed raid target icon in combo options=>panels=>misc
+
+
+Improvements:
+-- Many optimizations
+
+
+Changes:
+-- Changed overall shield value detection to 5.2 standard
+   system
+
+Features:
+-- Separated icons and color "removable only" debuff option
+   (Options=>Debuffs=>Standard)
+
+-- Added Shield Bar
+	 (Options=>General=>Incoming, "Shield Bar")
+	 (Options=>Colors=>Modes, "Shield Bar")
+
+-- Introducing Text Providers for
+   (Options=>Panels=>Misc "Overheal" Indicator)
+   (Options=>General=>Indicators", "more" next to ...
+   "Mana Bar", "Side Left", "Side Right".
+   More to come...)
+
+-- You can now copy/paste color codes as hex string in any
+   color picker
+
+-- Added default PvP flag carrier bouquet
+--------------------------------------------------------------
+Version 3.31.
+- updated toc for patch 5.2
+
+--------------------------------------------------------------
+Version 3.30.
+
+
+Bugfixes:
+-- Fixed damage flash bar
+-- Fixed possibly incorrect button sizes after changing a profile
+
+
+Improvements:
+-- BuffWatch will be hidden in pet battles now
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.29.
+
+
+Bugfixes:
+-- BuffWatch Rebuff Arcane Brilliance if either no spell power
+   OR no crit buff on target
+
+
+Improvements:
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.28.
+
+
+Bugfixes:
+-- Hopefully fixed Eternal Flame AoE predicition
+
+
+Improvements:
+-- Performance optimizations
+-- Direction arrow bouquet now can have range text yards/10
+-- Added more shields to shield absorb (thx acer13189)
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.27.
+
+
+Bugfixes:
+-- Performance optimizations
+
+Improvements:
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.26.
+
+
+Bugfixes:
+-- Workaround for unit incoming resurrection client bug
+-- Fixed a bug in shield absorb calculation
+
+
+Improvements:
+-- Added several default custom debuffs
+	 (options=>tools=>reset "Custom Debuffs" may be needed)
+-- Increased performance
+-- All mutual exclusive buffs should be recognized by BuffWatch now
+-- Bouquet item "SHIELD_COUNT" now works for shields from all sources
+
+Changes:
+
+
+Features:
+-- Added Chi Burst to trackable AOE advices (experimental)
+
+
+--------------------------------------------------------------
+Version 3.25.
+
+
+Bugfixes:
+-- Bugfix with bouquets
+
+
+Improvements:
+
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.24.
+
+
+Bugfixes:
+-- Hopefully fixed a bug with icons disappearing after player died
+
+
+Improvements:
+
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.23.
+
+
+Bugfixes:
+-- Fixed a bug with mana bars etc disappearing sometimes when player
+   target changed
+
+
+Improvements:
+
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.22.
+
+
+Bugfixes:
+-- Fixed a major bug not updating raid members properly sometimes
+
+
+Improvements:
+
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.21.
+
+
+Bugfixes:
+-- AOE advice calculations fix for Priests
+-- Fixed rez announce chat channel name
+
+
+Improvements:
+-- Signicantly reduced memory/cpu consumption on
+   when changing player target.
+
+
+Changes:
+-- Removed "Keep Stance" from Options=>Spells=>Misc
+   (didn't work, use /console autoUnshift 0/1 instead)
+
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.20.
+
+
+Bugfixes:
+-- Changed "Dark Power", "Light Power" constants to "Chi" pendants
+
+
+Improvements:
+
+
+Changes:
+
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.19.
+
+
+Bugfixes:
+-- Changed "Mastery: Illuminated Healing" to "Illuminated
+   Healing" to track the buff really
+-- Fixed error in options menu introduced with 5.1
+
+
+Improvements:
+-- Increased display update speed after pet summon
+-- Weapon enchants will now be told apart
+
+
+Changes:
+-- Tagged for version 5.1
+
+
+
+Features:
+-- Added Symbiosis to BuffWatch
+-- Added rogue poisons to BuffWatch
+-- Added shaman offhand weapon enchant to BuffWatch
+
+
+--------------------------------------------------------------
+Version 3.18.
+
+
+Bugfixes:
+-- Changed Dark Intent to raid wide buff for BuffWatch
+-- Minor bugfixes
+
+
+Improvements:
+-- Added improved version of PW:S to shield absorb tracking
+
+
+Changes:
+
+
+
+Features:
+-- Added bouquet item for counter "Counter: All shields absorb #k"
+   showing the remaining shield absorption of all shields on the
+   target
+
+
+
+--------------------------------------------------------------
+Version 3.17.
+
+
+Bugfixes:
+-- Added missing GCD reference spell for monks
+-- Possible fix for flashing hots
+-- Possible fix for bouquets after profile loading
+
+
+Improvements:
+
+
+
+Changes:
+
+
+
+Features:
+
+
+
+--------------------------------------------------------------
+Version 3.16.
+
+
+Bugfixes:
+-- Fixed a serious cpu resource hog introduced with 3.9
+
+
+Improvements:
+-- Increased performance after raid roster changes
+
+
+Changes:
+
+
+
+Features:
+
+
+
+--------------------------------------------------------------
+Version 3.15.
+
+
+Bugfixes:
+-- Minor bugfix in tooltips
+-- Bugfix (hopefully) for totem cooldowns not displaying properly
+
+
+Improvements:
+-- Added a lot of mop default custom debuffs
+
+
+Changes:
+
+
+
+Features:
+
+
+
+--------------------------------------------------------------
+Version 3.14.
+
+
+Bugfixes:
+-- Fixed repeated ready-check not showing properly
+-- Fixed some HoTs not updating properly when changing profiles
+
+
+Improvements:
+
+
+
+Changes:
+
+
+
+Features:
+-- Added bouquet item "flag: class color if active"
+   This enables you to apply class color to any active
+   icon
+
+
+
+--------------------------------------------------------------
+Version 3.13.
+
+
+Bugfixes:
+-- Fixed a range detection bug in PT panel
+-- Fixed party panel hiding bug
+-- Fixed a bug with options not showing active panel sometimes
+-- Minor bugfixes
+
+
+Improvements:
+-- Inreased hitbox for custom debuff tooltips
+
+
+Changes:
+
+
+
+Features:
+
+
+
+--------------------------------------------------------------
+Version 3.12.
+
+
+Bugfixes:
+-- Minor bugfixes
+
+
+Improvements:
+-- Improved registering of events when force show blizz frames
+   is enabled in options=>general=>miscs
+
+
+Changes:
+
+
+
+Features:
+
+
+
+--------------------------------------------------------------
+Version 3.11.
+
+
+Bugfixes:
+-- Fixed a bug in player group determination
+-- Fixed several possible taint problems
+-- Soulstone, Enveloping Mist and Surging Mist
+   should now work as intended if Soothing mist
+   is channeling
+-- Fixed coincidence with other addons hiding Blizz UI elements
+-- Fixed bug in range detecton
+
+
+Improvements:
+-- Player powers will be updated more frequently
+-- Minor optimizations
+
+
+Changes:
+
+
+
+Features:
+
+
+
+--------------------------------------------------------------
+Version 3.9.
+
+Bugfixes:
+-- Minor bugfix with range detection for enemy targets
+-- Minor bugfix with overheal higlight not reseting properly
+-- Other minor bugfixes
+
+Improvements:
+-- Reduced memory consumption
+-- Major options code rework, reduces memory usage, increased
+   flexibility for future extensions
+-- Added Sacred Shield to trackable buffs
+
+Changes:
+-- Added "Vixar" to default libSharedMedia fonts
+
+
+Features:
+-- On popular demand: Options=>General=>Misc "Hide Blizz xyz" is
+   tri-state now. So you can "leave alone/show/hide blizz" frames.
+   May need to overwrite existing profiles in order to have Blizz
+   UI elements shown when hidden from another addon
+   Defaults to: Leave alone
+
+
+--------------------------------------------------------------
+Version 3.7.
+
+Bugfixes:
+-- Fixed problem with minimap button
+
+Improvements:
+
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.6.
+
+Bugfixes:
+-- Fixed dc shield macro icons
+-- Fixed group size detection for group of 5
+-- Fixed shield absorb calculation
+-- Fix for libSharedMedia which seems to be registering
+   nil for "none" borders now
+-- Hopefully fixes a bug with minimap setting not saving
+   sometimes
+-- Minor bugfixes
+-- Attempt to fix smart cast battle rez
+
+Improvements:
+-- Added Grimoire of Sacrifice to BuffWatch
+-- Added Cenarion Ward to hot list
+-- Added Serpent's Zeal to trackable hots
+-- Improved BuffWatch options buff detection
+   for low level toons
+
+Changes:
+-- Integrated minimap icon into VuhDo to save
+   some bytes
+-- Some Code cleanup
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.5.
+
+Bugfixes:
+-- All characters "." and "#" will be removed from bouquet names
+   to avoid crashes
+-- Switched shield absorb estimation to spell ids instead of spell names
+-- Aggro indicator marks working again
+-- Minor bugfixes
+
+Improvements:
+-- Improved range checking for hostile targets
+-- Added default bouquet "Raid Cooldowns" (Thank you, Zohar)
+-- Added Spirit Shell to "Pump Aegis" feature
+-- Updated libSharedMedia
+-- Minor optimizations
+
+
+Changes:
+
+
+Features:
+-- Added default bouquet "Raid CDs" (Thanks to Zohar)
+
+
+--------------------------------------------------------------
+Version 3.4.
+
+Bugfixes:
+-- Some rewrite of buff watch code to make it more robus
+-- Fixed glyph/talent taint bug
+-- Fixed a bug with resurrection announcement
+-- Fixed a bug with VuhDo not auto hiding in parties
+-- Hopefully fixed a bug with target/focus frame taint
+
+
+Improvements:
+
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.2.
+
+Bugfixes:
+-- Fixed use of custom macros
+
+
+Improvements:
+
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+Version 3.1.
+
+Bugfixes:
+-- Sharing profiles fixed
+-- Casting Purify Spirit, Eternal Flame fixed
+-- Eternal Flame available for HoT Icons
+
+Improvements:
+
+
+Changes:
+
+
+Features:

@@ -1,0 +1,486 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Frame name="VuhDoNewOptionsColorsModesTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentEmergencyModePanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="168" y="131" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-250" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_EMERGENCY_MODE" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentEmergencyTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="34" y="-43" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.EMERGENCY");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_EMERGENCY, VUHDO_I18N_EMERGENCY);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K031);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentNoEmergencyTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="34" y="-81" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.NO_EMERGENCY");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_NO_EMEGENCY, VUHDO_I18N_NO_EMEGENCY);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K032);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentLifeLeftPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="278" y="169" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="230" y="-230" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_LIFE_COLORS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentGoodTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="34" y="-43" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.LIFE_LEFT.GOOD");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_GOOD, VUHDO_I18N_GOOD);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K421);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentFairTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="34" y="-81" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.LIFE_LEFT.FAIR");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_FAIR, VUHDO_I18N_FAIR);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K422);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentLowTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="34" y="-119" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.LIFE_LEFT.LOW");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_LOW, VUHDO_I18N_LOW);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K423);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentSolidTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="144" y="-43" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.PANEL_COLOR.BARS");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_SOLIDD, VUHDO_I18N_SOLIDD, "T");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K306);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+
+			<Frame name="$parentNormalModePanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="321" y="207" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="113" y="-13" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentOpacityLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="75" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="247" y="-24" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_OPACITY" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentTextLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="75" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="170" y="-24" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_TEXT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentBackgroundLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="75" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="93" y="-24" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_BACKGROUND" justifyH="RIGHT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentRangeOpacCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="247" y="-162" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.OUTRANGED.useOpacity");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentRangeTextCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="192" y="-162" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.OUTRANGED.useText");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentRangeBackCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="136" y="-162" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.OUTRANGED.useBackground");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentShieldOpacCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="247" y="-124" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.SHIELD.useOpacity");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentShieldTextCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="192" y="-124" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.SHIELD.useText");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentShieldBackCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="136" y="-124" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.SHIELD.useBackground");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentIcomingOpacCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="247" y="-86" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.INCOMING.useOpacity");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentIncomingTextCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="192" y="-86" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.INCOMING.useText");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentIcomingBackCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="136" y="-86" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.INCOMING.useBackground");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentIrreleventOpacCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="247" y="-48" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.IRRELEVANT.useOpacity");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentIrrelevantTextCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="192" y="-48" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.IRRELEVANT.useText");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentIrrelevantBackCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="136" y="-48" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.IRRELEVANT.useBackground");
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentNormalModeLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_NORMAL_MODE"  inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentIrrelevantTexture" inherits="VuhDoContextColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-48" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.IRRELEVANT");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_IRRELEVANT, VUHDO_I18N_IRRELEVANT);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K033);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentIcomingTexture" inherits="VuhDoContextColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-86" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.INCOMING");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_INCOMING, VUHDO_I18N_INCOMING);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K034);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame name="$parentShielTexture" inherits="VuhDoContextColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-124" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.SHIELD");
+								VUHDO_lnfInitColorSwatch(self, "Shield Bar", "Shield Bar");
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentRangeTexture" inherits="VuhDoContextColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-162" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.OUTRANGED");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_OUT_OF_RANGE, VUHDO_I18N_OUT_OF_RANGE);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K035);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

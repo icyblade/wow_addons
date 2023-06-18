@@ -1,0 +1,514 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Frame name="VuhDoNewOptionsGeneralClusterTemplate" virtual="true">
+		<Frames>
+
+			<Frame name="$parentClusterPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="235" y="385" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-13" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="$parentRefreshSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="205" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-55" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CLUSTER.REFRESH")
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_REFRESH_RATE, 20, 500, " " .. VUHDO_I18N_MSEC, 20);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K425);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentRangeSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="205" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-93" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CLUSTER.RANGE")
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_RANGE, 1, 40, " " .. VUHDO_I18N_YARDS, 1);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K426);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentHealthSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="205" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-131" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CLUSTER.BELOW_HEALTH_PERC")
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_HEALTH_LEVEL, 5, 100, " %", 5);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K427);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentModeRadioGroup">
+						<Size>
+							<AbsDimension x="106" y="70" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-169" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+
+							<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+								<Size>
+									<AbsDimension x="75" y="18" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="0" y="4" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Layers>
+									<Layer>
+										<FontString name="$parentLabel" text="VUHDO_I18N_OPERATION_MODE" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+										</FontString>
+									</Layer>
+								</Layers>
+							</Frame>
+
+							<CheckButton name="$parentRadialRadioButton" text="VUHDO_I18N_RADIAL" inherits="VuhDoRadioButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="0" y="-15" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_CONFIG.CLUSTER.MODE", 1);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K437);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentChainedRadioButton" text="VUHDO_I18N_CHAINED" inherits="VuhDoRadioButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="110" y="-15" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_CONFIG.CLUSTER.MODE", 2);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K438);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+						</Frames>
+					</Frame>
+
+					<Frame name="$parentJumpSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="205" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-229" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CLUSTER.CHAIN_MAX_JUMP")
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_CHAINED_MAX_JUMP, 1, 20, VUHDO_I18N_TIMES, 1);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K439);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentSpellNameLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="75" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-258" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_LINK_SPELL_COOLDOWN" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentSpellNameEditBox" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="205" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-267" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CLUSTER.COOLDOWN_SPELL");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K479);
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxCheckSpell(self);
+							</OnTextChanged>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Hint");
+								VUHDO_lnfPatchFont(self, "");
+								VUHDO_lnfEditBoxInitFromModel(self);
+								VUHDO_newOptionsSpellEditBoxCheckSpell(self);
+							</OnShow>
+						</Scripts>
+					</EditBox>
+
+					<Frame name="$parentConeSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="205" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-310" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CLUSTER.CONE_DEGREES")
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_CONE, 1, 360, " " .. VUHDO_I18N_DEGREES, 1);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K544);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentJumpRangeSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="205" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-348" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CLUSTER.RANGE_JUMP")
+								VUHDO_lnfSliderOnLoad(self, "Chain jump range", 1, 40, " " .. VUHDO_I18N_YARDS, 1);
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_CLUSTER_SCANNER" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentClusterSourceDest" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="235" y="127" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="275" y="-60" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_SOURCE_DESTINATION" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentSourceRadioGroup">
+						<Size>
+							<AbsDimension x="106" y="70" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+								<Size>
+									<AbsDimension x="75" y="18" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="0" y="4" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Layers>
+									<Layer>
+										<FontString name="$parentLabel" text="VUHDO_I18N_SOURCE_SPELL" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+										</FontString>
+									</Layer>
+								</Layers>
+							</Frame>
+
+							<CheckButton name="$parentSourceMineRadioButton" text="VUHDO_I18N_SOURCE_MINE" inherits="VuhDoRadioButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="0" y="-15" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_CONFIG.CLUSTER.DISPLAY_SOURCE", 1);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K430);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentSourceAllRadioButton" text="VUHDO_I18N_SOURCE_ALL" inherits="VuhDoRadioButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="0" y="-53" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_CONFIG.CLUSTER.DISPLAY_SOURCE", 2);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K431);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+						</Frames>
+					</Frame>
+
+					<Frame name="$parentDestRadioGroup">
+						<Size>
+							<AbsDimension x="106" y="70" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="123" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+								<Size>
+									<AbsDimension x="75" y="18" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="0" y="4" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Layers>
+									<Layer>
+										<FontString name="$parentLabel" text="VUHDO_I18N_DEST_SPELL" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+										</FontString>
+									</Layer>
+								</Layers>
+							</Frame>
+
+							<CheckButton name="$parentDestPartyRadioButton" text="VUHDO_I18N_DEST_PARTY" inherits="VuhDoRadioButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="0" y="-15" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_CONFIG.CLUSTER.DISPLAY_DESTINATION", 1);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K433);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentDestRaidRadioButton" text="VUHDO_I18N_DEST_RAID" inherits="VuhDoRadioButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="0" y="-53" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_CONFIG.CLUSTER.DISPLAY_DESTINATION", 2);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K432);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+						</Frames>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentDisplayOptions" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="235" y="156" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="275" y="-220" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_DISPLAY_OPTIONS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentCounterCheckButton" text="VUHDO_I18N_COUNTER" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-35" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CLUSTER.IS_NUMBER");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K435);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Button name="$parentTextButton" text="VUHDO_I18N_TEXT" inherits="VuhDoFontButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="123" y="-35" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CLUSTER.TEXT");
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<Frame name="$parentFairSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="205" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-78" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CLUSTER.THRESH_FAIR")
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_FAIR_THRESHOLD, 1, 10, " " .. VUHDO_I18N_PEOPLE, 1);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K428);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentGoodSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="205" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-116" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CLUSTER.THRESH_GOOD")
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_GOOD_THRESHOLD, 1, 10, " " .. VUHDO_I18N_PEOPLE, 1);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K429);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

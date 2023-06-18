@@ -1,0 +1,146 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Frame name="VuhDoNewOptionsBuffsRebuffTemplate" virtual="true">
+		<Frames>
+
+			<Frame name="$parentTimersPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="310" y="197" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="210" y="-110" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<CheckButton name="$parentFlashCdCheckButton" text="VUHDO_I18N_CD_FLASHING" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-150" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_BUFF_SETTINGS.CONFIG.HIGHLIGHT_COOLDOWN");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K021);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentPercentSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="283" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-44" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_BUFF_SETTINGS.CONFIG.REBUFF_AT_PERCENT");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_INDICATE_REBUFF_BELOW, 1, 100, "%", 1);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K022);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentTimersLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_TIMERS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentMinutesSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="283" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-106" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_BUFF_SETTINGS.CONFIG.REBUFF_MIN_MINUTES");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_INDICATE_REBUFF_BELOW, 0, 25, " " .. VUHDO_I18N_MINUTE, 0.1);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K023);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentOrLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="138" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-78" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_WHATEVER_FIRST" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentWheelPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="169" y="88" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-140" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_MOUSE_WHEEL"  inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentWheelBuffCheckButton" text="VUHDO_I18N_SMART_WHEEL" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="32" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_BUFF_SETTINGS.CONFIG.WHEEL_SMART_BUFF");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K451);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+		</Frames>
+	</Frame>
+</Ui>

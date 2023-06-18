@@ -1,0 +1,7 @@
+## Interface: 50400
+## Title: Tidy Plates Widgets
+## Notes: Library of Widgets
+## Dependencies: TidyPlates
+## SavedVariables: TidyPlatesWidgetData
+
+Widgets.xml

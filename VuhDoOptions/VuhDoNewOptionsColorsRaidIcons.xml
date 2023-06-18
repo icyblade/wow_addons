@@ -1,0 +1,575 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Frame name="VuhDoRaidIconTexture" virtual="true">
+		<Size>
+			<AbsDimension x="28" y="28" />
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER" relativePoint="LEFT">
+				<Offset>
+					<AbsDimension x="6" y="-0" />
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture name="$parentTexture" setAllPoints="true" file="interface\targetingframe\ui-raidtargetingicons">
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnShow>
+				local tNumber = VUHDO_getNumbersFromString(self:GetName(), 1)[1];
+				VUHDO_setRaidTargetIconTexture(_G[self:GetName() .. "Texture"], tNumber);
+			</OnShow>
+		</Scripts>
+	</Frame>
+
+	<Frame name="VuhDoNewOptionsColorsRaidIconsTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentEnablePanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="140" y="108" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="40" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<CheckButton name="$parentEnableCheckButton" text="VUHDO_I18N_ENABLE" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="20" y="-27" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K416);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentFilteredCheckButton" text="VUHDO_I18N_FILTER_ONLY" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="20" y="-65" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.filterOnly");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K417);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_COLORS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentColorPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="232" y="363" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="220" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<CheckButton name="$parent4TextCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="177" y="-164" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.4.useText");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent4BackCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="131" y="-164" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.4.useBackground");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent3TextCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="177" y="-126" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.3.useText");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent3BackCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="131" y="-126" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.3.useBackground");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent2TextCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="177" y="-88" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.2.useText");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent2BackCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="131" y="-88" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.2.useBackground");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent5TextCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="177" y="-202" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.5.useText");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent5BackCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="131" y="-202" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.5.useBackground");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent6TextCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="177" y="-240" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.6.useText");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent6BackCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="131" y="-240" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.6.useBackground");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent7TextCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="177" y="-278" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.7.useText");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent7BackCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="131" y="-278" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.7.useBackground");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent8TextCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="177" y="-316" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.8.useText");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent8BackCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="131" y="-316" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.8.useBackground");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentBackgroundLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="75" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="88" y="-26" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_BACKGROUND" justifyH="RIGHT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parent1TextCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="177" y="-50" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.1.useText");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent1BackCheckBox" inherits="VuhDoCheckBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="131" y="-50" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.1.useBackground");
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentRaidIconsLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_RAID_ICON" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parent1Texture" inherits="VuhDoContextColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-50" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentIcon" inherits="VuhDoRaidIconTexture"></Frame>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.1");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_TEXT, VUHDO_I18N_RAID_ICON);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K418);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parent2Texture" inherits="VuhDoContextColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-88" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentIcon" inherits="VuhDoRaidIconTexture"></Frame>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.2");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_TEXT, VUHDO_I18N_RAID_ICON);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K418);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parent3Texture" inherits="VuhDoContextColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-126" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentIcon" inherits="VuhDoRaidIconTexture"></Frame>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.3");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_TEXT, VUHDO_I18N_RAID_ICON);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K418);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parent4Texture" inherits="VuhDoContextColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-164" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentIcon" inherits="VuhDoRaidIconTexture"></Frame>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.4");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_TEXT, VUHDO_I18N_RAID_ICON);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K418);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parent5Texture" inherits="VuhDoContextColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-202" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentIcon" inherits="VuhDoRaidIconTexture"></Frame>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.5");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_TEXT, VUHDO_I18N_RAID_ICON);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K418);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parent6Texture" inherits="VuhDoContextColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-240" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentIcon" inherits="VuhDoRaidIconTexture"></Frame>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.6");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_TEXT, VUHDO_I18N_RAID_ICON);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K418);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parent7Texture" inherits="VuhDoContextColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-278" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentIcon" inherits="VuhDoRaidIconTexture"></Frame>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.7");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_TEXT, VUHDO_I18N_RAID_ICON);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K418);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parent8Texture" inherits="VuhDoContextColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-316" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentIcon" inherits="VuhDoRaidIconTexture"></Frame>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.8");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_TEXT, VUHDO_I18N_RAID_ICON);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K418);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.BAR_COLORS.RAID_ICONS.enable", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentTextLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="75" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="187" y="-26" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_TEXT" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

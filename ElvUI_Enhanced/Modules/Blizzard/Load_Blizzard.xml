@@ -1,0 +1,8 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="Blizzard.lua"/>
+	<Script file="DeathRecap.lua"/>
+	<Script file="AddonList.lua"/>
+	<Script file="AnimatedAchievementsBars.lua"/>
+	<Script file="ErrorFrame.lua"/>
+	<Script file="PaperDoll.lua"/>
+</Ui>

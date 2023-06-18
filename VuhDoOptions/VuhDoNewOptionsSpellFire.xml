@@ -1,0 +1,428 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Script file="VuhDoNewOptionsSpellFire.lua" />
+
+	<Frame name="VuhDoNewOptionsSpellFireTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentTriggerWhatPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="365" y="152" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="160" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<EditBox name="$parentCustom2EditBox" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="221" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="130" y="-107" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.FIRE_CUSTOM_2_SPELL");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K201);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_SPELL_CONFIG.IS_FIRE_CUSTOM_2", false);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_SPELL_CONFIG.IS_AUTO_FIRE", false);
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<EditBox name="$parentCustom1EditBox" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="221" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="130" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.FIRE_CUSTOM_1_SPELL");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K202);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_SPELL_CONFIG.IS_FIRE_CUSTOM_1", false);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_SPELL_CONFIG.IS_AUTO_FIRE", false);
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+								VUHDO_newOptionsSpellEditBoxSpellId(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<CheckButton name="$parentCustom2CheckButton"  text="VUHDO_I18N_INSTANT_2" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-107" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.IS_FIRE_CUSTOM_2");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K203);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_SPELL_CONFIG.IS_AUTO_FIRE", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentCustom1CheckButton"  text="VUHDO_I18N_INSTANT_1" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.IS_FIRE_CUSTOM_1");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K204);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_SPELL_CONFIG.IS_AUTO_FIRE", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentTrinket1CheckButton" text="VUHDO_I18N_TRINKET_1" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="23" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.IS_FIRE_TRINKET_1");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K206);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_SPELL_CONFIG.IS_AUTO_FIRE", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentTrinket2CheckButton" text="VUHDO_I18N_TRINKET_2" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="133" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.IS_FIRE_TRINKET_2");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K205);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_SPELL_CONFIG.IS_AUTO_FIRE", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentGlovesCheckButton" text="VUHDO_I18N_GLOVES" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="243" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.IS_FIRE_GLOVES");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K530);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_SPELL_CONFIG.IS_AUTO_FIRE", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentTriggerWhatLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_TRIGGER_WHAT" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentAutoTriggerPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="130" y="152" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_AUTO_TRIGGER" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentEnableCheckButton" text="VUHDO_I18N_ENABLE" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.IS_AUTO_FIRE");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K209);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentAlsoOutFightCheckButton" text="VUHDO_I18N_ALSO_OUT_FIGHT" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.IS_FIRE_OUT_FIGHT");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K207);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_SPELL_CONFIG.IS_AUTO_FIRE", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentAlsoHotsCheckButton" text="VUHDO_I18N_ALSO_HOTS" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-107" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.IS_FIRE_HOT");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K208);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_SPELL_CONFIG.IS_AUTO_FIRE", false);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentMiscPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="130" y="114" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-200" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_MISCELLANEOUS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentTargetCheckButton" text="VUHDO_I18N_TARGET" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.IS_AUTO_TARGET");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K366);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentCancelCurrentCheckButton" text="VUHDO_I18N_STOP_CAST" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.IS_CANCEL_CURRENT");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K498);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentSmartCastPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="236" y="188" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="160" y="-200" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<CheckButton name="$parentResurrectCheckButton" text="VUHDO_I18N_RESURRECT_SHORT" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.SMARTCAST_RESURRECT");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K049);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentCleanseCheckButton" text="VUHDO_I18N_CLEANSE" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.SMARTCAST_CLEANSE");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K048);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentBuffCheckButton" text="VUHDO_I18N_BUFF" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="123" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.SMARTCAST_BUFF");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K215);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentBattleRezCheckButton" text="VUHDO_I18N_BATTLE_REZ" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="123" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.autoBattleRez");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K360);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentSmartCastLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_SMART_CAST_OO_COMBAT" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentModifierLabel" inherits="VuhDoLabelFrameTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-120" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_KEY_MODIFIES" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentModifierComboBox" inherits="VuhDoComboBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="40" y="-145" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_setComboModel(self, "VUHDO_SPELL_CONFIG.smartCastModi",
+									{
+										{ "all", VUHDO_I18N_BUFF_ALL },
+										{ "shift", VUHDO_I18N_SHIFT },
+										{ "ctrl", VUHDO_I18N_CTRL },
+										{ "alt", VUHDO_I18N_ALT },
+									}
+								);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K359);
+							</OnLoad>
+						</Scripts>
+
+					</Button>
+
+				</Frames>
+			</Frame>
+
+		</Frames>
+	</Frame>
+</Ui>

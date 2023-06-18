@@ -1,0 +1,957 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Frame name="VuhDoNewOptionsPanelTextTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentTextposPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="180" y="190" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_TEXT_POSITION" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentExampleTexture" inherits="VuhDoBarExampleTexture">
+						<Size>
+							<AbsDimension x="74" y="74" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="40" y="-58" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+
+							<CheckButton name="$parent11RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
+										<Offset>
+											<AbsDimension x="-5" y="-2" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "BOTTOMLEFT+TOPLEFT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent12RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="BOTTOM" relativePoint="TOP">
+										<Offset>
+											<AbsDimension x="0" y="-2" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "BOTTOM+TOP");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent13RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT">
+										<Offset>
+											<AbsDimension x="5" y="-2" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "BOTTOMRIGHT+TOPRIGHT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent20RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPRIGHT" relativePoint="TOPLEFT">
+										<Offset>
+											<AbsDimension x="0" y="5" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "TOPRIGHT+TOPLEFT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent21RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+										<Offset>
+											<AbsDimension x="-5" y="5" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "TOPLEFT+TOPLEFT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent22RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOP" relativePoint="TOP">
+										<Offset>
+											<AbsDimension x="0" y="5" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "TOP+TOP");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent23RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+										<Offset>
+											<AbsDimension x="5" y="5" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "TOPRIGHT+TOPRIGHT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent24RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
+										<Offset>
+											<AbsDimension x="0" y="5" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "TOPLEFT+TOPRIGHT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent30RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="RIGHT" relativePoint="LEFT">
+										<Offset>
+											<AbsDimension x="0" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "RIGHT+LEFT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent31RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="LEFT" relativePoint="LEFT">
+										<Offset>
+											<AbsDimension x="-5" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "LEFT+LEFT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent32RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="CENTER" relativePoint="CENTER">
+										<Offset>
+											<AbsDimension x="0" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "CENTER+CENTER");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent33RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="RIGHT" relativePoint="RIGHT">
+										<Offset>
+											<AbsDimension x="5" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "RIGHT+RIGHT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent34RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="LEFT" relativePoint="RIGHT">
+										<Offset>
+											<AbsDimension x="0" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "LEFT+RIGHT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent40RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT">
+										<Offset>
+											<AbsDimension x="0" y="-5" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "BOTTOMRIGHT+BOTTOMLEFT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent41RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT">
+										<Offset>
+											<AbsDimension x="-5" y="-5" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "BOTTOMLEFT+BOTTOMLEFT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent42RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="BOTTOM" relativePoint="BOTTOM">
+										<Offset>
+											<AbsDimension x="0" y="-5" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "BOTTOM+BOTTOM");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent43RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
+										<Offset>
+											<AbsDimension x="5" y="-5" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "BOTTOMRIGHT+BOTTOMRIGHT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent44RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT">
+										<Offset>
+											<AbsDimension x="0" y="-5" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "BOTTOMLEFT+BOTTOMRIGHT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent51RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT">
+										<Offset>
+											<AbsDimension x="-5" y="2" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "TOPLEFT+BOTTOMLEFT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent52RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOP" relativePoint="BOTTOM">
+										<Offset>
+											<AbsDimension x="0" y="2" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "TOP+BOTTOM");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parent53RadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT">
+										<Offset>
+											<AbsDimension x="5" y="2" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.position", "TOPRIGHT+BOTTOMRIGHT");
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+						</Frames>
+					</Frame>
+
+					<Frame name="$parentYAdjustSlider" inherits="VuhDoVSliderTemplate">
+						<Size>
+							<AbsDimension x="18" y="125" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="150" y="-10" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.yAdjust");
+								VUHDO_lnfSliderOnLoad(self, "", -50, 50, "", 1);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K401);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentXAdjustSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="160" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="10" y="-155" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.xAdjust");
+								VUHDO_lnfSliderOnLoad(self, "", -50, 50, "", 1);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K400);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentHitpointsPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="365" y="144" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="155" y="-250" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTextOrientPanel">
+						<Size>
+							<AbsDimension x="122" y="123" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="130" y="-4" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+
+							<CheckButton name="$parentPercentRadioButton" text="VUHDO_I18N_PERCENT" inherits="VuhDoRadioButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="5" y="-15" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.mode", 1);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K126);
+										VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.show", false);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentMissingRadioButton" text="VUHDO_I18N_MISSING" inherits="VuhDoRadioButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="5" y="-53" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.mode", 3);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K127);
+										VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.show", false);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentLifeLeftRadioButton" text="VUHDO_I18N_REMAINING" inherits="VuhDoRadioButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="5" y="-91" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.mode", 2);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K128);
+										VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.show", false);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentVerboseCheckButton" text="VUHDO_I18N_VERBOSE" inherits="VuhDoCheckButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="120" y="-15" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.verbose");
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K340);
+										VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.show", false);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentHideIrrelevantCheckButton" text="VUHDO_I18N_HIDE_IRRELEVANT" inherits="VuhDoCheckButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="120" y="-53" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.hideIrrelevant");
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K364);
+										VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.show", false);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentShowTotalCheckButton" text="VUHDO_I18N_SHOW_TOTAL" inherits="VuhDoCheckButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="120" y="-91" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.showTotalHp");
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K515);
+										VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.show", false);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+
+						</Frames>
+					</Frame>
+
+					<CheckButton name="$parentShowCheckButton" text="VUHDO_I18N_SHOW" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-34" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.show");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K133);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentExampleTexture" inherits="VuhDoBarExampleTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="19" y="-84" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+
+							<CheckButton name="$parentRightRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="68" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.position", 1);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K129);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentLeftRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="-2" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.position", 2);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K130);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentBottomRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="34" y="-13" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.position", 4);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K131);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentTopRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="34" y="13" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetRadioModel(self, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.position", 3);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K132);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+						</Frames>
+					</Frame>
+
+					<Frame name="$parentHitpointsLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_HITPOINTS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentShowWhatPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="120" y="186" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-220" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<CheckButton name="$parentNameCheckButton" text="VUHDO_I18N_NAME" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="10" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.showName");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K341);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentClassCheckButton" text="VUHDO_I18N_CLASS" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="10" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.showClass");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K342);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentTagsCheckButton" text="VUHDO_I18N_FLAGS" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="10" y="-107" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.showTags");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K168);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentPetOwnersCheckButton" text="VUHDO_I18N_PET_OWNERS" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="10" y="-145" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.ID_TEXT.showPetOwners");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K357);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_SHOW_TEXT" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentBarTextPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="320" y="220" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="205" y="-19" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentNameTextSizeSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="190" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="120" y="-95" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.TEXT.textSize");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_NAME_TEXT_SIZE, 1, 32);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K134);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentLifeTextSizeSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="190" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="120" y="-137" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.TEXT.textSizeLife");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_LIFE_TEXT_SIZE, 1, 32);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K134);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.position", 1);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.position", 2);
+								VUHDO_lnfAddConstraint(self, VUHDO_LF_CONSTRAINT_DISABLE, "VUHDO_PANEL_SETUP.#PNUM#.LIFE_TEXT.show", false);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentMaxCharsSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="140" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="170" y="-180" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.TEXT.maxChars");
+								VUHDO_lnfSliderOnLoad(self, VUHDO_I18N_MAX_CHARS, 0, 15);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K343);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+
+					<Button name="$parentFontCombo" inherits="VuhDoComboBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-183" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_setComboModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.TEXT.font", VUHDO_FONTS);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K344);
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<CheckButton name="$parentClassColorsCheckButton" text="VUHDO_I18N_CLASS_COL" inherits="VuhDoCheckButtonTemplate">
+						<Size>
+							<AbsDimension x="90" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="120" y="-10" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.PANEL_COLOR.classColorsName");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K135);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentOutlineCheckButton" text="VUHDO_I18N_OUTLINE" inherits="VuhDoCheckButtonTemplate">
+						<Size>
+							<AbsDimension x="90" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="120" y="-48" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.TEXT.outline");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K382);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentMonoCheckButton" text="VUHDO_I18N_MONO" inherits="VuhDoCheckButtonTemplate">
+						<Size>
+							<AbsDimension x="90" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="220" y="-10" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.TEXT.USE_MONO");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K531);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentShadowCheckButton" text="VUHDO_I18N_SHADOW" inherits="VuhDoCheckButtonTemplate">
+						<Size>
+							<AbsDimension x="90" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="220" y="-48" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.#PNUM#.PANEL_COLOR.TEXT.USE_SHADOW");
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentBarTextLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_BAR_TEXT" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentTextColorTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-48" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.PANEL_COLOR.TEXT");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_TEXT, VUHDO_I18N_TEXT,  "B");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K136);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<CheckButton name="$parentHealthColorCheckButton" text="VUHDO_I18N_HEALTH_COLOR" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-94" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.PANEL_COLOR.HEALTH_TEXT.useText");
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentHealthColorTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-136" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_PANEL_SETUP.PANEL_COLOR.HEALTH_TEXT");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_TEXT, VUHDO_I18N_HEALTH_COLOR,  "BO");
+								VUHDO_lnfSetTooltip(self, nil);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

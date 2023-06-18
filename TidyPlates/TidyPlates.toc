@@ -1,0 +1,8 @@
+## Interface: 50400
+## Title: Tidy Plates
+## Notes: Yes!
+## Author: Binbwen and Friends
+## Version: 6.14.Beta2
+## SavedVariablesPerCharacter: TidyPlatesOptions
+
+TidyPlates.xml

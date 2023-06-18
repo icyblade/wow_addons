@@ -1,0 +1,14 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="Agility.lua"/>
+	<Script file="CombatIndicator.lua"/>
+	<Script file="DatatextsColors.lua"/>
+	<Script file="EnergyRegen.lua"/>
+	<Script file="Intellect.lua"/>
+	<Script file="ItemLevel.lua"/>
+	<Script file="Mail.lua"/>
+	<Script file="Reincarnation.lua"/>
+	<Script file="Spirit.lua"/>
+	<Script file="Stamina.lua"/>
+	<Script file="Strength.lua"/>
+	<Script file="StopWatch.lua"/>
+</Ui>

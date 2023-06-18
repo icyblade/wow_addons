@@ -1,0 +1,386 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+	<Script file="VuhDoLookAndFeelStandardFont.lua" />
+
+	<Frame name="VuhDoLnfIconTextDialog" toplevel="true" frameStrata="FULLSCREEN_DIALOG" hidden="true" movable="true" enableMouse="true" enableKeyboard="true" inherits="VuhDoFrameTemplate">
+		<Size>
+			<AbsDimension x="320" y="220" />
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+		<Frames>
+			<Frame name="$parentRootPane" setallpoints="true" inherits="VuhDoPanelTemplate">
+				<Frames>
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnMouseUp>VuhDoLnfIconTextDialog:StopMovingOrSizing()</OnMouseUp>
+							<OnMouseDown>VuhDoLnfIconTextDialog:StartMoving()</OnMouseDown>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentAnchorTexture">
+						<Size>
+							<AbsDimension x="32" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="75" y="-100" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<Texture name="$parentTexture" setAllPoints="true" file="Interface\AddOns\VuhDo\Images\LiteStepLite">
+									<TexCoords left="0" right="1" top="0" bottom="1" />
+								</Texture>
+							</Layer>
+
+						</Layers>
+						<Frames>
+
+							<Frame name="$parentCenterBar">
+								<Size>
+									<AbsDimension x="30" y="3" />
+								</Size>
+								<Anchors>
+									<Anchor point="CENTER">
+										<Offset>
+											<AbsDimension x="15" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Layers>
+									<Layer level="OVERLAY">
+										<Texture name="$parentTexture" setAllPoints="true" file="Interface\AddOns\VuhDoOptions\Images\blue_dk_square_16_16">
+											<TexCoords left="0" right="1" top="0" bottom="1" />
+										</Texture>
+									</Layer>
+								</Layers>
+							</Frame>
+
+							<Frame name="$parentTitle" setallPoints="true">
+								<Layers>
+									<Layer>
+										<FontString name="$parentString" setallPoints="true" text="" inherits="VuDoWhiteFontTemplate">
+										</FontString>
+									</Layer>
+								</Layers>
+							</Frame>
+
+							<CheckButton name="$parentLeftRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="-32" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetTooltip(self, nil);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentTopLeftRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="-32" y="32" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K392);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentTopRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="0" y="32" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetTooltip(self, nil);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentTopRightRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPRIGHT">
+										<Offset>
+											<AbsDimension x="32" y="32" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K393);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentBottomRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="BOTTOMLEFT">
+										<Offset>
+											<AbsDimension x="0" y="-32" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K394);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentBottomLeftRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="BOTTOMLEFT">
+										<Offset>
+											<AbsDimension x="-32" y="-32" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K394);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentBottomRightRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="BOTTOMRIGHT">
+										<Offset>
+											<AbsDimension x="32" y="-32" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K395);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentCenterRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="RIGHT">
+										<Offset>
+											<AbsDimension x="32" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K517);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+							<CheckButton name="$parentRightRadioButton" inherits="VuhDoRadioBoxTemplate">
+								<Anchors>
+									<Anchor point="RIGHT">
+										<Offset>
+											<AbsDimension x="62" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K517);
+									</OnLoad>
+								</Scripts>
+							</CheckButton>
+
+						</Frames>
+						<Scripts>
+							<OnShow>VUHDO_lnfPatchFont(self, "TitleString")</OnShow>
+						</Scripts>
+					</Frame>
+
+
+					<Frame name="$parentXAdjustSlider" inherits="VuhDoHSliderTemplate">
+						<Size>
+							<AbsDimension x="150" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSliderOnLoad(self, "X", -50, 50, "%");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K400);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentYAdjustSlider" inherits="VuhDoVSliderTemplate">
+						<Size>
+							<AbsDimension x="18" y="125" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="175" y="-35" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSliderOnLoad(self, "Y", -50, 50, "%");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K401);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentScaleSlider" inherits="VuhDoVSliderTemplate">
+						<Size>
+							<AbsDimension x="18" y="125" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-73" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSliderOnLoad(self, "Scale", 10, 100, "%");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K518);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Button name="$parentFontCombo" inherits="VuhDoComboBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="42" y="-183" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K519);
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<Frame name="$parentColorTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="205" y="-25" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_TEXT_SHADOW, VUHDO_I18N_TEXT_SHADOW);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K520);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<CheckButton name="$parentShadowCheckButton" text="VUHDO_I18N_SHADOW" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="205" y="-63" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K521);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentOutlineCheckButton" text="VUHDO_I18N_OUTLINE" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="205" y="-101" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K522);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentMonoCheckButton" text="VUHDO_I18N_MONO" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="205" y="-139" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K531);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Button name="$parentOkayButton" inherits="VuhDoOkayButtonTemplate">
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset>
+									<AbsDimension x="-10" y="10"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VuhDoLnfIconTextDialog:Hide();
+							</OnClick>
+						</Scripts>
+					</Button>
+				</Frames>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				--VUHDO_lnfPatchFont(self, "OldColorLabel");
+				--VUHDO_lnfPatchFont(self, "NewColorLabel");
+				self:SetScript("OnKeyDown", function(anInstance, aKey)
+					if (aKey == "ESCAPE") then
+						self:Hide();
+					end
+				end);
+			</OnLoad>
+			<OnUpdate>
+				VUHDO_lnfStandardFontUpdateDemoText();
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+</Ui>

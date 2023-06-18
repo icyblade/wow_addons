@@ -1,0 +1,346 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+	<Script file="VuhDoNewColorPicker.lua" />
+
+	<ColorSelect name="VuhDoNewColorPicker" frameStrata="FULLSCREEN_DIALOG" toplevel="true" hidden="true" parent="UIParent" movable="true" enableMouse="true" enableKeyboard="true" inherits="VuhDoFrameTemplate">
+		<Size>
+			<AbsDimension x="385" y="240"/>
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+		<Layers>
+			<Layer level="ARTWORK">
+
+				<FontString name="$parentNewColorLabel" text="VUHDO_I18N_NEW_COLOR" inherits="VuDoDefaultFontTemplate">
+					<Anchors>
+						<Anchor point="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="-17" y="-90"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<Texture name="VuhDoColorPickerColorSwatchNew">
+					<Size>
+						<AbsDimension x="80" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="-17" y="-100"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Color r="1.0" g="1.0" b="1.0" a="1.0"/>
+				</Texture>
+
+				<Texture name="VuhDoColorPickerColorSwatchOld">
+					<Size>
+						<AbsDimension x="80" y="32"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="-17" y="-132"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Color r="1.0" g="1.0" b="1.0" a="1.0"/>
+				</Texture>
+
+				<FontString name="$parentOldColorLabel" text="VUHDO_I18N_OLD_COLOR" inherits="VuDoDefaultFontTemplate">
+					<Anchors>
+						<Anchor point="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="-17" y="-164"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+			</Layer>
+		</Layers>
+		<Frames>
+
+			<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="285" y="18" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="13" y="-7" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" text="" inherits="VuDoDarkTitleFontTemplate">
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnMouseUp>VuhDoNewColorPicker:StopMovingOrSizing()</OnMouseUp>
+					<OnMouseDown>VuhDoNewColorPicker:StartMoving()</OnMouseDown>
+				</Scripts>
+			</Frame>
+
+			<CheckButton name="$parentTextRadioButton" text="VUHDO_I18N_TEXT" inherits="VuhDoRadioButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-7" y="-7" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						VUHDO_lnfRadioButtonClicked(self);
+						VUHDO_colorPickerTextClicked(self:GetParent());
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parentBackgroundRadioButton" text="VUHDO_I18N_BACKGROUND" inherits="VuhDoRadioButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-7" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						VUHDO_lnfRadioButtonClicked(self);
+						VUHDO_colorPickerBackgroundClicked(self:GetParent());
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+
+			<Button name="$parentOkayButton" inherits="VuhDoOkayButtonTemplate">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="-10" y="10"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						VUHDO_colorPickerOkay();
+						VuhDoNewColorPicker:Hide();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="$parentCancelButton" inherits="VuhDoCancelButtonTemplate">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentOkayButton" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						VUHDO_colorPickerCancel();
+						VuhDoNewColorPicker:Hide();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="$parentCopyButton" text="VUHDO_I18N_COPY" inherits="VuhDoButtonTemplate">
+				<Size>
+					<AbsDimension x="65" y="32"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentCancelButton" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						VUHDO_colorPickerCopy();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="$parentPasteButton" text="VUHDO_I18N_PASTE" inherits="VuhDoButtonTemplate">
+				<Size>
+					<AbsDimension x="65" y="32"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentCopyButton" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						VUHDO_colorPickerPaste(self:GetParent());
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<EditBox name="VuhDoColorPickerColorCodeEditBox" inherits="VuhDoEditBoxTemplate">
+				<Size>
+					<AbsDimension x="100" y="22" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="$parentPasteButton" relativePoint="TOP">
+						<Offset>
+							<AbsDimension x="-10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:SetMaxLetters(8);
+					</OnLoad>
+					<OnEnterPressed>
+						VUHDO_updateColorByCode(self:GetParent());
+					</OnEnterPressed>
+					<OnTabPressed>
+						VUHDO_updateColorByCode(self:GetParent());
+					</OnTabPressed>
+					<OnTextChanged>
+						VUHDO_setColorCodeTextColor();
+					</OnTextChanged>
+				</Scripts>
+			</EditBox>
+
+
+			<Slider name="$parentOpacitySliderFrame">
+				<Size>
+					<AbsDimension x="16" y="128"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="235" y="-40"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Slider name="$parentSlider" setallpoints="true" enableMouse="true" minValue="0" maxValue="100" defaultValue="0" valueStep="1" orientation="VERTICAL">
+						<Backdrop bgFile="Interface\AddOns\VuhDoOptions\Images\blue_lt_square_16_16" edgeFile="Interface\AddOns\VuhDoOptions\Images\panel_edges_1" tile="true">
+							<BackgroundInsets>
+								<AbsInset left="1" right="1" top="1" bottom="1" />
+							</BackgroundInsets>
+							<TileSize>
+								<AbsValue val="8" />
+							</TileSize>
+							<EdgeSize>
+								<AbsValue val="8" />
+							</EdgeSize>
+						</Backdrop>
+						<Layers>
+							<Layer>
+								<FontString name="$parentTitle" inherits="VuDoDefaultFontTemplate" text="VUHDO_I18N_OPACITY">
+									<Anchors>
+										<Anchor point="BOTTOM" relativePoint="TOP">
+											<Offset>
+												<AbsDimension x="0" y="4" />
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+								<FontString name="$parentValue" inherits="VuDoDefaultFontTemplate" text="">
+									<Anchors>
+										<Anchor point="TOP" relativePoint="BOTTOM">
+											<Offset>
+												<AbsDimension x="0" y="-2" />
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<ThumbTexture name="$parentThumb" file="Interface\AddOns\VuhDoOptions\Images\slider_thumb_v">
+							<Size>
+								<AbsDimension x="16" y="16" />
+							</Size>
+						</ThumbTexture>
+						<Scripts>
+							<OnShow>VUHDO_lnfPatchFont(self, "Title");VUHDO_lnfPatchFont(self, "Value");</OnShow>
+							<OnValueChanged>
+							  if not self._onsetting then
+							    self._onsetting = true;
+							    self:SetValue(self:GetValue());
+							    value = self:GetValue()
+							    self._onsetting = false;
+							  else return; end
+								VUHDO_colorPickerOpacityValueChanged(self:GetParent());
+								VUHDO_lnfSliderOnValueChanged(self:GetParent());
+							</OnValueChanged>
+						</Scripts>
+					</Slider>
+				</Frames>
+			</Slider>
+
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				VUHDO_lnfPatchFont(self, "OldColorLabel");
+				VUHDO_lnfPatchFont(self, "NewColorLabel");
+				self:SetScript("OnColorSelect", VUHDO_colorPickerColorSelectCallback);
+				self:SetScript("OnKeyDown", function(anInstance, aKey)
+					if (aKey == "ESCAPE") then
+						VUHDO_colorPickerCancel();
+						VuhDoNewColorPicker:Hide();
+					end
+				end);
+			</OnLoad>
+		</Scripts>
+
+		<ColorWheelTexture name="$parentColorPickerWheel">
+			<Size>
+				<AbsDimension x="128" y="128"/>
+			</Size>
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset>
+						<AbsDimension x="16" y="-42"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</ColorWheelTexture>
+
+		<ColorWheelThumbTexture file="Interface\Buttons\UI-ColorPicker-Buttons">
+			<Size>
+				<AbsDimension x="10" y="10"/>
+			</Size>
+			<TexCoords left="0" right="0.15625" top="0" bottom="0.625"/>
+		</ColorWheelThumbTexture>
+
+		<ColorValueTexture>
+			<Size>
+				<AbsDimension x="32" y="128"/>
+			</Size>
+			<Anchors>
+				<Anchor point="LEFT" relativeTo="$parentColorPickerWheel" relativePoint="RIGHT">
+					<Offset>
+						<AbsDimension x="24" y="0"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</ColorValueTexture>
+		<ColorValueThumbTexture file="Interface\Buttons\UI-ColorPicker-Buttons">
+			<Size>
+				<AbsDimension x="48" y="14"/>
+			</Size>
+			<TexCoords left="0.25" right="1.0" top="0" bottom="0.875"/>
+		</ColorValueThumbTexture>
+		<Scripts>
+			<OnShow>VUHDO_newColorPickerOnShow(self)</OnShow>
+		</Scripts>
+	</ColorSelect>
+</Ui>
+

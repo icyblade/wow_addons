@@ -1,0 +1,35 @@
+
+- Option je Bouquet Stacks aufaddieren
+- Bug: Keine Balkenfarbe custom debuffs per spellID
+- Sehbehindertenmodus Optionen
+- Bug: Optionen=>Filter=>Target sofort anzeigen
+
+- Trinkets pro zauber zünden
+- Boss frames
+- Makros aus Keys=>Local and Mausbuttons in spells=>mouse binden
+- BuffWatch: Buff-Wechsel mit Wheel
+- Verbleibende Dauer Totems BuffWatch
+- Mage T90 Talente in BuffWatch
+
+1. Health     3
+2. Mana       1
+3. Background 5
+4. Aggro      2
+5. Target     -
+6. Incoming   4
+7. Threat     -
+8. Unit/Group highlight
+9. Hot bar 1
+10. Hot bar 2
+11. Hot bar 3
+
+3. Background
+		6. Incoming
+				1. Health
+					4. Aggro
+					5. Mana
+					Highlight
+					Player Target
+		12. Shield
+5. Target
+7. Threat

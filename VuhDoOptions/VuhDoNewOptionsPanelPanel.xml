@@ -1,0 +1,259 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsPanelPanel.lua" />
+
+	<Frame name="VuhDoNewOptionsPanelPanelTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentRadioPanel">
+				<Size>
+					<AbsDimension x="115" y="231" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="0" y="-10" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<CheckButton name="$parentHeaderRadioButton" text="VUHDO_I18N_HEADERS" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-108" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsPanelHeader";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K104);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentBasicRadioButton" checked="true" text="VUHDO_I18N_GENERAL" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-3" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsPanelBasic";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K105);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentTooltipRadioButton" text="VUHDO_I18N_TOOLTIPS" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-178" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsPanelTooltip";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K106);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentTextRadioButton" text="VUHDO_I18N_TEXT" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-213" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsPanelText";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K107);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentHotsRadioButton" text="VUHDO_I18N_HOT_ICONS" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-248" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsPanelHots";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K337);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentHotBarsRadioButton" text="VUHDO_I18N_HOT_BARS" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-283" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsPanelHotBars";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K338);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentMiscRadioButton" text="VUHDO_I18N_MISC" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-318" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsPanelMisc";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K402);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentTargetRadioButton" text="VUHDO_I18N_TARGETS" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-143" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsPanelTarget";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K108);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentSizeRadioButton" text="VUHDO_I18N_SIZING" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-38" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsPanelSize";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K109);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentBarsRadioButton" text="VUHDO_I18N_BARS" inherits="VuhDoTabRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-73" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.tabPanel = "VuhDoNewOptionsPanelBars";
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K110);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+			<Button name="$parentApplyToAllButton" inherits="VuhDoApplyToAllButtonTemplate">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="-15" y="20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>VUHDO_newOptionsApplyToAllOnClick();</OnClick>
+					<OnLoad>
+						 VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K111);
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Frame name="$parentContentPanel">
+				<Size>
+					<AbsDimension x="428" y="345" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="VuhDoNewOptionsPanelBasic" setAllPoints="true" inherits="VuhDoNewOptionsPanelBasicTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsPanelSize" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsPanelSizeTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsPanelBars" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsPanelBarsTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsPanelHeader" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsPanelHeaderTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsPanelTarget" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsPanelTargetTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsPanelText" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsPanelTextTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsPanelTooltip" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsPanelTooltipTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsPanelHots" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsPanelHotsTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsPanelHotBars" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsPanelHotBarsTemplate">
+					</Frame>
+					<Frame name="VuhDoNewOptionsPanelMisc" hidden="true" setAllPoints="true" inherits="VuhDoNewOptionsPanelMiscTemplate">
+					</Frame>
+				</Frames>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnShow>
+				VUHDO_IS_PANEL_CONFIG = true;
+				VUHDO_CONFIG_SHOW_RAID = true;
+				VUHDO_initDynamicPanelModels();
+				VUHDO_reloadUI(false);
+			</OnShow>
+			<OnHide>
+				VUHDO_IS_PANEL_CONFIG = false;
+				VUHDO_CONFIG_SHOW_RAID = false;
+				VUHDO_initDynamicPanelModels();
+				VUHDO_reloadUI(false);
+			</OnHide>
+		</Scripts>
+	</Frame>
+</Ui>

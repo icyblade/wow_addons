@@ -1,0 +1,1030 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsGeneralBouquet.lua" />
+
+	<Button name="VuhDoBouquetIconTemplate" virtual="true" inherits="VuhDoPanelTemplate">
+		<Size>
+			<AbsDimension x="180" y="40" />
+		</Size>
+		<Frames>
+
+			<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="100" y="18" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="10" y="-5" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" text="" inherits="VuDoDarkTitleFontTemplate">
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Frame name="$parentNameLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="149" y="18" />
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="10" y="-10" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" text="" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Frame name="$parentDemoTexture" virtual="true">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="-5" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentBar" setAllPoints="true" file="Interface\AddOns\VuhDo\Images\bar15">
+							<TexCoords left="0" right="1" top="0" bottom="1" />
+						</Texture>
+					</Layer>
+					<Layer level="ARTWORK">
+						<Texture name="$parentIcon" file="Interface\AddOns\VuhDo\Images\bar15">
+							<Size>
+								<AbsDimension x="16" y="16" />
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER" relativePoint="CENTER">
+									<Offset>
+										<AbsDimension x="0" y="0" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<FontString name="$parentLabel" text="" justifyH="CENTER" inherits="VuDoBigWhiteFontShadedTemplate">
+							<Anchors>
+								<Anchor point="CENTER" relativePoint="CENTER">
+									<Offset>
+										<AbsDimension x="3" y="-3" />
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+		</Frames>
+		<Scripts>
+			<OnClick>VUHDO_bouquetItemButtonOnClick(self)</OnClick>
+		</Scripts>
+	</Button>
+
+
+	<Frame name="VuhDoNewOptionsGeneralBouquetTemplate" virtual="true">
+		<Frames>
+
+			<Frame name="$parentMainPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="270" y="115" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-13" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentSelectLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="149" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_SELECT_OR_ENTER_BOUQUET" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentBouquetsComboBox" hidden="false" inherits="VuhDoScrollComboBoxTemplate">
+						<Size>
+							<AbsDimension x="217" y="1" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_setComboModel(self, "VUHDO_BOUQUETS.SELECTED", VUHDO_BOUQET_COMBO_MODEL);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K452);
+								self:SetAttribute("custom_function_post", VUHDO_bouquetsComboValueChanged);
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<Frame name="$parentNewLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="149" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-55" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_OR_NEW_BOUQUET_NAME" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentBouquetNameEditBox" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="170" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-65" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, nil);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K459);
+							</OnLoad>
+						</Scripts>
+					</EditBox>
+
+					<Button name="$parentCopyButton" text="VUHDO_I18N_COPY" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="70" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
+								<Offset>
+									<AbsDimension x="-7" y="7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_bouquetSaveButtonClicked(self:GetParent());
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentNewButton" text="VUHDO_I18N_NEW" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="70" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="RIGHT" relativePoint="RIGHT">
+								<Offset>
+									<AbsDimension x="-7" y="0" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_bouquetNewButtonClicked(self:GetParent());
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentDeleteButton" text="VUHDO_I18N_DELETE" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="70" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="-7" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_bouquetDeleteButtonClicked(self:GetParent());
+							</OnClick>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentDetailsPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="200" y="380" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="304" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_BOUQUET_DETAILS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentHighPrioLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="145" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-34" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_HIGHEST_PRIO" justifyH="RIGHT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+							<Button name="$parentUpButton" enableMouse="true">
+								<Size>
+									<AbsDimension x="32" y="32" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPRIGHT">
+										<Offset>
+											<AbsDimension x="-5" y="-18" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+									</OnClick>
+								</Scripts>
+								<NormalTexture name="$parentNormalTexture" file="Interface\AddOns\VuhDoOptions\Images\button_up_32_32">
+									<Size>
+										<AbsDimension x="32" y="32" />
+									</Size>
+									<Anchors>
+										<Anchor point="RIGHT" />
+									</Anchors>
+								</NormalTexture>
+								<Scripts>
+									<OnClick>VUHDO_bouquetItemButtonUpOnClick()</OnClick>
+								</Scripts>
+							</Button>
+
+							<Button name="$parentDownButton" enableMouse="true">
+								<Size>
+									<AbsDimension x="32" y="32" />
+								</Size>
+								<Anchors>
+									<Anchor point="BOTTOMRIGHT">
+										<Offset>
+											<AbsDimension x="-5" y="48" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+									</OnClick>
+								</Scripts>
+								<NormalTexture name="$parentNormalTexture" file="Interface\AddOns\VuhDoOptions\Images\button_combo_32_32">
+									<Size>
+										<AbsDimension x="32" y="32" />
+									</Size>
+									<Anchors>
+										<Anchor point="RIGHT" />
+									</Anchors>
+								</NormalTexture>
+								<Scripts>
+									<OnClick>VUHDO_bouquetItemButtonDownOnClick()</OnClick>
+								</Scripts>
+							</Button>
+
+					<ScrollFrame name="$parentScrollPanel" inherits="VuhDoScrollPanelTemplate">
+						<Size>
+							<AbsDimension x="200" y="250" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="-50" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<ScrollChild>
+							<Frame name="$parentChild">
+								<Size>
+									<AbsDimension x="18" y="240" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="0" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Frames>
+
+								</Frames>
+							</Frame>
+						</ScrollChild>
+					</ScrollFrame>
+
+					<Frame name="$parentLowPrioLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="145" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-297" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_LOWEST_PRIO" justifyH="RIGHT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+
+					<Button name="$parentAddButton" text="VUHDO_I18N_ADD" inherits="VuhDoAddItemButtonTemplate">
+						<Size>
+							<AbsDimension x="90" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" >
+								<Offset>
+									<AbsDimension x="7" y="7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_bouquetItemAddClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentRemoveButton" text="VUHDO_I18N_REMOVE" inherits="VuhDoRemoveItemButtonTemplate">
+						<Size>
+							<AbsDimension x="90" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
+								<Offset>
+									<AbsDimension x="-7" y="7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_bouquetItemRemoveClicked();
+							</OnClick>
+						</Scripts>
+					</Button>
+
+				</Frames>
+				<Scripts>
+					<OnShow>
+						VUHDO_bouquetItemsOnShow(_G[self:GetName() .. "ScrollPanelChild"]);
+					</OnShow>
+				</Scripts>
+			</Frame>
+
+			<Frame name="$parentBuffPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="270" y="272" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-136" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="$parentSelectLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="149" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="55" y="-4" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_ENTER_DE_BUFF_OR_SPECIAL" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentNameComboBox" hidden="false" inherits="VuhDoScrollComboBoxTemplate">
+						<Size>
+							<AbsDimension x="187" y="1" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="55" y="-35" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_setComboModel(self, nil, VUHDO_BOUQET_DETAILS_COMBO_MODEL);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K453);
+								self:SetAttribute("custom_function_post", VUHDO_bouquetsBuffComboValueChanged);
+								self:SetAttribute("derive_custom", true);
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<Frame name="$parentBuffLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="149" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+								<Offset>
+									<AbsDimension x="50" y="-45" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_OR_ENTER_DEBUFF_HOT" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentNameEditBox" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="170" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="50" y="-55" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, nil);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K460);
+							</OnLoad>
+							<OnTextChanged>
+								VUHDO_lnfEditBoxUpdateModel(self);
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+
+					<Frame name="$parentBuffOrIndicatorFrame" hidden="true">
+						<Size>
+							<AbsDimension x="230" y="272" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="20" y="0" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentColorTexture" inherits="VuhDoColorSwatchTexture">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="65" y="-97" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnMouseDown>
+										VUHDO_lnfColorSwatchShowColorPicker(self, arg1);
+										VUHDO_setColorManuallyChanged();
+									</OnMouseDown>
+									<OnLoad>
+										VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_ITEM, VUHDO_I18N_ITEM);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K454);
+										self:SetAttribute("custom_function_post", VUHDO_bouquetsBuffColorChanged);
+									</OnLoad>
+								</Scripts>
+							</Frame>
+
+							<Frame name="$parentTextLabel" inherits="VuhDoLabelFrameTemplate">
+								<Size>
+									<AbsDimension x="32" y="18" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="35" y="-132" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Layers>
+									<Layer>
+										<FontString name="$parentLabel" text="VUHDO_I18N_TEXT" justifyH="CENTER" inherits="VuDoDefaultFontTemplate">
+										</FontString>
+									</Layer>
+								</Layers>
+							</Frame>
+
+							<CheckButton name="$parentTextCheckBox" inherits="VuhDoCheckBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="35" y="-147" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetModel(self, nil);
+									</OnLoad>
+									<OnClick>
+										VUHDO_setColorManuallyChanged();
+										VUHDO_lnfCheckButtonUpdateModel(self);
+										VUHDO_lnfCheckButtonClicked(self);
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+
+							<Frame name="$parentBackgroundLabel" inherits="VuhDoLabelFrameTemplate">
+								<Size>
+									<AbsDimension x="32" y="18" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="95" y="-132" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Layers>
+									<Layer>
+										<FontString name="$parentLabel" text="VUHDO_I18N_BACKGROUND" justifyH="CENTER" inherits="VuDoDefaultFontTemplate">
+										</FontString>
+									</Layer>
+								</Layers>
+							</Frame>
+
+							<CheckButton name="$parentBackgroundCheckBox" inherits="VuhDoCheckBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="95" y="-147" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetModel(self, nil);
+									</OnLoad>
+									<OnClick>
+										VUHDO_setColorManuallyChanged();
+										VUHDO_lnfCheckButtonUpdateModel(self);
+										VUHDO_lnfCheckButtonClicked(self);
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+
+							<Frame name="$parentOpacityLabel" inherits="VuhDoLabelFrameTemplate">
+								<Size>
+									<AbsDimension x="32" y="18" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="155" y="-132" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Layers>
+									<Layer>
+										<FontString name="$parentLabel" text="VUHDO_I18N_OPACITY" justifyH="CENTER" inherits="VuDoDefaultFontTemplate">
+										</FontString>
+									</Layer>
+								</Layers>
+							</Frame>
+
+							<CheckButton name="$parentOpacityCheckBox" inherits="VuhDoCheckBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="155" y="-147" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_lnfSetModel(self, nil);
+									</OnLoad>
+									<OnClick>
+										VUHDO_setColorManuallyChanged();
+										VUHDO_lnfCheckButtonUpdateModel(self);
+										VUHDO_lnfCheckButtonClicked(self);
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+
+							<Frame name="$parentIconLabel" inherits="VuhDoLabelFrameTemplate">
+								<Size>
+									<AbsDimension x="149" y="18" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="30" y="-180" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Layers>
+									<Layer>
+										<FontString name="$parentLabel" text="VUHDO_I18N_SELECT_DEFAULT_ICON" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+										</FontString>
+									</Layer>
+								</Layers>
+							</Frame>
+
+							<Button name="$parentIconComboBox" hidden="false" inherits="VuhDoComboBoxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="30" y="-193" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										VUHDO_setComboModel(self, nil, VUHDO_BOUQUET_ICON_COMBO_MODEL);
+										self:SetAttribute("custom_function_post", VUHDO_bouquetsBuffComboValueChanged);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K455);
+										self.prohibitCloseExtensions = true;
+									</OnLoad>
+								</Scripts>
+							</Button>
+
+							<Frame name="$parentMineOthersFrame" hidden="true">
+								<Size>
+									<AbsDimension x="270" y="42" />
+								</Size>
+								<Anchors>
+									<Anchor point="BOTTOM">
+										<Offset>
+											<AbsDimension x="0" y="7" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Frames>
+									<Frame name="$parentSelectLabel" inherits="VuhDoLabelFrameTemplate">
+										<Size>
+											<AbsDimension x="149" y="18" />
+										</Size>
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset>
+													<AbsDimension x="10" y="5" />
+												</Offset>
+											</Anchor>
+										</Anchors>
+										<Layers>
+											<Layer>
+												<FontString name="$parentLabel" text="VUHDO_I18N_SOURCE_SPELL" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+												</FontString>
+											</Layer>
+										</Layers>
+									</Frame>
+
+									<CheckButton name="$parentMineCheckButton" text="VUHDO_I18N_MINE" inherits="VuhDoCheckButtonTemplate">
+										<Size>
+											<AbsDimension x="80" y="32" />
+										</Size>
+										<Anchors>
+											<Anchor point="BOTTOMLEFT">
+												<Offset>
+													<AbsDimension x="10" y="0" />
+												</Offset>
+											</Anchor>
+										</Anchors>
+									</CheckButton>
+
+									<CheckButton name="$parentOthersCheckButton" text="VUHDO_I18N_OTHERS" inherits="VuhDoCheckButtonTemplate">
+										<Size>
+											<AbsDimension x="80" y="32" />
+										</Size>
+										<Anchors>
+											<Anchor point="BOTTOM">
+												<Offset>
+													<AbsDimension x="0" y="0" />
+												</Offset>
+											</Anchor>
+										</Anchors>
+									</CheckButton>
+
+									<CheckButton name="$parentAliveTimeCheckButton" text="VUHDO_I18N_ALIVE_TIME" inherits="VuhDoCheckButtonTemplate">
+										<Size>
+											<AbsDimension x="80" y="32" />
+										</Size>
+										<Anchors>
+											<Anchor point="BOTTOMRIGHT">
+												<Offset>
+													<AbsDimension x="-10" y="0" />
+												</Offset>
+											</Anchor>
+										</Anchors>
+									</CheckButton>
+
+								</Frames>
+							</Frame>
+
+							<Frame name="$parentPercentFrame" hidden="true">
+								<Size>
+									<AbsDimension x="230" y="42" />
+								</Size>
+								<Anchors>
+									<Anchor point="BOTTOM">
+										<Offset>
+											<AbsDimension x="0" y="7" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Frames>
+									<Frame name="$parentSlider" inherits="VuhDoHSliderTemplate">
+										<Size>
+											<AbsDimension x="200" y="32" />
+										</Size>
+										<Anchors>
+											<Anchor point="BOTTOM">
+												<Offset>
+													<AbsDimension x="0" y="0" />
+												</Offset>
+											</Anchor>
+										</Anchors>
+									</Frame>
+								</Frames>
+							</Frame>
+						</Frames>
+					</Frame>
+
+
+
+					<Frame name="$parentStatusbarFrame" hidden="true">
+						<Size>
+							<AbsDimension x="200" y="272" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="20" y="0" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Frames>
+
+							<CheckButton name="$parentSolidRadioButton" text="VUHDO_I18N_SOLIDD" inherits="VuhDoRadioButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="10" y="-95" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										VUHDO_lnfRadioButtonClicked(self);
+										VUHDO_lnfRadioButtonUpdateModel(self);
+										VUHDO_rebuildBouquetContextEditors(nil);
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+
+							<Frame name="$parentColorTexture" inherits="VuhDoColorSwatchTexture">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="120" y="-95" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnMouseDown>
+										VUHDO_lnfColorSwatchShowColorPicker(self, arg1);
+										VUHDO_setColorManuallyChanged();
+									</OnMouseDown>
+									<OnLoad>
+										VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_ITEM, VUHDO_I18N_ITEM);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K454);
+										self:SetAttribute("custom_function_post", VUHDO_bouquetsBuffColorChanged);
+									</OnLoad>
+								</Scripts>
+							</Frame>
+
+							<CheckButton name="$parentClassColorRadioButton" text="VUHDO_I18N_CLASS_COL" inherits="VuhDoRadioButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="10" y="-133" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										VUHDO_lnfRadioButtonClicked(self);
+										VUHDO_lnfRadioButtonUpdateModel(self);
+										VUHDO_rebuildBouquetContextEditors(nil);
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+
+							<Frame name="$parentClassColorBrightnessSlider" inherits="VuhDoHSliderTemplate">
+								<Size>
+									<AbsDimension x="100" y="32" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="120" y="-133" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+							</Frame>
+
+							<CheckButton name="$parentGradientRadioButton" text="VUHDO_I18N_GRADIENT" inherits="VuhDoRadioButtonTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="10" y="-171" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										VUHDO_lnfRadioButtonClicked(self);
+										VUHDO_lnfRadioButtonUpdateModel(self);
+										VUHDO_rebuildBouquetContextEditors(nil);
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+
+							<Frame name="$parentLowColorTexture" inherits="VuhDoColorSwatchTexture">
+								<Size>
+									<AbsDimension x="66" y="32" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="10" y="-219" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnMouseDown>
+										VUHDO_lnfColorSwatchShowColorPicker(self, arg1);
+									</OnMouseDown>
+									<OnLoad>
+										VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_LOW, VUHDO_I18N_LOW);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K461);
+									</OnLoad>
+								</Scripts>
+							</Frame>
+
+							<Frame name="$parentFairColorTexture" inherits="VuhDoColorSwatchTexture">
+								<Size>
+									<AbsDimension x="66" y="32" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="81" y="-218" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnMouseDown>
+										VUHDO_lnfColorSwatchShowColorPicker(self, arg1);
+									</OnMouseDown>
+									<OnLoad>
+										VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_FAIR, VUHDO_I18N_FAIR);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K462);
+									</OnLoad>
+								</Scripts>
+							</Frame>
+
+							<Frame name="$parentGoodColorTexture" inherits="VuhDoColorSwatchTexture">
+								<Size>
+									<AbsDimension x="66" y="32" />
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="152" y="-219" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnMouseDown>
+										VUHDO_lnfColorSwatchShowColorPicker(self, arg1);
+										VUHDO_setColorManuallyChanged();
+									</OnMouseDown>
+									<OnLoad>
+										VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_GOOD, VUHDO_I18N_GOOD);
+										VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K463);
+										self:SetAttribute("custom_function_post", VUHDO_bouquetsBuffColorChanged);
+									</OnLoad>
+								</Scripts>
+							</Frame>
+
+						</Frames>
+					</Frame>
+
+
+
+				</Frames>
+			</Frame>
+
+			<Button name="$parentBackButton" inherits="VuhDoBackButtonTemplate">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="205" y="-55" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>VUHDO_generalBouquetBackButtonClicked(self:GetParent())</OnClick>
+				<OnLoad>
+					 VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K478);
+				</OnLoad>
+				</Scripts>
+			</Button>
+
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				VUHDO_TEMP_BOUQUET_BUFF = VUHDO_deepCopyTable(VUHDO_SANE_BOUQUET_ITEM);
+			</OnLoad>
+			<OnShow>
+				VUHDO_bouquetsUpdateDefaultColors();
+				_G[self:GetName() .. "BackButton"]:SetShown(VUHDO_MENU_RETURN_TARGET ~= nil or VUHDO_MENU_RETURN_TARGET_MAIN ~= nil);
+			</OnShow>
+			<OnHide>
+				VUHDO_trimAllBouquetItems();
+			</OnHide>
+		</Scripts>
+	</Frame>
+</Ui>

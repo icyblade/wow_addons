@@ -1,0 +1,245 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Frame name="VuhDoNewOptionsBuffsColorsTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentStatesPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="235" y="164" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="220" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentStatesLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_STATES" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentOkayTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="14" y="-41" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_BUFF_SETTINGS.CONFIG.SWATCH_COLOR_BUFF_OKAY");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_BUFF_OKAY, VUHDO_I18N_BUFF_OKAY);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K012);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentLowTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="14" y="-79" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_BUFF_SETTINGS.CONFIG.SWATCH_COLOR_BUFF_LOW");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_BUFF_LOW, VUHDO_I18N_BUFF_LOW);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K013);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentMissingTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="14" y="-117" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_BUFF_SETTINGS.CONFIG.SWATCH_COLOR_BUFF_OUT");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_BUFF_MISSING, VUHDO_I18N_BUFF_MISSING);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K014);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentCooldownTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="120" y="-79" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_BUFF_SETTINGS.CONFIG.SWATCH_COLOR_BUFF_COOLDOWN");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_COOLDOWN, VUHDO_I18N_COOLDOWN);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K016);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentPanelPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="128" y="164" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="50" y="-40" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentPanelLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_PANEL" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentBackgroundTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-41" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_BUFF_SETTINGS.CONFIG.PANEL_BG_COLOR");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_PANEL_BACKGROUND, VUHDO_I18N_PANEL_BACKGROUND);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K018);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentSwatchBorderTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-117" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_BUFF_SETTINGS.CONFIG.SWATCH_BORDER_COLOR");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_SWATCH_BORDER, VUHDO_I18N_SWATCH_BORDER);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K019);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentBorderTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-79" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_BUFF_SETTINGS.CONFIG.PANEL_BORDER_COLOR");
+								VUHDO_lnfInitColorSwatch(self, VUHDO_I18N_PANEL_BORDER, VUHDO_I18N_PANEL_BORDER);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K020);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentBarsPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="128" y="164" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="180" y="-220" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentPanelLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_BAR_COLOR" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentInFightCheckButton" text="VUHDO_I18N_SHOW_IN_FIGHT" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_BUFF_SETTINGS.CONFIG.BAR_COLORS_IN_FIGHT");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K221);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentTextCheckButton" text="VUHDO_I18N_TEXT" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-78" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_BUFF_SETTINGS.CONFIG.BAR_COLORS_TEXT");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K222);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentBarCheckButton" text="VUHDO_I18N_BAR" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-116" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_BUFF_SETTINGS.CONFIG.BAR_COLORS_BACKGROUND");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K223);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

@@ -1,0 +1,203 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsToolsWizard.lua" />
+
+	<Frame name="VuhDoNewOptionsToolsWizardTemplate" virtual="true">
+		<Frames>
+
+			<Button name="$parentApplyButton" text="VUHDO_I18N_APPLY" inherits="VuhDoApplyToAllButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="206" y="-360" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>VUHDO_newOptionsApplyWizardOnClick();</OnClick>
+					<OnLoad>
+						VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K280);
+					</OnLoad>
+				</Scripts>
+			</Button>
+
+			<Frame name="$parentAdditionalPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="254" y="114" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="220" y="-200" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<CheckButton name="$parentVehiclesCheckButton" text="VUHDO_I18N_VEHICLES" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="133" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_WIZARD_IS_VEHICLES");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K281);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentPetsCheckButton" text="VUHDO_I18N_PETS" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="133" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_WIZARD_IS_PETS");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K282);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentPlayerTargetsCheckButton" text="VUHDO_I18N_PRIV_TANKS" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_WIZARD_IS_PTS");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K283);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentMainTanksCheckButton" text="VUHDO_I18N_MAINTANKS" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_WIZARD_IS_MTS");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K284);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentAdditionalLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_ADDITIONAL_PANELS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentMainPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="255" y="129" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="60" y="-25" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<CheckButton name="$parentUnsortRadioButton" text="VUHDO_I18N_UNSORT" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="133" y="-78" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_WIZARD_MAIN_PANEL_VAL", "UNSORT");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K285);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentRolesRadioButton" text="VUHDO_I18N_ROLES" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="133" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_WIZARD_MAIN_PANEL_VAL", "ROLES");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K286);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentClassesRadioButton" text="VUHDO_I18N_CLASSES" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-78" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_WIZARD_MAIN_PANEL_VAL", "CLASSES");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K287);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentGroupsRadioButton" text="VUHDO_I18N_GROUPS" inherits="VuhDoRadioButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetRadioModel(self, "VUHDO_WIZARD_MAIN_PANEL_VAL", "GROUPS");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K288);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentMainPanelLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_MAIN_PANEL" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

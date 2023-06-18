@@ -1,0 +1,491 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsDebuffsCustom.lua" />
+
+	<Frame name="VuhDoNewOptionsDebuffsCustomTemplate" virtual="true">
+		<Frames>
+
+			<Frame name="$parentDefaultsPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="240" y="235" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-100" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_DEBUFF_DEFAULTS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentIconCheckButton" text="VUHDO_I18N_ICON" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-32" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.isIcon");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K266);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentColorCheckButton" text="VUHDO_I18N_BAR_COLOR" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-100" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.isColor");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K267);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentShowNameCheckButton" text="VUHDO_I18N_DEBUFF_NAME" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="125" y="-100" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.isName");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K491);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentAnimateCheckButton" text="VUHDO_I18N_ANIMATION" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-66" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.animate");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K268);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentTimerCheckButton" text="VUHDO_I18N_TIMER" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="125" y="-66" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.timer");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K269);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentStacksCheckButton" text="VUHDO_I18N_APPLIANCES" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="125" y="-32" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.isStacks");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K350);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentSoundLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="120" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="43" y="-140" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_SOUND" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentSoundCombo" inherits="VuhDoComboBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="43" y="-153" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_setComboModel(self, "VUHDO_CONFIG.CUSTOM_DEBUFF.SOUND", VUHDO_SOUNDS);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K272);
+								self:SetAttribute("custom_function", VUHDO_notifySoundSelect);
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentApplyToAllButton" inherits="VuhDoApplyToAllButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="70" y="-190q" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_applyToAllCustomDebuffOnClick();</OnClick>
+							<OnLoad>
+								 VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K412);
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentStorePanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="235" y="358" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="280" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<CheckButton name="$parentIconCheckButton" text="VUHDO_I18N_ICON" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-112" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K273);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentColorCheckButton" text="VUHDO_I18N_BAR_COLOR" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-180" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K274);
+							</OnLoad>
+							<OnClick>
+								VUHDO_lnfCheckButtonUpdateModel(self);
+								VUHDO_lnfCheckButtonClicked(self);
+								VUHDO_custonDebuffisColorClicked();
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentColorTexture" inherits="VuhDoColorSwatchTexture">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="125" y="-180" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K413);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<CheckButton name="$parentAnimateCheckButton" text="VUHDO_I18N_ANIMATION" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-146" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K275);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentTimerCheckButton" text="VUHDO_I18N_TIMER" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="125" y="-146" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K276);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentStacksCheckButton" text="VUHDO_I18N_APPLIANCES" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="125" y="-112" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K350);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentSoundLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="120" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="43" y="-220" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_SOUND" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentSoundCombo" inherits="VuhDoComboBoxTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="43" y="-233" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self:SetAttribute("custom_function", VUHDO_notifySoundSelect);
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<Frame name="$parentListLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="120" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="43" y="-65" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_DEBUFF_LIST" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentSelectComboBox" inherits="VuhDoScrollComboBoxTemplate">
+						<Size>
+							<AbsDimension x="180" y="1" />
+						</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset>
+											<AbsDimension x="43" y="-95" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+						<Scripts>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Text");
+								VUHDO_setupCustomDebuffsComboModel(self);
+							</OnShow>
+							<OnLoad>
+								self:SetAttribute("custom_function", VUHDO_notifyCustomDebuffSelect);
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_STORE_DELETE" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentEditLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="120" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="18" y="-28" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_DEBUFF_EDIT_BOX" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentEditBox" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="205" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="18" y="-36" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Hint"); VUHDO_lnfPatchFont(self, "");
+								if (VUHDO_CONFIG.CUSTOM_DEBUFF.SELECTED ~= nil) then
+									self:SetText(VUHDO_CONFIG.CUSTOM_DEBUFF.SELECTED);
+								end
+							</OnShow>
+							<OnTextChanged>
+								if (self:GetText() ~= "") then
+									VUHDO_customDebuffUpdateEditBox(self);
+								end
+							</OnTextChanged>
+						</Scripts>
+					</EditBox>
+
+					<CheckButton name="$parentAliveTimeCheckButton" text="VUHDO_I18N_ALIVE_TIME" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-275" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K523);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentFullDurationCheckButton" text="VUHDO_I18N_FULL_DURATION" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="125" y="-275" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K528);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Button name="$parentSaveButton" text="VUHDO_I18N_SAVE" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-313" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_saveCustomDebuffOnClick(self);
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentDeleteButton" text="VUHDO_I18N_DELETE" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="125" y="-313" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_deleteCustomDebuffOnClick(self);
+							</OnClick>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+
+		</Frames>
+	</Frame>
+</Ui>
+

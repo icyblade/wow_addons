@@ -1,0 +1,22 @@
+## Interface: 50400
+## Author: d07.RiV (Iroared)
+## Title: ReforgeLite
+## Notes: Calculates optimal reforging for given weights/caps.
+## Version: 1.38
+## SavedVariables: ReforgeLiteDB
+## X-Curse-Packaged-Version: v1.38
+## X-Curse-Project-Name: ReforgeLite
+## X-Curse-Project-ID: reforgelite
+## X-Curse-Repository-ID: wow/reforgelite/mainline
+
+## LoadOnDemand: 1
+## LoadWith: Blizzard_ReforgingUI
+
+Localization.lua
+Scaling.lua
+GUI.lua
+ReforgeLite.lua
+ReforgeEngine.lua
+Parsers.lua
+Presets.lua
+TaskUI.lua
