@@ -1,0 +1,30 @@
+tag 5.4.19
+79acc8241ece42fe2a0fe011006141d7e791dc82
+subversion <svn@deadlybossmods.com>
+2014-08-29 17:28:07 +0200
+
+Tagging as 5.4.19
+
+
+--------------------
+
+subversion:
+	- increment version number to 5.4.19
+	- Omega via svn r11592: revert, I need to do more review and testing.
+	- Omega via svn r11591: here too
+	- Omega via svn r11588: Add timer for phase 3 to 4 transition
+	- Omega via svn r11586: Try to fix skin code for people who have too many mods installed (ie VERY SLOW loading).
+	- Omega via svn r11584: target scanner, if not in a group, scantimes always 1.
+	- Omega via svn r11581: Curse didn't see last commit, so clear redundant comment and push again
+	- Omega via svn r11579: oops, ok NOW 100%
+	- Omega via svn r11578: More fixes
+	- Omega via svn r11576: Fix a screwup.
+	- Omega via svn r11573: Fix small logical error, now seems good
+	- Omega via svn r11572: not sure when/why this was changed but remove invalid comment
+	- Omega via svn r11570: small change
+	- Omega via svn r11569: Remove broken hack that breaks my timeless isle mod. do it a different way
+	- Omega via svn r11568: Add important debug information
+	- nbluewiz via svn r11532: # Fix reflect warning.
+	- nbluewiz via svn r11531: # Revert changes. (C_Scenario.IsInScenario() is fucked up. shit blizzzzzzzzzzzzzzzzzzzzzzzzzzzzz!!!!!!!!!!!!!!!!)
+	- nbluewiz via svn r11530: # Better scenario check fix.
+	- Omega via svn r11527: incrim alpha
