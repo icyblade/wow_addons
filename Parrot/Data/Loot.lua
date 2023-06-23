@@ -160,9 +160,9 @@ local SILVER_AMOUNT_inv = SILVER_AMOUNT:gsub("%%d", "%%d+")
 local COPPER_AMOUNT_inv = COPPER_AMOUNT:gsub("%%d", "%%d+")
 
 
-local GOLD_ABBR = GOLD_AMOUNT:sub(4,4)
-local SILVER_ABBR = SILVER_AMOUNT:sub(4,4)
-local COPPER_ABBR = COPPER_AMOUNT:sub(4,4)
+local GOLD_ABBR = 'g'
+local SILVER_ABBR = 's'
+local COPPER_ABBR = 'c'
 if GOLD_ABBR:len() == 1 then
 	GOLD_ABBR = GOLD_ABBR:lower()
 end
