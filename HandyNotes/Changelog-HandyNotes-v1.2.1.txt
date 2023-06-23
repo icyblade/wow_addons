@@ -1,0 +1,19 @@
+------------------------------------------------------------------------
+r232 | stanzilla | 2013-09-17 16:34:15 +0000 (Tue, 17 Sep 2013) | 1 line
+Changed paths:
+   A /tags/v1.2.1 (from /trunk:231)
+
+Tagging as v1.2.1
+------------------------------------------------------------------------
+r231 | mysticalos | 2013-09-17 16:20:51 +0000 (Tue, 17 Sep 2013) | 1 line
+Changed paths:
+   M /trunk/HandyNotes.toc
+
+bump toc
+------------------------------------------------------------------------
+r230 | stanzilla | 2013-06-05 19:51:27 +0000 (Wed, 05 Jun 2013) | 1 line
+Changed paths:
+   M /trunk/HandyNotes.toc
+
+TOC Bump (from 40000, scary o.o) to get the latest Astrolabe
+------------------------------------------------------------------------

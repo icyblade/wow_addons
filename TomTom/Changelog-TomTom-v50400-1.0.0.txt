@@ -1,0 +1,15 @@
+tag v50400-1.0.0
+07ee6024f8a06f6d87a33dfd3a036d0db9f8baad
+Jim Whitehead <jnwhiteh@gmail.com>
+2013-09-12 07:26:09 +0200
+
+Tagging v50400-1.0.0
+
+
+--------------------
+
+Jim Whitehead:
+	- Update for 5.4
+James Whitehead II:
+	- Fix zone searching in commandlines
+	- Add updated zhCN localisation from ananhaid

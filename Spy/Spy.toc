@@ -1,0 +1,28 @@
+## Interface: 50400
+## Title: Spy
+## Version: 3.1.6
+## Notes: Detects and alerts you to the presence of nearby enemy players.
+## Notes-ptBR: Detecta e alerta você da presença de jogadores inimigos.
+## Creator: Immolation
+## Author: Slipjack
+## X-Credits-ptBR: Localization: Kasth
+## OptionalDeps:  Ace3, LibSharedMedia-3.0, 
+## SavedVariables: SpyDB
+## SavedVariablesPerCharacter: SpyPerCharDB
+
+#@no-lib-strip@
+Embeds.xml
+#@end-no-lib-strip@
+
+Spy.xml
+
+Locales\Spy-enUS.lua
+Locales\Spy-ptBR.lua
+
+Spy.lua
+Fonts.lua
+Colors.lua
+Widgets.lua
+WindowOrder.lua
+MainWindow.lua
+List.lua

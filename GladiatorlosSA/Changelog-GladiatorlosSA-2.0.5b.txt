@@ -1,0 +1,57 @@
+------------------------------------------------------------------------
+r64 | superk521 | 2013-10-07 09:51:34 +0000 (Mon, 07 Oct 2013) | 2 lines
+Changed paths:
+   A /tags/2.0.5b (from /trunk:63)
+
+tag as version 2.0.5b
+fix for custom alert options
+------------------------------------------------------------------------
+r63 | superk521 | 2013-10-07 09:46:11 +0000 (Mon, 07 Oct 2013) | 1 line
+Changed paths:
+   M /trunk/GladiatorlosSA.lua
+   M /trunk/options.lua
+
+fix for custom alert options
+------------------------------------------------------------------------
+r61 | superk521 | 2013-10-07 06:42:26 +0000 (Mon, 07 Oct 2013) | 1 line
+Changed paths:
+   M /trunk/Libs/AceAddon-3.0/AceAddon-3.0.lua
+   M /trunk/Libs/AceConfig-3.0/AceConfigDialog-3.0/AceConfigDialog-3.0.lua
+   M /trunk/Libs/AceDB-3.0/AceDB-3.0.lua
+   M /trunk/Libs/AceGUI-3.0/widgets/AceGUIContainer-TreeGroup.lua
+   M /trunk/Libs/AceGUI-3.0/widgets/AceGUIWidget-Button.lua
+   M /trunk/Libs/AceGUI-3.0/widgets/AceGUIWidget-DropDown.lua
+   M /trunk/Libs/AceGUI-3.0/widgets/AceGUIWidget-EditBox.lua
+   M /trunk/Libs/AceGUI-3.0/widgets/AceGUIWidget-Slider.lua
+
+update libs
+------------------------------------------------------------------------
+r60 | superk521 | 2013-10-07 06:39:30 +0000 (Mon, 07 Oct 2013) | 1 line
+Changed paths:
+   M /trunk/options.lua
+
+add hunter's Counter Shot
+------------------------------------------------------------------------
+r59 | superk521 | 2013-10-07 06:36:45 +0000 (Mon, 07 Oct 2013) | 1 line
+Changed paths:
+   A /trunk/Voice/countershot.ogg
+   A /trunk/Voice_enUS/countershot.ogg
+   M /trunk/options.lua
+   M /trunk/spelllist.lua
+
+add hunter's Counter Shot
+------------------------------------------------------------------------
+r58 | superk521 | 2013-10-07 06:00:58 +0000 (Mon, 07 Oct 2013) | 1 line
+Changed paths:
+   M /trunk/options.lua
+   M /trunk/spelllist.lua
+
+remove hunter's Readiness 
+------------------------------------------------------------------------
+r57 | superk521 | 2013-10-07 05:44:55 +0000 (Mon, 07 Oct 2013) | 1 line
+Changed paths:
+   M /trunk/GladiatorlosSA.lua
+   M /trunk/GladiatorlosSA.toc
+
+update for 5.4
+------------------------------------------------------------------------
