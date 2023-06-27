@@ -1,0 +1,17 @@
+﻿## Interface: 40300
+## LoadOnDemand: 1
+## Title: Lib: Babble-ItemSet-3.0
+## Notes: A library to help with localization of in-game item sets.
+## Notes-zhTW: 為本地化服務的函式庫 [套裝名稱]
+## Author: Arith
+## X-eMail: arithmandarjp@yahoo.co.jp
+## X-Category: Library
+## X-License: MIT
+## X-Curse-Packaged-Version: 4.3-release2
+## X-Curse-Project-Name: LibBabble-ItemSet-3.0
+## X-Curse-Project-ID: libbabble-itemset-3-0
+## X-Curse-Repository-ID: wow/libbabble-itemset-3-0/mainline
+
+LibStub\LibStub.lua
+lib.xml
+

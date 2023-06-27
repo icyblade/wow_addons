@@ -1,0 +1,1992 @@
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+    <HTML>
+    <HEAD>
+    <!--
+	All of these dialog windows should be opened at an appropriate fixed size and position on the screen.
+	
+	For the simple confirmation dialogs this means the window.open "features" parameter (the 3rd parameter)
+	should be set to:
+	
+	   "'menubar=0,directories=0,location=0,status=0,scrollbars=0,width=400,height=300,left='+((screen.width-400)/2)+',top='+(((screen.height-300)/2-100))"
+
+	For the dialog that lists feedback needing approval (the 'working' dialog) the 'features' parameter should be set to
+
+          "'menubar=0,directories=0,location=0,status=0,scrollbars=0,resizable=yes,width=1000,height=600,top=200,left='+((screen.width-1000/2))
+	
+    -->  
+    <script src="/js/jquery-1.4.2.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/js/QuickBaseClient.js"></script>
+	
+	<SCRIPT LANGUAGE="JavaScript" type="text/javascript" id="Reviewer">
+	</SCRIPT>
+	<SCRIPT LANGUAGE="JavaScript" type="text/javascript" id="Feedback">
+	</SCRIPT>
+	<SCRIPT LANGUAGE="JavaScript" type="text/javascript" id="Parent">
+	</SCRIPT>
+	<SCRIPT LANGUAGE="JavaScript" type="text/javascript" id="Reference">
+	</SCRIPT>
+	<SCRIPT LANGUAGE="JavaScript" type="text/javascript" id="Users">
+	</SCRIPT>
+	
+	<script language="Javascript" type="text/javascript"> 
+	var qdb = new QuickBaseClient("");
+	var vars = qdb.DoQuery(qdb.dbid, "{'3'.EX.'0'}", "3");
+	
+	var headerTableNode = qdb.selectSingleNode(vars, "/*/table/variables/var[@name='HeaderTable']");
+	var headerTable = qdb.text(headerTableNode);
+
+	var headerReviewers="https://g-pmo.quickbase.com/up/" +headerTable+ "/g/rc/ei/va/headerReviewers.js";
+	var headerFeedbacks="https://g-pmo.quickbase.com/up/" +headerTable+ "/g/rd/ei/va/headerFeedbacks.js";
+	var headerParentOR="https://g-pmo.quickbase.com/up/" +headerTable+ "/g/ri/ei/va/headerParentOR.js";
+	var headerRefOR="https://g-pmo.quickbase.com/up/" +headerTable+ "/g/rj/ei/va/headerRefOR.js";
+	var headerUsers="https://g-pmo.quickbase.com/up/" +headerTable+ "/g/re/ei/va/headerUsers.js";
+	
+	document.getElementById('Reviewer').src=headerReviewers;
+	document.getElementById('Feedback').src=headerFeedbacks;
+	document.getElementById('Parent').src=headerParentOR;
+	document.getElementById('Reference').src=headerRefOR;
+	document.getElementById('Users').src=headerUsers;
+	
+	$.getScript(headerReviewers);
+	$.getScript(headerFeedbacks);
+	$.getScript(headerParentOR);
+	$.getScript(headerRefOR);
+	$.getScript(headerUsers); 
+	
+	</script>
+	
+	<script language="JavaScript" type="text/JavaScript">
+
+    var configParameters = new Array();
+    configParameters.push("rid", "mode");
+
+    var redirectDFID = "2";
+
+    var approverXML;
+    var approverNodes;
+ //   var qdb = new QuickBaseClient("");
+    var NameValues;
+    var roles;
+	
+	var approverPMORID;
+    var milliToday;
+    $(init);
+    function init()
+    {
+        NameValues = qdb.parseQueryString();
+	    for(var i=0; i < configParameters.length; i++)
+		    {
+		    if(!(configParameters[i] in NameValues) || NameValues[configParameters[i]] == "")
+		        {
+		        alert("Please make sure to specify a '" + configParameters[i]+"' in the URL.");
+		        window.close();
+                return;
+		        }
+		    }
+    	milliToday = new Date();
+        milliToday = milliToday.getTime();
+        milliToday = milliToday - (milliToday % (24*3600000));	
+		
+		///////////////////////////////////////////////////////////////////////////////////
+		
+	    if(NameValues["mode"] == "submit")
+	        {
+			//Check that users have access and are Registered
+			var queryAccess = makeQuery([approverPrimaryRoleFID, "EX", "None", "AND", approverRefFID, "EX", NameValues["rid"]]);		
+	        
+			approverXMLAccess = qdb.DoQuery(approverDBID, queryAccess, "3.");
+			if(qdb.displayErrorAlert("Could not fetch reviewer records because:"))
+                {
+                window.close();
+                return;
+                }
+            approverNodesAccess = qdb.selectNodes(approverXMLAccess, "/*/table/records/record");
+            if(approverNodesAccess.length > 0)
+                {
+                alert("All reviewers must have access to Supplier Mgmt to proceed to the next status. Please contact the P&G PMO rep for assistance.");
+				window.close();
+                return;
+                }	
+			var queryRegistrationStatus = makeQuery([approverRegistrationStatusFID, "XEX", "Registered", "AND", approverRefFID, "EX", NameValues["rid"]]);		
+	        
+			approverXMLRegistrationStatus = qdb.DoQuery(approverDBID, queryRegistrationStatus, "3.");
+			if(qdb.displayErrorAlert("Could not fetch reviewer records because:"))
+                {
+                window.close();
+                return;
+                }
+            approverNodesRegistrationStatus = qdb.selectNodes(approverXMLRegistrationStatus, "/*/table/records/record");
+            if(approverNodesRegistrationStatus.length > 0)
+                {
+                alert("All reviewers must be registered with Intuit Quickbase to proceed to the next status. Please contact the P&G PMO rep for assistance.");
+				window.close();
+                return;
+                }
+				
+			//Query for Reviewers for this status	        
+			//Query for PMO Reviewers to receive cc message
+	        var queryPMO = makeQuery([approverTypeFID, "EX", "PMO", "AND", approverRefFID, "EX", NameValues["rid"]]);		
+	        
+			approverXMLPMO = qdb.DoQuery(approverDBID, queryPMO, "3." + NoPMOReviewersFID);
+			if(qdb.displayErrorAlert("Could not fetch reviewer records because:"))
+                {
+                window.close();
+                return;
+                }
+            approverNodesPMO = qdb.selectNodes(approverXMLPMO, "/*/table/records/record");
+            if(approverNodesPMO.length == 0)
+                {
+                alert("Please add at least 1 PMO Reviewer");
+				window.close();
+                return;
+                }
+            var NoPMOReviewers = getTextByFID(approverNodesPMO[0], NoPMOReviewersFID);
+	        if(parseInt(NoPMOReviewers) < 1)
+				{
+				alert("Please add at least 1 PMO Reviewer");
+				window.close();
+                return;
+				}
+			var query = makeQuery([approverTypeFID, "XEX", "PMO", "AND", approverRefFID, "EX", NameValues["rid"]]);
+		    approverXML = qdb.DoQuery(approverDBID, query, "3");	
+			if(qdb.displayErrorAlert("Could not fetch approver records because:"))
+                {
+                window.close();
+                return;
+                }
+            approverNodes = qdb.selectNodes(approverXML, "/*/table/records/record");
+
+			//Check data entry fields
+	        //query = makeQuery([parentDBID, "EX", NameValues["rid"]]);
+	        //clist = makeClist(["3", datePGRequestsSOWFID, dateTargetPGRequestsSOWFID]);
+			//parentXML = qdb.DoQuery(parentDBID, query, clist);       
+            //parentNodes = qdb.selectNodes(parentXML, "/*/table/records/record");
+			
+			//datePGRequestsSOW = allowDateKeys(getTextByFID(parentNodes[0], datePGRequestsSOWFID));
+			//dateTargetPGRequestsSOW = allowDateKeys(getTextByFID(parentNodes[0], dateTargetPGRequestsSOWFID));
+			
+			//if(datePGRequestsSOW == " ")
+			//	{
+			//	alert("hello");
+			//	$("#CheckFieldsdiv").show();
+			//	resizeByInnerDimensions("body");
+			//	$("#CheckField").bind("click", CancelRecord);
+			//	}
+            if(approverNodes.length == 0)
+                {
+                if(confirm("Do you only want to send this to the PMO for review? This will not be reviewed by finance or service management if you select OK. Please select cancel and add a finance or service manager reviewer if finance or the service manager needs to review this O&R"))
+                    {
+					for(var i = 0; i < approverNodesPMO.length; i++)
+                    {		
+				    //change status to send cc email to PMO
+                    qdb.EditRecord(approverDBID, getTextByFID(approverNodesPMO[i], "3") , [approverPMOStatusFID, "Approved"]);				
+                    if(qdb.displayErrorAlert("Could not set PMO status to Submitted to Others in " + approverDBID))
+                        {
+                        window.close();
+                        return;
+                        }               
+				    }
+					NameValues["mode"] = "submitPMO";
+                    }
+                else
+                    {
+					window.close();
+                    return;
+                    }
+                }
+            else
+                {
+                var fiveBusinessDaysOut = new Date();
+                fiveBusinessDaysOut.setDate(fiveBusinessDaysOut.getDate() + 7);
+                fiveBusinessDaysOut = fiveBusinessDaysOut.getTime();
+                fiveBusinessDaysOut = fiveBusinessDaysOut - (fiveBusinessDaysOut % (24*3600000));
+                for(var i = 0; i < approverNodes.length; i++)
+                    {
+                    //submitStatus = "Submitted for Approval";
+                    qdb.EditRecord(approverDBID, getTextByFID(approverNodes[i], "3") , [approverFeedBackStatusFID, submitStatus, approverTargetFeedbackDateFID, fiveBusinessDaysOut.toString()]);
+                    if(qdb.displayErrorAlert("Could not set status to  " + submitStatus + " in " + approverDBID))
+                        {
+                        window.close();
+                        return;
+                        }
+				    }	
+
+                if(approverNodes.length)
+                    {
+                    //submittedORStatus = "Submitted for Review"
+                    qdb.EditRecord(parentDBID, NameValues["rid"], [ORApprovalStatusFID, submittedORStatus, ORStatusFID, submittedORStatus, ORStatusTrackingFID, submittedORStatus, LastStatusChangeDateFID, milliToday.toString(), dateSubmittedFID, milliToday.toString()]);
+                    if(qdb.displayErrorAlert("Could not set O&R status to  " + submittedORStatus + " in " + parentDBID))
+                        {
+                        window.close();
+                        return;
+                        }                
+                    alert("Your O&R has been submitted for approval.");
+					window.opener.location.href = "?";
+					//window.opener.location.reload(true);
+                    window.close();
+                    return;
+                    }
+                }
+	        }
+    	
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+	    if(NameValues["mode"] == "feedback")
+	        {
+			//check that the PMO is not trying to act in the incorrect status
+			var queryPMO = makeQuery([approverTypeFID, "EX", "PMO", "AND", approverRefFID, "EX", NameValues["rid"], "AND", approverUserFieldFID, "TV", "_curuser_"]);
+			approverXML = qdb.DoQuery(approverDBID, queryPMO, "3.");
+			approverNodes = qdb.selectNodes(approverXML, "/*/table/records/record");
+			
+			if(approverNodes.length > 0)
+	            {
+	            alert("You cannot provide feedback for this O&R yet. Please wait for 'Submitted for PMO Review' Status.");
+	            window.close();
+				return;
+	            }
+			
+			//check that the user is providing feedback and have not already approved or provided feedback
+	        query = makeQuery([approverTypeFID, "XEX", "PMO", "AND", approverRefFID, "EX", NameValues["rid"], "AND", approverUserFieldFID, "TV", "_curuser_", "AND", approverActionFID, "EX", "Review and Approve"]);
+	        clist = makeClist(["3", approverFeedBackStatusFID]);
+			approverXML = qdb.DoQuery(approverDBID, query, clist);       
+            approverNodes = qdb.selectNodes(approverXML, "/*/table/records/record");
+			
+			for(var i = 0; i < approverNodes.length; i++)
+				{
+				approverFeedBackStatus = getTextByFID(approverNodes[i], approverFeedBackStatusFID);
+				
+				if(approverFeedBackStatus == "Approved")
+					{
+					alert("You cannot submit feedback since you have already approved this O&R.");
+					window.close();
+					return;
+					} 
+				if(approverFeedBackStatus == "Feedback Provided")
+					{
+					alert("You have already submitted your feedback for this O&R.");
+					window.close();
+					return;
+					} 					
+				}	
+	        if(qdb.displayErrorAlert("Could not fetch approver records because:"))
+                {
+                window.close();
+                return;
+                }
+            if(approverNodes.length == 0)
+	            {
+	            alert("You cannot provide feedback for this O&R because you are not listed as a Reviewer with an action of 'Review and Approve'");
+	            window.close();
+				return;
+	            }	
+				
+			//Check for Feedback Records before Submitting Feedback
+	        query = makeQuery([feedbackRefFID, "EX", NameValues["rid"], "AND", feedbackProviderFID, "TV", "_curuser_", "AND", feedbackSourceTableFID, "EX", feedbackSourceTableCriteria, "AND", feedbackStatusFID, "EX", "Pending"]);
+	        clist = makeClist(["3"]);
+			feedbackXML = qdb.DoQuery(feedbackDBID, query, clist);       
+            feedbackNodes = qdb.selectNodes(feedbackXML, "/*/table/records/record");
+			
+	        if(feedbackNodes.length == 0)
+	            {
+	            alert("Please Add Pending Feedback before selecting the 'Submit Feedback' Button");
+	            window.close();
+				return;
+	            }	
+            var strCSV = "";
+            for(i = 0; i < approverNodes.length; i++)
+                {
+                //feedbackStatus = "Feedback Provided";
+                strCSV += makeCSVCells([getTextByFID(approverNodes[i], "3"), feedbackStatus, milliToday.toString()]);
+                strCSV = strCSV.replace(/\,$/, "\n");
+                }
+            if(strCSV != "")
+                {
+                clist = makeClist(["3", approverFeedBackStatusFID, approverResponseDateFID]);
+                rids = new Array();
+                qdb.ImportFromCSV(approverDBID, strCSV, clist, rids, "0");
+                if(qdb.displayErrorAlert("Could not set status to  " + feedbackStatus + " in " + approverDBID))
+                    {
+                    window.close();
+                    return;
+                    }
+                //now we have to set the ORStatus in the parent table
+                query = makeQuery(["3", "EX", NameValues["rid"]]);
+                clist = makeClist([NoApproversFID, NoApproversProvidedFeedbackFID, NoApproversWhoApprovedFID]);
+                var orXML = qdb.DoQuery(parentDBID, query, clist);
+                orNodes = qdb.selectNodes(orXML, "/*/table/records/record");        
+                numApprovers = parseInt(getTextByFID(orNodes[0], NoApproversFID));
+                numApproversApproved = parseInt(getTextByFID(orNodes[0], NoApproversWhoApprovedFID));
+                numProvidedFeedback = parseInt(getTextByFID(orNodes[0], NoApproversProvidedFeedbackFID));
+				var orApprovalStatus = "Some Feedback Provided";
+                if(numApprovers == (numProvidedFeedback + numApproversApproved + 1))
+                    {
+                    var orStatus = "Feedback Sent to PM";
+					var orApprovalStatus = "All Feedback Provided";
+					qdb.EditRecord(parentDBID, NameValues["rid"], [ORApprovalStatusFID, orApprovalStatus, ORStatusFID, orStatus, ORStatusTrackingFID, orStatus, LastStatusChangeDateFID, milliToday.toString(), dateFeedbacktoPMFID, milliToday.toString()]);
+					alert("Your feedback has been submitted for review.");
+                    }
+				else
+					{
+					qdb.EditRecord(parentDBID, NameValues["rid"], [ORApprovalStatusFID, orApprovalStatus, ORStatusTrackingFID, "Feedback Provided", LastStatusChangeDateFID, milliToday.toString()]);
+					alert("Your feedback has been received and will be submitted for review when all Reviewers have completed their review.");
+					}
+                if(qdb.displayErrorAlert("Could not set O&R Review status to  " + orApprovalStatus + " in " + parentDBID))
+                    {
+                    window.close();
+                    return;
+                    }
+                window.opener.location.href = "?";
+                window.close();
+                return;
+                }
+            alert("You cannot submit feedback on this O&R because you are not listed as a Non-PMO Reviewer with an action of 'Review and Approve'");
+            window.close();
+            return;
+        }
+    	  
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		  
+        if(NameValues["mode"] == "approve")
+	        {
+			window.document.title = "Approve Feedback";
+
+			//check that the PMO is not trying to act in the incorrect status
+			queryPMO = makeQuery([approverTypeFID, "EX", "PMO", "AND", approverRefFID, "EX", NameValues["rid"], "AND", approverUserFieldFID, "TV", "_curuser_"]);
+			approverXML = qdb.DoQuery(approverDBID, queryPMO, "3.");
+			approverNodes = qdb.selectNodes(approverXML, "/*/table/records/record");
+			
+			if(approverNodes.length > 0)
+	            {
+	            alert("You cannot provide feedback for this O&R yet. Please wait for 'Submitted for PMO Review' Status.");
+	            window.close();
+				return;
+	            }
+				
+	        query = makeQuery([approverTypeFID, "XEX", "PMO", "AND", approverRefFID, "EX", NameValues["rid"], "AND", approverUserFieldFID, "TV", "_curuser_", "AND", approverActionFID, "EX", "Review and Approve"]);
+	        clist = makeClist(["3", approverFeedBackStatusFID]);
+			approverXML = qdb.DoQuery(approverDBID, query, clist);       
+            approverNodes = qdb.selectNodes(approverXML, "/*/table/records/record");
+			
+			for(var i = 0; i < approverNodes.length; i++)
+				{
+				approverFeedBackStatus = getTextByFID(approverNodes[i], approverFeedBackStatusFID);
+				
+				if(approverFeedBackStatus == "Approved")
+					{
+					alert("You have already approved this O&R.");
+					window.close();
+					return;
+					}  
+				if(approverFeedBackStatus == "Feedback Provided")
+					{
+					alert("You cannot approve since you have already submitted feedback for this O&R.");
+					window.close();
+					return;
+					} 					
+				}	
+	        if(qdb.displayErrorAlert("Could not fetch approver records because:"))
+                {
+                window.close();
+                return;
+                }
+
+	        if(approverNodes.length == 0)
+	            {
+	            alert("You cannot approve this O&R because you are not listed as a non-PMO reviewer with an action of 'Review and Approve'.");
+				window.close();
+	            return;
+	            }
+	        
+            
+            qdbTable = new QuNectTable("feedbacks");
+            qdbTable.dbid = feedbackDBID;
+            qdbTable.query = makeQuery([feedbackRefFID, "EX", NameValues["rid"], "AND", feedbackProviderFID, "TV", "_curuser_", "AND", feedbackSourceTableFID, "EX", feedbackSourceTableCriteria]);
+            qdbTable.cList = makeClist(["3", feedbackDescriptionFID, feedbackTypeFID, feedbackStatusFID]);
+            qdbTable.border = "1px";
+            qdbTable.columns =
+                [
+                {fid:feedbackTypeFID},
+                {fid:feedbackStatusFID},
+                {fid:feedbackDescriptionFID}         
+                ];        
+            qdbTable.display();
+            if(qdbTable.recordNodes.length == 0)
+                {
+                approvePendingFeedbacks();
+                }
+            else
+                {
+                // $(qdbTable.table).attr("width", 600);              
+                document.getElementById("working").style.display = "";
+				$("#pleaseWait").hide();
+                }
+            }
+			
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	    if(NameValues["mode"] == "submitPMO")
+	        {
+	        var query = makeQuery([approverTypeFID, "EX", "PMO", "AND", approverRefFID, "EX", NameValues["rid"]]);
+	        approverXML = qdb.DoQuery(approverDBID, query, "3");
+	        if(qdb.displayErrorAlert("Could not fetch Reviewer records because:"))
+                {
+                window.close();
+                return;
+                }
+            approverNodes = qdb.selectNodes(approverXML, "/*/table/records/record");
+            
+            var fiveBusinessDaysOut = new Date();
+            fiveBusinessDaysOut.setDate(fiveBusinessDaysOut.getDate() + 7);
+            fiveBusinessDaysOut = fiveBusinessDaysOut.getTime();
+            fiveBusinessDaysOut = fiveBusinessDaysOut - (fiveBusinessDaysOut % (24*3600000));
+            for(var i = 0; i < approverNodes.length; i++)
+                {
+                //submitStatus = "Submitted for Approval";
+                qdb.EditRecord(approverDBID, getTextByFID(approverNodes[i], "3") , [approverFeedBackStatusFID, submitStatus, approverTargetFeedbackDateFID, fiveBusinessDaysOut.toString()]);
+                if(qdb.displayErrorAlert("Could not set status to  " + submitStatus + " in " + approverDBID))
+                    {
+                    window.close();
+                    return;
+                    }
+                }
+            if(approverNodes.length)
+                {
+                //submittedORStatus = "Submitted for PMO Review"
+                qdb.EditRecord(parentDBID, NameValues["rid"], [ORStatusFID, "Submitted for PMO Review", ORStatusTrackingFID, "Submitted for PMO Review", LastStatusChangeDateFID, milliToday.toString(), dateSubmittedforPMOFID, milliToday.toString()]);
+                if(qdb.displayErrorAlert("Could not set O&R status to  " + submittedORStatus + " in " + parentDBID))
+                    {
+                    window.close();
+                    return;
+                    }                
+                alert("Your O&R has been submitted for PMO Review.");
+                window.opener.location.href = "?";
+				//window.opener.location.reload(true);
+                window.close();
+                return;
+                }
+	        }
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 	
+	    if(NameValues["mode"] == "feedbackPMO")
+	        {
+	        query = makeQuery([approverTypeFID, "EX", "PMO", "AND", approverRefFID, "EX", NameValues["rid"], "AND", approverUserFieldFID, "TV", "_curuser_", "AND", approverActionFID, "EX", "Review and Approve"]);
+	        clist = makeClist(["3"]);
+	        approverXML = qdb.DoQuery(approverDBID, query, clist);
+	        if(qdb.displayErrorAlert("Could not fetch approver records because:"))
+                {
+                window.close();
+                return;
+                }
+            approverNodes = qdb.selectNodes(approverXML, "/*/table/records/record");
+			
+	        if(approverNodes.length == 0)
+	            {
+	            alert("You cannot provide feedback for this O&R because you are not listed as a Reviewer with an action of 'Review and Approve'");
+	            window.close();
+				return;
+	            }
+				
+			//Check for Feedback Records before Submitting Feedback
+	        query = makeQuery([feedbackRefFID, "EX", NameValues["rid"], "AND", feedbackProviderFID, "TV", "_curuser_", "AND", feedbackSourceTableFID, "EX", feedbackSourceTableCriteria, "AND", feedbackStatusFID, "EX", "Pending"]);
+	        clist = makeClist(["3"]);
+			feedbackXML = qdb.DoQuery(feedbackDBID, query, clist);       
+            feedbackNodes = qdb.selectNodes(feedbackXML, "/*/table/records/record");
+			
+	        if(feedbackNodes.length == 0)
+	            {
+	            alert("Please Add Pending Feedback before selecting the 'Submit Feedback' Button");
+	            window.close();
+				return;
+	            }
+				
+            var strCSV = "";
+            for(i = 0; i < approverNodes.length; i++)
+                {
+                //feedbackStatus = "Feedback Provided";
+                strCSV += makeCSVCells([getTextByFID(approverNodes[i], "3"), feedbackStatus, milliToday.toString()]);
+                strCSV = strCSV.replace(/\,$/, "\n");
+                }
+            if(strCSV != "")
+                {
+                clist = makeClist(["3", approverFeedBackStatusFID, approverResponseDateFID]);
+                rids = new Array();
+                qdb.ImportFromCSV(approverDBID, strCSV, clist, rids, "0");
+                if(qdb.displayErrorAlert("Could not set status to  " + feedbackStatus + " in " + approverDBID))
+                    {
+                    window.close();
+                    return;
+                    }
+                //now we have to set the ORStatus in the parent table
+                query = makeQuery(["3", "EX", NameValues["rid"]]);
+                clist = makeClist([NoApproversFID, NoApproversProvidedFeedbackFID, NoApproversWhoApprovedFID]);
+                var orXML = qdb.DoQuery(parentDBID, query, clist);
+                orNodes = qdb.selectNodes(orXML, "/*/table/records/record");        
+                numApprovers = parseInt(getTextByFID(orNodes[0], NoApproversFID));
+                numApproversApproved = parseInt(getTextByFID(orNodes[0], NoApproversWhoApprovedFID));
+                numProvidedFeedback = parseInt(getTextByFID(orNodes[0], NoApproversProvidedFeedbackFID));
+                var orStatus = "Feedback Provided by PMO";
+                qdb.EditRecord(parentDBID, NameValues["rid"], [ORStatusFID, orStatus, ORStatusTrackingFID, orStatus, LastStatusChangeDateFID, milliToday.toString(), dateFeedbackfromPMOFID, milliToday.toString()]);
+                if(qdb.displayErrorAlert("Could not set O&R status to  " + orStatus + " in " + parentDBID))
+                    {
+                    window.close();
+                    return;
+                    }
+                alert("Your feedback has been submitted for review.");
+                window.opener.location.href = "?";
+                window.close();
+                return;
+                }
+            alert("You cannot submit feedback on this O&R because you are not listed as a PMO Reviewer with an action of 'Review and Approve'");
+            window.close();
+            return;
+			}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    	    
+        if(NameValues["mode"] == "approvePMO")
+	        {
+			window.document.title = "Approve Feedback";
+
+	        query = makeQuery([approverTypeFID, "EX", "PMO", "AND", approverRefFID, "EX", NameValues["rid"], "AND", approverUserFieldFID, "TV", "_curuser_", "AND", approverActionFID, "EX", "Review and Approve"]);
+	        approverXML = qdb.DoQuery(approverDBID, query, "3");
+	        if(qdb.displayErrorAlert("Could not fetch Reviewer records because:"))
+                {
+                window.close();
+                return;
+                }
+	        approverNodes = qdb.selectNodes(approverXML, "/*/table/records/record");
+	        if(approverNodes.length == 0)
+	            {
+	            alert("You cannot approve this O&R because you are not listed as a PMO Reviewer with an action of 'Review and Approve'.");
+                window.close();
+	            return;
+	            }
+		    		
+
+				 
+    	    document.getElementById("working2").style.display = "";
+            qdbTable = new QuNectTable("feedbacks");
+            qdbTable.dbid = feedbackDBID;
+            qdbTable.query = makeQuery([feedbackRefFID, "EX", NameValues["rid"], "AND", feedbackProviderFID, "TV", "_curuser_", "AND", feedbackSourceTableFID, "EX", feedbackSourceTableCriteria]);
+            qdbTable.cList = makeClist(["3", feedbackDescriptionFID, feedbackTypeFID, feedbackStatusFID]);
+            qdbTable.border = "1px";
+            qdbTable.columns =
+                [
+                {fid:feedbackTypeFID},
+                {fid:feedbackStatusFID},
+                {fid:feedbackDescriptionFID}         
+                ];        
+            qdbTable.display();
+            //$(qdbTable.table).attr("width", 600);              
+            $("#pleaseWait").hide();
+            }
+			
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    	    
+        if(NameValues["mode"] == "IBMsubmit")
+	        {
+				qdb.EditRecord(parentDBID, NameValues["rid"] , [ORStatusFID, "Submitted to Supplier", ORStatusTrackingFID, "Submitted to Supplier", LastStatusChangeDateFID, milliToday.toString(), dateSubmittedtoSupplierFID, milliToday.toString()]);
+				alert("You have submitted the O&R");
+				window.opener.location.reload(true);       
+				window.close();
+				return;
+			}
+			
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    	    
+		if(NameValues["mode"] == "Cancel")
+			{
+			window.document.title = "Please confirm";
+            $("#pleaseWait").hide();
+			$("#cancelalertdiv").show();
+			$("#cancel").bind("click", CancelRecord);
+			} 
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		if(NameValues["mode"] == "OnHold")
+			{
+			window.document.title = "Please confirm";
+            $("#pleaseWait").hide();
+			$("#OnHoldalertdiv").show();
+			$("#OnHold").bind("click", OnHold);
+			} 	
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		if(NameValues["mode"] == "OffHold")
+			{
+			window.document.title = "Please confirm";
+            $("#pleaseWait").hide();
+			$("#OffHoldalertdiv").show();
+			$("#OffHold").bind("click", OffHold);
+			}			
+        }
+
+var qdbTable;        
+        
+			function CancelRecord()
+	        {
+			 //now we have to get the Status in the parent table
+				var query = makeQuery(["3", "EX", NameValues["rid"]]);
+				var clist = makeClist([ORStatusFID]);
+				var orXML = qdb.DoQuery(parentDBID, query, clist);
+				orNodes = qdb.selectNodes(orXML, "/*/table/records/record");        
+				var orStatus = getTextByFID(orNodes[0], ORStatusFID);
+
+				qdb.EditRecord(parentDBID, NameValues["rid"] , [ORStatusFID, "O&R Canceled", ORStatusTrackingFID, "O&R Canceled", LastStatusChangeDateFID, milliToday.toString(), PreviousStatusFID, orStatus, dateCanceledFID, milliToday.toString()]);
+					
+				alert("You have canceled this O&R");
+				window.opener.location.href = "?";       
+				window.close();
+				return;
+			}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+  	function OnHold()
+	    {
+		//now we have to get the Status in the parent table
+		var query = makeQuery(["3", "EX", NameValues["rid"]]);
+		var clist = makeClist([ORStatusFID]);
+		var orXML = qdb.DoQuery(parentDBID, query, clist);
+		var orNodes = qdb.selectNodes(orXML, "/*/table/records/record");        
+		var orStatus = getTextByFID(orNodes[0], ORStatusFID);
+
+		qdb.EditRecord(parentDBID, NameValues["rid"] , [ORStatusFID, "O&R On Hold", ORStatusTrackingFID, "O&R On Hold", ORStatusChangeDateFID, milliToday.toString(), PreviousStatusFID, orStatus, dateOnHoldFID, milliToday.toString()]);
+		alert("You have placed this O&R On Hold");
+		window.opener.location.href = "?";       
+		window.close();
+		return;
+		}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+  	function OffHold()
+	    {
+		//now we have to get the Previous Status in the parent table
+		var query = makeQuery(["3", "EX", NameValues["rid"]]);
+		var clist = makeClist([PreviousStatusFID]);
+		var orXML = qdb.DoQuery(parentDBID, query, clist);
+		var orNodes = qdb.selectNodes(orXML, "/*/table/records/record");        
+		var orPreviousStatus = getTextByFID(orNodes[0], PreviousStatusFID);
+
+		qdb.EditRecord(parentDBID, NameValues["rid"] , [ORStatusFID, orPreviousStatus, ORStatusTrackingFID, "O&R Off Hold", ORStatusChangeDateFID, milliToday.toString(), dateOffHoldFID, milliToday.toString()]);
+		alert("You have taken this O&R Off Hold");
+		window.opener.location.href = "?";       
+		window.close();
+		return;
+		}
+		
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+    	   function approvePendingFeedbacks()
+        {            
+            
+            var strCSV = "";
+			var approvedStatus = "Approved";
+            milliNow = new Date();
+            milliNow = milliNow.getTime() - (milliNow.getTimezoneOffset() * 60000);
+            for(i = 0; i < approverNodes.length; i++)
+                {
+                //approvedStatus = "Approved"
+                strCSV += makeCSVCells([getTextByFID(approverNodes[i], "3"), approvedStatus, milliNow.toString(), milliToday.toString()]);
+                strCSV = strCSV.replace(/\,$/, "\n");
+                }
+            if(strCSV != "")
+                {
+                clist = makeClist(["3", approverFeedBackStatusFID, approverDateFID, approverResponseDateFID]);
+                rids = new Array();
+                qdb.ImportFromCSV(approverDBID, strCSV, clist, rids, "0");
+                if(qdb.displayErrorAlert("Could not set status to  " + approvedStatus + " in " + approverDBID))
+                    {
+                    window.close();
+                    return;
+                    }
+                //now we have to set the status in the feedback table
+                
+                var feedbackNodes = qdb.selectNodes(qdbTable.DOM, "/*/table/records/record");
+                
+                strCSV = "";
+                for(i = 0; i < feedbackNodes.length; i++)
+                    {
+                    //feedbackCompletedStatus = "Completed"
+                    strCSV += makeCSVCells([getTextByFID(feedbackNodes[i], "3"), feedbackCompletedStatus]);
+                    strCSV = strCSV.replace(/\,$/, "\n");
+                    }
+               
+                clist = makeClist(["3", feedbackStatusFID]);
+                qdb.ImportFromCSV(feedbackDBID, strCSV, clist, rids, "0");
+                if(qdb.displayErrorAlert("Could not set feedback status to  " + feedbackCompletedStatus + " in " + feedbackDBID))
+                    {
+                    window.close();
+                    return;
+                    }    
+					
+				var queryPMO = makeQuery([approverTypeFID, "EX", "PMO", "AND", approverRefFID, "EX", NameValues["rid"]]);	
+				approverXMLPMO = qdb.DoQuery(approverDBID, queryPMO, "3." + NoPMOReviewersFID);
+				if(qdb.displayErrorAlert("Could not fetch reviewer records because:"))
+					{
+					window.close();
+					return;
+					}				
+                //now we have to set the ORStatus in the parent table
+                query = makeQuery(["3", "EX", NameValues["rid"]]);
+                var clist = makeClist([NoApproversFID, NoApproversWhoApprovedFID, NoApproversProvidedFeedbackFID]);
+                var orXML = qdb.DoQuery(parentDBID, query, clist);
+                orNodes = qdb.selectNodes(orXML, "/*/table/records/record");        
+                var numApprovers = parseInt(getTextByFID(orNodes[0], NoApproversFID));
+                var numApproversApproved = parseInt(getTextByFID(orNodes[0], NoApproversWhoApprovedFID));
+				var numProvidedFeedback = parseInt(getTextByFID(orNodes[0], NoApproversProvidedFeedbackFID));
+                var orStatus = "Submitted for PMO Review";
+				var orApprovalStatus = "Approved";
+				if(numApprovers != numApproversApproved + 1)
+                    {
+					orApprovalStatus = "Some Approval Provided";
+					qdb.EditRecord(parentDBID, NameValues["rid"], [ORApprovalStatusFID, orApprovalStatus, ORStatusTrackingFID, "Approved", LastStatusChangeDateFID, milliToday.toString()]);
+					alert("This O&R has been Approved and will be sent to the Supplier when all Reviewers have Approved.");
+                    }
+				else if(numProvidedFeedback > 0)
+					{
+					orStatus = "Feedback Sent to PM";
+					orApprovalStatus = "All Feedback Provided";
+					qdb.EditRecord(parentDBID, NameValues["rid"], [ORStatusFID, orStatus, ORApprovalStatusFID, orApprovalStatus, ORStatusTrackingFID, orStatus, LastStatusChangeDateFID, milliToday.toString(), dateFeedbacktoPMFID, milliToday.toString()]);
+					alert("This O&R has been Submitted for Revision since one of the Reviewers had feedback for the Project Manager.");
+					}				
+				else
+					{
+					qdb.EditRecord(parentDBID, NameValues["rid"], [ORStatusFID, orStatus, ORApprovalStatusFID, orApprovalStatus, ORStatusTrackingFID, orStatus, LastStatusChangeDateFID, milliToday.toString(), dateSubmittedforPMOFID, milliToday.toString()]);
+					alert("This O&R has been Approved.");
+					approverNodesPMO = qdb.selectNodes(approverXMLPMO, "/*/table/records/record");	
+					for(var i = 0; i < approverNodesPMO.length; i++)
+						{		
+						//change status to send cc email to PMO
+						qdb.EditRecord(approverDBID, getTextByFID(approverNodesPMO[i], "3") , [approverPMOStatusFID, "Approved"]);				
+						if(qdb.displayErrorAlert("Could not set PMO status to Submitted to Others in " + approverDBID))
+							{
+							window.close();
+							return;
+							}               
+						}
+					}
+             	
+				if(qdb.displayErrorAlert("Could not set O&R status to  " + orStatus + " in " + parentDBID))
+                    {
+                    window.close();
+                    return;
+                    }
+                window.opener.location.href = "?";
+                window.close();
+                return;
+                }
+	        }          
+  
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+    function approvePendingPMOFeedbacks()
+        {            
+            
+            var strCSV = "";
+            milliNow = new Date();
+            milliNow = milliNow.getTime() - (milliNow.getTimezoneOffset() * 60000);
+            for(i = 0; i < approverNodes.length; i++)
+                {
+                //approvedStatus = "Approved"
+                strCSV += makeCSVCells([getTextByFID(approverNodes[i], "3"), approvedStatus, milliNow.toString(), milliToday.toString()]);
+                strCSV = strCSV.replace(/\,$/, "\n");
+                }
+            if(strCSV != "")
+                {
+                clist = makeClist(["3", approverFeedBackStatusFID, approverDateFID, approverResponseDateFID, ]);
+                rids = new Array();
+                qdb.ImportFromCSV(approverDBID, strCSV, clist, rids, "0");
+                if(qdb.displayErrorAlert("Could not set status to  " + approvedStatus + " in " + approverDBID))
+                    {
+                    window.close();
+                    return;
+                    }
+                //now we have to set the status in the feedback table
+                
+                var feedbackNodes = qdb.selectNodes(qdbTable.DOM, "/*/table/records/record");
+                
+                strCSV = "";
+                for(i = 0; i < feedbackNodes.length; i++)
+                    {
+                    //feedbackCompletedStatus = "Completed"
+                    strCSV += makeCSVCells([getTextByFID(feedbackNodes[i], "3"), feedbackCompletedStatus]);
+                    strCSV = strCSV.replace(/\,$/, "\n");
+                    }
+               
+                clist = makeClist(["3", feedbackStatusFID]);
+                qdb.ImportFromCSV(feedbackDBID, strCSV, clist, rids, "0");
+                if(qdb.displayErrorAlert("Could not set feedback status to  " + feedbackCompletedStatus + " in " + feedbackDBID))
+                    {
+                    window.close();
+                    return;
+                    }    
+                //now we have to set the ORStatus in the parent table
+                query = makeQuery(["3", "EX", NameValues["rid"]]);
+                var orStatus = "Approved by PMO";
+                qdb.EditRecord(parentDBID, NameValues["rid"], [ORStatusFID, orStatus, ORStatusTrackingFID, orStatus, LastStatusChangeDateFID, milliToday.toString(), dateApprovedbyPMOFID, milliToday.toString()]);
+                if(qdb.displayErrorAlert("Could not set O&R status to  " + orStatus + " in " + parentDBID))
+                    {
+                    window.close();
+                    return;
+                    }
+                alert("This O&R has been Approved by PMO.");
+                window.opener.location.href = "?";
+				//window.opener.location.reload(true);
+                window.close();
+                return;
+                }
+		}		
+
+    function makeClist(carray)
+    {
+    var period = "";
+    var result = "";
+    for(var i in carray)
+        {
+        result += period + carray[i];
+        period = ".";
+        }
+    return result;
+    }
+
+    function makeQuery(qarray)
+    {
+    var result = "";
+    for(var i = 0; i < Math.floor(qarray.length); i+=4)
+        {
+        result += "{'" + qarray[i] + "'." + qarray[i+1] + ".'" + qarray[i+2] + "'}";
+        if(qarray[i+3])
+            {
+            result += qarray[i+3];
+            }
+        }
+    return result;   
+    }
+
+    function makeCSVCells(cArray)
+    {
+    var result = "";
+    for(var i in cArray)
+        {
+        result += "\"" + cArray[i].replace(/\"/g, "\"\"") + "\",";
+        }
+    return result;       
+    }
+
+
+
+    function QuNectTable(place)
+        {
+        this.place = place;
+        var that = this;
+        
+    this.clear = function()
+        {
+        if(!this.table)return;
+        while(this.tbody.rows.length > 0)
+            {
+            this.tbody.deleteRow(0);
+            }
+        while(this.thead.rows.length > 0)
+            {
+            this.thead.deleteRow(0);
+            }
+        while(this.thead.rows.length > 0)
+            {
+            this.thead.deleteRow(0);
+            }
+        }
+
+
+    this.isRowDirty = function(thisRow, setValues)
+        {
+        for(var j = 0; j < this.columns.length; j++)
+            {
+            var data;
+            var tag = "";
+            if(thisRow.cells[j].childNodes[0].tagName)
+                tag = thisRow.cells[j].childNodes[0].tagName.toLowerCase();
+            if((tag == "input" || tag == "select") && this.columns[j].fid)
+                {
+                if(thisRow.cells[j].childNodes[0].style.display == "none")
+                    continue;
+                if(this.columns[j].field_type == "checkbox")
+                    {
+                    if(thisRow.cells[j].childNodes[0].checked)
+                        {
+                        data = "Yes";
+                        }
+                    else
+                        {
+                        data = "No";
+                        }
+                    }
+                else
+                    {
+                    data = thisRow.cells[j].childNodes[0].value;
+                    }
+                if(setValues)
+                    {
+                    thisRow.cells[j].origValue = data;
+                    }
+                else
+                    {
+                    if(data != thisRow.cells[j].origValue)
+                        {
+                        return true;
+                        }
+                    }
+                }
+            }
+        return false;
+        }
+
+    this.save = function()
+        {
+        var csvPayloads = new Object();
+        rowNumbers = new Object();
+        var rids;
+        for(var i = 0; i < this.tbody.rows.length; i++)
+            {   
+            var thisRow = this.tbody.rows[i];
+            if(!this.isRowDirty(thisRow, false))
+                {
+                continue;
+                }        
+            var strCSV = "";
+            var cList = "3";
+            strCSV += "\"" + thisRow.rid + "\",";
+            for(var j = 0; j < this.columns.length; j++)
+                {
+                var data;
+                var tag = "";
+                if(thisRow.cells[j].childNodes[0].tagName)
+                    tag = thisRow.cells[j].childNodes[0].tagName.toLowerCase();
+                if((tag == "input" || tag == "select") && this.columns[j].fid)
+                    {
+                    if(thisRow.cells[j].childNodes[0].style.display == "none")
+                        {
+                        continue;
+                        }
+                    cList += "." + this.columns[j].fid;
+                    if(this.columns[j].field_type == "checkbox")
+                        {
+                        data = thisRow.cells[j].childNodes[0].checked.toString();                
+                        }
+                    else
+                        {
+                        data = thisRow.cells[j].childNodes[0].value;
+                        if(this.columns[j].required == "1")
+                            {
+                            if(data == "")
+                                {
+                                alert("Please enter a value for the required field: '" + this.columns[j].label + "'.");
+                                thisRow.cells[j].childNodes[0].focus();
+                                return false;
+                                }
+                            }
+                        }
+                    strCSV += "\"" + data.replace(/\"/, "\"\"") + "\",";
+                    }
+                }
+            strCSV += "\n";
+            if(rowNumbers[cList] == undefined)
+                rowNumbers[cList] = new Array();
+            rowNumbers[cList].push(i);
+            if(csvPayloads[cList] == undefined)
+                csvPayloads[cList] = "";
+            csvPayloads[cList] += strCSV;
+            }
+        var importedRecords = 0;   
+        for(cList in csvPayloads)
+            {
+            rids = new Array();
+            qdb.ImportFromCSV(this.dbid, csvPayloads[cList], cList, rids, "0");
+            if(qdb.displayErrorAlert("Could not save records marked in pink because:"))
+                {
+                for(j = 0; j < rowNumbers[cList].length; j++)
+                    {
+                    this.tbody.rows[rowNumbers[cList][j]].style.backgroundColor = "pink";
+                    }
+                }
+            else
+                {
+                importedRecords += rids.length;
+                for(j = 0; j < rids.length; j++)
+                    {
+                    this.tbody.rows[rowNumbers[cList][j]].rid = rids[j];
+                    }
+                }
+            }
+
+
+        if(importedRecords == 0)
+            {
+            alert("No changes to save.");
+            return false;
+            }
+
+        
+        this.isDirty(true)
+        alert("Changes to " + importedRecords + " records have been saved.");
+        return true;
+        }
+        
+    this.addRow = function(newRow)
+        {
+        if(newRow)
+            this.addRowType = "new";
+        else
+            this.addRowType = "existing";
+        this.insertNewRow();
+        this.createColumns(this.columns);
+        }
+
+    this.insertNewRow = function()
+        {
+        this.newRow = this.tbody.insertRow(-1);
+        if((this.tbody.rows.length % 2) == 0)
+            {
+            this.newRow.className = "ev";
+            }
+        else
+            {
+            this.newRow.className = "od";
+            }
+        if(this.addRowType == "new")
+            {
+            this.newRow.rid = "";
+            }
+        else
+            {
+            this.newRow.rid = getTextByFid(this.recordNodes[this.row], "3");
+            }
+        }
+        
+        
+    this.checkRWStatus = function(column)
+        {
+        if(column.display == "input")
+            return true;
+        if(column.display == "inputOnNew" && this.addRowType == "new")
+            return true;
+        if(typeof(column.display) == "function")
+            return column.display(this);
+        }
+
+    this.createColumns = function(columns)
+        {
+        for(this.column = 0; this.column < columns.length; this.column++)
+            {
+            this.newCell = this.newRow.insertCell(-1);
+            applyCellFormat(this.newCell, columns[this.column]);
+            if(columns[this.column].fieldNode)
+                {
+                if(this.addRowType == "new")
+                    {
+                    cellHTML = columns[this.column].default_value;
+                    }
+                else
+                    {
+                    cellHTML = renderField(this.DOM, qdb.selectSingleNode(this.recordNodes[this.row], "f[@id="+columns[this.column].fid+"]"), columns[this.column]);
+                    }
+                if(this.checkRWStatus(columns[this.column]))
+                    {
+                    var inputNode;
+                    var choices = qdb.selectNodes(columns[this.column].fieldNode, "choices/choice");
+                    if(choices.length)
+                        {
+                        inputNode = document.createElement("select");
+                        var choiceNode = document.createElement("option");
+                        inputNode.appendChild(choiceNode);
+                        choiceNode.innerText = "";
+                        for(var i = 0; i < choices.length; i++)
+                            {
+                            choiceNode = document.createElement("option");
+                            choiceNode.innerText = qdb.text(choices[i]);
+                            choiceNode.value = choiceNode.innerText;
+                            if(choiceNode.innerText == cellHTML)
+                                {
+                                choiceNode.setAttribute("selected", "1");
+                                }
+                            inputNode.appendChild(choiceNode);
+                            }
+                        if(columns[this.column].onchange)
+                            {
+                            inputNode.onchange = columns[this.column].onchange;
+                            }
+                        }
+                    else if(columns[this.column].base_type == "bool")
+                        {
+                        inputNode = document.createElement("input");
+                        inputNode.setAttribute("type", "checkbox");
+                        if(cellHTML == "Yes" || cellHTML == "1")
+                            {
+                            inputNode.checked = true;
+                            cellHTML = "Yes";
+                            }
+                        else
+                            {
+                            inputNode.checked = false;
+                            cellHTML = "No";
+                            }
+                        }
+                    else if(columns[this.column].mastag != "")
+                        {
+                        inputNode = document.createElement("select");
+                        choiceNode = document.createElement("option");
+                        inputNode.appendChild(choiceNode);
+                        choiceNode.innerText = "";
+                        for(i = 0; i < columns[this.column].displayChoices.length; i++)
+                            {
+                            choiceNode = document.createElement("option");
+                            choiceNode.innerText = qdb.text(columns[this.column].displayChoices[i]);
+                            choiceNode.value = qdb.text(columns[this.column].valueChoices[i]);;
+                            if(choiceNode.value == cellHTML)
+                                {
+                                choiceNode.setAttribute("selected", "1");
+                                }
+                            inputNode.appendChild(choiceNode);
+                            }
+                        }
+                    else
+                        {
+                        inputNode = document.createElement("input");
+                        if(columns[this.column].size)
+                            {
+                            inputNode.size = columns[this.column].size;
+                            }
+                        if(columns[this.column].base_type == "float")
+                            {
+                            inputNode.onkeypress = allowNumberKeys;
+                            }
+                        if(cellHTML == "&nbsp;")
+                            cellHTML = "";
+                        inputNode.value = cellHTML;
+                        }
+                    this.newCell.appendChild(inputNode);
+                    this.newCell.origValue = cellHTML;
+                    }
+                else
+                    {
+                    if(columns[this.column].mastag != "" && columns[this.column].displayChoices)
+                        {
+                        for(i = 0; i < columns[this.column].displayChoices.length; i++)
+                            {
+                            if(qdb.text(columns[this.column].valueChoices[i]) == cellHTML)
+                                {
+                                cellHTML = qdb.text(columns[this.column].displayChoices[i]);
+                                break;
+                                }
+                            }
+                        }
+                    if(cellHTML == "")
+                        cellHTML = "&nbsp;";
+                    this.newCell.innerHTML = cellHTML;
+                    }
+                }
+            else if(columns[this.column].evaluate)
+                {
+                try
+                    {
+                    this.newCell.innerHTML = eval(columns[this.column].evaluate);
+                    }
+                catch(exception)
+                    {
+                    this.newCell.innerHTML = exception.message;
+                    }
+                }
+            else if(columns[this.column].call)
+                {
+                columns[this.column].call(this);
+                }
+            else if(columns[this.column].display == "checkbox")
+                {
+                inputNode = document.createElement("input");
+                inputNode.setAttribute("type", "checkbox");
+                this.newCell.appendChild(inputNode);
+                }
+            else if(columns[this.column].display == "view")
+                {
+                inputNode = document.createElement("a");
+                inputNode.setAttribute("href", this.dbid + "?a=dr&rid=" + this.newRow.rid);
+                inputNode.setAttribute("target", "_blank");
+                var linkNode = this.newCell.appendChild(inputNode);
+                inputNode = document.createElement("img");
+                inputNode.setAttribute("src", "/i/vr.gif");
+                linkNode.appendChild(inputNode);
+                }
+            }
+        }
+       
+    this.confirmExit = function()
+        {
+        if(that.isDirty(false))
+            {
+            var msg = "Are you sure you want to lose changes to your time entries?";
+            if(window.event)
+                {
+                window.event.returnValue = msg;
+                }
+            else
+                {
+                return msg;
+                }
+            }
+        }
+        
+    this.isDirty = function(setValues)
+        {
+        for(var i = 0; i < this.tbody.rows.length; i++)
+            {  
+            var thisRow = this.tbody.rows[i];    
+            if(this.isRowDirty(thisRow, setValues) && !setValues)
+                {
+                return true;
+                }
+            }
+        return false;
+        }
+
+    this.makeCList = function()
+    {
+    this.cList = "3";
+        for(var column = 0; column < this.columns.length; column++)
+            {
+            if(this.columns[column].fid)
+                this.cList += "." + this.columns[column].fid;
+            }
+    }
+
+      
+    this.display = function()
+            {
+            if(!this.table)
+                {
+                this.table = document.createElement("table");
+                if(!this.container)
+                    this.container = document.getElementById(this.place);
+                this.container.appendChild(this.table);
+                if(this.border)
+                    {
+                    this.table.border = this.border;
+                    }
+                if(this.tableKeyUpHandler)
+                    {
+                    this.table.onkeyup = this.tableKeyUpHandler;
+                    }
+                this.table.cellSpacing = "0px";
+                this.thead = document.createElement("thead");
+                this.table.appendChild(this.thead);
+                this.tfoot = document.createElement("tfoot");
+                this.table.appendChild(this.tfoot);
+                this.tbody = document.createElement("tbody");
+                this.table.appendChild(this.tbody);
+                }
+            else
+                {
+                this.clear();
+                }
+            if(!this.query)this.query = "";
+            if(!this.cList)
+                {
+                this.makeCList();
+                }
+            //need to fill out the cList is it's empty
+            if(!this.sList)this.sList = "";
+            if(!this.options)this.options = "";
+            var xPath = "/*/table/records/record";
+            if(typeof this.dbid != 'string')
+                {
+                this.DOM = this.dbid;
+                xPath += this.query;
+                }
+            else
+                {
+                this.DOM = qdb.DoQuery(this.dbid, this.query, this.cList, this.sList, this.options);
+                if(qdb.displayErrorAlert("Could not get records from " + this.dbid + " because:"))
+                    {
+                    return;
+                    }
+                }
+            //Now we need to build the table
+            //we need to go through the column array of arrays and fill out the ordinal value of the column in the DOM
+            this.fieldNodes = qdb.selectNodes(this.DOM, "/*/table/fields/field");
+            this.recordNodes = qdb.selectNodes(this.DOM, xPath);
+            attachFieldNodes();
+            
+            if(this.headerRows)
+                {
+                for(var headerRowCounter = 0; headerRowCounter < this.headerRows.length; headerRowCounter++)
+                    {
+                    this.newRow = this.thead.insertRow(-1);
+                    for(var column = 0; column < this.headerRows[headerRowCounter].length; column++)
+                        {
+                        this.newCell = this.newRow.insertCell(-1);
+                        if(this.headerRows[headerRowCounter][column].rowspan)
+                            {
+                            this.newCell.rowSpan = this.headerRows[headerRowCounter][column].rowspan;
+                            }
+                        if(this.headerRows[headerRowCounter][column].colspan)
+                            {
+                            this.newCell.colSpan = this.headerRows[headerRowCounter][column].colspan;
+                            }
+                        if(this.headerRows[headerRowCounter][column].nowrap)
+                            {
+                            this.newCell.noWrap = true;
+                            }
+                        this.newCell.innerText = this.headerRows[headerRowCounter][column].label;
+                        if(this.newCell.innerText == "")
+                            this.newCell.innerHTML = "&nbsp;"
+                        if(this.headerRows[headerRowCounter][column].fontWeight)
+                            {
+                            this.newCell.style.fontWeight = this.headerRows[headerRowCounter][column].fontWeight;
+                            }
+                        if(this.headerRows[headerRowCounter][column].textAlign)
+                            {
+                            this.newCell.style.textAlign = this.headerRows[headerRowCounter][column].textAlign;
+                            }
+                        if(this.headerRows[headerRowCounter][column].redstar)
+                            {
+                            var newSpan = document.createElement("span");
+                            newSpan.className = "rqrd";
+                            newSpan.innerText = "*";
+                            this.newCell.appendChild(newSpan);
+                            }
+                        }
+                    }
+                }
+            else
+                {
+                //Now lets lay down the column headings
+                this.newRow = this.thead.insertRow(-1);            
+                for(var column = 0; column < this.columns.length; column++)
+                    {
+                    this.newCell = this.newRow.insertCell(-1);
+                    this.newCell.innerText = this.columns[column].label;
+                    if(this.columns[column].redstar)
+                        {
+                        var newSpan = document.createElement("span");
+                        newSpan.className = "rqrd";
+                        newSpan.innerText = "*";
+                        this.newCell.appendChild(newSpan);
+                        }
+                    }
+                    
+                }
+            //this will be the totals row
+            if(this.totals)
+                {
+                this.newRow = this.tfoot.insertRow(-1);
+                for(column = 0; column < this.columns.length; column++)
+                    {
+                    this.newCell = this.newRow.insertCell(-1);
+                    this.newCell.align = "right";
+                    }
+                this.newRow.style.backgroundColor = "silver";
+                }
+            for(this.row = 0; this.row < this.recordNodes.length; this.row++)
+                {
+                this.addRow(false);
+                }
+            if((this.recordNodes.length == 0) && (this.defaultRows))
+                {        
+                for(var row = 0; row < this.defaultRows.length; row++)
+                    {
+                    this.newRow = this.tbody.insertRow(-1);
+                    for(var column = 0; column < this.columns.length; column++)
+                        {
+                        this.newCell = this.newRow.insertCell(-1);
+                        applyCellFormat(this.newCell, this.columns[column]);
+                        this.newCell.innerText = this.defaultRows[row][column];
+                        }
+                    }
+                }
+            }
+        
+        function allowNumberKeys(e)
+        {
+        if (!e) var e = window.event;
+        var keynum;
+        var keychar;
+        var numcheck;
+        
+        if(window.event) // IE
+            {
+            keynum = e.keyCode;
+            }
+        else if(e.which) // Netscape/Firefox/Opera
+            {
+            keynum = e.which;
+            }
+        if((keynum < 48) || (keynum == undefined))
+            return true;
+        keychar = String.fromCharCode(keynum);
+        numcheck = /[\d\.]/;
+        return numcheck.test(keychar);
+        }
+        
+        function applyCellFormat(cell, column)
+            {
+            if(column.align)cell.align = column.align;
+            if(column.nowrap)cell.noWrap = column.nowrap;
+            if(column.colspan)cell.colSpan = column.colspan;
+            if(column.backgroundcolor)
+                {
+                if(column.backgroundcolor.match(/fid(\d+)(\#[0-9A-F]{6})$/))
+                    {
+                    if(getTextByFid(that.recordNodes[that.row], RegExp.$1) == "1")
+                        {
+                        that.newRow.style.backgroundColor = RegExp.$2;
+                        }
+                    }
+                }
+            }
+        
+        function attachFieldNodes()
+            {
+            scanColumnsForFIDMatch(that.columns);
+            }
+            
+        function scanColumnsForFIDMatch(columns)
+            {
+            for(var column = 0; column < columns.length; column++)
+                {
+                for(var i=0; i < that.fieldNodes.length; i++)
+                    {
+                    var fid = qdb.text(qdb.selectSingleNode(that.fieldNodes[i], "@id"));
+                    if(fid == columns[column].fid)
+                        {
+                        attachColumnProps(columns[column], that.fieldNodes[i])
+                        }
+                    }
+                }
+            }
+            
+            
+        function attachColumnProps(column, fieldNode)
+            {
+            if(!column.label)
+                column.label = getNodeText(fieldNode, "label");
+            column.fieldNode = fieldNode;
+            column.field_type = getNodeText(fieldNode, "@field_type");
+            column.base_type = getNodeText(fieldNode, "@base_type");
+            column.target_dbid = getText(fieldNode, "target_dbid");
+            column.target_fid = getText(fieldNode, "target_fid");
+            column.allowHTML = getText(fieldNode, "allowHTML");
+            column.comma_start = getText(fieldNode, "comma_start");
+            column.decimal_places = getText(fieldNode, "decimal_places");
+            column.currency_symbol = getText(fieldNode, "currency_symbol");
+            column.currency_format = getText(fieldNode, "currency_format");
+            column.default_value = getText(fieldNode, "default_value");
+            column.required = getText(fieldNode, "required");
+            column.mastag = getText(fieldNode, "mastag");
+            if(column.mastag != "" && mastags[column.mastag])
+                {
+                //we need to get all the master records
+                //so we can get the parent DBID then a parent schema, then the schema of the master table
+                //then we need to formulate a query to pull the key field and a proxy field
+                column.masterDOM = qdb.DoQuery(mastags[column.mastag].dbid, mastags[column.mastag].query, mastags[column.mastag].keyfid + "." + mastags[column.mastag].proxyfid, mastags[column.mastag].proxyfid);
+                column.displayChoices = qdb.selectNodes(column.masterDOM, "/*/table/records/record/f[@id="+mastags[column.mastag].proxyfid+"]");
+                column.valueChoices = qdb.selectNodes(column.masterDOM, "/*/table/records/record/f[@id="+mastags[column.mastag].keyfid+"]");
+                }
+            }
+            
+            
+        function renderField(DOM, fieldNode, column)
+        {
+            var data = fieldNode;
+            if(data.childNodes.length == 0)
+               {
+                data="&nbsp;";
+                }
+            else if(column.field_type == "timestamp" || column.field_type == "date")
+               {
+                data = qdb.format(data.childNodes[0].nodeValue, "date");           
+                }
+            else if(column.field_type == "timeofday")
+                {
+                data = qdb.format(data.childNodes[0].nodeValue, "timeofday");            
+                }
+            else if(column.field_type == "file")
+                {
+                 var url = qdb.selectSingleNode(data, "url");
+                 if(url)
+                   {
+                   data = url.childNodes[0].nodeValue;
+                   if(data.match(/jpe?g$|gif$|png$/i))
+                       {
+                       data = "<img src='" + data + "'>";
+                       }
+                    }
+                 else
+                    {
+                    data = "";
+                    }
+                 }
+            else if(column.field_type == "dblink")
+                 {
+                 var url = "API_GenResultsTable&query={'"+column.target_fid+"'.EX.'" + data.childNodes[0].nodeValue + "'}&options=nvw.ned.phd.nfg";
+                 data = qdb.GetURL(column.target_dbid, url);
+                 }
+            else if(column.field_type == "text")
+                {
+                 data="";
+                 var dataNodes = qdb.selectNodes(fieldNode, "text() | BR");
+                 for(var k = 0; k < dataNodes.length; k++)
+                     {
+                     var dataNode = dataNodes[k];
+                     if(dataNode.nodeType == 3)
+                        {  
+                         if (column.allowHTMLnode == 1)
+                           {
+                           data += dataNode.nodeValue;
+                           }
+                         else
+                           {                 
+                            var dataText = dataNode.nodeValue.replace(/&/g, "&amp;");
+                            dataText = dataText.replace(/>/g, "&gt;");
+                            dataText = dataText.replace(/</g, "&lt;");
+                            dataText = dataText.replace(/\"/g, "\&quot;");
+                            data += dataText;
+                           }
+                        }
+                     else
+                        {
+                         data += "<BR>\r\n";
+                         }
+                     }
+                 }
+            else if(column.base_type == "float")
+                 {
+                  var currency_symbol = "";
+                  var currency_format = 0;
+                  if(column.commas)
+                     {
+                      commas=parseInt(column.commas);
+                      }
+                  else
+                      {
+                       commas = 0;
+                       }
+                  if(column.decimal_places)
+                     {
+                      var decimal_places=parseInt(column.decimal_places);
+                      }
+                  else
+                      {
+                       decimal_places= undefined;
+                       }
+                  data=data.childNodes[0].nodeValue;
+                  var divideByHundred = data.match(/%/);
+                  data = data.replace(/[\,%]/g, "");   
+                  if(column.field_type == "percent" && !divideByHundred)
+                     {
+                     data = parseFloat(data) * 100;
+                     }
+                  else
+                     {
+                     data = parseFloat(data);
+                     }
+                    if(decimal_places != undefined)
+                       {
+                        data = data.toFixed(decimal_places);
+                       }
+                    else
+                        {
+                        data = data.toString()
+                        }
+                  if(column.field_type == "currency")
+                     {
+                     if(column.currency_format == "1")
+                         {
+                         data = column.currency_symbol + data;
+                         }
+                     else if(column.currency_format == "2")
+                         {
+                         data = data + " " + column.currency_symbol;
+                         }
+                     else
+                         {
+                         data = column.currency_symbol + data;
+                         }                
+                     }
+                  if(column.commas)
+                     {
+                     if(!data.match(/\./))
+                         {
+                         if(data.match(/(\d)(\d{3})$/))
+                             {
+                             data = data.replace(/(\d)(\d{3})$/,RegExp.$1 + "," + RegExp.$2);
+                             }
+                         }
+                     else
+                         {
+                         if(data.match(/(\d)(\d{3}\.)/))
+                             {
+                             data = data.replace(/(\d)(\d{3}\.)/,RegExp.$1 + "," + RegExp.$2);
+                             }
+                         }
+                     while(data.match(/(\d)(\d{3},)/))
+                         {
+                         data = data.replace(/(\d)(\d{3},)/,RegExp.$1 + "," + RegExp.$2);
+                         }
+                     }            
+                  if(column.field_type == "percent")
+                      {
+                       data += "%";
+                       }
+                  }        
+            else if(column.field_type == "userid")
+                 {
+                 var luserID = qdb.selectSingleNode(DOM, "/*/table/lusers/luser[@id='"+data.childNodes[0].nodeValue+"']");
+                 if(luserID)
+                     {                        
+                     data = qdb.text(luserID);
+                     }
+                 else
+                     {
+                     data=data.childNodes[0].nodeValue;
+                     }
+                 }        
+            else if(column.base_type == "bool")
+                  {
+                  if(data.childNodes[0].nodeValue == "0")
+                      {
+                       data = "No";
+                       }
+                   else
+                       {
+                        data = "Yes"
+                       }
+                  }
+            else
+                 {
+                  data=data.childNodes[0].nodeValue;
+                  }
+            return data;
+            }
+        }
+
+    function addOnKeyUpHandler(table)
+        {
+        table.newRow.onkeyup = updateWSPRow;
+        table.newRow.onkeyup(table.newRow);
+        }
+        
+        
+        function getTextByFid(recordNode, Fid)
+        {
+        return getNodeText(recordNode, "f[@id=" + Fid + "]");
+        }
+        
+        var millisecondsPerDay = 24 * 3600 * 1000;
+        
+        function todayString()
+        {
+        var dat=new Date();
+        return dateToString(dat);
+        }
+        
+        function dateToString(dat)
+        {
+        if(typeof dat == 'string')
+            {
+            dat = parseInt(dat);
+            }
+        if(typeof dat == 'number')
+            {
+            dat = new Date(dat);
+            }
+        var mm=dat.getUTCMonth()+1;
+        var dd=dat.getUTCDate();
+        var yy=dat.getUTCFullYear();
+        return mm+"-"+dd+"-"+yy;
+        }
+        
+        function sundayDateString(milliOrStringDate, milliseconds)
+        {
+        var dat;
+        if(milliOrStringDate != undefined)
+            {
+            if(typeof milliOrStringDate == "string")
+                {
+                if(milliOrStringDate.match(/\d+[\-\/]/))
+                    {
+                    milliOrStringDate = milliOrStringDate.replace(/-/g, "/");
+                    milliOrStringDate = Date.parse(milliOrStringDate);
+                    }
+                else
+                    {
+                    milliOrStringDate = parseInt(milliOrStringDate)
+                    }
+                }
+            if(milliseconds)
+                {
+                milliOrStringDate += milliseconds;
+                }
+            dat = new Date(milliOrStringDate);
+            }
+        else
+            {
+            dat = new Date();
+            }
+        dat.setTime(dat.getTime() - (millisecondsPerDay * dat.getDay()));
+        return dateToString(dat);
+        }
+        
+        function getText(node, xpath)
+        {
+        var txtnode = qdb.selectSingleNode(node, xpath);
+        if(txtnode)return qdb.text(txtnode);
+        return "";
+        }
+        
+        function getNodeText(node, xpath, debugMessage)
+        {
+        var txtnode = qdb.selectSingleNode(node, xpath);
+        if(txtnode)return qdb.text(txtnode);
+        if(debugMessage == undefined) debugMessage = "";
+        alert("Could not find node at " + xpath + " " + debugMessage);
+        }
+        
+        
+        
+        function makeNumber(numberString)
+        {
+        numberString = numberString.replace(/[^0-9\.\-]/g, "");
+        if(numberString == "")
+            return 0;
+        return parseFloat(numberString);
+        }
+        
+        
+        
+        function allowDateKeys(e)
+        {
+        var keynum;
+        var keychar;
+        var numcheck;
+        
+        if(window.event) // IE
+            {
+            keynum = e.keyCode;
+            }
+        else if(e.which) // Netscape/Firefox/Opera
+            {
+            keynum = e.which;
+            }
+        keychar = String.fromCharCode(keynum);
+        
+        numcheck = /[\d\-\/]/;
+        return numcheck.test(keychar);
+        }
+        
+        function formatCurrency(numberString, nullAsBlank)
+        {
+        if(nullAsBlank && numberString == "")
+            return "";
+        if(typeof numberString == "number")
+            {
+            numberString = numberString.toFixed(2);
+            }
+        if(numberString == "")
+            {
+            return "$0.00";
+            }
+        if(numberString.match(/\./))
+            {
+            numberString += "00";
+            numberString = numberString.substr(0, numberString.indexOf(".") + 3);
+            }
+        else
+            {
+            numberString += ".00";
+            }
+        while(numberString.match(/\d\d\d\d[\.\,]/))
+            {
+            numberString = numberString.replace(/(\d)(\d\d\d[\.\,])/, "$1,$2"); 
+            }
+        return "$" + numberString;
+        }
+        
+        function formatPerCent(strIn, nullAsBlank)
+        {
+        if(nullAsBlank && strIn == "")
+            return "";
+        return makeNumber(strIn) * 100 + "%";
+        }
+
+    var OB32CHARACTERS = "abcdefghijkmnpqrstuvwxyz23456789";    
+    function ob32decode(str32)
+        {
+        var strLength;
+        var power;
+        var result;
+        strLength = str32.length;
+        result = 0;
+        for(power = 0; power < strLength; power++)
+            {
+            var character = str32.substr(strLength - power - 1, 1);
+            result += OB32CHARACTERS.indexOf(character) * Math.pow(32, power);
+            }
+        return result;
+        }
+
+
+
+    function getTextByFID(recordNode, FID, debugMessage)
+    {
+    return getNodeText(recordNode, "f[@id=" + FID + "]", debugMessage);
+    }
+
+    function getTextByLabel(recordNode, name)
+    {
+    return getNodeText(recordNode, "f[@id=/*/table/fields/field[label='"+name+"']/@id]");
+    }
+
+    function getNumByFID(recordNode, FID)
+    {
+    return parseFloat(getNodeText(recordNode, "f[@id=" + FID + "]"));
+    }
+
+    function getNumByLabel(recordNode, name)
+    {
+    return parseFloat(getNodeText(recordNode, "f[@id=/*/table/fields/field[label='"+name+"']/@id]"));
+    }
+
+    var debugMsg = "";
+
+    function debug(msg)
+        {
+        debugMsg += msg + "<br>";
+        document.getElementById("debug").innerHTML = debugMsg;
+        }
+
+    var isIE = (window.navigator.userAgent.indexOf("MSIE") > 0);
+        
+        if (! isIE) {
+          HTMLElement.prototype.__defineGetter__("innerText", 
+                      function () { return(this.textContent); });
+          HTMLElement.prototype.__defineSetter__("innerText", 
+                      function (txt) { this.textContent = txt; });
+        }    
+        
+    /*
+	function resizeByInnerDimensions(boundingElement) {
+      setTimeout(function()
+        {
+          boundingElement = document.getElementById(boundingElement);
+          var myWidth = 0, myHeight = 0;
+          var desiredWidth = boundingElement.offsetWidth + (2 * boundingElement.offsetLeft);
+          var desiredHeight = boundingElement.offsetHeight + (2 * boundingElement.offsetTop);
+          window.resizeTo(desiredWidth + 200, desiredHeight + 200);
+          if( typeof( window.innerWidth ) == 'number' ) {
+            //Non-IE
+            myWidth = window.innerWidth;
+            myHeight = window.innerHeight;
+          } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+            //IE 6+ in 'standards compliant mode'
+            myWidth = document.documentElement.clientWidth;
+            myHeight = document.documentElement.clientHeight;
+          } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+            //IE 4 compatible
+            myWidth = document.body.clientWidth;
+            myHeight = document.body.clientHeight;
+          }
+          var extraWidth = desiredWidth + 300 - myWidth;
+          var extraHeight = desiredHeight + 300 - myHeight;
+          window.resizeTo(desiredWidth + extraWidth, desiredHeight + extraHeight);
+         }, 400); 
+    }
+	*/
+	
+    </script>
+
+    <TITLE>Processing...</TITLE>
+
+	<style type="text/css">
+<!--
+		div.QuNectPopUp					{ font-family:calibri; font-size:14pt;}
+		div#working button				{ font-size:12pt; padding:10px 20px; font-weight:bold;  color:#444444; margin:35px 0px 0px 20px; overflow:visible}
+		div.QuNectPopUp h2				{ margin-top:0; font-size:18pt;}
+		
+		div#feedbacks		 			{ height:400px; overflow-y:scroll; border:1px solid #bbbbbb; width:930px;}
+		div#feedbacks table 			{ width:900px; }
+		div#feedbacks table tr td		{ color:#111111; font-size:12pt; padding:6px 10px;  background-color:#f8f8f8;}
+		div#feedbacks table thead tr td	{ color:#000000; font-weight:bold; background-color:#e4e4e4;}
+
+		table#ssf_table tr td 					{ color:#777777; padding-left:20px; white-space:nowrap; }
+		table#ssf_table tr td input				{ font-size:10pt; }
+		table#ssf_table tr td input.sfs_fbut	{ background-color:white; }
+		table#ssf_table tr td input.ssf_but		{ font-size:12pt; }
+		table#ssf_table tr td select			{ font-size:10pt; }
+
+		input.ssf_but	{ font-size:12pt; padding:5px 20px; font-weight:bold;  color:#444444;  overflow:visible}
+
+
+		div.sow_confirm_dialog			{ text-align:center; line-spacing:10; font-size:16pt; margin-top:20px;}
+		div.sow_confirm_dialog	input	{ width:80px; padding:3px 20px; margin:10px;}
+
+		div#pleaseWait					{ font-size:18pt; color:#aaa; text-align:center; padding-top:60px;}
+-->
+	</style>
+	
+    </HEAD>
+
+    <BODY style="background-color:white;">
+		<div id="SOWdivs" class="QuNectPopUp" style="padding:30px 40px 5px 30px;">
+		
+			<div id="pleaseWait">
+				Just a moment
+			</div>
+				
+			<div id="working" style="display:none;">
+				<div id="feedbacks"></div>
+				<button id="yes" onclick="approvePendingFeedbacks()">YES, I have approved all the above feedbacks</button>
+				<button id="no"  onclick="window.close();"			>NO, I have not approved all the above feedbacks</button>
+			</div>
+						
+			<div id="working2" style="display:none;">
+				<div id="feedbacks2"></div>
+				<button id="yes2" onclick="approvePendingPMOFeedbacks()">YES, I have approved all the above feedbacks</button>
+				<button id="no2"  onclick="window.close();"				>NO, I have not approved all the above feedbacks</button>
+			</div>
+						
+			<div id="cancelalertdiv" style="display:none;" class="sow_confirm_dialog">
+				Are you sure you want to <b>cancel</b> this O&amp;R? <br /><br />
+				<input type="button" class="ssf_but" value="Yes" id="cancel">
+				<input type="button" class="ssf_but" value="No"  onclick="window.close();">
+			</div>
+						
+			<div id="OnHoldalertdiv" style="display:none;" class="sow_confirm_dialog">
+				Are you sure you want to place this O&amp;R <b>on hold</b>? <br /><br />
+				<input type="button" class="ssf_but" value="Yes" id="OnHold">
+				<input type="button" class="ssf_but" value="No"  onclick="window.close();">
+			</div>	
+			
+			<div id="OffHoldalertdiv" style="display:none;" class="sow_confirm_dialog">
+				Are you sure you want to resume this O&amp;R? (<b>off hold</b>) <br /><br />
+				<input type="button" class="ssf_but" value="Yes" id="OffHold">
+				<input type="button" class="ssf_but" value="No"  onclick="window.close();">
+			</div>
+
+			<div id="CheckFieldsdiv" style="display:none" class="sow_confirm_dialog">
+				<table>
+					<tr><td>Date P&amp;G Requests SOW</td>		<td><input id="_fid_203" /></td></tr>
+					<tr><td>Target Date P&amp;G Requests SOW</td>	<td><input id="_fid_271" /></td></tr>
+					<tr><td>Are you sure you want to Resume this O&amp;R? (Off-Hold) <br /></td></tr>
+				</table>
+				
+				<input type="button" value="Yes" id="CheckField">
+				<input type="button" value="No"  onclick="window.close();">
+			</div>	
+						
+			<div id="debug">&nbsp;</div>
+		</div>	
+    
+    </BODY>
+    </HTML>

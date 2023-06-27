@@ -1,0 +1,221 @@
+if not WeakAuras.IsCorrectVersion() then return end
+local AddonName, OptionsPrivate = ...
+
+-- Lua APIs
+local pairs  = pairs
+
+-- WoW APIs
+local CreateFrame, GetSpellInfo = CreateFrame, GetSpellInfo
+
+local AceGUI = LibStub("AceGUI-3.0")
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+
+local WeakAuras = WeakAuras
+local L = WeakAuras.L
+
+local iconPicker
+
+local spellCache = WeakAuras.spellCache
+
+local function ConstructIconPicker(frame)
+  local group = AceGUI:Create("InlineGroup");
+  group.frame:SetParent(frame);
+  group.frame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -17, 30); -- 12
+  group.frame:SetPoint("TOPLEFT", frame, "TOPLEFT", 17, -50);
+  group.frame:Hide();
+  group:SetLayout("fill");
+
+  local scroll = AceGUI:Create("ScrollFrame");
+  scroll:SetLayout("flow");
+  --scroll.frame:SetClipsChildren(true);
+  group:AddChild(scroll);
+
+  local function iconPickerFill(subname, doSort)
+    scroll:ReleaseChildren();
+
+    local distances = {};
+    local names = {};
+
+    -- Work around special numbers such as inf and nan
+    if (tonumber(subname)) then
+      local spellId = tonumber(subname);
+      if (abs(spellId) < math.huge and tostring(spellId) ~= "nan") then
+        subname = GetSpellInfo(spellId or 0)
+      end
+    end
+
+    if subname then
+      subname = subname:lower();
+    end
+
+    local usedIcons = {};
+    local AddButton = function(name, icon)
+      local button = AceGUI:Create("WeakAurasIconButton");
+      button:SetName(name);
+      button:SetTexture(icon);
+      button:SetClick(function()
+        group:Pick(icon);
+      end);
+      scroll:AddChild(button);
+
+      usedIcons[icon] = true;
+    end
+
+    local num = 0;
+    if(subname and subname ~= "") then
+      for name, icons in pairs(spellCache.Get()) do
+        if(name:lower():find(subname, 1, true)) then
+          if icons.spells then
+            for spellId, icon in pairs(icons.spells) do
+              if (not usedIcons[icon]) then
+                AddButton(name, icon)
+                num = num + 1;
+                if(num >= 500) then
+                  break;
+                end
+              end
+            end
+          elseif icons.achievements then
+            for _, icon in pairs(icons.achievements) do
+              if (not usedIcons[icon]) then
+                AddButton(name, icon)
+                num = num + 1;
+                if(num >= 500) then
+                  break;
+                end
+              end
+            end
+          end
+        end
+
+        if(num >= 500) then
+          break;
+        end
+      end
+    end
+  end
+
+  local input = CreateFrame("EDITBOX", nil, group.frame, "InputBoxTemplate");
+  input:SetScript("OnTextChanged", function(...) iconPickerFill(input:GetText(), false); end);
+  input:SetScript("OnEnterPressed", function(...) iconPickerFill(input:GetText(), true); end);
+  input:SetScript("OnEscapePressed", function(...) input:SetText(""); iconPickerFill(input:GetText(), true); end);
+  input:SetWidth(170);
+  input:SetHeight(15);
+  input:SetPoint("BOTTOMRIGHT", group.frame, "TOPRIGHT", -12, -5);
+
+  local inputLabel = input:CreateFontString(nil, "OVERLAY", "GameFontNormal");
+  inputLabel:SetText(L["Search"]);
+  inputLabel:SetJustifyH("RIGHT");
+  inputLabel:SetPoint("BOTTOMLEFT", input, "TOPLEFT", 0, 5);
+
+  local icon = AceGUI:Create("WeakAurasIconButton");
+  icon.frame:Disable();
+  icon.frame:SetParent(group.frame);
+  icon.frame:SetPoint("BOTTOMLEFT", group.frame, "TOPLEFT", 15, -15);
+
+  local iconLabel = input:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge");
+  iconLabel:SetNonSpaceWrap("true");
+  iconLabel:SetJustifyH("LEFT");
+  iconLabel:SetPoint("LEFT", icon.frame, "RIGHT", 5, 0);
+  iconLabel:SetPoint("RIGHT", input, "LEFT", -50, 0);
+
+  function group.Pick(self, texturePath)
+    local valueToPath = OptionsPrivate.Private.ValueToPath
+    if(not self.groupIcon and self.baseObject.controlledChildren) then
+      for index, childId in pairs(self.baseObject.controlledChildren) do
+        local childData = WeakAuras.GetData(childId);
+        if(childData) then
+          valueToPath(childData, self.paths[childId], texturePath)
+          WeakAuras.Add(childData)
+          WeakAuras.ClearAndUpdateOptions(childData.id)
+          WeakAuras.UpdateThumbnail(childData);
+        end
+      end
+    else
+      valueToPath(self.baseObject, self.paths[self.baseObject.id], texturePath)
+      WeakAuras.Add(self.baseObject)
+      WeakAuras.ClearAndUpdateOptions(self.baseObject.id)
+      WeakAuras.UpdateThumbnail(self.baseObject)
+    end
+    local success = icon:SetTexture(texturePath) and texturePath;
+    if(success) then
+      iconLabel:SetText(texturePath);
+    else
+      iconLabel:SetText();
+    end
+  end
+
+  function group.Open(self, baseObject, paths, groupIcon)
+    local valueFromPath = OptionsPrivate.Private.ValueFromPath
+    self.baseObject = baseObject
+    self.paths = paths
+    self.groupIcon = groupIcon
+    if(not groupIcon and baseObject.controlledChildren) then
+      self.givenPath = {};
+      for index, childId in pairs(baseObject.controlledChildren) do
+        local childData = WeakAuras.GetData(childId);
+        if(childData) then
+          local value = valueFromPath(childData, paths[childId])
+          self.givenPath[childId] = value;
+        end
+      end
+    else
+      local value = valueFromPath(self.baseObject, paths[self.baseObject.id])
+      self.givenPath = value
+    end
+    -- group:Pick(self.givenPath);
+    frame.window = "icon";
+    frame:UpdateFrameVisible()
+    input:SetText("");
+  end
+
+  function group.Close()
+    frame.window = "default";
+    frame:UpdateFrameVisible()
+    WeakAuras.FillOptions()
+  end
+
+  function group.CancelClose()
+    local valueToPath = OptionsPrivate.Private.ValueToPath
+    if(not group.groupIcon and group.baseObject.controlledChildren) then
+      for index, childId in pairs(group.baseObject.controlledChildren) do
+        local childData = WeakAuras.GetData(childId);
+        if(childData) then
+          if (group.givenPath[childId]) then
+            valueToPath(childData, group.paths[childId], group.givenPath[childId])
+            WeakAuras.Add(childData);
+            WeakAuras.ClearAndUpdateOptions(childData.id)
+            WeakAuras.UpdateThumbnail(childData);
+          end
+        end
+      end
+    else
+      valueToPath(group.baseObject, group.paths[group.baseObject.id], group.givenPath)
+      WeakAuras.Add(group.baseObject)
+      WeakAuras.ClearAndUpdateOptions(group.baseObject.id)
+      WeakAuras.UpdateThumbnail(group.baseObject)
+    end
+    group.Close();
+  end
+
+  local cancel = CreateFrame("Button", nil, group.frame, "UIPanelButtonTemplate");
+  cancel:SetScript("OnClick", group.CancelClose);
+  cancel:SetPoint("bottomright", frame, "bottomright", -27, 11);
+  cancel:SetHeight(20);
+  cancel:SetWidth(100);
+  cancel:SetText(L["Cancel"]);
+
+  local close = CreateFrame("Button", nil, group.frame, "UIPanelButtonTemplate");
+  close:SetScript("OnClick", group.Close);
+  close:SetPoint("RIGHT", cancel, "LEFT", -10, 0);
+  close:SetHeight(20);
+  close:SetWidth(100);
+  close:SetText(L["Okay"]);
+
+  return group
+end
+
+function OptionsPrivate.IconPicker(frame)
+  iconPicker = iconPicker or ConstructIconPicker(frame)
+  return iconPicker
+end

@@ -1,0 +1,30 @@
+------------------------------------------------------------------------
+r38 | oscarucb | 2012-05-11 15:18:06 +0000 (Fri, 11 May 2012) | 1 line
+Changed paths:
+   A /tags/3.3 (from /trunk:37)
+
+Tagging as 3.3
+------------------------------------------------------------------------
+r37 | oscarucb | 2012-05-09 22:57:55 +0000 (Wed, 09 May 2012) | 4 lines
+Changed paths:
+   M /trunk/InspectFix.lua
+
+fix a rare inspect failure that can occur when there is a race on 
+INSPECT_READY while opening the inspect window, or if addons deliberately circumvent _G.NotifyInspect
+Minor debugging improvements
+
+------------------------------------------------------------------------
+r35 | oscarucb | 2012-05-04 06:06:18 +0000 (Fri, 04 May 2012) | 2 lines
+Changed paths:
+   M /trunk/InspectFix.lua
+
+fix display of empty slot tooltips after a target change
+
+------------------------------------------------------------------------
+r34 | oscarucb | 2012-04-09 22:32:06 +0000 (Mon, 09 Apr 2012) | 2 lines
+Changed paths:
+   M /trunk/InspectFix.lua
+
+minor tweak
+
+------------------------------------------------------------------------

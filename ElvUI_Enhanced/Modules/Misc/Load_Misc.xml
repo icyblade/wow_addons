@@ -1,0 +1,15 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="Misc.lua"/>
+	<Script file="Paperdoll.lua"/>
+	<Script file="QuestItemLevel.lua"/>
+	<Script file="QuestLevel.lua"/>
+	<Script file="LoseControl.lua"/>
+	<Script file="AlreadyKnown.lua"/>
+	<Script file="TrainAllButton.lua"/>
+	<Script file="UndressButton.lua"/>
+	<Script file="AddonsCompatibility.lua"/>
+	<Script file="QuestReward.lua"/>
+	<Script file="RaidMarkers.lua"/>
+	<Script file="MerchantBuyStack.lua"/>
+	<Script file="MerchantItemLevel.lua"/>
+</Ui>

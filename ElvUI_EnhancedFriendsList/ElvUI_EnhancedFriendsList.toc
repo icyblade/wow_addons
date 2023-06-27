@@ -1,0 +1,12 @@
+﻿## Interface: 40300
+## Author: Apollyon, Bunny
+## Version: 1.12
+## Title: |cffff7000E|r|cffe5e3e3lvUI|r |cffff7000E|r|cffe5e3e3nhanced|r |cffff7000F|r|cffe5e3e3riends|r |cffff7000L|r|cffe5e3e3ist|r
+## SavedVariables: EnhancedFriendsListDB
+## RequiredDeps: ElvUI
+
+Locales\Load_Locales.xml
+Media\Load_Media.xml
+Settings\Load_Settings.xml
+ElvUI_EnhancedFriendsList.lua
+Config\Load_Config.xml

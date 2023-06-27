@@ -1,0 +1,14 @@
+## Interface: 40300
+## Author: Bunny, Apollyon
+## Version: 1.5
+## Title: |cffff7000E|r|cffe5e3e3lvUI|r |cffff7000E|r|cffe5e3e3nhanced|r
+## SavedVariables: EnhancedDB
+## RequiredDeps: ElvUI
+## DefaultState: Enabled
+
+Locales\Load_Locales.xml
+Media\Load_Media.xml
+ElvUI_Enhanced.lua
+Settings\Load_Settings.xml
+Modules\load_Modules.xml
+Config\Load_Config.xml

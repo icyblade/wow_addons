@@ -1,0 +1,229 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsMove.lua" />
+
+	<Frame name="VuhDoNewOptionsMoveTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentAddPanelPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="153" y="75" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="13" y="-17" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentAddPanelLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="137" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_ADD_NEW_PANEL" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentAddButton" inherits="VuhDoAddButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="29" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_newOptionsAddPanelOnclick();</OnClick>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+			<Frame name="$parentTestPanelPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="410" y="75" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="175" y="-17" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTestPanelLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="126" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_HOLD_TO_TEST" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentTestButton" inherits="VuhDoTestButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnMouseDown>
+								VUHDO_CONFIG_SHOW_RAID = true;
+								VUHDO_reloadUI();
+							</OnMouseDown>
+							<OnMouseUp>
+								VUHDO_CONFIG_SHOW_RAID = false;
+								VUHDO_reloadUI();
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+
+					<CheckButton name="$parentCurrentRadioButton" checked="true" text="VUHDO_I18N_CURR" inherits="VuhDoRadioButtonTemplate">
+						<Size>
+							<AbsDimension x="80" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="150" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_lnfRadioButtonClicked(self);
+								VUHDO_newOptionsMoveSetTestData(-1);
+							</OnClick>
+							<OnLoad>
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K189);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentFiveRadioButton" text="VUHDO_I18N_5" inherits="VuhDoRadioButtonTemplate">
+						<Size>
+							<AbsDimension x="80" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="150" y="-39" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_lnfRadioButtonClicked(self);
+								VUHDO_newOptionsMoveSetTestData(5);
+							</OnClick>
+							<OnLoad>
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K190);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentTenRadioButton" text="VUHDO_I18N_10" inherits="VuhDoRadioButtonTemplate">
+						<Size>
+							<AbsDimension x="80" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="235" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_lnfRadioButtonClicked(self);
+								VUHDO_newOptionsMoveSetTestData(10);
+							</OnClick>
+							<OnLoad>
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K191);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentTwentyFiveRadioButton" text="VUHDO_I18N_25" inherits="VuhDoRadioButtonTemplate">
+						<Size>
+							<AbsDimension x="80" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="235" y="-39" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_lnfRadioButtonClicked(self);
+								VUHDO_newOptionsMoveSetTestData(25);
+							</OnClick>
+							<OnLoad>
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K192);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentFourtyRadioButton" text="VUHDO_I18N_40" inherits="VuhDoRadioButtonTemplate">
+						<Size>
+							<AbsDimension x="80" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="320" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_lnfRadioButtonClicked(self);
+								VUHDO_newOptionsMoveSetTestData(40);
+							</OnClick>
+							<OnLoad>
+								VUHDO_lnfCheckButtonOnLoad(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K193);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnShow>VUHDO_newOptionsMoveOnShow();</OnShow>
+			<OnHide>VUHDO_newOptionsMoveOnHide();</OnHide>
+		</Scripts>
+	</Frame>
+</Ui>

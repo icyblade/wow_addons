@@ -1,0 +1,12 @@
+## Interface: 40300
+## Author: Bunny, Azilroka, Sortokk, Apollyon
+## Version: 1.2
+## Title: |cffff7000E|r|cffe5e3e3lvUI|r |cffff7000A|r|cffe5e3e3ddOn|r |cffff7000S|r|cffe5e3e3kins|r
+## RequiredDeps: ElvUI
+
+Locales\Load_Locales.xml
+Settings\Load_Settings.xml
+ElvUI_AddOnSkins.lua
+Modules\Load_Modules.xml
+Skins\Load_Skins.xml
+Config\Load_Config.xml

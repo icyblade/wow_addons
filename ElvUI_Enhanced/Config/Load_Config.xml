@@ -1,0 +1,12 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="Core.lua"/>
+	<Script file="Blizzard.lua"/>
+	<Script file="Chat.lua"/>
+	<Script file="General.lua"/>
+	<Script file="Map.lua"/>
+	<Script file="Minimap.lua"/>
+	<Script file="NamePlates.lua"/>
+	<Script file="Misc.lua"/>
+	<Script file="Tooltip.lua"/>
+	<Script file="UnitFrames.lua"/>
+</Ui>

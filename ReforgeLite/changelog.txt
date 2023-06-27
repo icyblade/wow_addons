@@ -1,0 +1,117 @@
+** v1.10
+
+- Fixed some presets
+- Tanking calculations now correctly handle items like Resolve of Undying
+
+** v1.09
+
+- Redid all presets based on EJ threads
+- "Open window when reforging" now also closes the window when reforge UI is closed
+- Tanking model reworked. It only appears for paladins/warriors/deathknights (druids don't need to balance dodge/parry/block).
+ Additionally, it gives you an option to simulate buffs such as Kings, Str/Agi, flasks and food in order to correctly reforge
+ to block cap.
+- Added Reset button to show current stats (mostly so tanks can see their current CTC easily)
+- Added Debug button at the buttom of Settings: if you think that something is wrong, e-mail the dump provided by this
+ option to d07.riv@gmail.com so I can find the problem.
+
+** v1.08
+
+- Don't remember what I fixed, but uploading anyway so the latest fix isn't marked as beta
+
+** v1.07-fix
+   M /trunk/ReforgeEngine.lua
+
+- Fixed tanking reforge
+
+** v1.07
+   M /trunk/Presets.lua
+   M /trunk/ReforgeEngine.lua
+   M /trunk/ReforgeLite.lua
+   M /trunk/ReforgeLite.toc
+   
+- Added an option to display reforged stats in item tooltips
+- Should no longer freeze when preset button is clicked with Pawn installed
+- Few minor bug fixes and improvements
+
+** v1.06
+   M /trunk/GUI.lua
+   M /trunk/Presets.lua
+   M /trunk/ReforgeEngine.lua
+   M /trunk/ReforgeLite.lua
+   M /trunk/ReforgeLite.toc
+   
+- Fixed and improved calculation algorithms (hopefully)
+- Spirit-to-hit no longer disables second stat cap; it should now prefer spirit over hit whenever possible
+- Tanking mode added, allowing tanks to maximize total avoidance and/or block
+- Individual items can be locked by clicking on their icons in the stats table
+- If Pawn is installed, its scales will be available in Presets dropdown
+
+** v1.05
+   M /trunk/ReforgeEngine.lua
+   M /trunk/ReforgeLite.lua
+
+- Enhance with Primal Precision (and Feral with Balance of Power) no longer blocks second cap. Spirit-to-hit conversion is ignored
+ for now
+- Fixed a couple typos
+
+** v1.04
+   M /trunk/Presets.lua
+   M /trunk/ReforgeEngine.lua
+   M /trunk/ReforgeLite.lua
+   M /trunk/ReforgeLite.toc
+
+- Fixed and improved spirit-to-hit option. It now automatically detects spirit-to-hit talents, and only allows using one stat cap.
+- Output window now uses checkboxes, so users can select which items they want to skip reforging. Also, irrelevant reforges aren't
+ applied.
+- Reforging is now a bit faster and makes a lot less noise, but users shouldn't interfere in the process, otherwise results are
+ unpredictable.
+
+** v1.03
+Changed paths:
+   M /trunk/GUI.lua
+   M /trunk/Localization.lua
+   A /trunk/Presets.lua
+   M /trunk/ReforgeEngine.lua
+   M /trunk/ReforgeLite.lua
+   M /trunk/ReforgeLite.toc
+
+- Marking as release
+- Added weight presets for all classes/specs.
+- Added Pawn import.
+- Result stats table now updates as stats/weights change, instead of being computed once.
+- Lots of fixes and improvements.
+
+** v1.02 Beta
+Changed paths:
+   M /trunk/.pkgmeta
+   A /trunk/GUI.lua
+   A /trunk/Localization.lua
+   M /trunk/ReforgeEngine.lua
+   M /trunk/ReforgeLite.lua
+   M /trunk/ReforgeLite.toc
+
+- Recoded stat caps. It is now possible to set multiple cap values for the same stat (barely affecting performance). For example,
+ fury warriors can set multiple soft caps for hit rating.
+- It is now possible to use preset values for stat caps, e.g. Melee hit cap.
+- Some settings added at the bottom of the scroll frame.
+- Minor fixes and improvements.
+
+** v1.01 Beta
+Changed paths:
+   M /trunk/ReforgeLite.lua
+   M /trunk/ReforgeLite.toc
+
+- Added Reforge button to output window that reforges all items in the specified way (only works when reforging UI is open).
+- Few minor fixes.
+
+** v1.00 Beta
+Changed paths:
+   A /trunk/ReforgeEngine.lua
+   A /trunk/ReforgeLite.lua
+   A /trunk/ReforgeLite.toc
+   A /trunk/textures
+   A /trunk/textures/frameborder.tga
+   A /trunk/textures/leftgrip.tga
+   A /trunk/textures/rightgrip.tga
+
+- Submitting initial version.

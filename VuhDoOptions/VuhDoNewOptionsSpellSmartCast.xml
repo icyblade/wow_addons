@@ -1,0 +1,168 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Script file="VuhDoNewOptionsSpellFire.lua" />
+
+	<Frame name="VuhDoNewOptionsSpellSmartCastTemplate" virtual="true">
+		<Frames>
+
+			<Frame name="$parentSmartCastPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="130" y="188" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="60" y="-105" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<CheckButton name="$parentCleanseCheckButton" text="VUHDO_I18N_CLEANSE" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-69" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.SMARTCAST_CLEANSE");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K048);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentResurrectCheckButton" text="VUHDO_I18N_RESURRECT_SHORT" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.SMARTCAST_RESURRECT");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K049);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentBuffCheckButton" text="VUHDO_I18N_BUFF" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-107" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.SMARTCAST_BUFF");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K215);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentBattleRezCheckButton" text="VUHDO_I18N_BATTLE_REZ" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-145" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.autoBattleRez");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K360);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="75" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_SMART_CAST_OO_COMBAT" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentModifierPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="190" y="80" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="260" y="-160" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Button name="$parentModeComboBox" inherits="VuhDoComboBoxTemplate">
+						<Size>
+							<AbsDimension x="184" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="20" y="-55" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_setComboModel(self, "VUHDO_SPELL_CONFIG.smartCastModi",
+									{
+										{ "all", VUHDO_I18N_BUFF_ALL },
+										{ "shift", VUHDO_I18N_SHIFT },
+										{ "ctrl", VUHDO_I18N_CTRL },
+										{ "alt", VUHDO_I18N_ALT },
+									}
+								);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K359);
+							</OnLoad>
+						</Scripts>
+
+					</Button>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="160" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_KEY_MODIFIES" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+			</Frame>
+
+
+		</Frames>
+	</Frame>
+</Ui>

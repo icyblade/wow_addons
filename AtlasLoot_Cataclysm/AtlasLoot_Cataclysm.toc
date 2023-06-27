@@ -1,0 +1,23 @@
+﻿## Interface: 40300
+## Title: AtlasLoot_Cataclysm
+## Title-deDE: AtlasLoot |cFF0099FF[Cataclysm]|r
+## Title-zhTW: |r|cFF0099FF[地圖]|rAtlasLoot 浩劫與重生
+## Title-zhCN: AtlasLoot |cFF0099FF[大灾变]|r
+## Notes: AtlasLoot loot tables from Cataclysm
+## Notes-deDE: AtlasLoot Beuteverzeichnisse für Cataclysm
+## Notes-zhTW: AtlasLoot 浩劫與重生資料片物品掉落資料庫
+## Notes-zhCN: AtlasLoot Enhanced 的《大灾变》副本掉落信息
+## Author: Hegarol	
+## Version: v6.05.04
+## X-eMail: manager@atlasloot.net
+## X-Category: Map
+## X-License: GPL v2
+## X-Website: http://www.atlasloot.net
+## Dependencies: AtlasLoot
+## LoadOnDemand: 1
+## X-Curse-Packaged-Version: v6.05.04
+## X-Curse-Project-Name: AtlasLoot Enhanced
+## X-Curse-Project-ID: atlasloot-enhanced
+## X-Curse-Repository-ID: wow/atlasloot-enhanced/mainline
+
+cataclysm.lua

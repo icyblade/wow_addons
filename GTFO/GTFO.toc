@@ -1,0 +1,42 @@
+## Interface: 40300
+## Title: GTFO
+## Notes: GTFO, you're dying!
+## Author: Zensunim of Malygos
+## Version: 4.13
+## DefaultState: Enabled
+## SavedVariables: GTFOData
+Localization\enUS.lua
+Localization\esES.lua
+Localization\esMX.lua
+Localization\deDE.lua
+Localization\ruRU.lua
+Localization\frFR.lua
+Localization\zhCN.lua
+Localization\zhTW.lua
+Localization\koKR.lua
+Localization\ptBR.lua
+Localization\Boss.lua
+GTFO_PowerAuras.lua
+GTFO_Recount.lua
+GTFO_Skada.lua
+GTFO.lua
+GTFO_Ignore.lua
+GTFO_Spells_Generic.lua
+GTFO_Spells_Classic.lua
+GTFO_Spells_BC.lua
+GTFO_Spells_LK.lua
+GTFO_Spells_CAT.lua
+GTFO_Spells_MP.lua
+GTFO_Spells_Special.lua
+GTFO_Fail_Generic.lua
+GTFO_Fail_Classic.lua
+GTFO_Fail_BC.lua
+GTFO_Fail_LK.lua
+GTFO_Fail_CAT.lua
+GTFO_Fail_MP.lua
+GTFO_FF_BC.lua
+GTFO_FF_LK.lua
+GTFO_FF_CAT.lua
+GTFO_FF_MP.lua
+GTFO_Mobs.lua
+GTFO.xml

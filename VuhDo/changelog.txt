@@ -1,0 +1,676 @@
+since Version 2.137 (to 2.138):
+
+Bugfixes:
+-- Minor bugfixes
+
+Improvements:
+-- Minor memory/performance optimizations
+-- Paladin's Inquisition now available in BuffWatch
+-- Smart cast buff will cast buffs in configured order now
+   (instead od random)
+
+Changes:
+-- Blacklisted debuffs in options=>debuffs=>standard will now
+   also prevent bar color from changing
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.136 (to 2.137):
+
+Bugfixes:
+-- Minor bugfixes
+
+Improvements:
+
+Changes:
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.135 (to 2.136):
+
+Bugfixes:
+-- Minor bugfixes
+
+Improvements:
+
+Changes:
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.133 (to 2.135):
+
+Bugfixes:
+-- Minor bugfixes
+
+Improvements:
+-- Minor performance optimizations
+-- Reduced memory usage
+-- Several Refactorings
+
+Changes:
+
+Features:
+-- You can now import blizz raid class colors in
+   Options=>Colors=>Classes
+
+--------------------------------------------------------------
+since Version 2.132 (to 2.133):
+
+Bugfixes:
+-- Minor bugfixes
+
+Improvements:
+-- Added "Consuming Shroud" to shield debuffs
+-- Performance optimizations
+-- Minor improvements
+
+Changes:
+
+Features:
+-- Added DK's Unholy Frenzy to BuffWatch
+-- Added option to disable Ready Checks
+   (Options=>General=>Misc)
+
+--------------------------------------------------------------
+since Version 2.131 (to 2.132):
+
+Bugfixes:
+-- Minor Bugfixes
+
+Improvements:
+-- Reworked "Searing Plasma" Debuff Shield detection
+
+Changes:
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.130 (to 2.131):
+
+Bugfixes:
+-- Fixed a bug in shield absorb detection
+
+Improvements:
+
+Changes:
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.129 (to 2.130):
+
+Bugfixes:
+-- Minor bugfixes
+
+Improvements:
+-- Recoded shield absorption Searing Plasma Debuff (Percentage)
+   calculation
+-- Some code cleanup
+
+Changes:
+
+Features:
+-- Added Bouquet item type "Flag: Stacks >" so you can change
+   texture or color of an icon/bar due to the number of stacks
+   it has
+
+--------------------------------------------------------------
+since Version 2.128 (to 2.129):
+
+Bugfixes:
+-- More experimental changes to avoid "sticky" if unit dies
+   while casting (Thanks Saiket@wowinterface.com)
+-- Fixed a bug with timer not properly updating if debuff
+   stacks >1
+
+Improvements:
+-- Memory optimizations
+-- Changed resurrection monitoring from CTRA to internal event
+-- Option to show remaining shield absorption on custom debuffs
+   (experimental)
+
+Changes:
+
+Features:
+-- X/Y Text position adjustment in options=>panels=>text
+
+--------------------------------------------------------------
+since Version 2.127 (to 2.128):
+
+Bugfixes:
+
+Improvements:
+-- Some experimental changes to avoid "sticky" if unit dies
+   while casting
+
+Changes:
+
+Features:
+-- Additional sort by role options in options=>panels=>general.
+-- Added libSharedMedia support for inner and outer bar borders
+   (Options=>General=>Indicators, "more")
+
+--------------------------------------------------------------
+since Version 2.126 (to 2.127):
+
+Bugfixes:
+-- Fixed a bug in sharing functionality
+
+Improvements:
+-- Performance / memory optimizations
+
+Changes:
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.125 (to 2.126):
+
+Bugfixes:
+
+Improvements:
+
+Changes:
+-- Tagged toc for 4.3
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.124 (to 2.125):
+
+Bugfixes:
+-- Minor Bugfix for BuffWatch in chinese locale
+-- Bugfix for custom debuffs only showing for one
+   of the units if unit displayed in raid frames
+   more than once
+
+Improvements:
+-- Cleaned up Options=>Panels=>Text a bit.
+-- Prepared default custom debuffs for 4.3 raid
+
+Changes:
+
+Features:
+-- Added option for different color of HP text (from name text)
+   (Options=>Panels=>Text)
+-- You can now share your profiles with other VuhDo users:
+   Added Options=>Tools=>Share, enable "Receive"
+   Added Options=>Tools=>Profiles "Share" button and dialog
+
+--------------------------------------------------------------
+since Version 2.123 (to 2.124):
+
+Bugfixes:
+-- Minor Bugfix when targetting units with 1 HP max.
+-- Minor Bugfix: Missing Translation in default profile
+
+Improvements:
+-- You can now set options=>debuffs=>visuals "max. # debuffs"
+   to 0 to only show latest custom debuffs as bouquet item.
+-- Massively improved custom debuff responsiveness/performance
+-- Other minor performance optimizations
+
+Changes:
+
+Features:
+-- Added options=>panels=>bars "Bar colors" radio buttons
+   (Redundant to options=>general=>indicators, "Health Bar"
+   bouquet selection) for convenience reasons.
+-- Profiles can now be tagged for group size AND spec instead
+   of group size OR spec. So you can auto-enable different
+   profiles for a specific spec based on group size
+-- Shadow and outline of bar text can now be changed
+   independently (Options=>Panels=>Text)
+
+--------------------------------------------------------------
+since Version 2.122 (to 2.123):
+
+Bugfixes:
+-- Fixed several potential "Division by zero" errors
+   (relevant for PTR 4.3 only)
+
+Improvements:
+-- Minor performance optimizations
+
+Changes:
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.121 (to 2.122):
+
+Bugfixes:
+-- Shield absorb display is up and working again
+
+Improvements:
+-- Added role color default bouquet for diplaying
+   raid roles as color in borders, bars or icons
+
+Changes:
+
+Features:
+-- Shield absorb display now also available for Ice Barrier,
+   Mana Shield, Sacrifice, Sacred Shield, Savage Defense
+-- Added role color bouquet items
+-- Enabling Options=>General hide empty "panels", "buttons" and
+   "click through" at the same time will make the whole panel
+   disappear if no active unit is in it (experimental)
+
+--------------------------------------------------------------
+since Version 2.120 (to 2.121):
+
+Bugfixes:
+-- Minor bugfix
+-- Workaround for wow client's 4.3 texture clipping bug
+
+Improvements:
+-- Performance optimizations
+
+Changes:
+-- Removed a all default custom debuffs from Wotlk raids
+   to save some memory (on clean installations only)
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.119 (to 2.120):
+
+Bugfixes:
+-- Fixed a bug with cooldown clocks on hot icons not updating
+   properly if hot is being refreshed
+-- Minor bugfixes
+
+Improvements:
+
+Changes:
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.118 (to 2.119):
+
+Bugfixes:
+-- Fixed a bug with special "own pet" group not updating health
+   sometimes
+-- Fixed a minor bug in table serializer
+
+Improvements:
+-- AoE advice feature will only show for targets in range now
+-- Minor improvements to default bouquets
+-- Slightly better compression of stored profiles etc.
+-- Performance optimizations
+-- Bouquet item "Holy Power ==" can now be used in statusbar
+   indicators
+-- Added mage's "Invisibility" to mage buffs in BuffWatch
+-- Added "Ya'rlly?" question to "Apply" in options=>tools=>profiles
+-- Added paladin's "Holy Radiance" to aoe advice (in anticipation
+   of patch 4.3 => future use only, doesn't work yet!)
+
+Changes:
+
+Features:
+-- Added default profiles "Bit'o'Grid" and "VuhDo'esque"
+-- AoE advisor is now capable of displaying best target per group.
+   (Prayer of Healing, configure in options=>general=>aoe advice)
+-- You can now display remaining duration of HoTs as cooldown clock
+   (Options=>Colors=>HoTs #1, enable "clock")
+
+--------------------------------------------------------------
+since Version 2.117 (to 2.118):
+
+Bugfixes:
+-- Fix for libButtonFacade/Masque support with HoT icons
+
+Improvements:
+-- Minor performance/memory optimizations
+
+Changes:
+-- Reduced duration of "damage flash" animation to make it less
+   obtrusive
+
+Features:
+-- Added bouquet items for "Raid Leader", "Raid Assist", Master Looter"
+	 and "PvP status".
+-- Added Chakra to BuffWatch trackable Buffs
+-- Added Option to entirely hide buttons for non-existant raid members
+   (Target, Focus and raid members leaving during combat)
+   (Options=>General=>General, "Hide" => "Empty Buttons"
+
+--------------------------------------------------------------
+since Version 2.116 (to 2.117):
+
+Bugfixes:
+-- Minor Bugfix
+
+Improvements:
+-- Minor improvements
+-- Added color picker for "Energy"
+
+Changes:
+-- Bouquets now can have texture coordinates, no need to provide
+   external image files anymore
+
+Features:
+-- Direction arrow is now available as bouquet item
+-- Added default bouquet for direction arrow
+
+--------------------------------------------------------------
+since Version 2.115 (to 2.116):
+
+Bugfixes:
+-- Fixed a bug where custom debuffs kept reappearing after deleting
+   them
+
+Improvements:
+
+Changes:
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.114 (to 2.115):
+
+Bugfixes:
+-- Minor bugfixes
+
+Improvements:
+
+Changes:
+
+Features:
+-- Added an option "boss only" in options=>debuffs=>standard
+
+--------------------------------------------------------------
+since Version 2.113 (to 2.114):
+
+Bugfixes:
+
+Improvements:
+-- Minor performance optimizations
+-- Private Tanks will now be sorted like regular groups
+
+Changes:
+
+Features:
+-- Added automated group of 5 layout when lfg proposal is
+   shown in case you join a group in combat (experimental)
+
+--------------------------------------------------------------
+since Version 2.112 (to 2.113):
+
+Bugfixes:
+
+Improvements:
+-- Added some fireland boss debuffs to default custom debuffs
+-- Minor improvements
+
+Changes:
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.111 (to 2.112):
+
+Bugfixes:
+-- Fixed a bug in raid roster change
+
+Improvements:
+
+Changes:
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.110 (to 2.111):
+
+Bugfixes:
+-- Fixed a bug in debuff export tool
+-- Minor bugfixes
+
+Improvements:
+-- Performance optimizations
+-- Reduced generation of garbage memory in emergency modes
+
+Changes:
+-- Tagged toc to 4.2
+
+Features:
+-- Added efflorescence to AoE advice (experimental)
+
+--------------------------------------------------------------
+since Version 2.109 (to 2.110):
+
+Bugfixes:
+-- Bouquet items for single debuff schools will also
+   show if "removable only" is selected in debuff options
+-- Flag bouquet items with an explicitly set icon will use that
+   icon in favor of the native icon
+-- Adjusted some calculations of aoe advisor
+-- Minor bugfixes
+
+Improvements:
+-- Added some map data for 4.2 raids
+-- Debuff bar coloring will now have a higher priority than
+   "missing buff" bar coloring
+-- Minor improvements
+
+Changes:
+
+Features:
+-- Added refresh rate slider in options=>general=>aoe advice
+-- Added incoming only if cast time option for aoe advice
+
+--------------------------------------------------------------
+since Version 2.108 (to 2.109):
+
+Bugfixes:
+-- Minor Bugfixes
+
+Improvements:
+-- Minor Improvements
+
+Changes:
+
+Features:
+-- All Buff bouquet items now have an additional flag "alive time"
+-- New flag bouquet items "duration > sec" and "duration < sec"
+-- New default bouquet "Status wrack" (to be assigned to a hot icon)
+   Hint: You should enable options=>colors=>hots "Full duration" for that slot
+
+--------------------------------------------------------------
+since Version 2.107 (to 2.108):
+
+Bugfixes:
+-- Removed memory leak in cluster scanner
+-- AoE advice shouldn't alternate between two or
+   more players anymore
+-- Minor bugfixes
+
+Improvements:
+
+Changes:
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.106 (to 2.107):
+
+Bugfixes:
+-- Fixed a bug where raid target icons wouldn't appear
+   on target bars
+-- Minor bugfixes
+
+Improvements:
+-- Max "Jumps/Targets" in Options=>General=>Clusters also
+   applies to radial clusters now
+-- Performance optimizations
+
+
+Changes:
+-- Statusbar indicators which contain Flags only
+   will show size of statusbar rather than 100%
+   if one of the flags is active (see: Features)
+-- Options=>General=>Incoming/Threat have been
+   merged into one sub menu
+-- "Max jumps" in Options=>General=>Clusters have
+   been renamed to "Max Targets", so shamans need to
+   increase the original value by one. (3 to 4)
+
+
+Features:
+-- Added Statusbar bouquet items:
+   1. "always active" (always shows the bar at 100%)
+   2. "full if active" shows bar at 100% if one of
+      the flag bouquet items below this status toggled
+      the bouquet active.
+-- Added new Option "AOE Advisor" which will show
+   an icon on the player which is best target for
+   most aoe healing spells
+   1. Configure in options=>general=>AOE advice
+   2. Set new default bouquet "AOE Advice" to a free HoT slot
+      in Options=>Panels=>HoT icons
+-- Added new feature "Cone degrees" in cluster scanner to
+   allow for scanning targets in a cone in front of you only
+   (Light of Dawn)
+-- It's now possible to scale every hot icon separately.
+   (Options=>Panels=>HoTs, click "More" on the left.
+
+--------------------------------------------------------------
+since Version 2.105 (to 2.106):
+
+Bugfixes:
+-- Minor bugfixes
+
+
+Improvements:
+
+
+Changes:
+
+
+Features:
+
+
+--------------------------------------------------------------
+since Version 2.104 (to 2.105):
+
+Bugfixes:
+-- Fixed a bug where remaining duration would not update
+   for some bouquet items
+-- Minor bugfixes
+
+
+Improvements:
+-- Performance optimzations
+-- Max. number of targets setting will also work for radial
+   clusters now in options=>general=>clusters
+
+
+Changes:
+
+
+Features:
+-- Added an option to show/hide Blizz standard raid management
+   tool
+
+--------------------------------------------------------------
+since Version 2.103 (to 2.104):
+
+Bugfixes:
+-- Fixed a bug where auto-trigger options didn't
+   load from key layouts
+-- Fixed a minor glitch not recognizing unit name
+   changes
+-- Minor bugfixes
+
+
+Improvements:
+-- Unused bouquets will be compressed now to save
+   some memory
+-- Improved compression of internal data and profiles
+-- It's now possible to click rez dead players after
+   they released spirit
+-- Added some ZA/ZG buffs/debuffs
+-- Added some translatables and german translations
+
+
+Changes:
+
+
+Features:
+-- Added "Monochrome" in all font selection screens
+-- Revamped raid target display, is an (internal)
+   bouquet now. Options=>Panels=>Targets, Options=>Colors=>States
+
+--------------------------------------------------------------
+since Version 2.102 (to 2.103):
+
+Bugfixes:
+-- Bugfix in custom debuff options
+
+Improvements:
+-- Performance optimizations
+
+
+Changes:
+
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.101 (to 2.102):
+
+Bugfixes:
+-- Fixed a name text positioning issue when HP text is turned off
+
+Improvements:
+
+
+Changes:
+-- Added 2 statusbar textures for libSharedMedia
+
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.100 (to 2.101):
+
+Bugfixes:
+-- Minor bugfix in bouquet options
+
+Improvements:
+-- Icons coming from bouquets will now overrule icon settings
+   in options=>panels=>Hot Icons
+
+Changes:
+
+
+Features:
+
+--------------------------------------------------------------
+since Version 2.99 (to 2.100):
+
+Bugfixes:
+-- Fixed a bug with panel sizing in combination with some
+   rare hot icon configurations
+-- Minor bugfixes
+
+Improvements:
+-- Flags like afk/dc/ghost and rip will be shown (if enabled)
+   even if hp is disabled
+-- Minor improvements
+-- VuhDo will now serialize and compress stored profiles which
+   reduces memory usage to ~45 kBytes (down from 200 kBytes)
+-- Reduced core out-of-the-box memory consumption to ~1,50 MByte
+   (single player, 40 man raid: ~2,43 MByte)
+-- Changed the way profile and key layout options dialogs are
+   handeld to avoid accidental overwriting and make it more
+   standard
+
+Changes:
+
+Features:
+

@@ -1,0 +1,37 @@
+<Bindings>
+	<Binding name="VUHDO_KEY_ASSIGN_SMART_BUFF" description="" header="VUHDO_TITLE">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_1" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_2" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_3" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_4" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_5" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_6" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_7" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_8" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_9" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_10" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_11" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_12" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_13" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_14" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_15" description="">
+	</Binding>
+	<Binding name="VUHDO_KEY_ASSIGN_16" description="">
+	</Binding>
+</Bindings>
+

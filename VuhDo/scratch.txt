@@ -1,0 +1,33 @@
+- Bouquets <, > # stacks bei buffs/debuffs
+- Bouquets, Text-Indikatoren
+
+- Option je Bouquet Stacks aufaddieren
+- Keine Balkenfarbe custom debuffs per spellID
+- Sound für auslaufende Buffs BuffWatch
+
+- Zweite Waffenverz. Schamanen, Erkennung welche Waffenverz.
+- Hot bars vertical
+- Rez-Spells DK, WL
+
+1. Health     3
+2. Mana       1
+3. Background 5
+4. Aggro      2
+5. Target     -
+6. Incoming   4
+7. Threat     -
+8. Unit/Group highlight
+9. Hot bar 1
+10. Hot bar 2
+11. Hot bar 3
+
+3. Background
+		6. Incoming
+				1. Health
+					4. Aggro
+					5. Mana
+					Highlight
+					Player Target
+
+5. Target
+7. Threat

@@ -1,0 +1,474 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+
+	<Script file="VuhDoPanelConfig.lua" />
+
+	<Frame name="VuhDoGrpOrdTemplate" movable="true" enableMouse="true" hidden="true" virtual="true">
+		<Size>
+			<AbsDimension x="80" y="100" />
+		</Size>
+
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="5" right="5" top="5" bottom="5" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="16" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="16" />
+			</EdgeSize>
+		</Backdrop>
+		<Frames>
+			<Frame name="$parentInsTxuL" hidden="true">
+				<Size>
+					<AbsDimension x="5" y="80" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="-5" y="-10" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<Texture name="$parentTxu" setAllPoints="true" file="interface\buttons\bluegrad64">
+							<TexCoords left="0" right="1" top="0" bottom="1" />
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Button name="$parentChsBtn" inherits="UIPanelButtonTemplate" text="VUHDO_I18N_CHOOSE">
+				<Size>
+					<AbsDimension x="56" y="22" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="12" y="-46" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>VUHDO_panelSetupChooseGroupOnClick(self)</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+					<TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+				</NormalTexture>
+				<PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+					<TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+				</PushedTexture>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+					<TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+				</HighlightTexture>
+				<ButtonText name="$parentText">
+					<FontHeight>
+						<AbsValue val="10" />
+					</FontHeight>
+				</ButtonText>
+				<NormalFont inherits="SystemFont_Tiny">
+					<FontHeight>
+						<AbsValue val="11" />
+					</FontHeight>
+					<Color r="1" g="0.82" b="0" />
+					<Shadow>
+						<Color r="0" g="0" b="0" />
+						<Offset>
+							<AbsDimension x="1" y="-1" />
+						</Offset>
+					</Shadow>
+				</NormalFont>
+			</Button>
+			<Frame name="$parentDrgLbl1">
+				<Size>
+					<AbsDimension x="80" y="20" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-8" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLbl" inherits="SystemFont_Tiny" text="VUHDO_I18N_DRAG">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="11" />
+							</FontHeight>
+							<Color r="1" g="0.82" b="0" />
+							<Shadow>
+								<Color r="0" g="0" b="0" />
+								<Offset>
+									<AbsDimension x="1" y="-1" />
+								</Offset>
+							</Shadow>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Frame name="$parentRmvLbl">
+				<Size>
+					<AbsDimension x="44" y="16" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="5" y="-78" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLbl" inherits="SystemFont_Tiny" text="VUHDO_I18N_REMOVE" justifyH="RIGHT">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="8" />
+							</FontHeight>
+							<Color r="1" g="0.82" b="0" />
+							<Shadow>
+								<Color r="0" g="0" b="0" />
+								<Offset>
+									<AbsDimension x="1" y="-1" />
+								</Offset>
+							</Shadow>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Frame name="$parentRmvTxu">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="53" y="-74" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<Texture name="$parentTxu" setAllPoints="true" file="interface\buttons\ui-minusbutton-up">
+							<TexCoords left="0" right="1" top="0" bottom="1" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnMouseDown>VUHDO_panelSetupRemoveGroupOnClick(self)</OnMouseDown>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentDrgLbl2">
+				<Size>
+					<AbsDimension x="80" y="20" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-22" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLbl" inherits="SystemFont_Tiny" text="VUHDO_I18N_ME">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="11" />
+							</FontHeight>
+							<Color r="1" g="0.82" b="0" />
+							<Shadow>
+								<Color r="0" g="0" b="0" />
+								<Offset>
+									<AbsDimension x="1" y="-1" />
+								</Offset>
+							</Shadow>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Frame name="$parentDrgTxu">
+				<Size>
+					<AbsDimension x="70" y="40" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="5" y="-5" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<Texture name="$parentTexture" setAllPoints="true" file="interface\buttons\ui-panel-minimizebutton-highlight">
+							<TexCoords left="0" right="1" top="0" bottom="1" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnMouseDown>VUHDO_panelSetupGroupDragOnMouseDown(self)</OnMouseDown>
+					<OnMouseUp>VUHDO_panelSetupGroupDragOnMouseUp(self)</OnMouseUp>
+					<OnDragStart>VUHDO_panelSetupOnDragStart(self)</OnDragStart>
+					<OnDragStop>VUHDO_panelSetupOnDragStop(self)</OnDragStop>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentInsTxuR" hidden="true">
+				<Size>
+					<AbsDimension x="5" y="80" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="80" y="-10" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<Texture name="$parentTxu" setAllPoints="true" file="interface\buttons\bluegrad64">
+							<TexCoords left="0" right="1" top="0" bottom="1" />
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnShow>VUHDO_PanelSetupGroupOrderOnShow(self)</OnShow>
+		</Scripts>
+	</Frame>
+
+	<Frame name="VuhDoGrpSelTemplate" hidden="true" virtual="true">
+		<Size>
+			<AbsDimension x="80" y="100" />
+		</Size>
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="5" right="5" top="5" bottom="5" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="16" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="16" />
+			</EdgeSize>
+		</Backdrop>
+		<Frames>
+
+			<Frame name="$parentTypeLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="63" y="18" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="7" y="1" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" inherits="SystemFont_Tiny" text="VUHDO_I18N_TYPE" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="8" />
+							</FontHeight>
+							<Color r="1" g="0.82" b="0" />
+							<Shadow>
+								<Color r="0" g="0" b="0" />
+								<Offset>
+									<AbsDimension x="1" y="-1" />
+								</Offset>
+							</Shadow>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+			<Frame name="$parentValueLabel" inherits="VuhDoLabelFrameTemplate">
+				<Size>
+					<AbsDimension x="63" y="15" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="7" y="-33" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parentLabel" inherits="SystemFont_Tiny" text="VUHDO_I18N_VALUE" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<FontHeight>
+								<AbsValue val="8" />
+							</FontHeight>
+							<Color r="1" g="0.82" b="0" />
+							<Shadow>
+								<Color r="0" g="0" b="0" />
+								<Offset>
+									<AbsDimension x="1" y="-1" />
+								</Offset>
+							</Shadow>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+
+
+			<Frame name="$parentTyCmb" inherits="UIDropDownMenuTemplate" id="1">
+				<Size>
+					<AbsDimension x="160" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="-12" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+					UIDropDownMenu_SetWidth(self, 100);
+					self:SetScale(0.7);
+					local cb_init_fn = function()
+						local info1 = {};
+						info1.text = "" .. VUHDO_I18N_CLASS;
+						info1.value = 1;
+						info1.owner = self;
+						info1.func = function() VUHDO_groupSelectTypeOnSelectionChanged(info1) end
+						UIDropDownMenu_AddButton(info1);
+						local info2 = {};
+						info2.text = "" .. VUHDO_I18N_GROUP;
+						info2.value = 2;
+						info2.owner = self;
+						info2.func = function() VUHDO_groupSelectTypeOnSelectionChanged(info2) end
+						UIDropDownMenu_AddButton(info2);
+						local info3 = {};
+						info3.text = "" .. VUHDO_I18N_SPECIAL;
+						info3.value = 3;
+						info3.owner = self;
+						info3.func = function() VUHDO_groupSelectTypeOnSelectionChanged(info3) end
+						UIDropDownMenu_AddButton(info3);
+					end
+					UIDropDownMenu_Initialize(self, cb_init_fn)
+					</OnLoad>
+					<OnHide>CloseDropDownMenus();</OnHide>
+					<OnShow>VUHDO_groupSelectTypeComboOnShow(self)</OnShow>
+				</Scripts>
+			</Frame>
+
+
+			<Button name="$parentVlCmb" inherits="UIDropDownMenuTemplate" id="1">
+				<Size>
+					<AbsDimension x="160" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="-12" y="-65" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						UIDropDownMenu_SetWidth(self, 100);
+						self:SetScale(0.7);
+					</OnLoad>
+					<OnHide>CloseDropDownMenus();</OnHide>
+				</Scripts>
+			</Button>
+
+			<Button name="$parentOkayButton" inherits="UIPanelButtonTemplate" text="VUHDO_I18N_OKAY">
+				<Size>
+					<AbsDimension x="60" y="20" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="10" y="-74" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>VUHDO_groupSelectOkayOnClick(self)</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+					<TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+				</NormalTexture>
+				<PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+					<TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+				</PushedTexture>
+				<DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+					<TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+				</DisabledTexture>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+					<TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+				</HighlightTexture>
+				<ButtonText name="$parentText">
+					<FontHeight>
+						<AbsValue val="10" />
+					</FontHeight>
+				</ButtonText>
+				<NormalFont inherits="SystemFont_Tiny">
+					<FontHeight>
+						<AbsValue val="12" />
+					</FontHeight>
+					<Color r="1" g="0.82" b="0" />
+					<Shadow>
+						<Color r="0" g="0" b="0" />
+						<Offset>
+							<AbsDimension x="1" y="-1" />
+						</Offset>
+					</Shadow>
+				</NormalFont>
+				<HighlightFont inherits="SystemFont_Tiny">
+					<FontHeight>
+						<AbsValue val="12" />
+					</FontHeight>
+					<Color r="1" g="1" b="1" />
+					<Shadow>
+						<Color r="0" g="0" b="0" />
+						<Offset>
+							<AbsDimension x="1" y="-1" />
+						</Offset>
+					</Shadow>
+				</HighlightFont>
+				<DisabledFont inherits="SystemFont_Tiny">
+					<FontHeight>
+						<AbsValue val="12" />
+					</FontHeight>
+					<Color r="0.5" g="0.5" b="0.5" />
+					<Shadow>
+						<Color r="0" g="0" b="0" />
+						<Offset>
+							<AbsDimension x="1" y="-1" />
+						</Offset>
+					</Shadow>
+				</DisabledFont>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnShow>VUHDO_PanelSetupGroupSelectOnShow(self)</OnShow>
+		</Scripts>
+
+	</Frame>
+
+</Ui>

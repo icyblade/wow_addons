@@ -1,0 +1,557 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<Script file="VuhDoNewOptionsToolsSkins.lua" />
+
+	<Frame name="VuhDoNewOptionsToolsSkinsTemplate" virtual="true">
+		<Frames>
+
+			<Frame name="$parentLoadSavePanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="230" y="215" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="20" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="143" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_PROFILES" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Frame name="$parentSelectProfileLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="149" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="40" y="-31" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_SELECT_A_PROFILE" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentProfileComboBox" inherits="VuhDoComboBoxTemplate">
+						<Size>
+							<AbsDimension x="180" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="40" y="-65" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_setComboModel(self, "VUHDO_CURRENT_PROFILE", VUHDO_PROFILE_TABLE_MODEL);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K177);
+								self:SetAttribute("custom_function", VUHDO_profileComboValueChanged);
+								VUHDO_setProfileCombo(self);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Text");
+								VUHDO_initProfileTableModels();
+								VUHDO_lnfComboBoxInitFromModel(self);
+							</OnShow>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentProfileLoadButton" text="VUHDO_I18N_APPLY" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-85" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_loadProfileClicked(self)</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentProfileDeleteButton" text="VUHDO_I18N_DELETE" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="120" y="-85" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_deleteProfileClicked(self)</OnClick>
+						</Scripts>
+					</Button>
+
+					<Frame name="$parentEnterProfileNameLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="143" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="16" y="-126" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_OR_ENTER_PROFILE_NAME" justifyH="LEFT" inherits="VuDoDefaultFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<EditBox name="$parentEnterProfileNameEditBox" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="200" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="16" y="-143" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CURRENT_PROFILE");
+								VUHDO_setProfileEditBox(self);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K176);
+							</OnLoad>
+						</Scripts>
+					</EditBox>
+
+					<Button name="$parentProfileSaveButton" text="VUHDO_I18N_SAVE" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="65" y="-173" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>VUHDO_saveProfileClicked(self)</OnClick>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentAutoEnablePanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="230" y="155" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="270" y="-20" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="143" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_ACTIVATE_DUE_GRP_SIZE" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+
+					<CheckButton name="$parent1CheckButton" text="VUHDO_I18N_1" inherits="VuhDoCheckButtonTemplate">
+						<Size>
+							<AbsDimension x="65" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="10" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K298);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfCheckButtonInitFromModel(self);
+								VUHDO_skinsInitAutoCheckButton(self, "1");
+								VUHDO_lnfPatchFont(self, "Label"); VUHDO_lnfRadioButtonOnShow(self);
+							</OnShow>
+							<OnClick>
+								VUHDO_lnfCheckButtonClicked(self);
+								VUHDO_skinsAutoCheckButtonClicked(self, "1");
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent5CheckButton" text="VUHDO_I18N_5" inherits="VuhDoCheckButtonTemplate">
+						<Size>
+							<AbsDimension x="65" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="80" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K299);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Label"); VUHDO_lnfRadioButtonOnShow(self);
+								VUHDO_lnfCheckButtonInitFromModel(self);
+								VUHDO_skinsInitAutoCheckButton(self, "5");
+							</OnShow>
+							<OnClick>
+								VUHDO_lnfCheckButtonClicked(self);
+								VUHDO_skinsAutoCheckButtonClicked(self, "5");
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent10CheckButton" text="VUHDO_I18N_10" inherits="VuhDoCheckButtonTemplate">
+						<Size>
+							<AbsDimension x="65" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="150" y="-40" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K300);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Label"); VUHDO_lnfRadioButtonOnShow(self);
+								VUHDO_lnfCheckButtonInitFromModel(self);
+								VUHDO_skinsInitAutoCheckButton(self, "10");
+							</OnShow>
+							<OnClick>
+								VUHDO_lnfCheckButtonClicked(self);
+								VUHDO_skinsAutoCheckButtonClicked(self, "10");
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent15CheckButton" text="VUHDO_I18N_15" inherits="VuhDoCheckButtonTemplate">
+						<Size>
+							<AbsDimension x="65" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="10" y="-75" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K444);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Label"); VUHDO_lnfRadioButtonOnShow(self);
+								VUHDO_lnfCheckButtonInitFromModel(self);
+								VUHDO_skinsInitAutoCheckButton(self, "15");
+							</OnShow>
+							<OnClick>
+								VUHDO_lnfCheckButtonClicked(self);
+								VUHDO_skinsAutoCheckButtonClicked(self, "15");
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent25CheckButton" text="VUHDO_I18N_25" inherits="VuhDoCheckButtonTemplate">
+						<Size>
+							<AbsDimension x="65" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="80" y="-75" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K301);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Label"); VUHDO_lnfRadioButtonOnShow(self);
+								VUHDO_lnfCheckButtonInitFromModel(self);
+								VUHDO_skinsInitAutoCheckButton(self, "25");
+							</OnShow>
+							<OnClick>
+								VUHDO_lnfCheckButtonClicked(self);
+								VUHDO_skinsAutoCheckButtonClicked(self, "25");
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parent40CheckButton" text="VUHDO_I18N_40" inherits="VuhDoCheckButtonTemplate">
+						<Size>
+							<AbsDimension x="65" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="150" y="-75" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K302);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Label"); VUHDO_lnfRadioButtonOnShow(self);
+								VUHDO_lnfCheckButtonInitFromModel(self);
+								VUHDO_skinsInitAutoCheckButton(self, "40");
+							</OnShow>
+							<OnClick>
+								VUHDO_lnfCheckButtonClicked(self);
+								VUHDO_skinsAutoCheckButtonClicked(self, "40");
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentSpec1CheckButton" text="VUHDO_I18N_SPEC_1" inherits="VuhDoCheckButtonTemplate">
+						<Size>
+							<AbsDimension x="85" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="25" y="-113" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K475);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Label"); VUHDO_lnfRadioButtonOnShow(self);
+								VUHDO_lnfCheckButtonInitFromModel(self);
+								VUHDO_skinsInitAutoCheckButton(self, "SPEC_1");
+							</OnShow>
+							<OnClick>
+								VUHDO_lnfCheckButtonClicked(self);
+								VUHDO_skinsAutoCheckButtonClicked(self, "SPEC_1");
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentSpec2CheckButton" text="VUHDO_I18N_SPEC_2" inherits="VuhDoCheckButtonTemplate">
+						<Size>
+							<AbsDimension x="85" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="115" y="-113" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K476);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Label"); VUHDO_lnfRadioButtonOnShow(self);
+								VUHDO_lnfCheckButtonInitFromModel(self);
+								VUHDO_skinsInitAutoCheckButton(self, "SPEC_2");
+							</OnShow>
+							<OnClick>
+								VUHDO_lnfCheckButtonClicked(self);
+								VUHDO_skinsAutoCheckButtonClicked(self, "SPEC_2");
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentSettingsPanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="110" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="60" y="-270" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="143" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_SETTINGS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentAlwaysOverwriteCheckButton" text="VUHDO_I18N_QUIET_MODE" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CONFIG.IS_ALWAYS_OVERWRITE_PROFILE");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K487);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentLockCheckButton" text="VUHDO_I18N_LOCK" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-68" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K486);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Label"); VUHDO_lnfRadioButtonOnShow(self);
+								VUHDO_lnfCheckButtonInitFromModel(self);
+								VUHDO_skinsInitLockCheckButton(self);
+							</OnShow>
+							<OnClick>
+								VUHDO_lnfCheckButtonClicked(self);
+								VUHDO_skinsLockCheckButtonClicked(self);
+							</OnClick>
+						</Scripts>
+					</CheckButton>
+
+				</Frames>
+			</Frame>
+
+			<Frame name="$parentSharePanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="72" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="270" y="-270" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="143" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="Send Profile" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentShareButton" inherits="VuhDoShareButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, { "VUHDO_shareCurrentProfile", "VUHDO_CURRENT_PROFILE" } );
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+
+		</Frames>
+		<Scripts>
+			<OnHide>
+				VUHDO_skinsSaveAutoProfileButtonEnablement(self, VUHDO_CURRENT_PROFILE);
+			</OnHide>
+		</Scripts>
+	</Frame>
+</Ui>

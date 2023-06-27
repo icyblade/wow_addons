@@ -1,0 +1,251 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Script file="VuhDoNewOptionsToolsKeyLayouts.lua" />
+
+	<Frame name="VuhDoNewOptionsToolsKeyLayoutsTemplate" virtual="true">
+		<Frames>
+			<Frame name="$parentStorePanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="320" y="167" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="30" y="-30" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Button name="$parentSaveAsButton" text="VUHDO_I18N_SAVE_AS" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="210" y="-127" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_saveKeyLayoutOnClick(self);
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<EditBox name="$parentSaveAsEditBox" inherits="VuhDoEditBoxTemplate">
+						<Size>
+							<AbsDimension x="170" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="17" y="-115" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_CURR_LAYOUT");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K403);
+							</OnLoad>
+						</Scripts>
+					</EditBox>
+
+					<Button name="$parentLayoutCombo" inherits="VuhDoComboBoxTemplate">
+						<Size>
+							<AbsDimension x="200" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="23" y="-45" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_setComboModel(self, "VUHDO_CURR_LAYOUT", VUHDO_KEY_LAYOUT_COMBO_MODEL);
+								self:SetAttribute("custom_function", VUHDO_keyLayoutComboChanged);
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K404);
+							</OnLoad>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Text");
+								VUHDO_initKeyLayoutComboModel();
+								VUHDO_lnfComboBoxInitFromModel(self);
+							</OnShow>
+						</Scripts>
+					</Button>
+
+					<CheckButton name="$parentSpec2CheckButton" text="VUHDO_I18N_SPEC_2" inherits="VuhDoCheckButtonTemplate">
+						<Size>
+							<AbsDimension x="80" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="105" y="-70" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_keyLayoutSpecOnClick(self, "2");
+								VUHDO_lnfCheckButtonClicked(self);
+							</OnClick>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Label");
+								self:SetChecked(VUHDO_CURR_LAYOUT == VUHDO_SPEC_LAYOUTS["2"]);
+								VUHDO_lnfCheckButtonClicked(self);
+							</OnShow>
+						</Scripts>
+					</CheckButton>
+
+					<CheckButton name="$parentSpec1CheckButton" text="VUHDO_I18N_SPEC_1" inherits="VuhDoCheckButtonTemplate">
+						<Size>
+							<AbsDimension x="80" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-70" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_keyLayoutSpecOnClick(self, "1");
+								VUHDO_lnfCheckButtonClicked(self);
+							</OnClick>
+							<OnShow>
+								VUHDO_lnfPatchFont(self, "Label");
+								self:SetChecked(VUHDO_CURR_LAYOUT == VUHDO_SPEC_LAYOUTS["1"]);
+								VUHDO_lnfCheckButtonClicked(self);
+							</OnShow>
+						</Scripts>
+					</CheckButton>
+
+					<Button name="$parentDeleteButton" text="VUHDO_I18N_DELETE" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="210" y="-89" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_keyLayoutDeleteOnClick(self);
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<Button name="$parentApplyButton" text="VUHDO_I18N_APPLY" inherits="VuhDoButtonTemplate">
+						<Size>
+							<AbsDimension x="100" y="32" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="210" y="-51" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								VUHDO_keyLayoutApplyOnClick(self);
+							</OnClick>
+						</Scripts>
+					</Button>
+
+					<CheckButton name="$parentLoadHotsCheckButton"  text="VUHDO_I18N_LOAD_HOTS" inherits="VuhDoCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="210" y="-13" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, "VUHDO_SPELL_CONFIG.IS_LOAD_HOTS");
+								VUHDO_lnfSetTooltip(self, VUHDO_I18N_TT.K365);
+							</OnLoad>
+						</Scripts>
+					</CheckButton>
+
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="223" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="VUHDO_I18N_MANAGE_KEYS" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+			</Frame>
+			<Frame name="$parentSharePanel" inherits="VuhDoPanelTemplate">
+				<Size>
+					<AbsDimension x="126" y="72" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="270" y="-270" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="$parentTitleLabel" inherits="VuhDoLabelFrameTemplate">
+						<Size>
+							<AbsDimension x="143" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="12" y="-7" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString name="$parentLabel" text="Send Layout" inherits="VuDoDefaultTitleFontTemplate">
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<Button name="$parentShareButton" inherits="VuhDoShareButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="13" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								VUHDO_lnfSetModel(self, { "VUHDO_shareCurrentKeyLayout", "VUHDO_CURR_LAYOUT" } );
+							</OnLoad>
+						</Scripts>
+					</Button>
+
+				</Frames>
+			</Frame>
+
+		</Frames>
+	</Frame>
+</Ui>

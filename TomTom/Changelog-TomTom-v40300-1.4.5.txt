@@ -1,0 +1,22 @@
+tag v40300-1.4.5
+ea1a3616fd40e8ae8cdf620f4fabe74de4000e27
+James Whitehead II <jnwhiteh@gmail.com>
+2012-07-08 11:43:28 +0100
+
+v40300-1.4.5
+
+
+--------------------
+
+James Whitehead II:
+	- Add an 'exactcolor' option for the waypoint arrow
+	This will be used when you are moving within 98% accuracy of the
+	intended direction and can be useful for distinguishing between the
+	shades of 'good' and some value of 'exact'.
+	- Update .gitignore
+Jim Whitehead II:
+	- Use stored options when reloading waypoints
+James Whitehead II:
+	- Don't bail out immediately without floor information
+	- Remove an extraneous print
+	- Avoid IEEE-754 precision issues

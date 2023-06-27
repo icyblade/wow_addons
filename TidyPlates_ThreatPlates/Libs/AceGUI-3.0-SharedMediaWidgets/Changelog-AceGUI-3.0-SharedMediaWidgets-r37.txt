@@ -1,0 +1,26 @@
+------------------------------------------------------------------------
+r37 | yssaril | 2010-10-12 06:21:49 +0000 (Tue, 12 Oct 2010) | 1 line
+Changed paths:
+   M /trunk/AceGUI-3.0-SharedMediaWidgets.toc
+
+update toc
+------------------------------------------------------------------------
+r36 | yssaril | 2010-09-30 06:10:18 +0000 (Thu, 30 Sep 2010) | 1 line
+Changed paths:
+   M /trunk/AceGUI-3.0-SharedMediaWidgets.toc
+
+testing committing on new server
+------------------------------------------------------------------------
+r35 | yssaril | 2010-09-30 06:06:29 +0000 (Thu, 30 Sep 2010) | 1 line
+Changed paths:
+   M /trunk/AceGUI-3.0-SharedMediaWidgets.toc
+
+add ## X-Compatible-With: 40000
+------------------------------------------------------------------------
+r34 | yssaril | 2010-09-19 17:07:03 +0000 (Sun, 19 Sep 2010) | 1 line
+Changed paths:
+   M /trunk/.pkgmeta
+   M /trunk/AceGUI-3.0-SharedMediaWidgets.toc
+
+add libstub and acegui as externals via pkgmeta (just in case someone decides to only disembed the widgets and nothing else)
+------------------------------------------------------------------------

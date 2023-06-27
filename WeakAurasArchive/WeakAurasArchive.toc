@@ -1,0 +1,7 @@
+## Interface: 40300
+## Title: WeakAuras Archive
+## LoadOnDemand: 1
+## SavedVariables: WeakAurasArchive
+## Dependencies: WeakAuras
+
+WeakAurasArchive.lua
