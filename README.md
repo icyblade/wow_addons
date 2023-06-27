@@ -5,7 +5,7 @@
  - [Auctionator](https://www.curseforge.com/wow/addons/auctionator/download/558559)
  - [Deadly Boss Mods](https://www.curseforge.com/wow/addons/deadly-boss-mods/download/608290)
  - [Details](https://github.com/skyler-code/Details-Cata)
- - [ElvUI_AddOnSkins]https://github.com/ElvUI-Cataclysm/ElvUI_AddOnSkins-4.3.4)
+ - [ElvUI_AddOnSkins](https://github.com/ElvUI-Cataclysm/ElvUI_AddOnSkins-4.3.4)
  - [ElvUI_Enhanced](https://github.com/ElvUI-Cataclysm/ElvUI_Enhanced-4.3.4)
  - [ElvUI_EnhancedFriendsList](https://github.com/ElvUI-Cataclysm/ElvUI_EnhancedFriendsList-4.3.4)
  - [ElvUI](https://github.com/ElvUI-Cataclysm/ElvUI-4.3.4)
