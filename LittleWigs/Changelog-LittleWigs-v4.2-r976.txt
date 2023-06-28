@@ -1,0 +1,66 @@
+------------------------------------------------------------------------
+r976 | ulic | 2011-08-13 18:42:28 +0000 (Sat, 13 Aug 2011) | 1 line
+Changed paths:
+   A /tags/v4.2-r976 (from /trunk:975)
+
+Tagging as v4.2-r976
+------------------------------------------------------------------------
+r975 | ulic | 2011-08-06 03:25:10 +0000 (Sat, 06 Aug 2011) | 1 line
+Changed paths:
+   M /trunk/GrimBatol/Umbriss.lua
+
+Another crack at Blitz
+------------------------------------------------------------------------
+r974 | pettigrow | 2011-07-30 09:36:58 +0000 (Sat, 30 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/BRC/LittleWigs_BRC.toc
+   M /trunk/Deadmines/LittleWigs_Deadmines.toc
+   M /trunk/GrimBatol/LittleWigs_GrimBatol.toc
+   M /trunk/LostCity/LittleWigs_LostCity.toc
+   M /trunk/Origination/LittleWigs_Origination.toc
+   M /trunk/Shadowfang/LittleWigs_Shadowfang.toc
+   M /trunk/Stonecore/LittleWigs_Stonecore.toc
+   M /trunk/ThroneTides/LittleWigs_ThroneTides.toc
+   M /trunk/VortexPinnacle/LittleWigs_VortexPinnacle.toc
+   M /trunk/ZulAman/LittleWigs_ZulAman.toc
+   M /trunk/ZulGurub/LittleWigs_ZulGurub.toc
+
+frFR Update
+------------------------------------------------------------------------
+r973 | ulic | 2011-07-30 03:12:08 +0000 (Sat, 30 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/GrimBatol/Umbriss.lua
+
+Hopefully a solution for Blitz, at least until Blizz totally removes CHAT_MSG_RAID_BOSS_EMOTE
+------------------------------------------------------------------------
+r972 | funkydude | 2011-07-29 03:20:57 +0000 (Fri, 29 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/ZulAman/Nalorakk.lua
+
+ZulAman/Nalorakk: fix form changes
+------------------------------------------------------------------------
+r971 | ananhaid | 2011-07-24 12:27:54 +0000 (Sun, 24 Jul 2011) | 2 lines
+Changed paths:
+   M /trunk/BRC/LittleWigs_BRC.toc
+   M /trunk/GrimBatol/LittleWigs_GrimBatol.toc
+   M /trunk/LostCity/LittleWigs_LostCity.toc
+   M /trunk/Origination/LittleWigs_Origination.toc
+   M /trunk/Stonecore/LittleWigs_Stonecore.toc
+   M /trunk/ThroneTides/LittleWigs_ThroneTides.toc
+   M /trunk/VortexPinnacle/LittleWigs_VortexPinnacle.toc
+
+LittleWigs:
+- zhCN update.
+------------------------------------------------------------------------
+r970 | ulic | 2011-07-18 19:58:58 +0000 (Mon, 18 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/ZulGurub/Zanzil.lua
+
+Ignore Zanzil's fire when it's a result of player reflection (Ticket 55)
+------------------------------------------------------------------------
+r969 | ulic | 2011-07-11 20:32:34 +0000 (Mon, 11 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/ZulGurub/Kilnara.lua
+
+Remove Tears of Blood bar if interrupted (Ticket #54)
+------------------------------------------------------------------------

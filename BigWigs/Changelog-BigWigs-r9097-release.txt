@@ -1,0 +1,82 @@
+------------------------------------------------------------------------
+r9097 | funkydude | 2012-08-08 13:32:32 +0000 (Wed, 08 Aug 2012) | 1 line
+Changed paths:
+   A /tags/r9097-release (from /trunk:9096)
+
+Tagging as r9097-release
+------------------------------------------------------------------------
+r9096 | funkydude | 2012-08-08 13:29:01 +0000 (Wed, 08 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/BigWigs.toc
+
+bump version
+------------------------------------------------------------------------
+r9095 | funkydude | 2012-08-03 19:38:31 +0000 (Fri, 03 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/Options/Options.lua
+
+Options: temp names for MoP modules
+------------------------------------------------------------------------
+r9094 | funkydude | 2012-08-03 19:21:26 +0000 (Fri, 03 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/.pkgmeta
+
+fix unpacking for endless spring
+------------------------------------------------------------------------
+r9093 | funkydude | 2012-08-03 19:09:15 +0000 (Fri, 03 Aug 2012) | 1 line
+Changed paths:
+   A /trunk/EndlessSpring/BigWigs_EndlessSpring.toc
+   M /trunk/EndlessSpring/modules.xml
+   A /trunk/HeartOfFear/BigWigs_HeartOfFear.toc
+   M /trunk/HeartOfFear/modules.xml
+   A /trunk/Mogushan/BigWigs_Mogushan.toc
+   M /trunk/Mogushan/modules.xml
+
+add toc files
+------------------------------------------------------------------------
+r9092 | funkydude | 2012-08-03 18:35:11 +0000 (Fri, 03 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/.pkgmeta
+   M /trunk/modules.xml
+   D /trunk/temp.lua
+
+remove MoP force load hack & make MoP modules LoD again
+------------------------------------------------------------------------
+r9091 | funkydude | 2012-08-01 16:05:05 +0000 (Wed, 01 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/Mogushan/Garajal.lua
+
+Mogushan/Garajal: final change to syncing
+------------------------------------------------------------------------
+r9090 | funkydude | 2012-08-01 15:25:34 +0000 (Wed, 01 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/Mogushan/Garajal.lua
+
+Mogushan/Garajal: don't call self in a local function
+------------------------------------------------------------------------
+r9089 | funkydude | 2012-08-01 15:21:18 +0000 (Wed, 01 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/Mogushan/Garajal.lua
+
+Mogushan/Garajal: better way to handle the syncing
+------------------------------------------------------------------------
+r9088 | funkydude | 2012-08-01 14:57:12 +0000 (Wed, 01 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/Mogushan/Garajal.lua
+
+Mogushan/Garajal: fix syncing
+------------------------------------------------------------------------
+r9087 | Maat | 2012-08-01 12:38:20 +0000 (Wed, 01 Aug 2012) | 1 line
+Changed paths:
+   M /trunk/Mogushan/Garajal.lua
+
+populate Gara'jal module, need to test voodoo doll syncing
+------------------------------------------------------------------------
+r9086 | funkydude | 2012-07-05 15:01:04 +0000 (Thu, 05 Jul 2012) | 1 line
+Changed paths:
+   M /trunk/Bastion/Sinestra.lua
+   M /trunk/Firelands/Staghelm.lua
+   M /trunk/Plugins/Tips.lua
+
+more MoP fixes
+------------------------------------------------------------------------

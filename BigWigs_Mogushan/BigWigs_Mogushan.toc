@@ -1,0 +1,18 @@
+## Interface: 50001
+## X-Curse-Packaged-Version: r9097-release
+## X-Curse-Project-Name: BigWigs Bossmods
+## X-Curse-Project-ID: big-wigs
+## X-Curse-Repository-ID: wow/big-wigs/mainline
+
+## Title: Big Wigs [|cffeda55fMogu'shan Vaults|r]
+## Notes: Big Wigs Modules for the Mogu'shan Vaults.
+
+## LoadOnDemand: 1
+## Dependencies: BigWigs
+
+## X-Category: Raid
+## X-BigWigs-LoadOn-ZoneId: 896
+
+locales.xml
+modules.xml
+
