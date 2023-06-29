@@ -94,7 +94,7 @@ function M:COMBAT_TEXT_UPDATE(event, ...)
 
 	local messagetype, faction = ...
 	if messagetype == "FACTION" then
-		if faction ~= "Guild" and faction ~= GetWatchedFactionInfo() then
+		if faction ~= _G.GUILD and faction ~= GetWatchedFactionInfo() then
 			ExpandAllFactionHeaders()
 			for i = 1, GetNumFactions() do
 				if faction == GetFactionInfo(i) then
