@@ -1,0 +1,26 @@
+﻿## Interface: 40300
+## Version: 99.7
+## Title: Quest Completist
+## Notes: Enables you to see what quests you have completed, and what ones you have left to do.
+## SavedVariables: qcSettings qcWorkingDB qcWorkingLog qcCollectedQuests qcProgressComplete qcSharedIDs
+## SavedVariablesPerCharacter: qcCompletedQuests
+
+Localization.enUS.lua
+Localization.ptBR.lua
+Localization.frFR.lua
+Localization.deDE.lua
+Localization.itIT.lua
+Localization.koKR.lua
+Localization.esMX.lua
+Localization.ruRU.lua
+Localization.zhCN.lua
+Localization.esES.lua
+Localization.zhTW.lua
+
+qcMenu.lua
+
+qcInitiator.lua
+qcQuest.lua
+qcCollect.lua
+qcCore.lua
+QuestCompletist.xml

@@ -1,0 +1,24 @@
+How to Contribute
+
+The add-on will record details each time you Accept or Complete a quest,
+including: NPC Name\ID\GUID, your current zone, your current coordinates,
+quest name, quest category (As it appears in the quest log), and your
+faction\race\class.
+
+This information will be stored in the QuestCompletist Saved Variables
+file located: 
+
+
+
+<World of Warcraft Folder>\WTF\Account\<ACCOUNT NAME>\SavedVariables\QuestCompletist.lua
+
+Please email me your Saved Variables files to: viduus.wow@gmail.com. 
+
+
+
+As you continue to quest through the game the add-on will continue to
+log this information, so even after you have sent me the file once,
+if you complete more quests after that, please feel free to send me
+an updated copy!
+
+Thank you =)

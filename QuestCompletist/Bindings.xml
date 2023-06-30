@@ -1,0 +1,9 @@
+<Bindings>
+	<Binding name="QCTOGGLEFRAME" description="Toggle the Quest Completist frame on and off." header="QCQUESTCOMPLETIST">
+		if qcQuestCompletistUI:IsShown() then
+			qcQuestCompletistUI:Hide()
+		else
+			qcQuestCompletistUI:Show()
+		end
+	</Binding>
+</Bindings>
