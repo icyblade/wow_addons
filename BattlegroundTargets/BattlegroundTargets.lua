@@ -198,7 +198,7 @@ local groupMemChk = 0
 local scoreUpdateThrottle  = GetTime()      -- scoreupdate: B.attlefieldScoreUpdate()
 local scoreUpdateFrequency = 1              -- scoreupdate: 0-20 updates = 1 second | 21+ updates = 5 seconds
 local scoreUpdateCount     = 0              -- scoreupdate: (reason: later score updates are less relevant and 5 seconds is still very high)
-local range_SPELL_Frequency     = 0.2       -- rangecheck: [class-spell]: the 0.2 second freq is per enemy (variable: ENEMY_Name2Range[enemyname]) 
+local range_SPELL_Frequency     = 0.2       -- rangecheck: [class-spell]: the 0.2 second freq is per enemy (variable: ENEMY_Name2Range[enemyname])
 local range_CL_Throttle         = 0         -- rangecheck: [combatlog] C.ombatLogRangeCheck()
 local range_CL_Frequency        = 3         -- rangecheck: [combatlog] 50/50 or 66/33 or 75/25 (%Yes/%No) => 64/36 = 36% combatlog messages filtered (36% vs overhead: two variables, one addition, one number comparison and if filtered one math_random)
 local range_CL_DisplayThrottle  = GetTime() -- rangecheck: [combatlog] display update
@@ -280,7 +280,7 @@ local bgSize = {
 	["Strand of the Ancients"] = 15,
 	["Isle of Conquest"] = 40,
 	["The Battle for Gilneas"] = 10,
-	["Twin Peaks"] = 10, 
+	["Twin Peaks"] = 10,
 }
 
 local bgSizeINT = {
@@ -292,7 +292,7 @@ local bgSizeINT = {
 local flagBG = {
 	["Warsong Gulch"] = 1,
 	["Eye of the Storm"] = 2,
-	["Twin Peaks"] = 3, 
+	["Twin Peaks"] = 3,
 }
 
 local flagIDs = {
@@ -745,7 +745,7 @@ TEMPLATE.TextButton = function(button, text, action)
 	local bordercolor
 	if action == 1 then
 		button:SetNormalFontObject("GameFontNormal")
-		button:SetDisabledFontObject("GameFontDisable") 
+		button:SetDisabledFontObject("GameFontDisable")
 		buttoncolor = {0.38, 0, 0, 1}
 		bordercolor = {0.73, 0.26, 0.21, 1}
 	elseif action == 2 then
@@ -760,7 +760,7 @@ TEMPLATE.TextButton = function(button, text, action)
 		bordercolor = {0.24, 0.46, 0.21, 1}
 	elseif action == 4 then
 		button:SetNormalFontObject("GameFontNormalSmall")
-		button:SetDisabledFontObject("GameFontDisableSmall") 
+		button:SetDisabledFontObject("GameFontDisableSmall")
 		buttoncolor = {0.38, 0, 0, 1}
 		bordercolor = {0.73, 0.26, 0.21, 1}
 	else
@@ -798,7 +798,7 @@ TEMPLATE.TextButton = function(button, text, action)
 	button.Highlight:SetTexture(0.6, 0.6, 0.6, 0.2)
 	button:SetHighlightTexture(button.Highlight)
 
-	button:SetPushedTextOffset(1, -1)	
+	button:SetPushedTextOffset(1, -1)
 	button:SetText(text)
 end
 -- Template TextButton END ----------------------------------------
@@ -1043,7 +1043,7 @@ TEMPLATE.TabButton = function(button, text, active)
 		button.TabTexture:SetHeight(17)
 		button.TabTexture:SetTexture(AddonIcon)
 	end
-	
+
 	button:SetScript("OnEnter", function() if not button.show then button.TextureBorder:SetTexture(0.4, 0.4, 0.4, 0.8) end end)
 	button:SetScript("OnLeave", function() if not button.show then button.TextureBorder:SetTexture(0.4, 0.4, 0.4, 0.4) end end)
 end
@@ -1078,7 +1078,7 @@ end
 TEMPLATE.Slider = function(slider, width, step, minVal, maxVal, curVal, func, measure)
 	slider:SetWidth(width)
 	slider:SetHeight(16)
-	slider:SetValueStep(step) 
+	slider:SetValueStep(step)
 	slider:SetMinMaxValues(minVal, maxVal)
 	slider:SetValue(curVal)
 	slider:SetOrientation("HORIZONTAL")
@@ -1269,7 +1269,7 @@ TEMPLATE.PullDownMenu = function(button, contentName, buttonText, pulldownWidth,
 			button.PullDownMenu.Button[i].value1 = i
 		elseif contentName == "SortDetail" then
 			button.PullDownMenu.Button[i].Text:SetText(sortDetail[i])
-			button.PullDownMenu.Button[i].value1 = i	
+			button.PullDownMenu.Button[i].value1 = i
 		elseif contentName == "RangeType" then
 			button.PullDownMenu.Button[i].Text:SetText(rangeTypeName[i])
 			button.PullDownMenu.Button[i].value1 = i
@@ -1391,7 +1391,7 @@ function BattlegroundTargets:InitOptions()
 		end
 		BattlegroundTargets_Options.version = 4
 	end
-	
+
 	if BattlegroundTargets_Options.version == 4 then
 		if BattlegroundTargets_Options.ButtonShowRealm then -- rename ButtonShowRealm to ButtonHideRealm
 			BattlegroundTargets_Options.ButtonHideRealm = {}
@@ -1741,7 +1741,7 @@ function BattlegroundTargets:InitOptions()
 		if not OPT.ButtonScale              then OPT.ButtonScale              = {} end OPT.ButtonScale[sz]              = BattlegroundTargets_Options.ButtonScale[sz]
 		if not OPT.ButtonWidth              then OPT.ButtonWidth              = {} end OPT.ButtonWidth[sz]              = BattlegroundTargets_Options.ButtonWidth[sz]
 		if not OPT.ButtonHeight             then OPT.ButtonHeight             = {} end OPT.ButtonHeight[sz]             = BattlegroundTargets_Options.ButtonHeight[sz]
-	end	
+	end
 end
 -- ---------------------------------------------------------------------------------------------------------------------
 
@@ -5052,10 +5052,10 @@ function BattlegroundTargets:EnableConfigMode()
 		for i = 1, 40 do
 			local role = 4
 			local spec = 4
-			
+
 			local talentSpec = ENEMY_Data[i].talentSpec
 			local classToken = ENEMY_Data[i].classToken
-			
+
 			if talentSpec and classToken then
 				local token = TLT[classToken]
 				if token then
@@ -5323,7 +5323,7 @@ function BattlegroundTargets:ClearConfigButtonValues(GVAR_TargetButton, clearRan
 	GVAR_TargetButton.SpecTexture:SetTexture(nil)
 	GVAR_TargetButton.ClassTexture:SetTexCoord(0, 0, 0, 0)
 	GVAR_TargetButton.ClassColorBackground:SetTexture(0, 0, 0, 0)
-	
+
 	if clearRange then
 		Range_Display(false, GVAR_TargetButton, OPT.ButtonRangeDisplay[currentSize])
 	end
@@ -5384,7 +5384,7 @@ function BattlegroundTargets:DefaultShuffle()
 			rem = rem - n
 		end
 	end
- 
+
 	for i = 1, rndGG do
 		for j = 1, memGG[i] do
 			local r = math_random(1,currentSize)
@@ -5469,7 +5469,7 @@ function BattlegroundTargets:Shuffle(shuffleStyle)
 		GVAR.OptionsFrame.TestShuffler.TextureHighlight:SetAlpha(0)
 	else
 		GVAR.OptionsFrame.TestShuffler.TextureHighlight:SetAlpha(0.5)
-	end	
+	end
 
 	if shuffleStyle then
 		BattlegroundTargets:DefaultShuffle()
@@ -5955,7 +5955,7 @@ function BattlegroundTargets:MainDataUpdate()
 					GVAR_TargetButton.FocusTexture:SetAlpha(0)
 				end
 			end
-			
+
 			if ButtonShowFlag and hasFlag then
 				if qname == hasFlag then
 					GVAR_TargetButton.FlagTexture:SetAlpha(1)
@@ -5989,7 +5989,7 @@ function BattlegroundTargets:MainDataUpdate()
 					local tex = guildGrpTex[texNum]
 					local col = guildGrpCol[colNum]
 					GVAR_TargetButton.GuildGroup:SetTexCoord(tex[1], tex[2], tex[3], tex[4]) -- GRP_TEX
-					GVAR_TargetButton.GuildGroup:SetVertexColor(col[1], col[2], col[3]) 
+					GVAR_TargetButton.GuildGroup:SetVertexColor(col[1], col[2], col[3])
 				else
 					GVAR_TargetButton.GuildGroup:SetTexCoord(0, 0, 0, 0)
 				end
@@ -6432,7 +6432,7 @@ function BattlegroundTargets:IsBattleground()
 		end
 	end
 
-	if IsRatedBattleground() then
+	if IsRatedBattleground() or true then  -- Support cross faction BG
 		currentSize = 10
 		local faction = GetBattlefieldArenaFaction()
 		if faction == 0 then
@@ -6963,7 +6963,7 @@ function BattlegroundTargets:CheckUnitTarget(unitID, unitName)
 				GVAR.TargetButton[i].AssistTexture:SetAlpha(0)
 			end
 			if GVAR_TargetButton then
-				assistTargetName = enemyName 
+				assistTargetName = enemyName
 				GVAR_TargetButton.AssistTexture:SetAlpha(1)
 			end
 		end
@@ -7031,7 +7031,7 @@ function BattlegroundTargets:CheckUnitTarget(unitID, unitName)
 					local num = 1
 					for gName, gCount in pairs(ENEMY_GuildCount) do
 						if gCount > 1 then
-						
+
 							local num2 = 0
 							for eName2, gName2 in pairs(ENEMY_Guild) do
 								if gName == gName2 then
@@ -7061,7 +7061,7 @@ function BattlegroundTargets:CheckUnitTarget(unitID, unitName)
 											local tex = guildGrpTex[texNum]
 											local col = guildGrpCol[colNum]
 											button2.GuildGroup:SetTexCoord(tex[1], tex[2], tex[3], tex[4]) -- GRP_TEX
-											button2.GuildGroup:SetVertexColor(col[1], col[2], col[3]) 
+											button2.GuildGroup:SetVertexColor(col[1], col[2], col[3])
 										end
 									end
 
