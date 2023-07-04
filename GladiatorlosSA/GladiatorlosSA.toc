@@ -1,0 +1,21 @@
+﻿## Interface: 40300
+## Title: GladiatorlosSA
+## Notes: PVP Spell Sound Alert
+## Notes-zhTW: PVP技能語音提示
+## Author: Abatorlos(of Spinebreaker), DuskAshes, superk521
+## SavedVariables: GladiatorlosSADB
+## Version: v1.0
+## X-Curse-Packaged-Version: 1.0.1
+## X-Curse-Project-Name: GladiatorlosSA
+## X-Curse-Project-ID: gladiatorlossa
+## X-Curse-Repository-ID: wow/gladiatorlossa/mainline
+## X-Curse-Packaged-Version: Releas
+## X-Curse-Project-Name: GladiatorlosSA
+## X-Curse-Project-ID: gladiatorlossa
+## X-Curse-Repository-ID: wow/gladiatorlossa/mainline
+
+embeds.xml
+Locales\locales.xml
+
+GladiatorlosSA.lua
+spelllist.lua

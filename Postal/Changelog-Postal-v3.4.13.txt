@@ -1,0 +1,58 @@
+------------------------------------------------------------------------
+r354 | xinhuan | 2011-12-17 09:20:29 +0000 (Sat, 17 Dec 2011) | 1 line
+Changed paths:
+   A /tags/v3.4.13 (from /trunk:353)
+
+Tag release v3.4.13.
+------------------------------------------------------------------------
+r353 | xinhuan | 2011-12-17 09:10:57 +0000 (Sat, 17 Dec 2011) | 1 line
+Changed paths:
+   M /trunk/Postal.toc
+
+Update version to 3.4.13
+------------------------------------------------------------------------
+r352 | xinhuan | 2011-12-17 09:03:55 +0000 (Sat, 17 Dec 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/OpenAll.lua
+
+Add solution (provided by paxi) for mailbox not opening past the first 50 mails for users of other addons that also regularly check the mailbox for changes such as "Tradeskillmaster Mailing".
+------------------------------------------------------------------------
+r351 | xinhuan | 2011-12-17 08:43:18 +0000 (Sat, 17 Dec 2011) | 1 line
+Changed paths:
+   M /trunk/Localization.lua
+   M /trunk/Postal.toc
+
+Add Brazilian Portugese (ptBR) localization.
+------------------------------------------------------------------------
+r349 | xinhuan | 2011-12-03 17:28:34 +0000 (Sat, 03 Dec 2011) | 1 line
+Changed paths:
+   M /trunk/Postal.toc
+
+Update version to 3.4.12.
+------------------------------------------------------------------------
+r348 | xinhuan | 2011-12-03 17:27:42 +0000 (Sat, 03 Dec 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/OpenAll.lua
+   M /trunk/Modules/Select.lua
+   M /trunk/Postal.lua
+
+Add option to disable having Mr.Plow addon be triggered on opening/returning mails in Select and OpenAll modules. Defaults to On.
+------------------------------------------------------------------------
+r346 | xinhuan | 2011-12-03 16:22:15 +0000 (Sat, 03 Dec 2011) | 1 line
+Changed paths:
+   M /trunk/Postal.toc
+
+Update TOC to 40300, version to 3.4.11.
+------------------------------------------------------------------------
+r345 | xinhuan | 2011-12-03 15:23:55 +0000 (Sat, 03 Dec 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Select.lua
+
+Apply fix for PTR crash when opening a mail containing more than 2^31 gold, by Cybeloras.
+------------------------------------------------------------------------
+r344 | mikk | 2011-11-05 13:11:42 +0000 (Sat, 05 Nov 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Select.lua
+
+More accurate timings on when new mail will arrive when someone else is doing CheckInbox() calls.
+------------------------------------------------------------------------

@@ -1,0 +1,51 @@
+(Mon 2012-7-9) R01
+
+Removed: Zealotry, Hungering Cold, Throwdown, Dark Archangel
+
+Added: Over 100 new Spell Trigger
+
+Added: Monk Spells
+
+(Mon 2012-7-9 21.00 CET) R02
+
+Added: Incarnation: Three of Life, Touch of Karma (Down), Spear Strike (Monk Interrupt)
+
+Changed: Zen Meditation Down (Audio), Repentance (StartCasting)
+
+Fixed: Dire Beast (multiple trigger added), Blinding Light (Audio), Stray of Execution (audio: Healing Execution)
+
+(Wed 2012-7-11 14.30 CET) R03
+
+Fixed: Archimonde's Vengance (Audio), Remorseless Winter (trigger)
+
+Changed: Dark Soul (Now have 3 differnt trigger "Instability, Knoweldge and Misery)
+
+Added: lvl 90 "Drinking"
+
+(Thu 2012-7-12 18.30 CET) R04
+
+Added: Symbiosis' spells, they will be identify by an "S" before them spell name (ex: s Ice Block, s Solar Beam, s Mass Dispell)
+
+(Thu 2012-7-12 18.55 CET) R04b
+
+Added: Mana Tea
+
+(Sun 2012-7-15 20.02) R05
+
+Added: Stampede (Hunter lvl 87 talent)
+
+Changed: Grimorire of Service Summons
+
+Added: Invalid SpellID Tracker
+
+(Tue 2012-07-17 15.00) R06
+
+Added: Transcendence: Transfer (Audio: Trensfer)
+
+Reworked: Mana Tea trigger due its Double Nature (channeled and Istant(glyph))
+
+(Thu 2012-07-26 17.00) R07
+
+Added: S(Symbiosis)Clash, S Elusive Brew/Down, S Fortyfing Brew/Down, S Grapple Weapon, S Cyclone
+
+Fixed: S Entangling Roots (moved form Priest to Monk), Class order is now the same for all spell kind (Buff Up/Down, Spell Casting, Special Ability)

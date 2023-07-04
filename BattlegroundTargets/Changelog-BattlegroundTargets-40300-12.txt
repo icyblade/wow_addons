@@ -1,0 +1,97 @@
+------------------------------------------------------------------------
+r135 | kunda | 2012-06-29 21:53:25 +0000 (Fri, 29 Jun 2012) | 5 lines
+Changed paths:
+   A /tags/40300-12 (from /trunk:134)
+
+New in BattlegroundTargets-40300-12:
+- fix flag check [details: r133]
+- fix friend guild group check [details: r133]
+- added two 'mix' methods to determine range [details: r126]
+- some updates for MoP compatibility
+------------------------------------------------------------------------
+r134 | kunda | 2012-06-24 10:21:36 +0000 (Sun, 24 Jun 2012) | 1 line
+Changed paths:
+   M /trunk/BattlegroundTargets.lua
+
+update
+------------------------------------------------------------------------
+r133 | kunda | 2012-06-22 00:44:06 +0000 (Fri, 22 Jun 2012) | 6 lines
+Changed paths:
+   M /trunk/BattlegroundTargets.lua
+
+- fix flag check if someone is doing a ReloadUI while "player" is dead ( dead means UnitIsGhost("player") is true ) [variable: isDeadUpdateStop]
+- fix friend guild group check: [function: BattlegroundTargets:GuildGroupFriendUpdate()]
+problem: GetGuildInfo() can return nil after the event RAID_ROSTER_UPDATE, even if a player is in a guild
+(for me this is a Blizzard bug, don't know, may be it's fixed in MoP)
+workaround: check guildName ( GetGuildInfo() ) with a maximum of 3 times (linked with scoreboard update) per player if it returns nil (it can also return nil if someone is not in a guild)
+(in my tests this workaround has a success rate of 100% in the 2. check, but a 3. check is there to cover any possible whatever thing)
+------------------------------------------------------------------------
+r132 | kunda | 2012-06-12 22:01:13 +0000 (Tue, 12 Jun 2012) | 1 line
+Changed paths:
+   M /trunk/BattlegroundTargets.lua
+
+update
+------------------------------------------------------------------------
+r131 | kunda | 2012-06-09 01:53:41 +0000 (Sat, 09 Jun 2012) | 1 line
+Changed paths:
+   M /trunk/BattlegroundTargets.lua
+
+update
+------------------------------------------------------------------------
+r130 | kunda | 2012-06-08 13:00:16 +0000 (Fri, 08 Jun 2012) | 1 line
+Changed paths:
+   M /trunk/BattlegroundTargets.lua
+
+update
+------------------------------------------------------------------------
+r129 | kunda | 2012-06-08 12:51:42 +0000 (Fri, 08 Jun 2012) | 1 line
+Changed paths:
+   M /trunk/BattlegroundTargets.lua
+
+update
+------------------------------------------------------------------------
+r128 | kunda | 2012-06-08 01:14:08 +0000 (Fri, 08 Jun 2012) | 1 line
+Changed paths:
+   M /trunk/BattlegroundTargets.lua
+
+update
+------------------------------------------------------------------------
+r127 | kunda | 2012-06-07 21:20:26 +0000 (Thu, 07 Jun 2012) | 1 line
+Changed paths:
+   M /trunk/BattlegroundTargets.lua
+
+update
+------------------------------------------------------------------------
+r126 | kunda | 2012-06-07 05:56:28 +0000 (Thu, 07 Jun 2012) | 17 lines
+Changed paths:
+   M /trunk/BattlegroundTargets-localization-deDE.lua
+   M /trunk/BattlegroundTargets-localization-enUS.lua
+   M /trunk/BattlegroundTargets-localization-esES.lua
+   M /trunk/BattlegroundTargets-localization-esMX.lua
+   M /trunk/BattlegroundTargets-localization-frFR.lua
+   M /trunk/BattlegroundTargets-localization-koKR.lua
+   M /trunk/BattlegroundTargets-localization-ptBR.lua
+   M /trunk/BattlegroundTargets-localization-ruRU.lua
+   M /trunk/BattlegroundTargets-localization-zhCN.lua
+   M /trunk/BattlegroundTargets-localization-zhTW.lua
+   M /trunk/BattlegroundTargets.lua
+   M /trunk/BattlegroundTargets.toc
+
+- added two 'mix' methods to determine range
+
+The four range check methods are:
+1) combatlog
+2) class-spell based
+3) mix 1: class-spell based + combatlog (range: 0-45)
+4) mix 2: class-spell based + combatlog (range: class-spell dependent)
+
+3/4) is not 1) + 2)
+3/4) is 2) + combatlog (if you are attacked only)
+
+3/4) covers one situation that 2) alone can't:
+If you are attacked and no one in your group (including you) is targeting this attacker no range can be determined.
+The included combatlog scan can cover such situations.
+
+The CPU usage is the highest with method 3) or 4).
+Disable the whole range check option if you have CPU/FPS problems in combat.
+------------------------------------------------------------------------

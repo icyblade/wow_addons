@@ -1,0 +1,30 @@
+## Interface: 40300
+## Author: kunda
+## Title: BattlegroundTargets
+## Notes: Shows all battleground enemies. Simple 'Enemy Unit Frame' for battlegrounds.
+## Notes-zhCN: 显示全部战场敌人。战场简洁敌对单位框体。
+## Notes-zhTW: 顯示全部戰場敵人。戰場簡潔敵對單位框體。
+## Version: 40300-12
+## SavedVariables: BattlegroundTargets_Options
+## X-Curse-Packaged-Version: 40300-12
+## X-Curse-Project-Name: BattlegroundTargets
+## X-Curse-Project-ID: battlegroundtargets
+## X-Curse-Repository-ID: wow/battlegroundtargets/mainline
+
+BattlegroundTargets-localized-bgnames.lua
+BattlegroundTargets-localized-talents.lua
+BattlegroundTargets-localized-flag.lua
+BattlegroundTargets-localized-racenames.lua
+
+BattlegroundTargets-localization-enUS.lua
+BattlegroundTargets-localization-deDE.lua
+BattlegroundTargets-localization-esES.lua
+BattlegroundTargets-localization-esMX.lua
+BattlegroundTargets-localization-frFR.lua
+BattlegroundTargets-localization-koKR.lua
+BattlegroundTargets-localization-ptBR.lua
+BattlegroundTargets-localization-ruRU.lua
+BattlegroundTargets-localization-zhCN.lua
+BattlegroundTargets-localization-zhTW.lua
+
+BattlegroundTargets.lua
