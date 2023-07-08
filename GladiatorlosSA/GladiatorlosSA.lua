@@ -4,9 +4,9 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local AceConfig = LibStub("AceConfig-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("GladiatorlosSA")
 local LSM = LibStub("LibSharedMedia-3.0")
-local self ,GladiatorlosSA = GladiatorlosSA ,GladiatorlosSA
+local self , GladiatorlosSA = GladiatorlosSA , GladiatorlosSA
 local GSA_TEXT= "GladiatorlosSA"
-local GSA_VERSION= " v1.0.1"
+local GSA_VERSION= " r430.02"
 local GSA_AUTHOR= " updated by superk"
 
 local GSA_LOCALEPATH = {
@@ -16,8 +16,8 @@ local GSA_LOCALEPATH = {
 }
 self.GSA_LOCALEPATH = GSA_LOCALEPATH
 local GSA_LANGUAGE = {
-	["GladiatorlosSA\\Voice"] = L["Chinese(female)"],
-	["GladiatorlosSA\\Voice_enUS"] = L["English(female)"],
+	["GladiatorlosSA\\Voice"] = L["漢語(女聲)"],
+	["GladiatorlosSA\\Voice_enUS"] = L["英語(女聲)"],
 }
 self.GSA_LANGUAGE = GSA_LANGUAGE
 local GSA_EVENT = {
@@ -117,14 +117,14 @@ function GladiatorlosSA:OnInitialize()
 	gsadb = self.db1.profile
 	GladiatorlosSA.options = {
 		name = "GladiatorlosSA",
-		desc = L["PVP Voice Alert"],
+		desc = L["PVP技能語音提示"],
 		type = 'group',
 		args = {},
 	}
 	local bliz_options = CopyTable(GladiatorlosSA.options)
 	bliz_options.args.load = {
-		name = L["Load Configuration"],
-		desc = L["Load Configuration Options"],
+		name = L["加載配置"],
+		desc = L["加載配置選項"],
 		type = 'execute',
 		func = "ShowConfig",
 		handler = GladiatorlosSA,
@@ -158,7 +158,7 @@ local function initOptions()
 end
 function GladiatorlosSA:ShowConfig()
 	initOptions()
-	AceConfigDialog:SetDefaultSize("GladiatorlosSA",800, 500)
+	AceConfigDialog:SetDefaultSize("GladiatorlosSA",780, 500)
 	AceConfigDialog:Open("GladiatorlosSA")
 end
 function GladiatorlosSA:ChangeProfile()
@@ -185,33 +185,22 @@ local function getOption(info)
 	return gsadb[name]
 end
 local function spellOption(order, spellID, ...)
-	local spellname,_,icon = GetSpellInfo(spellID)				
-	if (spellname ~= nil) then
-		return {
-			type = 'toggle',
-			name = "\124T"..icon..":24\124t"..spellname,							
-			desc = function () 
+	local spellname,_,icon = GetSpellInfo(spellID)
+	return {
+		type = 'toggle',
+		name = "\124T"..icon..":24\124t"..spellname,							
+		desc = function () 
 			GameTooltip:SetHyperlink(GetSpellLink(spellID));
 			--GameTooltip:Show();
-			end,
-			descStyle = "custom",
-					order = order,
-		}
-	else
-		print("spell id: "..spellID.." is invalid")
-	end
+		end,
+		descStyle = "custom",
+		order = order,
+	}
 end
-
 local function listOption(spellList, listType, ...)
 	local args = {}
-	for k, v in pairs(spellList) do
-		if self.spellList[listType][v] then
-			rawset (args, self.spellList[listType][v] ,spellOption(k, v))
-		else 
-		--[[debug
-			print (v)
-		]]
-		end
+	for k,v in pairs(spellList) do
+		rawset (args, self.spellList[listType][v] ,spellOption(k, v))
 	end
 	return args
 end
@@ -221,8 +210,8 @@ function GladiatorlosSA:OnOptionsCreate()
 	self.options.args.profiles.order = -1
 	self:AddOption('genaral', {
 		type = 'group',
-		name = L["General"],
-		desc = L["General options"],
+		name = L["一般"],
+		desc = L["一般選項"],
 		set = setOption,
 		get = getOption,
 		order = 1,
@@ -230,19 +219,19 @@ function GladiatorlosSA:OnOptionsCreate()
 			enableArea = {
 				type = 'group',
 				inline = true,
-				name = L["Enable area"],
+				name = L["當何時啟用"],
 				order = 1,
 				args = {
 					all = {
 						type = 'toggle',
-						name = L["Anywhere"],
-						desc = L["Alert works anywhere"],
+						name = L["總是啟用"],
+						desc = L["在任何地方GladiatorlosSA都處於開啟狀態"],
 						order = 1,
 					},
 					arena = {
 						type = 'toggle',
-						name = L["Arena"],
-						desc = L["Alert only works in arena"],
+						name = L["競技場"],
+						desc = L["在競技場中啟用GladiatorlosSA"],
 						disabled = function() return gsadb.all end,
 						order = 2,
 					},
@@ -253,15 +242,15 @@ function GladiatorlosSA:OnOptionsCreate()
 					},
 					battleground = {
 						type = 'toggle',
-						name = L["Battleground"],
-						desc = L["Alert only works in BG"],
+						name = L["戰場"],
+						desc = L["在戰場中啟用GladiatorlosSA"],
 						disabled = function() return gsadb.all end,
 						order = 4,
 					},
 					field = {
 						type = 'toggle',
-						name = L["World"],
-						desc = L["Alert works anywhere else then anena, BG, dungeon instance"],
+						name = L["野外"],
+						desc = L["除了戰場、競技場和副本的任何地方都啟用GladiatorlosSA"],
 						disabled = function() return gsadb.all end,
 						order = 5,
 					}
@@ -270,13 +259,13 @@ function GladiatorlosSA:OnOptionsCreate()
 			voice = {
 				type = 'group',
 				inline = true,
-				name = L["Voice config"],
+				name = L["聲音設置"],
 				order = 2,
 				args = {
 					path = {
 						type = 'select',
-						name = L["Voice language"],
-						desc = L["Select language of the alert"],
+						name = L["語言類型"],
+						desc = L["選擇通報所用語音"],
 						values = GSA_LANGUAGE,
 						order = 1,
 					},
@@ -285,8 +274,8 @@ function GladiatorlosSA:OnOptionsCreate()
 						max = 1,
 						min = 0,
 						step = 0.1,
-						name = L["Volume"],
-						desc = L["adjusting the voice volume(the same as adjusting the system master sound volume)"],
+						name = L["聲音大小"],
+						desc = L["調節聲音大小(等同於調節系統主音量大小)"],
 						set = function (info, value) SetCVar ("Sound_MasterVolume",tostring (value)) end,
 						get = function () return tonumber (GetCVar ("Sound_MasterVolume")) end,
 						order = 2,
@@ -296,13 +285,13 @@ function GladiatorlosSA:OnOptionsCreate()
 			advance = {
 				type = 'group',
 				inline = true,
-				name = L["Advance options"],
+				name = L["高級設置"],
 				order = 3,
 				args = {
 					smartDisable = {
 						type = 'toggle',
-						name = L["Smart disable"],
-						desc = L["Disable addon for a moment while too many alerts comes"],
+						name = L["智能禁用模式"],
+						desc = L["處於大型戰場等警報過於頻繁的區域自動禁用"],
 						order = 1,
 					},
 					throttle = {
@@ -310,8 +299,8 @@ function GladiatorlosSA:OnOptionsCreate()
 						max = 5,
 						min = 0,
 						step = 0.1,
-						name = L["Throttle"],
-						desc = L["The minimum interval of each alert"],
+						name = L["節流閥"],
+						desc = L["控制聲音警報的最小間隔"],
 						order = 2,
 					},
 				},
@@ -320,47 +309,47 @@ function GladiatorlosSA:OnOptionsCreate()
 	})
 	self:AddOption('spell', {
 		type = 'group',
-		name = L["Abilities"],
-		desc = L["Abilities options"],
+		name = L["技能"],
+		desc = L["技能選項"],
 		set = setOption,
 		get = getOption,
 		order = 2,
 		args = {
 			spellGeneral = {
 				type = 'group',
-				name = L["Disable options"],
-				desc = L["Disable abilities by type"],
+				name = L["技能模組控制"],
+				desc = L["技能各個模組禁用選項"],
 				inline = true,
 				order = -1,
 				args = {
 					aruaApplied = {
 						type = 'toggle',
-						name = L["Disable Buff Applied"],
-						desc = L["Check this will disable alert for buff applied to hostile targets"],
+						name = L["禁用敵方增益技能"],
+						desc = L["勾選此選項以關閉敵方增益型技能通報"],
 						order = 1,
 					},
 					aruaRemoved = {
 						type = 'toggle',
-						name = L["Disable Buff Down"],
-						desc = L["Check this will disable alert for buff removed from hostile targets"],
+						name = L["禁用敵方增益結束"],
+						desc = L["勾選此選項以關閉敵方增益結束通報"],
 						order = 2,
 					},
 					castStart = {
 						type = 'toggle',
-						name = L["Disable Spell Casting"],
-						desc = L["Chech this will disable alert for spell being casted to friendly targets"],
+						name = L["禁用敵方讀條技能"],
+						desc = L["勾選此選項以關閉敵方對友方讀條技能通報"],
 						order = 3,
 					},
 					castSuccess = {
 						type = 'toggle',
-						name = L["Disable special abilities"],
-						desc = L["Check this will disable alert for instant-cast important abilities"],
+						name = L["禁用敵方特殊技能"],
+						desc = L["勾選此選項以關閉敵方對友方特殊技能通報"],
 						order = 4,
 					},
 					interrupt = {
 						type = 'toggle',
-						name = L["Disable friendly interrupt"],
-						desc = L["Check this will disable alert for successfully-landed friendly interrupting abilities"],
+						name = L["禁用友方打斷技能"],
+						desc = L["勾選此選項以關閉友方對敵方打斷技能成功的通報"],
 						order = 5,
 					}
 				},
@@ -368,222 +357,187 @@ function GladiatorlosSA:OnOptionsCreate()
 			spellAuraApplied = {
 				type = 'group',
 				--inline = true,
-				name = L["Buff Applied"],
+				name = L["敵方增益技能"],
 				disabled = function() return gsadb.aruaApplied end,
 				order = 1,
 				args = {
 					aonlyTF = {
 						type = 'toggle',
-						name = L["Target and Focus Only"],
-						desc = L["Alert works only when your current target or focus gains the buff effect or use the ability"],
+						name = L["僅目標或關注目標"],
+						desc = L["僅當該技能是你的目標或關注目標使用或增益出現在你的目標或關注目標身上才語音通報"],
 						order = 1,
 					},
 					drinking = { 
 						type = 'toggle',
-						name = L["Alert Drinking"],
-						desc = L["In arena, alert when enemy is drinking"],
+						name = L["通報正在進食"],
+						desc = L["在競技場中,通報敵方玩家正在進食"],
 						order = 3,
 					},
-						--[[general = {
+					--[[general = {
 						type = 'group',
 						inline = true,
-						name = L["General Abilities"],
+						name = L["通用技能"],
 						order = 4,
 						args = listOption({42292,20594,7744},"auraApplied"),
 					},]]
-						dk	= {
-							type = 'group',
-							inline = true,
-							name = L["|cffC41F3BDeath Knight|r"],
-							order = 5,
-							args = listOption({49039,48792,55233,49016,51271,48707,115989,113072},"auraApplied"),
-						},
-						druid = {
-							type = 'group',
-							inline = true,
-							name = L["|cffFF7D0ADruid|r"],
-							order = 6,
-							args = listOption({61336,29166,22812,132158,16689,22842,5229,1850,50334,69369,124974,106922,112071,102351,102342,110575,110570,110617,110696,110700,110717,122291,110806,110717,110715,110788,126456,126453},"auraApplied"),	
-						},
-						hunter = {
-							type = 'group',
-							inline = true,
-							name = L["|cffABD473Hunter|r"],
-							order = 7,
-							args = listOption({34471,19263,3045,54216,113073},"auraApplied"),
-						},
-						mage = {
-							type = 'group',
-							inline = true,
-							name = L["|cff69CCF0Mage|r"],
-							order = 8,
-							args = listOption({45438,12042,12472,12043,108839,110909},"auraApplied"),
-						},
-						monk = {
-							type = 'group',
-							inline = true,
-							name = L["|cFF558A84Monk|r"],
-							order = 9,
-							args = listOption({120954,122278,122783,115213,115176,116849,115294,113306},"auraApplied"),
-						},
-						paladin = {
-							type = 'group',
-							inline = true,
-							name = L["|cffF58CBAPaladin|r"],
-							order = 10,
-							args = listOption({31821,1022,1044,642,6940,54428,31884,114917,114163,20925,114039,105809,113075},"auraApplied"),
-						},
-						preist	= {
-							type = 'group',
-							inline = true,
-							name = L["|cffFFFFFFPriest|r"],
-							order = 11,
-							args = listOption({33206,37274,6346,47585,89485,81700,47788,112833,109964,81209,81206,81208},"auraApplied"),
-						},
-						rogue = {
-							type = 'group',
-							inline = true,
-							name = L["|cffFFF569Rogue|r"],
-							order = 12,
-							args = listOption({51713,2983,31224,13750,5277,74001,114018},"auraApplied"),
-						},
-						shaman	= {
-							type = 'group',
-							inline = true,
-							name = L["|cff0070daShaman|r"],
-							order = 13,
-							args = listOption({30823,974,16188,79206,16166,114050,114051,114052,52127},"auraApplied"),
-						},
-						warlock	= {
-							type = 'group',
-							inline = true,
-							name = L["|cff9482C9Warlock|r"],
-							order = 14,
-							args = listOption({108416,108503,119049,113858,113861,113860,104773},"auraApplied"),
-						},
-						warrior	= {
-							type = 'group',
-							inline = true,
-							name = L["|cffC79C6EWarrior|r"],
-							order = 15,
-							args = listOption({55694,871,18499,23920,12328,46924,85730,12292,1719,114028,107574,112048,114029,114030},"auraApplied"),	
-						},
+					druid = {
+						type = 'group',
+						inline = true,
+						name = L["|cffFF7D0A德魯伊|r"],
+						order = 5,
+						args = listOption({61336,29166,22812,17116,16689,22842,5229,1850,50334,69369},"auraApplied"),	
+					},
+					paladin = {
+						type = 'group',
+						inline = true,
+						name = L["|cffF58CBA聖騎士|r"],
+						order = 6,
+						args = listOption({31821,1022,1044,642,6940,54428,85696,31884},"auraApplied"),
+					},
+					rogue = {
+						type = 'group',
+						inline = true,
+						name = L["|cffFFF569盜賊|r"],
+						order = 7,
+						args = listOption({51713,2983,31224,13750,5277,74001},"auraApplied"),
+					},
+					warrior	= {
+						type = 'group',
+						inline = true,
+						name = L["|cffC79C6E戰士|r"],
+						order = 8,
+						args = listOption({55694,871,18499,20230,23920,12328,46924,85730,12292,1719},"auraApplied"),	
+					},
+					preist	= {
+						type = 'group',
+						inline = true,
+						name = L["|cffFFFFFF牧師|r"],
+						order = 9,
+						args = listOption({33206,37274,6346,47585,89485,87153,87152,47788},"auraApplied"),
+					},
+					shaman	= {
+						type = 'group',
+						inline = true,
+						name = L["|cff0070DE薩滿|r"],
+						order = 10,
+						args = listOption({30823,974,16188,52127,79206,16166},"auraApplied"),
+					},
+					mage = {
+						type = 'group',
+						inline = true,
+						name = L["|cff69CCF0法師|r"],
+						order = 11,
+						args = listOption({45438,12042,12472},"auraApplied"),
+					},
+					dk	= {
+						type = 'group',
+						inline = true,
+						name = L["|cffC41F3B死亡騎士|r"],
+						order = 12,
+						args = listOption({49039,48792,55233,49016,51271,48707},"auraApplied"),
+					},
+					hunter = {
+						type = 'group',
+						inline = true,
+						name = L["|cffABD473獵人|r"],
+						order = 13,
+						args = listOption({34471,19263,3045,54216},"auraApplied"),
+					},
 				},
 			},
 			spellAuraRemoved = {
 				type = 'group',
 				--inline = true,
-				name = L["Buff Down"],
+				name = L["敵方增益結束"],
 				disabled = function() return gsadb.aruaRemoved end,
 				order = 2,
 				args = {
 					ronlyTF = {
 						type = 'toggle',
-						name = L["Target and Focus Only"],
-						desc = L["Alert works only when your current target or focus gains the buff effect or use the ability"],
+						name = L["僅目標或關注目標"],
+						desc = L["僅當該技能是你的目標或關注目標使用或增益出現在你的目標或關注目標身上才語音通報"],
 						order = 1,
-					},
-					dk = {
-						type = 'group',
-						inline = true,
-						name = L["|cffC41F3BDeath Knight|r"],
-						order = 4,
-						args = listOption({48792,49039,113072},"auraRemoved"),
-					},
-					druid = {
-						type = 'group',
-						inline = true,
-						name = L["|cffFF7D0ADruid|r"],
-						order = 5,
-						args = listOption({106922,110617,110696,110700,110715,110788,126456,126453},"auraRemoved"),
-					},
-					hunter = {
-						type = 'group',
-						inline = true,
-						name = L["|cffABD473Hunter|r"],
-						order = 6,
-						args = listOption({19263},"auraRemoved"),
-					},
-					mage = {
-						type = 'group',
-						inline = true,
-						name = L["|cff69CCF0Mage|r"],
-						order = 7,
-						args = listOption({45438},"auraRemoved"),
-					},
-					monk = {
-						type = 'group',
-						inline = true,
-						name = L["|cFF558A84Monk|r"],
-						order = 9,
-						args = listOption({120954,115213,115176},"auraRemoved"),	
 					},
 					paladin = {
 						type = 'group',
 						inline = true,
-						name = L["|cffF58CBAPaladin|r"],
-						order = 10,
+						name = L["|cffF58CBA聖騎士|r"],
+						order = 4,
 						args = listOption({1022,642},"auraRemoved"),
-					},
-					preist	= {
-						type = 'group',
-						inline = true,
-						name = L["|cffFFFFFFPriest|r"],
-						order = 11,
-						args = listOption({33206,47585,109964},"auraRemoved"),
 					},
 					rogue = {
 						type = 'group',
 						inline = true,
-						name = L["|cffFFF569Rogue|r"],
-						order = 12,
+						name = L["|cffFFF569盜賊|r"],
+						order = 5,
 						args = listOption({31224,5277,74001},"auraRemoved"),
-					},
-					shaman	= {
-						type = 'group',
-						inline = true,
-						name = L["|cff0070daShaman|r"],
-						order = 13,
-						args = listOption({108271,118350,118347},"auraRemoved"),
 					},
 					warrior	= {
 						type = 'group',
 						inline = true,
-						name = L["|cffC79C6EWarrior|r"],
-						order = 14,
-						args = listOption({871,103827,114030},"auraRemoved"),
+						name = L["|cffC79C6E戰士|r"],
+						order = 6,
+						args = listOption({871},"auraRemoved"),
+					},
+					preist	= {
+						type = 'group',
+						inline = true,
+						name = L["|cffFFFFFF牧師|r"],
+						order = 7,
+						args = listOption({33206,47585},"auraRemoved"),
+					},
+					mage = {
+						type = 'group',
+						inline = true,
+						name = L["|cff69CCF0法師|r"],
+						order = 9,
+						args = listOption({45438},"auraRemoved"),
+					},
+					dk = {
+						type = 'group',
+						inline = true,
+						name = L["|cffC41F3B死亡騎士|r"],
+						order = 10,
+						args = listOption({48792,49039},"auraRemoved"),
+					},
+					hunter = {
+						type = 'group',
+						inline = true,
+						name = L["|cffABD473獵人|r"],
+						order = 12,
+						args = listOption({19263},"auraRemoved"),
 					},
 				},
 			},
 			spellCastStart = {
 				type = 'group',
 				--inline = true,
-				name = L["Spell Casting"],
+				name = L["敵方讀條技能"],
 				disabled = function() return gsadb.castStart end,
 				order = 2,
 				args = {
 					conlyTF = {
 						type = 'toggle',
-						name = L["Target and Focus Only"],
-						desc = L["Alert works only when your current target or focus gains the buff effect or use the ability"],
+						name = L["僅目標或關注目標"],
+						desc = L["僅當該技能是你的目標或關注目標使用或增益出現在你的目標或關注目標身上才語音通報"],
 						order = 1,
 					},
 					general = {
 						type = 'group',
 						inline = true,
-						name = L["General Abilities"],
+						name = L["通用技能"],
 						order = 3,
 						args = {
 							bigHeal = {
 								type = 'toggle',
-								name = L["Big Heals"],
-								desc = L["Greater Heal, Divine Light, Greater Healing Wave, Healing Touch, Enveloping Mist"],
+								name = L["大型治療法術"],
+								desc = L["強效治療術 神聖之光 強效治療波 治療之觸"],
 								order = 1,
 							},
 							resurrection = {
 								type = 'toggle',
-								name = L["Resurrection"],
-								desc = L["Resurrection, Redemption, Ancestral Spirit, Revive, Resuscitate"],
+								name = L["復活技能"],
+								desc = L["復活術 救贖 先祖之魂 復活"],
 								order = 2,
 							},
 						}
@@ -591,185 +545,164 @@ function GladiatorlosSA:OnOptionsCreate()
 					druid = {
 						type = 'group',
 						inline = true,
-						name = L["|cffFF7D0ADruid|r"],
+						name = L["|cffFF7D0A德魯伊|r"],
 						order = 4,
-						args = listOption({2637,33786,339,110707},"castStart"),
-					},
-					hunter = {
-						type = 'group',
-						inline = true,
-						name = L["|cffABD473Hunter|r"],
-						order = 5,
-						args = listOption({982,1513,120360},"castStart"),
-					},
-					mage = {
-						type = 'group',
-						inline = true,
-						name = L["|cff69CCF0Mage|r"],
-						order = 6,
-						args = listOption({118,102051,113074},"castStart"),
-					},
-					monk = {
-						type = 'group',
-						inline = true,
-						name = L["|cFF558A84Monk|r"],
-						order = 7,
-						args = listOption({113275},"castStart"),	
-					},
-					paladin = {
-						type = 'group',
-						inline = true,
-						name = L["|cffF58CBAPaladin|r"],
-						order = 8,
-						args = listOption({20066},"castStart"),
+						args = listOption({2637,33786},"castStart"),
 					},
 					preist	= {
 						type = 'group',
 						inline = true,
-						name = L["|cffFFFFFFPriest|r"],
-						order = 9,
-						args = listOption({9484,605,32375,113277,113506},"castStart"),
+						name = L["|cffFFFFFF牧師|r"],
+						order = 6,
+						args = listOption({8129,9484,605},"castStart"),
 					},
 					shaman	= {
 						type = 'group',
 						inline = true,
-						name = L["|cff0070daShaman|r"],
-						order = 10,
+						name = L["|cff0070DE薩滿|r"],
+						order = 7,
 						args = listOption({51514,76780},"castStart"),
+					},
+					mage = {
+						type = 'group',
+						inline = true,
+						name = L["|cff69CCF0法師|r"],
+						order = 8,
+						args = listOption({118},"castStart"),
+					},
+					dk	= {
+						type = 'group',
+						inline = true,
+						name = L["|cffC41F3B死亡騎士|r"],
+						order = 9,
+						args = listOption({49203},"castStart"),
+					},
+					hunter = {
+						type = 'group',
+						inline = true,
+						name = L["|cffABD473獵人|r"],
+						order = 10,
+						args = listOption({982,1513},"castStart"),
 					},
 					warlock	= {
 						type = 'group',
 						inline = true,
-						name = L["|cff9482C9Warlock|r"],
+						name = L["|cff9482C9術士|r"],
 						order = 11,
-						args = listOption({5782,710,691,112869,112870,112867,112866},"castStart"),
+						args = listOption({5782,5484,710,691},"castStart"),
 					},
-					--dk	= {
-						--type = 'group',
-						--inline = true,
-						--name = L["|cffC41F3BDeath Knight|r"],
-						--order = 9,
-						--args = listOption({49203},"castStart"),
-					--},			
 				},
 			},
 			spellCastSuccess = {
 				type = 'group',
 				--inline = true,
-				name = L["Special Abilities"],
+				name = L["敵方特殊技能"],
 				disabled = function() return gsadb.castSuccess end,
 				order = 3,
 				args = {
 					sonlyTF = {
 						type = 'toggle',
-						name = L["Target and Focus Only"],
-						desc = L["Alert works only when your current target or focus gains the buff effect or use the ability"],
+						name = L["僅目標或關注目標"],
+						desc = L["僅當該技能是你的目標或關注目標使用或增益出現在你的目標或關注目標身上才語音通報"],
 						order = 1,
 					},
 					class = {
 						type = 'toggle',
-						name = L["PvP Trinketed Class"],
-						desc = L["Also announce class name with trinket alert when hostile targets use PvP trinket in arena"],
+						name = L["徽章職業提示"],
+						desc = L["在競技場中,通報徽章的同時提示使用徽章的職業"],
 						disabled = function() return not gsadb.trinket end,
 						order = 3,
 					},
 					general = {
 						type = 'group',
 						inline = true,
-						name = L["General Abilities"],
+						name = L["通用技能"],
 						order = 4,
 						args = listOption({58984,20594,7744,42292},"castSuccess"),
-					},
-					dk	= {
-						type = 'group',
-						inline = true,
-						name = L["|cffC41F3BDeath Knight|r"],
-						order = 5,
-						args = listOption({47528,47476,47568,49206,77606,108194,108199,108201,108200},"castSuccess"),
 					},
 					druid = {
 						type = 'group',
 						inline = true,
-						name = L["|cffFF7D0ADruid|r"],
-						order = 6,
-						args = listOption({80964,740,78675,108238,102693,102703,102706,99,5211,102795,102560,102543,102558,33891,102359,33831,102417,102383,49376,16979,102416,102401,110698,110730,113002,113004,122292,112970,128844,126458},"castSuccess"),
-					},
-					hunter = {
-						type = 'group',
-						inline = true,
-						name = L["|cffABD473Hunter|r"],
-						order = 7,
-						args = listOption({19386,19503,34490,23989,60192,1499,109248,109304,120657,120697,109259,126216,126215,126214,126213,122811,122809,122807,122806,122804,122802,121118,121818},"castSuccess"),
-					},
-					mage = {
-						type = 'group',
-						inline = true,
-						name = L["|cff69CCF0Mage|r"],
-						order = 8,
-						args = listOption({11129,11958,44572,2139,66,12051,113724,110959},"castSuccess"),
-					},
-					monk = {
-						type = 'group',
-						inline = true,
-						name = L["|cFF558A84Monk|r"],
-						order = 9,
-						args = listOption({116841,115399,119392,119381,116847,123904,115078,122057,115315,115313,117368,122470,116705,123761,119996},"castSuccess"),
+						name = L["|cffFF7D0A德魯伊|r"],
+						order = 5,
+						args = listOption({80964,740,78675},"castSuccess"),
 					},
 					paladin = {
 						type = 'group',
 						inline = true,
-						name = L["|cffF58CBAPaladin|r"],
-						order = 10,
-						args = listOption({96231,853,105593,114158,115750,85499},"castSuccess"),
-					},
-					preist	= {
-						type = 'group',
-						inline = true,
-						name = L["|cffFFFFFFPriest|r"],
-						order = 110,
-						args = listOption({8122,34433,64044,15487,64843,19236,108920,108921,123040,121135,108968},"castSuccess"),
+						name = L["|cffF58CBA聖騎士|r"],
+						order = 6,
+						args = listOption({96231,20066,853},"castSuccess"),
 					},
 					rogue = {
 						type = 'group',
 						inline = true,
-						name = L["|cffFFF569Rogue|r"],
-						order = 111,
-						args = listOption({51722,2094,1766,14185,1856,76577,73981,79140},"castSuccess"),
-					},
-					shaman	= {
-						type = 'group',
-						inline = true,
-						name = L["|cff0070daShaman|r"],
-						order = 112,
-						args = listOption({108271,8177,16190,8143,98008,108270,51485,108273,108285,108287,108280,108281,118345,2894,2062,108269,120668,118350,118347,57994,113287},"castSuccess"),
-					},
-					warlock = {
-						type = 'group',
-						inline = true,
-						name = L["|cff9482C9Warlock|r"],
-						order = 113,
-						args = listOption({108359,6789,5484,19647,48020,30283,111397,108482,108505,124539,104316,110913,111859,111895,111896,111897,111898},"castSuccess"),
+						name = L["|cffFFF569盜賊|r"],
+						order = 7,
+						args = listOption({51722,2094,1766,14185,1856,14177,76577,73981,79140},"castSuccess"),
 					},
 					warrior	= {
 						type = 'group',
 						inline = true,
-						name = L["|cffC79C6EWarrior|r"],
-						order = 114,
-						args = listOption({97462,676,5246,6552,2457,71,2458,107566,102060,46968,118000,107570,114207,114192,114203},"castSuccess"),	
+						name = L["|cffC79C6E戰士|r"],
+						order = 8,
+						args = listOption({97462,676,5246,6552,85388,2457,71,2458},"castSuccess"),	
+					},
+					preist	= {
+						type = 'group',
+						inline = true,
+						name = L["|cffFFFFFF牧師|r"],
+						order = 9,
+						args = listOption({8122,34433,64044,15487,64843,19236},"castSuccess"),
+					},
+					shaman	= {
+						type = 'group',
+						inline = true,
+						name = L["|cff0070DE薩滿|r"],
+						order = 10,
+						args = listOption({8177,16190,8143,98008},"castSuccess"),
+					},
+					mage = {
+						type = 'group',
+						inline = true,
+						name = L["|cff69CCF0法師|r"],
+						order = 11,
+						args = listOption({11958,44572,2139,66,12051,82676},"castSuccess"),
+					},
+					dk	= {
+						type = 'group',
+						inline = true,
+						name = L["|cffC41F3B死亡騎士|r"],
+						order = 12,
+						args = listOption({47528,47476,47568,49206,77606},"castSuccess"),
+					},
+					hunter = {
+						type = 'group',
+						inline = true,
+						name = L["|cffABD473獵人|r"],
+						order = 110,
+						args = listOption({19386,19503,34490,23989,60192,1499},"castSuccess"),
+					},
+					warlock = {
+						type = 'group',
+						inline = true,
+						name = L["|cff9482C9術士|r"],
+						order = 112,
+						args = listOption({6789,5484,19647,48020,77801},"castSuccess"),
 					},
 				},
 			},
 			spellInterrupt = {
 				type = 'group',
 				--inline = true,
-				name = L["Friendly Interrupt"],
+				name = L["友方打斷技能"],
 				disabled = function() return gsadb.interrupt end,
 				order = 4,
 				args = {
 					lockout = {
 						type = 'toggle',
-						name = L["Friendly Interrupt"],
-						desc = L["Spell Lock, Counterspell, Kick, Pummel, Mind Freeze, Skull Bash, Rebuke, Solar Beam, Spear Hand Strike, Wind Shear"],
+						name = L["友方打斷技能"],
+						desc = L["法術封鎖 法術反制 腳踢 拳擊 心智冰封 碎顱猛擊 責難"],
 						order = 1,
 					},
 				}
@@ -1092,16 +1025,6 @@ function GladiatorlosSA:UNIT_AURA(event,uid)
 		end
 	end
 end
-local DRINK_SPELL2 = GetSpellInfo(104270)
-function GladiatorlosSA:UNIT_AURA(event,uid)
-	if uid:find("arena") and gsadb.drinking then
-		if UnitAura (uid,DRINK_SPELL2) then
-			if self:Throttle(tostring(104270)..uid,3) then return end
-			PlaySoundFile("Interface\\Addons\\"..gsadb.path.."\\drinking.ogg","Master")
-		end
-	end
-end
-
 function GladiatorlosSA:Throttle(key,throttle)
 	if (not self.throttled) then
 		self.throttled = {}

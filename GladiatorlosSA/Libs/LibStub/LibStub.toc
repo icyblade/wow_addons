@@ -9,11 +9,7 @@
 ## X-Curse-Project-Name: LibStub
 ## X-Curse-Project-ID: libstub
 ## X-Curse-Repository-ID: wow/libstub/mainline
-## X-Curse-Packaged-Version: 1.0.1
-## X-Curse-Project-Name: GladiatorlosSA
-## X-Curse-Project-ID: gladiatorlossa
-## X-Curse-Repository-ID: wow/gladiatorlossa/mainline
-## X-Curse-Packaged-Version: Releas
+## X-Curse-Packaged-Version: 1.0
 ## X-Curse-Project-Name: GladiatorlosSA
 ## X-Curse-Project-ID: gladiatorlossa
 ## X-Curse-Repository-ID: wow/gladiatorlossa/mainline
