@@ -6432,18 +6432,20 @@ function BattlegroundTargets:IsBattleground()
 		end
 	end
 
-	if IsRatedBattleground() or true then  -- Support cross faction BG
+	if IsRatedBattleground() then
 		currentSize = 10
-		local faction = GetBattlefieldArenaFaction()
-		if faction == 0 then
-			playerFactionBG   = 0 -- Horde
-			oppositeFactionBG = 1 -- Alliance
-		elseif faction == 1 then
-			playerFactionBG   = 1 -- Alliance
-			oppositeFactionBG = 0 -- Horde
-		else
-			Print("ERROR", "unknown battleground faction", locale, faction)
-		end
+	end
+
+	-- Support cross faction BG
+	local faction = GetBattlefieldArenaFaction()
+	if faction == 0 then
+		playerFactionBG   = 0 -- Horde
+		oppositeFactionBG = 1 -- Alliance
+	elseif faction == 1 then
+		playerFactionBG   = 1 -- Alliance
+		oppositeFactionBG = 0 -- Horde
+	else
+		Print("ERROR", "unknown battleground faction", locale, faction)
 	end
 
 	if playerLevel >= maxLevel then -- LVLCHK
