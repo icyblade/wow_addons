@@ -19,6 +19,7 @@
  - [Postal](https://www.curseforge.com/wow/addons/postal/download/562045)
  - [Quest Completist](https://www.curseforge.com/wow/addons/quest_completist/download/589777)
  - [ReforgeLite](https://www.wowace.com/projects/reforgelite/files/564978/download)
+ - [Spy](https://www.curseforge.com/wow/addons/spy/download/529644)
  - [TidyPlates: ThreatPlates](https://www.curseforge.com/wow/addons/tidy-plates-threat-plates/download/595210)
  - [TidyPlates](https://www.curseforge.com/wow/addons/tidy-plates/download/598203)
  - [TomTom](https://www.curseforge.com/wow/addons/tomtom/download/602965)
