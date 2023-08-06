@@ -1,0 +1,15 @@
+tag 1.16.5
+3fb57f9d7211eb9408e1cc8cf51654701db50ea2
+Sal Scotto <sal.scotto@gmail.com>
+2012-07-29 14:33:53 -0400
+
+Tagging as 1.16.5, see generated changelog for details
+
+
+--------------------
+
+Sal Scotto:
+	- Minimap and Worldmap icons can now be independently scaled
+	- Added check to display as well
+	- Added a check in the collector for micro dungeons, to reset the mapid to its parent zone if detect
+	- no longer use LOOT_CLOSED event, do the gathercompleted after item added to map this might affect treasure chests

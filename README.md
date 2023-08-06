@@ -11,6 +11,8 @@
  - [ElvUI_Enhanced](https://github.com/ElvUI-Cataclysm/ElvUI_Enhanced-4.3.4)
  - [ElvUI_EnhancedFriendsList](https://github.com/ElvUI-Cataclysm/ElvUI_EnhancedFriendsList-4.3.4)
  - [ElvUI](https://github.com/ElvUI-Cataclysm/ElvUI-4.3.4)
+ - [GatherMate2_Data](https://www.curseforge.com/wow/addons/gathermate2_data/download/614715)
+ - [GatherMate2](https://www.curseforge.com/wow/addons/gathermate2/download/607165)
  - [GladiatorlosSA](https://www.curseforge.com/wow/addons/gladiatorlossa/download/573176)
  - [GTFO](https://www.curseforge.com/wow/addons/gtfo/download/603124)
  - [InspectFix](https://www.curseforge.com/wow/addons/inspectfix/download/593021)
