@@ -2,14 +2,17 @@ function AtrBuildLTable_enUS ()
 
 AtrL = {};
 
-AtrL["SCAN_EXPLANATION"] = "Scanning the auction house builds a database of prices that Auctionator uses for two purposes: to display in item tooltips "
+AtrL["SCAN_EXPLANATION"] =  "<br/>"
+							.."Scanning the auction house builds a database of prices that Auctionator uses for two purposes: to display in item tooltips "
 							.."when you're away from the Auction House and to recommend a price when you're posting an item for which there are no other "
 							.."auctions at that moment."
 							.."<br/><br/>"
-							.."Scanning usually takes about 10 seconds but in some situations can take much longer."
+
+							..""
+							.."If normal scanning causes problems, you can try |cFFff5555slow scanning|r instead.  Just hold down the Control key before clicking "
+							.."the Start Scanning button."
 							.."<br/><br/>"
-							.."Some people might find that they get disconnected from WoW when doing a scan.  You can read more about why this happens and "
-							.."possible solutions at http://auctionatoraddon.com/disconnects";
+
 
 
 

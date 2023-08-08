@@ -167,9 +167,10 @@ end
 
 function Atr_EventHandler(self, event, ...)
 
---	if (zc.StringStartsWith (event, "UNIT", "BAG")) then
---		zz (event, ...);
---	end
+	--if (zc.StringStartsWith (event, "UNIT", "BAG")) then
+	--if (true) then
+	--	zz (event, ...);
+	--end
 
 	if (event == "VARIABLES_LOADED")			then	Atr_OnLoad(); 						end;
 	if (event == "ADDON_LOADED")				then	Atr_OnAddonLoaded(...); 			end;
@@ -706,9 +707,9 @@ local function Atr_ModTradeSkillFrame()
 	
 	if (TradeSkillFrame) then
 		gTradeSkillFrameModded = true
---		local button = CreateFrame("BUTTON", "Auctionator_Search", TradeSkillFrame, "UIPanelButtonTemplate2");
+--		local button = CreateFrame("BUTTON", "Auctionator_Search", TradeSkillFrame, "UIPanelButtonTemplate");
 --		button:SetPoint("TOPRIGHT", "TradeSkillFrameCloseButton", "TOPLEFT", 0, -8);
-		local button = CreateFrame("BUTTON", "Auctionator_Search", TradeSkillDetailScrollChildFrame, "UIPanelButtonTemplate2");
+		local button = CreateFrame("BUTTON", "Auctionator_Search", TradeSkillDetailScrollChildFrame, "UIPanelButtonTemplate");
 		button:SetPoint("TOPRIGHT", "TradeSkillDetailScrollChildFrame", "TOPRIGHT", -1, -24);
 		button:SetHeight (16)
 		button:SetText("AH")
@@ -1917,13 +1918,27 @@ local aoa_count = 0
 
 function Atr_OnAuctionUpdate (...)
 
---	zz (aoa_count, "Atr_OnAuctionUpdate", ...);
+	local numBatchAuctions, totalAuctions = Atr_GetNumAuctionItems("list");
+
+	--local name, texture, count;
+	--if (numBatchAuctions > 0) then
+	--	name, texture, count = GetAuctionItemInfo("list", 1);
+	--end
+
+	--zz (aoa_count, "Atr_OnAuctionUpdate", numBatchAuctions, totalAuctions, name, count, ...);
 	aoa_count = aoa_count + 1
-	
-	if (gAtr_FullScanState == ATR_FS_STARTED or gAtr_FullScanState == ATR_FS_ANALYZING) then
-		Atr_FullScanAnalyze()
+
+	if (gAtr_FullScanState == ATR_FS_STARTED) then
+		gAtr_FullScanState = ATR_FS_ANALYZING		-- handle in idle loop to slow down
 		return
 	end
+
+	if (gAtr_FullScanState == ATR_FS_SLOW_QUERY_SENT) then
+		Atr_FullScanAnalyze()						-- handle here since it's just one page
+		return
+	end
+
+
 
 	if (not Atr_IsTabSelected()) then
 		Atr_ClearScanCache()		-- if not our tab, we have no idea what happened so must flush all caches
@@ -1941,7 +1956,7 @@ function Atr_OnAuctionUpdate (...)
 		if (not isDup) then
 
 			local done = gCurrentPane.activeSearch:AnalyzeResultsPage();
-
+			
 			if (done) then
 				gCurrentPane.activeSearch:Finish();
 				Atr_OnSearchComplete ();
@@ -2710,6 +2725,8 @@ function Atr_OnUpdate(self, elapsed)
 	if (zc.periodic (self, "idle_lastUpdate", 0.2, elapsed)) then
 		Atr_Idle (self, elapsed);
 	end
+
+
 end
 
 
@@ -2723,9 +2740,13 @@ function Atr_Idle(self, elapsed)
 		Atr_ShowRecTooltip();
 	end
 
-
-	if (gAtr_FullScanState ~= ATR_FS_NULL) then
-		Atr_FullScanFrameIdle();
+	if (Atr_FullScanFrameIdle == nil) then
+		Atr_Error_Display ("Looks like you installed Auctionator\n without quitting out of WoW.\n\nPlease quit and restart\nWoW to complete the install.")
+	else
+		local handled = Atr_FullScanFrameIdle()
+		if (handled) then
+			return
+		end
 	end
 	
 	if (verCheckMsgState == 0) then

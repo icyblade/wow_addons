@@ -1,0 +1,13 @@
+tag 1.8.24
+fa83d42afc68ae9c76a0c16345dcc215c60ea190
+dridzt <dridzt@mail.com>
+2012-04-18 17:17:20 +0300
+
+Tagging as 1.8.24
+
+
+--------------------
+
+dridzt:
+	- Fill keystone info that wasn't available on initialization when the item gets cached, enchancement ticket 391.
+	Fix ticket 394, one-time error on first login of fresh installation of Archy.

@@ -1,8 +1,9 @@
 # AddOns for World of Warcraft Cataclysm (4.3.4)
 
 ## Credits
+ - [Archy](https://www.curseforge.com/wow/addons/archy/download/588737)
  - [AtlasLoot Enhanced](https://www.curseforge.com/wow/addons/atlasloot-enhanced/download/578124)
- - [Auctionator](https://www.curseforge.com/wow/addons/auctionator/download/558559)
+ - [Auctionator](https://www.curseforge.com/wow/addons/auctionator/download/627337)
  - [BattlegroundTargets](https://www.curseforge.com/wow/addons/battlegroundtargets/download/600629)
  - [BigWigs](https://www.curseforge.com/wow/addons/big-wigs/download/609818)
  - [Deadly Boss Mods](https://www.curseforge.com/wow/addons/deadly-boss-mods/download/608290)

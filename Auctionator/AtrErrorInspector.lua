@@ -62,8 +62,12 @@ function Atr_Error_Handler (...)
 	local funcnames	= zc.printstack ( { silent=true } );
 	local funcstr	= table.concat (funcnames, " > ");
 
-	local looksLikeAuctionatorError = (zc.StringContains (msg, "auctionator.lua", "auctionatorQuery.lua", "auctionatorConflicts.lua", "auctionatorPane.lua", "auctionatorBuy.lua", "auctionatorConfig.lua", "auctionatorVendor.lua", "auctionator.xml", "auctionatorDatabase.lua", "auctionatorLocalize.lua", "auctionatorScan.lua", "auctionatorShop.lua", "auctionatorHints.lua", "zcutils"));
+	local looksLikeAuctionatorError = (zc.StringContains (msg, "auctionator.lua", "auctionatorQuery.lua", "auctionatorConflicts.lua", "auctionatorPane.lua", "auctionatorBuy.lua", "auctionatorConfig.lua", "auctionatorVendor.lua", "auctionator.xml", "auctionatorDatabase.lua", "auctionatorLocalize.lua", "auctionatorScan.lua", "auctionatorScanFull.lua", "auctionatorShop.lua", "auctionatorHints.lua", "zcutils"));
 
+	if (zc.StringContains (msg, "auctionatorMiniFeatures")) then
+		looksLikeAuctionatorError = false
+	end
+	
 	if (zc.StringSame (select(1,...), "xxx")) then
 		msg = "Debugging Information";
 		looksLikeAuctionatorError = true;

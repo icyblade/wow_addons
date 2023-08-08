@@ -25,7 +25,6 @@ local ATR_SORTBY_PRICE_DES = 3;
 gScanHistDayZero = time({year=2010, month=11, day=15, hour=0});		-- never ever change
 
 local gNumNilItemLinks
-local gNum42555Warnings = 0;
 
 -----------------------------------------
 
@@ -68,8 +67,6 @@ function AtrSearch:Init (searchText, IDstring, itemLink, rescanThreshold)
 	if (searchText == nil) then
 		searchText = ""
 	end
-
-	gNum42555Warnings = 0;
 
 	self.origSearchText = searchText
 	
@@ -863,7 +860,6 @@ function AtrSearch:Finish()
 		Atr_ILevelHist_Print()
 	end
 	
-	Atr_ClearBrowseListings();
 	
 	gSortScansBy = self.sortHow;
 	table.sort (self.sortedScans, Atr_SortScans);
@@ -924,17 +920,13 @@ end
 
 function Atr_ClearBrowseListings()
 	
---[[
-	local start = time();
 
-	while (time() - start < 5) do
-	
-		if (CanSendAuctionQuery()) then
-			QueryAuctionItems("xyzzy", 43, 43, 0, 7, 0);
-			break;
-		end
+	if (CanSendAuctionQuery()) then
+		QueryAuctionItems("xyzzy", 43, 43, 0, 7, 0);
+		zz ("Atr_ClearBrowseListings succeeded");
 	end
-]]--
+
+
 end
 
 -----------------------------------------
@@ -1183,25 +1175,6 @@ function AtrScan:IsNil ()
 	return false;
 end
 
------------------------------------------
-
-ATR_FS_NULL			= 0;
-ATR_FS_STARTED		= 1;
-ATR_FS_ANALYZING	= 2;
-ATR_FS_CLEANING_UP	= 3;
-
-ATR_FSS_NULL		= 0;
-
-gAtr_FullScanState		= ATR_FS_NULL;
-
-local gAtr_FullScanPosition;
-
-local gAtr_FullScanNumNullItemNames;
-local gAtr_FullScanNumNullItemLinks;
-local gAtr_FullScanNumNullOwners;
-
-local gAtr_FullScanStart;
-local gAtr_FullScanDur;
 
 -----------------------------------------
 
@@ -1217,383 +1190,6 @@ function Atr_GetDBsize()
 	return n;
 end
 
------------------------------------------
-
-local gNumAdded, gNumUpdated;
-
------------------------------------------
-
-function Atr_FullScanStart()
-
-	gNum42555Warnings = 0;
-
-	local canQuery,canQueryAll = CanSendAuctionQuery();
-	
-	if (canQueryAll) then
-	
-		Atr_FullScanStatus:SetText (ZT("Scanning").."...");
-		Atr_FullScanStartButton:Disable();
-		Atr_FullScanDone:Disable();
-	
-		gAtr_FullScanState		= ATR_FS_STARTED;
-		gAtr_FullScanPosition	= nil;
-		
-		gAtr_FullScanStart = time();
-		gAtr_FullScanDur   = nil;
-		
-		gAtr_FullScanNumNullItemNames = 0;
-		gAtr_FullScanNumNullItemLinks = 0;
-		gAtr_FullScanNumNullOwners = 0;
-
-		SortAuctionClearSort ("list");
-
-		gNumAdded = 0;
-		gNumUpdated = 0;
-
-		QueryAuctionItems ("", nil, nil, 0, 0, 0, 0, 0, 0, true);
-	end
-
-end
-
------------------------------------------
-
-local gScanDetails = {}
-
------------------------------------------
-
-function GetIgnoredString (qx)
-
-	if (qx < AUCTIONATOR_SCAN_MINLEVEL) then
-		return " |cffeeeeee(ignored)|r"
-	end
-	
-	return ""
-
-end
-
------------------------------------------
-
-function Atr_FullScanMoreDetails ()
-
-	local minutes = math.floor (gAtr_FullScanDur/60);
-	local seconds = gAtr_FullScanDur - (minutes * 60);
-
-	zc.msg (" ");
-	zc.msg_anm (ZT("Auctions scanned")..": |cffffffff", gScanDetails.numBatchAuctions, " |r("..gScanDetails.totalItems, "items) ", string.format ("time: |cffffffff%d:%02d|r", minutes, seconds));
-	zc.msg_anm ("|cffa335ee   "..ZT("Epic items")..": |r",		gScanDetails.numEachQual[5]..GetIgnoredString(5));
-	zc.msg_anm ("|cff0070dd   "..ZT("Rare items")..": |r",		gScanDetails.numEachQual[4]..GetIgnoredString(4));
-	zc.msg_anm ("|cff1eff00   "..ZT("Uncommon items")..": |r",	gScanDetails.numEachQual[3]..GetIgnoredString(3));
-	zc.msg_anm ("|cffffffff   "..ZT("Common items")..": |r",	gScanDetails.numEachQual[2]..GetIgnoredString(2));
-	zc.msg_anm ("|cff9d9d9d   "..ZT("Poor items")..": |r",		gScanDetails.numEachQual[1]..GetIgnoredString(1));
-	
-	if (gScanDetails.numRemoved[4] > 0) then		zc.msg_anm (ZT("Rare items").." "..ZT("removed from database")..": |cffffffff",		gScanDetails.numRemoved[4]);		end
-	if (gScanDetails.numRemoved[3] > 0) then		zc.msg_anm (ZT("Uncommon items").." "..ZT("removed from database")..": |cffffffff",	gScanDetails.numRemoved[3]);		end
-	if (gScanDetails.numRemoved[2] > 0) then		zc.msg_anm (ZT("Common items").." "..ZT("removed from database")..": |cffffffff",	gScanDetails.numRemoved[2]);		end
-	if (gScanDetails.numRemoved[1] > 0) then		zc.msg_anm (ZT("Poor items").." "..ZT("removed from database")..": |cffffffff",		gScanDetails.numRemoved[1]);		end
-	
-	zc.msg_anm (ZT("Items added to database")..": |cffffffff", gScanDetails.gNumAdded);
-	zc.msg_anm (ZT("Items updated in database")..": |cffffffff", gScanDetails.gNumUpdated);
-
-	if (gAtr_FullScanNumNullItemNames > 0) then
-		zc.msg_anm (string.format ("|cffff3333%d auctions returned empty results (out of %d)|r", gAtr_FullScanNumNullItemNames, gScanDetails.numBatchAuctions));
-	end
-		
-	if (gAtr_FullScanNumNullItemLinks > 0) then
-		zc.msg_anm (string.format ("|cffff3333%d auctions returned null itemLinks (out of %d)|r", gAtr_FullScanNumNullItemLinks, gScanDetails.numBatchAuctions));
-	end
-		
-	zc.msg (" ");
-end
-
------------------------------------------
-
-	local lowprices = {};
-	local qualities = {};
-
------------------------------------------
-
-function Atr_FullScanAnalyze()
-
-	gAtr_FullScanState = ATR_FS_ANALYZING;
-
-	local numBatchAuctions, totalAuctions = Atr_GetNumAuctionItems("list");
-
-	local x;
-	
-	if (gAtr_FullScanPosition == nil) then
-	
-		gAtr_FullScanPosition = 1
-		lowprices = {}
-		qualities = {}
-
-		zz ("FULL SCAN:"..numBatchAuctions.." out of  "..totalAuctions)
-		zz ("AUCTIONATOR_DC_PAUSE: ", AUCTIONATOR_DC_PAUSE)
-	end
-
---	zz ("gAtr_FullScanPosition:", gAtr_FullScanPosition)
-
-	local name, texture, count, quality, canUse, level, huh, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, owner, saleStatus
-
-	if (numBatchAuctions > 0) then
-
-		for x = gAtr_FullScanPosition, numBatchAuctions do
-
-			name, texture, count, quality, canUse, level, huh, minBid,
-					minIncrement, buyoutPrice, bidAmount, highBidder, owner, saleStatus   = GetAuctionItemInfo("list", x);
-
-			-- waste some time so that it's less likely we cause disconnects
-			
-			if (AUCTIONATOR_DC_PAUSE == nil) then
-				AUCTIONATOR_DC_PAUSE = 200;
-			end
-			
-			if (AUCTIONATOR_DC_PAUSE and AUCTIONATOR_DC_PAUSE > 0) then
-				for k = 1, AUCTIONATOR_DC_PAUSE do
-					k = math.acos (math.cos (47));
-				end
-			end
-			
-			-----------------------
-			
---			if (itemLink == nil) then
---				gAtr_FullScanNumNullItemLinks = gAtr_FullScanNumNullItemLinks + 1;
---			end
-			
-			if (name == nil) then
-				gAtr_FullScanNumNullItemNames = gAtr_FullScanNumNullItemNames + 1;
-			end
-			
-			if (owner == nil) then
-				gAtr_FullScanNumNullOwners = gAtr_FullScanNumNullOwners + 1;
-			end
-			
-			if (name ~= nil) then
-				qualities[name] = quality;
-			end
-			
-			if (name ~= nil and buyoutPrice ~= nil) then
-			
-				local itemPrice = math.floor (buyoutPrice / count);
-			
-				if (itemPrice > 0) then
-					if (not lowprices[name]) then
-						lowprices[name] = BIGNUM;
-					end
-					
-					lowprices[name] = math.min (lowprices[name], itemPrice);
-				end
-			end
-
-			if (x % 1000 == 0) then
-				Atr_FullScanStatus:SetText (ZT("Processing"));
-				if (x < numBatchAuctions) then
-					gAtr_FullScanPosition = x + 1;
-					return;
-				end
-			end
-		end
-
-	end
-
-	Atr_FullScanStatus:SetText (ZT("Updating"));
-	zz ("Updating")
-
-	local numEachQual = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-	local totalItems = 0;
-	local numRemoved = { 0, 0, 0, 0, 0, 0, 0, 0 };
-	
-	for name,newprice in pairs (lowprices) do
-		
-		if (newprice < BIGNUM) then
-		
-			local qx = qualities[name] + 1;
-			
-			numEachQual[qx]	= numEachQual[qx] + 1;
-			totalItems		= totalItems + 1;
-			
-			if (type(AUCTIONATOR_SCAN_MINLEVEL) ~= "number") then
-				AUCTIONATOR_SCAN_MINLEVEL = 1;
-			end
-			
-			if ((qx < AUCTIONATOR_SCAN_MINLEVEL) and gAtr_ScanDB[name]) then
-				numRemoved[qx] = numRemoved[qx] + 1;
-				gAtr_ScanDB[name] = nil;
-			end
-			
-			if (qx >= AUCTIONATOR_SCAN_MINLEVEL) then
-
-				if (gAtr_ScanDB[name] == nil) then
-					gNumAdded = gNumAdded + 1;
-				else
-					gNumUpdated = gNumUpdated + 1;
-				end
-
-				Atr_UpdateScanDBprice (name, newprice);
-			end
-		end
-	end
-
-	zz ("Cleaning up")
-
-	gScanDetails.numBatchAuctions		= numBatchAuctions;
-	gScanDetails.totalItems				= totalItems;
-	gScanDetails.numEachQual			= numEachQual;
-	gScanDetails.numRemoved				= numRemoved;
-	gScanDetails.gNumAdded				= gNumAdded;
-	gScanDetails.gNumUpdated			= gNumUpdated;
-
-
---[[
-	if (Atr_PrintBargains and Atr_CheckForBargain and numBatchAuctions > 0) then
-
-		for x = 1, numBatchAuctions do
-			Atr_CheckForBargain (x);
-		end
-		
-		Atr_PrintBargains();
-	end
-]]--
-	
-	gAtr_FullScanState = ATR_FS_CLEANING_UP;
-
-	gAtr_FullScanDur = time()- gAtr_FullScanStart;
-
-	Atr_FullScanMoreDetails();
-
-	Atr_FullScanStatus:SetText (ZT("Cleaning up"));
-
-	Atr_FullScanDone:Enable();
-	Atr_FullScanStatus:SetText ("");
-	
-	Atr_FSR_scanned_count:SetText	(numBatchAuctions);
-	Atr_FSR_added_count:SetText		(gNumAdded);
-	Atr_FSR_updated_count:SetText	(gNumUpdated);
-	Atr_FSR_ignored_count:SetText	(totalItems - (gNumAdded + gNumUpdated));
-	
-	Atr_FullScanHTML:Hide();
-	Atr_FullScanResults:Show();
-	
-	Atr_FullScanResults:SetBackdropColor (0.3, 0.3, 0.4);
-	
-	AUCTIONATOR_LAST_SCAN_TIME = time();
-	
-	Atr_UpdateFullScanFrame ();
-
-	Atr_Broadcast_DBupdated (totalItems, "fullscan");
-	
-	Atr_ClearBrowseListings();
-	
-	lowprices = {};
-
-	collectgarbage ("collect");
-end
-
------------------------------------------
-
-function Atr_ShowFullScanFrame()
-
-	Atr_FullScanHTML:Show();
-	Atr_FullScanResults:Hide();
-
-	Atr_FullScanFrame:Show();
-	Atr_FullScanFrame:SetBackdropColor(0,0,0,100);
-	
-	Atr_UpdateFullScanFrame();
-	Atr_FullScanStatus:SetText ("");
-
-	local expText = "<html><body>"
-					.."<p>"
-					..ZT("SCAN_EXPLANATION")
-					.."</p>"
-					.."</body></html>"
-					;
-
-
-
-	Atr_FullScanHTML:SetText (expText);
-	Atr_FullScanHTML:SetSpacing (3);
-end
-
------------------------------------------
-
-function Atr_UpdateFullScanFrame()
-
-	Atr_FullScanDBsize:SetText (Atr_GetDBsize());
-	
-	if (AUCTIONATOR_LAST_SCAN_TIME) then
-		Atr_FullScanDBwhen:SetText (date ("%A, %B %d at %I:%M %p", AUCTIONATOR_LAST_SCAN_TIME));
-	else
-		Atr_FullScanDBwhen:SetText (ZT("Never"));
-	end
-
-	local canQuery,canQueryAll = CanSendAuctionQuery();
-
-	if (canQueryAll) then
-		Atr_FullScanStatus:SetText ("");
-		Atr_FullScanStartButton:Enable();
-		Atr_FullScanNext:SetText(ZT("Now"));
-	else	
-		Atr_FullScanStartButton:Disable();
-
-		if (AUCTIONATOR_LAST_SCAN_TIME) then
-			local when = 15*60 - (time() - AUCTIONATOR_LAST_SCAN_TIME);
-		
-			when = math.floor (when/60);
-		
-			if (when == 0) then
-				Atr_FullScanNext:SetText (ZT("in less than a minute"));
-			elseif (when == 1) then
-				Atr_FullScanNext:SetText (ZT("in about one minute"));
-			elseif (when > 0) then
-				Atr_FullScanNext:SetText (string.format (ZT("in about %d minutes"), when));
-			else
-				Atr_FullScanNext:SetText (ZT("unknown"));
-			end
-		else
-			Atr_FullScanNext:SetText (ZT("unknown"));
-		end
-	end
-end
-
------------------------------------------
-
-function Atr_FullScan_GetDurString()
-
-	local minutes = math.floor (gAtr_FullScanDur/60);
-	local seconds = gAtr_FullScanDur - (minutes * 60);
-
-	return string.format ("%d:%02d", minutes, seconds);
-end
-
------------------------------------------
-
-function Atr_FullScanFrameIdle()
-
-	if (gAtr_FullScanState == ATR_FS_STARTED) then
-
-		local btext = Atr_FullScanStatus:GetText ();
-		
-		if (btext) then
-			gAtr_FullScanDur = time()- gAtr_FullScanStart;
-			Atr_FullScanStatus:SetText (string.format ("Scanning (%s)", Atr_FullScan_GetDurString()));
-		end
-	end
-
-
-	if (gAtr_FullScanState == ATR_FS_CLEANING_UP) then
-	
-		Atr_FullScanStatus:SetText ("Cleaning up");
-		
-		if (Atr_GetNumAuctionItems("list") < 100) then
-			gAtr_FullScanDur = time()- gAtr_FullScanStart;
-			Atr_FullScanStatus:SetText (string.format ("Scan complete (%s)", Atr_FullScan_GetDurString()));
-			PlaySound("AuctionWindowClose");
-			Atr_PurgeObsoleteItems ();
-			gAtr_FullScanState = ATR_FS_NULL;
-		end
-	end
-	
-end
 
 -----------------------------------------
 
@@ -1962,15 +1558,13 @@ function Atr_GetNumAuctionItems (which)
 
 	local numBatchAuctions, totalAuctions = GetNumAuctionItems(which);
 	
-	if (totalAuctions > 42554) then
-		if (gNum42555Warnings < 2) then
-			gNum42555Warnings = gNum42555Warnings + 1;
-			zc.msg_anm ("|cffff0000Warning: greater than 42554 auctions: ", totalAuctions, numBatchAuctions);
-		end
-		totalAuctions = 42554;
+	local returnTotalAuctions = totalAuctions
+	
+	if (totalAuctions > 500000 or totalAuctions < 0) then
+		totalAuctions = numBatchAuctions;
 	end
 	
-	return numBatchAuctions, totalAuctions
+	return numBatchAuctions, totalAuctions, returnTotalAuctions
 
 end
 
