@@ -1,0 +1,31 @@
+## Interface: 40200
+## Title: Hermes [|cffeda55fUI|r]
+## Author: inthedrops (Paperplate @ US-Stormrage)
+## Notes: UI plugin for Hermes
+## DefaultState: enabled
+## SavedVariables: 
+## OptionalDeps: 
+## RequiredDeps: Hermes
+## X-Curse-Packaged-Version: v2.3.3
+## X-Curse-Project-Name: Hermes
+## X-Curse-Project-ID: hermes
+## X-Curse-Repository-ID: wow/hermes/mainline
+
+Localization\enUS.lua
+Localization\deDE.lua
+Localization\frFR.lua
+Localization\esES.lua
+Localization\koKR.lua
+Localization\zhTW.lua
+Localization\zhCN.lua
+Localization\ruRU.lua
+
+LibHermesUICooldownBars-1.0.lua
+
+Hermes-UI.lua
+ViewManager.lua
+Hermes-UI-CooldownBars\Hermes-UI-CooldownBars.lua
+Hermes-UI-GridBars\Hermes-UI-GridBars.lua
+Hermes-UI-GridButtons\Hermes-UI-GridButtons.lua
+Hermes-UI-Bars\Hermes-UI-Bars.lua
+Hermes-UI-Logger\Hermes-UI-Logger.lua

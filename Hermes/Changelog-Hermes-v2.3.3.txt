@@ -1,0 +1,605 @@
+------------------------------------------------------------------------
+r171 | inthedrops | 2011-07-20 15:28:02 +0000 (Wed, 20 Jul 2011) | 1 line
+Changed paths:
+   A /tags/v2.3.3 (from /trunk:170)
+
+Tagging as v2.3.3
+------------------------------------------------------------------------
+r170 | inthedrops | 2011-07-15 20:52:30 +0000 (Fri, 15 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+
+auto upgrade paladin to 40200-3
+------------------------------------------------------------------------
+r169 | inthedrops | 2011-07-15 20:34:47 +0000 (Fri, 15 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/Hermes-UI-GridButtons/Hermes-UI-GridButtons.lua
+
+Added two vertex color options to GridButtons
+------------------------------------------------------------------------
+r168 | inthedrops | 2011-07-15 20:03:35 +0000 (Fri, 15 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/Hermes-UI-Bars/Hermes-UI-Bars.lua
+   M /trunk/Modules/Hermes-UI/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+   M /trunk/Modules/Hermes-UI/LibHermesUICooldownBars-1.0.lua
+
+Added "Outline" font option for even thicker fonts in bars. Also increased opacity of drop shadow from 0.5 to 1 for more effect.
+------------------------------------------------------------------------
+r167 | inthedrops | 2011-07-15 19:42:34 +0000 (Fri, 15 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/SpellMonitorDefaults.lua
+
+fixed DG cooldown
+------------------------------------------------------------------------
+r165 | inthedrops | 2011-07-10 21:08:39 +0000 (Sun, 10 Jul 2011) | 1 line
+Changed paths:
+   A /trunk/Modules/Hermes-UI/Hermes-UI-Logger
+   A /trunk/Modules/Hermes-UI/Hermes-UI-Logger/Hermes-UI-Logger.lua
+   A /trunk/Modules/Hermes-UI/Hermes-UI-Logger/icon-reset.tga
+   M /trunk/Modules/Hermes-UI/Hermes-UI.toc
+
+Added Logger view
+------------------------------------------------------------------------
+r164 | inthedrops | 2011-07-09 19:21:49 +0000 (Sat, 09 Jul 2011) | 1 line
+Changed paths:
+   A /trunk/Modules/Hermes-UI/Hermes-UI-Bars
+   A /trunk/Modules/Hermes-UI/Hermes-UI-Bars/Hermes-UI-Bars.lua
+   M /trunk/Modules/Hermes-UI/Hermes-UI.toc
+   M /trunk/Modules/Hermes-UI/LibHermesUICooldownBars-1.0.lua
+   M /trunk/Modules/Hermes-UI/Localization/deDE.lua
+   M /trunk/Modules/Hermes-UI/Localization/enUS.lua
+   M /trunk/Modules/Hermes-UI/Localization/esES.lua
+   M /trunk/Modules/Hermes-UI/Localization/frFR.lua
+   M /trunk/Modules/Hermes-UI/Localization/koKR.lua
+   M /trunk/Modules/Hermes-UI/Localization/ruRU.lua
+   M /trunk/Modules/Hermes-UI/Localization/zhCN.lua
+   M /trunk/Modules/Hermes-UI/Localization/zhTW.lua
+
+added "Bars" view
+------------------------------------------------------------------------
+r163 | inthedrops | 2011-07-08 13:43:00 +0000 (Fri, 08 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/LibHermesUICooldownBars-1.0.lua
+
+I believe this will fix the incorrect foreground texture color that sometimes happened.
+------------------------------------------------------------------------
+r159 | inthedrops | 2011-07-06 22:03:56 +0000 (Wed, 06 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+
+locale push
+------------------------------------------------------------------------
+r158 | inthedrops | 2011-07-06 16:56:49 +0000 (Wed, 06 Jul 2011) | 3 lines
+Changed paths:
+   M /trunk/Modules/Hermes-UI/Hermes-UI-CooldownBars/Hermes-UI-CooldownBars.lua
+   M /trunk/Modules/Hermes-UI/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+   M /trunk/Modules/Hermes-UI/Hermes-UI.lua
+   M /trunk/Modules/Hermes-UI/LibHermesUICooldownBars-1.0.lua
+
+added option to display spell name in bars.
+renamed one shot timer to duration timer, makes more sense.
+
+------------------------------------------------------------------------
+r156 | inthedrops | 2011-07-04 21:26:16 +0000 (Mon, 04 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+
+found old Hermes bug where abilities added before receiving was started would bug out and cause Lua error
+------------------------------------------------------------------------
+r155 | inthedrops | 2011-07-04 20:32:31 +0000 (Mon, 04 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+   M /trunk/SpellMonitorDefaults.lua
+
+added Bash, Wind Shear, Pummel, Mind Freeze, Kick, Rebuke, Hammer of Justice, Counterspell, and Stragulate to default spells.
+------------------------------------------------------------------------
+r154 | inthedrops | 2011-07-04 16:37:59 +0000 (Mon, 04 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/Hermes-UI-CooldownBars/Hermes-UI-CooldownBars.lua
+   M /trunk/Modules/Hermes-UI/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+
+fix locale
+------------------------------------------------------------------------
+r153 | inthedrops | 2011-07-04 16:26:32 +0000 (Mon, 04 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+   M /trunk/SpellMonitorDefaults.lua
+
+added spellmetadata defaults containing duration values for some spells. Modifed maintenance config page to make it a little less scary looking (it'll only be scary if you click a button)
+------------------------------------------------------------------------
+r152 | inthedrops | 2011-07-04 16:24:56 +0000 (Mon, 04 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/Hermes-UI-CooldownBars/Hermes-UI-CooldownBars.lua
+   M /trunk/Modules/Hermes-UI/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+   M /trunk/Modules/Hermes-UI/LibHermesUICooldownBars-1.0.lua
+
+cleaned up bar code. Added one shot timer to bars (and used in GridBars and CooldownBars)
+------------------------------------------------------------------------
+r150 | inthedrops | 2011-07-03 18:21:02 +0000 (Sun, 03 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/.pkgmeta
+
+move LegacyUI inside Hermes folder, I don't think most people will want it, but this puts it in their hands if so.
+------------------------------------------------------------------------
+r149 | inthedrops | 2011-07-03 17:06:46 +0000 (Sun, 03 Jul 2011) | 1 line
+Changed paths:
+   D /trunk/Modules/Hermes-UI/Hermes-UI-CooldownBars/Resize.tga
+   M /trunk/Modules/Hermes-UI/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+   D /trunk/Modules/Hermes-UI/Hermes-UI-GridBars/Resize.tga
+   M /trunk/Modules/Hermes-UI/Hermes-UI-GridButtons/Hermes-UI-GridButtons.lua
+   D /trunk/Modules/Hermes-UI/Hermes-UI-GridButtons/Resize.tga
+   A /trunk/Modules/Hermes-UI/Resize.tga
+
+fixed resize texture location
+------------------------------------------------------------------------
+r148 | inthedrops | 2011-07-03 16:49:16 +0000 (Sun, 03 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/.pkgmeta
+   D /trunk/Modules/Hermes-UI-Bars
+   D /trunk/Modules/Hermes-UI-CooldownBars
+   D /trunk/Modules/Hermes-UI-GridBars
+   D /trunk/Modules/Hermes-UI-GridButtons
+
+finish view mode, updated pkgmeta
+------------------------------------------------------------------------
+r147 | inthedrops | 2011-07-03 16:47:30 +0000 (Sun, 03 Jul 2011) | 1 line
+Changed paths:
+   A /trunk/Modules/Hermes-UI/Hermes-UI-CooldownBars
+   A /trunk/Modules/Hermes-UI/Hermes-UI-CooldownBars/Hermes-UI-CooldownBars.lua
+   A /trunk/Modules/Hermes-UI/Hermes-UI-CooldownBars/Resize.tga
+   A /trunk/Modules/Hermes-UI/Hermes-UI-GridBars
+   A /trunk/Modules/Hermes-UI/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+   A /trunk/Modules/Hermes-UI/Hermes-UI-GridBars/Resize.tga
+   A /trunk/Modules/Hermes-UI/Hermes-UI-GridButtons
+   A /trunk/Modules/Hermes-UI/Hermes-UI-GridButtons/Hermes-UI-GridButtons.lua
+   A /trunk/Modules/Hermes-UI/Hermes-UI-GridButtons/Resize.tga
+   M /trunk/Modules/Hermes-UI/Hermes-UI.toc
+   M /trunk/Modules/Hermes-UI/Localization/deDE.lua
+   M /trunk/Modules/Hermes-UI/Localization/enUS.lua
+   M /trunk/Modules/Hermes-UI/Localization/esES.lua
+   M /trunk/Modules/Hermes-UI/Localization/frFR.lua
+   M /trunk/Modules/Hermes-UI/Localization/koKR.lua
+   M /trunk/Modules/Hermes-UI/Localization/ruRU.lua
+   M /trunk/Modules/Hermes-UI/Localization/zhCN.lua
+   M /trunk/Modules/Hermes-UI/Localization/zhTW.lua
+
+moving views into UI, no longer separate addons.
+------------------------------------------------------------------------
+r146 | inthedrops | 2011-07-03 16:36:54 +0000 (Sun, 03 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/LibHermesUICooldownBars-1.0.lua
+   M /trunk/Modules/Hermes-UI/ViewManager.lua
+
+Toned down spark size. Implementing caching strategy for OnUpdate in ViewManager
+------------------------------------------------------------------------
+r145 | inthedrops | 2011-07-03 16:34:54 +0000 (Sun, 03 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+   M /trunk/SpellMonitorDefaults.lua
+
+updated defaults
+------------------------------------------------------------------------
+r144 | inthedrops | 2011-07-03 06:49:40 +0000 (Sun, 03 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+
+locale
+------------------------------------------------------------------------
+r143 | inthedrops | 2011-07-03 06:43:29 +0000 (Sun, 03 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+   M /trunk/Hermes.toc
+   A /trunk/SpellMonitorDefaults.lua
+   M /trunk/Talents.lua
+
+rough draft (barely tested) spell monitor defaults and maintenance
+------------------------------------------------------------------------
+r142 | inthedrops | 2011-07-02 15:22:00 +0000 (Sat, 02 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Talents.lua
+
+mage talent scan bugfix
+------------------------------------------------------------------------
+r141 | inthedrops | 2011-07-02 03:48:48 +0000 (Sat, 02 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+
+removed debug print
+------------------------------------------------------------------------
+r140 | inthedrops | 2011-07-02 02:50:02 +0000 (Sat, 02 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+
+fixed startup related bug in hermes where is would flag yourself as not online until the next status update. This caused a bug with the new UI where it wouldn't pickup the player.
+------------------------------------------------------------------------
+r139 | inthedrops | 2011-07-02 02:47:54 +0000 (Sat, 02 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/ViewManager.lua
+
+fixed new container not syncing with state
+------------------------------------------------------------------------
+r138 | inthedrops | 2011-07-02 02:09:33 +0000 (Sat, 02 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/ViewManager.lua
+
+push locale update
+------------------------------------------------------------------------
+r137 | inthedrops | 2011-07-02 01:45:06 +0000 (Sat, 02 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-GridButtons/Hermes-UI-GridButtons.lua
+
+added player filters
+------------------------------------------------------------------------
+r136 | inthedrops | 2011-07-02 01:44:43 +0000 (Sat, 02 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+
+added player filters
+------------------------------------------------------------------------
+r135 | inthedrops | 2011-07-02 01:44:28 +0000 (Sat, 02 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/Hermes-UI.lua
+   M /trunk/Modules/Hermes-UI/ViewManager.lua
+
+added player filters
+------------------------------------------------------------------------
+r134 | inthedrops | 2011-07-02 01:43:31 +0000 (Sat, 02 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+
+added player filters
+------------------------------------------------------------------------
+r133 | inthedrops | 2011-07-01 04:35:46 +0000 (Fri, 01 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/LibHermesUICooldownBars-1.0.lua
+
+Fixed bug where bar texture colors were not correct for unavailable senders with a spell on cooldown.
+------------------------------------------------------------------------
+r132 | inthedrops | 2011-07-01 04:35:09 +0000 (Fri, 01 Jul 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+
+Fixed bug where bar texture colors were not correct for unavailable senders with a spell on cooldown.
+------------------------------------------------------------------------
+r131 | inthedrops | 2011-06-30 18:07:10 +0000 (Thu, 30 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+
+Added created value to instances.
+------------------------------------------------------------------------
+r130 | inthedrops | 2011-06-30 18:06:49 +0000 (Thu, 30 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/Hermes-UI.lua
+   M /trunk/Modules/Hermes-UI/ViewManager.lua
+
+Improved view error handling when no views are loaded and default not loaded.
+------------------------------------------------------------------------
+r129 | inthedrops | 2011-06-30 18:06:21 +0000 (Thu, 30 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+
+added check to avoid unnecessary 2ndcooldown animations
+------------------------------------------------------------------------
+r128 | inthedrops | 2011-06-30 10:50:06 +0000 (Thu, 30 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-GridButtons/Hermes-UI-GridButtons.lua
+   M /trunk/Modules/Hermes-UI-GridButtons/Hermes-UI-GridButtons.toc
+
+quasi compatibility update so hermes doesn't bomb when Masque instead of the older ButtonFacade is installed
+------------------------------------------------------------------------
+r127 | inthedrops | 2011-06-30 05:50:23 +0000 (Thu, 30 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+
+small onupdate fix
+------------------------------------------------------------------------
+r126 | inthedrops | 2011-06-30 05:20:30 +0000 (Thu, 30 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+
+locale fix
+------------------------------------------------------------------------
+r125 | inthedrops | 2011-06-30 04:58:44 +0000 (Thu, 30 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/.pkgmeta
+
+removed bars mod
+------------------------------------------------------------------------
+r124 | inthedrops | 2011-06-30 04:16:05 +0000 (Thu, 30 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+
+added metadata support
+------------------------------------------------------------------------
+r123 | inthedrops | 2011-06-30 04:15:54 +0000 (Thu, 30 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+
+added 2ndcooldown metadata
+------------------------------------------------------------------------
+r122 | inthedrops | 2011-06-30 04:15:47 +0000 (Thu, 30 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/LibHermesUICooldownBars-1.0.lua
+
+added 2ndcooldown metadata
+------------------------------------------------------------------------
+r121 | inthedrops | 2011-06-29 23:10:07 +0000 (Wed, 29 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+   M /trunk/PluginAPI.lua
+
+final touch ups
+------------------------------------------------------------------------
+r120 | inthedrops | 2011-06-29 23:09:59 +0000 (Wed, 29 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/Hermes-UI.lua
+   M /trunk/Modules/Hermes-UI/ViewManager.lua
+
+final touch ups
+------------------------------------------------------------------------
+r119 | inthedrops | 2011-06-29 23:09:53 +0000 (Wed, 29 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-CooldownBars/Hermes-UI-CooldownBars.lua
+
+final touch ups
+------------------------------------------------------------------------
+r118 | inthedrops | 2011-06-29 23:09:48 +0000 (Wed, 29 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+
+final touch ups
+------------------------------------------------------------------------
+r117 | inthedrops | 2011-06-29 18:33:01 +0000 (Wed, 29 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+   M /trunk/Hermes.toc
+
+toc update, slight decrease in update frequency.
+------------------------------------------------------------------------
+r116 | inthedrops | 2011-06-29 18:32:10 +0000 (Wed, 29 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-LegacyUI/Hermes-LegacyUI.toc
+
+Major checkin
+------------------------------------------------------------------------
+r115 | inthedrops | 2011-06-29 18:32:03 +0000 (Wed, 29 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/Hermes-UI.lua
+   M /trunk/Modules/Hermes-UI/Hermes-UI.toc
+   A /trunk/Modules/Hermes-UI/LibHermesUICooldownBars-1.0.lua
+   M /trunk/Modules/Hermes-UI/ViewManager.lua
+
+Major checkin
+------------------------------------------------------------------------
+r114 | inthedrops | 2011-06-29 18:31:52 +0000 (Wed, 29 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-CooldownBars/Hermes-UI-CooldownBars.lua
+   M /trunk/Modules/Hermes-UI-CooldownBars/Hermes-UI-CooldownBars.toc
+
+Major checkin
+------------------------------------------------------------------------
+r113 | inthedrops | 2011-06-29 18:31:46 +0000 (Wed, 29 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+   M /trunk/Modules/Hermes-UI-GridBars/Hermes-UI-GridBars.toc
+
+Major checkin
+------------------------------------------------------------------------
+r112 | inthedrops | 2011-06-29 18:31:40 +0000 (Wed, 29 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-GridButtons/Hermes-UI-GridButtons.lua
+   M /trunk/Modules/Hermes-UI-GridButtons/Hermes-UI-GridButtons.toc
+
+Major checkin
+------------------------------------------------------------------------
+r111 | inthedrops | 2011-06-28 01:49:03 +0000 (Tue, 28 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-GridButtons/Hermes-UI-GridButtons.lua
+
+fixed L
+------------------------------------------------------------------------
+r110 | inthedrops | 2011-06-28 01:48:57 +0000 (Tue, 28 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+
+fixed L
+------------------------------------------------------------------------
+r109 | inthedrops | 2011-06-28 01:48:52 +0000 (Tue, 28 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI-CooldownBars/Hermes-UI-CooldownBars.lua
+
+fixed L
+------------------------------------------------------------------------
+r108 | inthedrops | 2011-06-28 01:48:46 +0000 (Tue, 28 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/Hermes-UI.lua
+   M /trunk/Modules/Hermes-UI/ViewManager.lua
+
+fixed L
+------------------------------------------------------------------------
+r107 | inthedrops | 2011-06-28 01:48:41 +0000 (Tue, 28 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-LegacyUI/Hermes-LegacyUI.lua
+
+fixed L
+------------------------------------------------------------------------
+r106 | inthedrops | 2011-06-28 01:48:19 +0000 (Tue, 28 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.toc
+
+fixed L
+------------------------------------------------------------------------
+r105 | inthedrops | 2011-06-28 01:33:40 +0000 (Tue, 28 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Localization/enUS.lua
+
+apparently not yet
+------------------------------------------------------------------------
+r104 | inthedrops | 2011-06-28 01:24:41 +0000 (Tue, 28 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Localization/deDE.lua
+   M /trunk/Localization/enUS.lua
+   M /trunk/Localization/esES.lua
+   M /trunk/Localization/frFR.lua
+   M /trunk/Localization/koKR.lua
+   M /trunk/Localization/ruRU.lua
+   M /trunk/Localization/zhCN.lua
+   M /trunk/Localization/zhTW.lua
+
+when does the madness end?
+------------------------------------------------------------------------
+r103 | inthedrops | 2011-06-28 01:21:22 +0000 (Tue, 28 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.lua
+   M /trunk/Localization/deDE.lua
+   M /trunk/Localization/esES.lua
+   M /trunk/Localization/frFR.lua
+   M /trunk/Localization/koKR.lua
+   M /trunk/Localization/ruRU.lua
+   M /trunk/Localization/zhCN.lua
+   M /trunk/Localization/zhTW.lua
+   M /trunk/Modules/Hermes-LegacyUI/Hermes-LegacyUI.lua
+   M /trunk/Modules/Hermes-LegacyUI/Hermes-LegacyUI.toc
+   A /trunk/Modules/Hermes-LegacyUI/Localization
+   A /trunk/Modules/Hermes-LegacyUI/Localization/deDE.lua
+   A /trunk/Modules/Hermes-LegacyUI/Localization/enUS.lua
+   A /trunk/Modules/Hermes-LegacyUI/Localization/esES.lua
+   A /trunk/Modules/Hermes-LegacyUI/Localization/frFR.lua
+   A /trunk/Modules/Hermes-LegacyUI/Localization/koKR.lua
+   A /trunk/Modules/Hermes-LegacyUI/Localization/ruRU.lua
+   A /trunk/Modules/Hermes-LegacyUI/Localization/zhCN.lua
+   A /trunk/Modules/Hermes-LegacyUI/Localization/zhTW.lua
+   M /trunk/Modules/Hermes-UI/Hermes-UI.lua
+   M /trunk/Modules/Hermes-UI/Localization/deDE.lua
+   M /trunk/Modules/Hermes-UI/Localization/enUS.lua
+   M /trunk/Modules/Hermes-UI/Localization/esES.lua
+   M /trunk/Modules/Hermes-UI/Localization/frFR.lua
+   M /trunk/Modules/Hermes-UI/Localization/koKR.lua
+   M /trunk/Modules/Hermes-UI/Localization/ruRU.lua
+   M /trunk/Modules/Hermes-UI/Localization/zhCN.lua
+   M /trunk/Modules/Hermes-UI/Localization/zhTW.lua
+   M /trunk/Modules/Hermes-UI/ViewManager.lua
+   M /trunk/Modules/Hermes-UI-CooldownBars/Hermes-UI-CooldownBars.lua
+   M /trunk/Modules/Hermes-UI-CooldownBars/Hermes-UI-CooldownBars.toc
+   A /trunk/Modules/Hermes-UI-CooldownBars/Localization
+   A /trunk/Modules/Hermes-UI-CooldownBars/Localization/deDE.lua
+   A /trunk/Modules/Hermes-UI-CooldownBars/Localization/enUS.lua
+   A /trunk/Modules/Hermes-UI-CooldownBars/Localization/esES.lua
+   A /trunk/Modules/Hermes-UI-CooldownBars/Localization/frFR.lua
+   A /trunk/Modules/Hermes-UI-CooldownBars/Localization/koKR.lua
+   A /trunk/Modules/Hermes-UI-CooldownBars/Localization/ruRU.lua
+   A /trunk/Modules/Hermes-UI-CooldownBars/Localization/zhCN.lua
+   A /trunk/Modules/Hermes-UI-CooldownBars/Localization/zhTW.lua
+   M /trunk/Modules/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+   M /trunk/Modules/Hermes-UI-GridBars/Hermes-UI-GridBars.toc
+   A /trunk/Modules/Hermes-UI-GridBars/Localization
+   A /trunk/Modules/Hermes-UI-GridBars/Localization/deDE.lua
+   A /trunk/Modules/Hermes-UI-GridBars/Localization/enUS.lua
+   A /trunk/Modules/Hermes-UI-GridBars/Localization/esES.lua
+   A /trunk/Modules/Hermes-UI-GridBars/Localization/frFR.lua
+   A /trunk/Modules/Hermes-UI-GridBars/Localization/koKR.lua
+   A /trunk/Modules/Hermes-UI-GridBars/Localization/ruRU.lua
+   A /trunk/Modules/Hermes-UI-GridBars/Localization/zhCN.lua
+   A /trunk/Modules/Hermes-UI-GridBars/Localization/zhTW.lua
+   M /trunk/Modules/Hermes-UI-GridButtons/Hermes-UI-GridButtons.lua
+   M /trunk/Modules/Hermes-UI-GridButtons/Hermes-UI-GridButtons.toc
+   A /trunk/Modules/Hermes-UI-GridButtons/Localization
+   A /trunk/Modules/Hermes-UI-GridButtons/Localization/deDE.lua
+   A /trunk/Modules/Hermes-UI-GridButtons/Localization/enUS.lua
+   A /trunk/Modules/Hermes-UI-GridButtons/Localization/esES.lua
+   A /trunk/Modules/Hermes-UI-GridButtons/Localization/frFR.lua
+   A /trunk/Modules/Hermes-UI-GridButtons/Localization/koKR.lua
+   A /trunk/Modules/Hermes-UI-GridButtons/Localization/ruRU.lua
+   A /trunk/Modules/Hermes-UI-GridButtons/Localization/zhCN.lua
+   A /trunk/Modules/Hermes-UI-GridButtons/Localization/zhTW.lua
+
+locale changes
+------------------------------------------------------------------------
+r102 | inthedrops | 2011-06-27 23:01:43 +0000 (Mon, 27 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/Localization/enUS.lua
+
+test locale
+------------------------------------------------------------------------
+r101 | inthedrops | 2011-06-27 22:58:31 +0000 (Mon, 27 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Hermes.toc
+
+test locale
+------------------------------------------------------------------------
+r100 | inthedrops | 2011-06-27 22:52:13 +0000 (Mon, 27 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/Modules/Hermes-UI/Hermes-UI.toc
+   A /trunk/Modules/Hermes-UI/Localization
+   A /trunk/Modules/Hermes-UI/Localization/deDE.lua
+   A /trunk/Modules/Hermes-UI/Localization/enUS.lua
+   A /trunk/Modules/Hermes-UI/Localization/esES.lua
+   A /trunk/Modules/Hermes-UI/Localization/frFR.lua
+   A /trunk/Modules/Hermes-UI/Localization/koKR.lua
+   A /trunk/Modules/Hermes-UI/Localization/ruRU.lua
+   A /trunk/Modules/Hermes-UI/Localization/zhCN.lua
+   A /trunk/Modules/Hermes-UI/Localization/zhTW.lua
+
+test locale
+------------------------------------------------------------------------
+r99 | inthedrops | 2011-06-27 21:15:22 +0000 (Mon, 27 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/.pkgmeta
+   D /trunk/DefaultUI
+   M /trunk/Hermes.toc
+   A /trunk/Modules
+   A /trunk/Modules/Hermes-LegacyUI
+   A /trunk/Modules/Hermes-LegacyUI/Defaults.lua
+   A /trunk/Modules/Hermes-LegacyUI/Hermes-LegacyUI.lua
+   A /trunk/Modules/Hermes-LegacyUI/Hermes-LegacyUI.toc
+   A /trunk/Modules/Hermes-LegacyUI/Resize.tga
+   A /trunk/Modules/Hermes-UI
+   A /trunk/Modules/Hermes-UI/Hermes-UI.lua
+   A /trunk/Modules/Hermes-UI/Hermes-UI.toc
+   A /trunk/Modules/Hermes-UI/ViewManager.lua
+   A /trunk/Modules/Hermes-UI-Bars
+   A /trunk/Modules/Hermes-UI-Bars/Resize.tga
+   A /trunk/Modules/Hermes-UI-CooldownBars
+   A /trunk/Modules/Hermes-UI-CooldownBars/Hermes-UI-CooldownBars.lua
+   A /trunk/Modules/Hermes-UI-CooldownBars/Hermes-UI-CooldownBars.toc
+   A /trunk/Modules/Hermes-UI-CooldownBars/Resize.tga
+   A /trunk/Modules/Hermes-UI-GridBars
+   A /trunk/Modules/Hermes-UI-GridBars/Hermes-UI-GridBars.lua
+   A /trunk/Modules/Hermes-UI-GridBars/Hermes-UI-GridBars.toc
+   A /trunk/Modules/Hermes-UI-GridBars/Resize.tga
+   A /trunk/Modules/Hermes-UI-GridButtons
+   A /trunk/Modules/Hermes-UI-GridButtons/Hermes-UI-GridButtons.lua
+   A /trunk/Modules/Hermes-UI-GridButtons/Hermes-UI-GridButtons.toc
+   A /trunk/Modules/Hermes-UI-GridButtons/Resize.tga
+
+First MAJOR checkin with the UI rewrite and refactor. Would probably be a terrible idea to try to use this version of Hermes.
+------------------------------------------------------------------------
+r98 | inthedrops | 2011-06-27 16:33:58 +0000 (Mon, 27 Jun 2011) | 16 lines
+Changed paths:
+   M /trunk/DefaultUI/DefaultUI.lua
+   M /trunk/Hermes.lua
+   M /trunk/PluginAPI.lua
+
+Added the following API events:
+* OnInventorySpellAdded
+* OnInventoryItemAdded
+* OnInventorySpellRemoved
+* OnInventoryItemRemoved
+* OnInventorySpellChanged
+* OnInventoryItemChanged
+
+Added the following API methods:
+Hermes:GetInventoryList()
+Hermes:GetInventoryDetail(id)
+
+Slight change to how plugins are enabled/disabled.
+Enlarged width of options config.
+Small tweak to DefaultUI and stopping button timers.
+Updated PluginAPI documentation.
+------------------------------------------------------------------------
+r97 | inthedrops | 2011-06-22 02:05:33 +0000 (Wed, 22 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/DefaultUI/DefaultUI.lua
+
+fixed button style bug where timer was showing when it shouldn't be.
+------------------------------------------------------------------------

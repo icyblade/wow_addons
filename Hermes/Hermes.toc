@@ -1,0 +1,43 @@
+## Interface: 40200
+## Title: Hermes [|cffeda55fCore|r]
+## Author: inthedrops (Paperplate @ US-Stormrage)
+## Notes: The core Hermes engine used for monitoring raid cooldowns.
+## DefaultState: enabled
+## SavedVariables: HermesDB2
+## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets
+## X-Curse-Packaged-Version: v2.3.3
+## X-Curse-Project-Name: Hermes
+## X-Curse-Project-ID: hermes
+## X-Curse-Repository-ID: wow/hermes/mainline
+
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+libs\LibSharedMedia-3.0\lib.xml
+libs\AceTimer-3.0\AceTimer-3.0.xml
+libs\AceAddon-3.0\AceAddon-3.0.xml
+libs\AceComm-3.0\AceComm-3.0.xml
+libs\AceSerializer-3.0\AceSerializer-3.0.xml
+libs\AceEvent-3.0\AceEvent-3.0.xml
+libs\AceDB-3.0\AceDB-3.0.xml
+libs\AceDBOptions-3.0\AceDBOptions-3.0.xml
+libs\AceConsole-3.0\AceConsole-3.0.xml
+libs\AceGUI-3.0\AceGUI-3.0.xml
+libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
+libs\AceConfig-3.0\AceConfig-3.0.xml
+libs\AceLocale-3.0\AceLocale-3.0.xml
+libs\LibQTip-1.0\lib.xml
+libs\LibTalentQuery-1.0\lib.xml
+
+Localization\enUS.lua
+Localization\deDE.lua
+Localization\frFR.lua
+Localization\esES.lua
+Localization\koKR.lua
+Localization\zhTW.lua
+Localization\zhCN.lua
+Localization\ruRU.lua
+
+Hermes.lua
+Reincarnation.lua
+Talents.lua
+SpellMonitorDefaults.lua

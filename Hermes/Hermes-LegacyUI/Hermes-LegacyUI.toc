@@ -1,0 +1,24 @@
+## Interface: 40200
+## Title: Hermes [|cffeda55fLegacyUI|r]
+## Author: inthedrops (Paperplate @ US-Stormrage)
+## Notes: The original "drag-n-drop" bars and buttons UI used in earlier versions of Hermes
+## DefaultState: disabled
+## SavedVariables: 
+## OptionalDeps: 
+## RequiredDeps: Hermes
+## X-Curse-Packaged-Version: v2.3.3
+## X-Curse-Project-Name: Hermes
+## X-Curse-Project-ID: hermes
+## X-Curse-Repository-ID: wow/hermes/mainline
+
+Localization\enUS.lua
+Localization\deDE.lua
+Localization\frFR.lua
+Localization\esES.lua
+Localization\koKR.lua
+Localization\zhTW.lua
+Localization\zhCN.lua
+Localization\ruRU.lua
+
+Hermes-LegacyUI.lua
+Defaults.lua
