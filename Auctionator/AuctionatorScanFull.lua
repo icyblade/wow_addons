@@ -55,17 +55,17 @@ function Atr_FullScanStart()
 	if (gDoSlowScan) then
 		canStart = CanSendAuctionQuery();
 	end
-	
+
 	if (canStart) then
-	
+
 		Atr_FullScanStatus:SetText (ZT("Waiting for auction data").."...");
 		Atr_FullScanStartButton:Disable();
 		Atr_FullScanDone:Disable();
-	
+
 		gFullScanPosition	= nil
-		
+
 		gFullScanStart = time()
-		
+
 		gFSNumNullItemNames = 0
 		gFSNumNullItemLinks = 0
 		gFSNumNullOwners = 0
@@ -75,9 +75,9 @@ function Atr_FullScanStart()
 		gNumAdded   = 0
 		gNumUpdated = 0
 		gNumScanned = 0
-		
+
 		gGetAllSuccess = true
-		
+
 		if (gDoSlowScan) then
 			gAtr_FullScanState = ATR_FS_SLOW_QUERY_NEEDED;
 			gSlowScanPage = 0
@@ -87,7 +87,7 @@ function Atr_FullScanStart()
 			QueryAuctionItems ("", nil, nil, 0, 0, 0, 0, 0, 0, true);
 			zz ("QueryAuctionItems (getAll) called");
 		end
-		
+
 	end
 
 end
@@ -97,8 +97,8 @@ end
 function Atr_FullScanFrameIdle()
 
 	---- ui stuff ----
-	
-	
+
+
 	if (gAtr_FullScanState == ATR_FS_NULL) then
 
 		gDoSlowScan = IsControlKeyDown()
@@ -117,7 +117,7 @@ function Atr_FullScanFrameIdle()
 
 		return false;
 	end
-	
+
 	-- processing stuff --
 
 	if (gAtr_FullScanState == ATR_FS_ANALYZING and not gDoSlowScan) then
@@ -127,13 +127,13 @@ function Atr_FullScanFrameIdle()
 	local statusText;
 
 	if (gAtr_FullScanState == ATR_FS_SLOW_QUERY_NEEDED and CanSendAuctionQuery()) then
-		QueryAuctionItems ("", nil, nil, 0, 0, 0, gSlowScanPage, 0, 0)
+		QueryAuctionItems ("", "", "", nil, nil, nil, gSlowScanPage, nil, -1)
 		gAtr_FullScanState = ATR_FS_SLOW_QUERY_SENT
 		if (gSlowScanTotalPages) then
 			statusText = string.format ("Page %s of %s", gSlowScanPage+1, gSlowScanTotalPages)
 		end
 	end
-		
+
 	if (gAtr_FullScanState == ATR_FS_STARTED)		then	statusText = "Waiting for auction data"		end
 	if (gAtr_FullScanState == ATR_FS_UPDATING_DB)	then	statusText = "Updating database"			end
 	if (gAtr_FullScanState == ATR_FS_CLEANING_UP)	then	statusText = "Scan complete"				end
@@ -148,13 +148,13 @@ function Atr_FullScanFrameIdle()
 			gAtr_FullScanState = ATR_FS_NULL;
 		end
 	end
-	
+
 	local btext = Atr_FullScanStatus:GetText ();
 	if (btext and statusText) then
 		Atr_FullScanStatus:SetText (string.format (statusText.." (%s)", Atr_FullScan_GetDurString()));
 	end
-	
-	
+
+
 	return true;
 end
 
@@ -174,9 +174,9 @@ function Atr_FullScanAnalyze()
 	end
 
 	local x;
-	
+
 	if (gFullScanPosition == nil) then
-	
+
 		gFullScanPosition = 1
 		lowprices = {}
 		qualities = {}
@@ -189,7 +189,7 @@ function Atr_FullScanAnalyze()
 	if (gDoSlowScan) then
 		gFullScanPosition = 1
 		gSlowScanTotalPages = math.floor (totalAuctions / 50) + 1
-		
+
 		--zz ("gSlowScanPage:", gSlowScanPage+1, " of ", gSlowScanTotalPages)
 
 		if (numBatchAuctions == 0) then		-- slow scan done
@@ -197,7 +197,7 @@ function Atr_FullScanAnalyze()
 			return;
 		end
 	end
-	
+
 	local dataIsGood = true
 
 	local name, texture, count, quality, canUse, level, huh, minBid, minIncrement, buyoutPrice, bidAmount, highBidder, owner, saleStatus
@@ -210,56 +210,56 @@ function Atr_FullScanAnalyze()
 					minIncrement, buyoutPrice, bidAmount, highBidder, owner, saleStatus   = GetAuctionItemInfo("list", x);
 
 			gNumScanned = gNumScanned + 1
-			
+
 			-- waste some time so that it's less likely we cause disconnects
-			
+
 			if (not gDoSlowScan) then
 				if (AUCTIONATOR_DC_PAUSE == nil) then
 					AUCTIONATOR_DC_PAUSE = 200;
 				end
-				
+
 				if (AUCTIONATOR_DC_PAUSE and AUCTIONATOR_DC_PAUSE > 0) then
 					for k = 1, AUCTIONATOR_DC_PAUSE do
 						k = math.acos (math.cos (47));
 					end
 				end
 			end
-			
+
 			-----------------------
-			
+
 --			if (itemLink == nil) then
 --				gFSNumNullItemLinks = gFSNumNullItemLinks + 1;
 --			end
-			
+
 			if (name == nil) then
 				gFSNumNullItemNames = gFSNumNullItemNames + 1;
 			end
-			
+
 			if (owner == nil) then
 				gFSNumNullOwners = gFSNumNullOwners + 1;
 			end
-			
+
 			if (name == nil or name == "") then
 				badItemCount = badItemCount + 1
 				dataIsGood = false
 				zz ("bad item scanned.  name: ", name, " count: ", count, "badItemCount: ", badItemCount);
 			else
 				qualities[name] = quality;
-				
+
 				if (buyoutPrice ~= nil) then
-				
+
 					local itemPrice = math.floor (buyoutPrice / count);
-				
+
 					if (itemPrice > 0) then
 						if (not lowprices[name]) then
 							lowprices[name] = BIGNUM;
 						end
-						
+
 						lowprices[name] = math.min (lowprices[name], itemPrice);
 					end
 				end
 			end
-			
+
 			if (x % 1000 == 0 and x < numBatchAuctions) then			-- analyze fast scan data in chunks so as not to cause client to timeout?
 				gFullScanPosition = x + 1;
 				return;
@@ -267,7 +267,7 @@ function Atr_FullScanAnalyze()
 		end
 	end
 
-	
+
 	if (gDoSlowScan) then
 		if (dataIsGood) then
 			gSlowScanPage = gSlowScanPage + 1
@@ -286,35 +286,35 @@ end
 function Atr_FullScanUpdateDB()
 
 	gAtr_FullScanState = ATR_FS_UPDATING_DB
-	
+
 	zz ("Updating")
 
 	local numEachQual = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 	local totalItems = 0;
 	local numRemoved = { 0, 0, 0, 0, 0, 0, 0, 0 };
-	
+
 	for name,newprice in pairs (lowprices) do
-		
+
 		if (newprice < BIGNUM) then
-		
+
 			local qx = qualities[name] + 1;
-			
+
 			if (qx == nil or numEachQual[qx] == nil) then
 				zz ("ERROR: numEachQual[qx] == nil,  qx: ", qx, " name: ", name, " totalItems: ", totalItems);
 			end
-			
+
 			numEachQual[qx]	= numEachQual[qx] + 1;
 			totalItems		= totalItems + 1;
-			
+
 			if (type(AUCTIONATOR_SCAN_MINLEVEL) ~= "number") then
 				AUCTIONATOR_SCAN_MINLEVEL = 1;
 			end
-			
+
 			if ((qx < AUCTIONATOR_SCAN_MINLEVEL) and gAtr_ScanDB[name]) then
 				numRemoved[qx] = numRemoved[qx] + 1;
 				gAtr_ScanDB[name] = nil;
 			end
-			
+
 			if (qx >= AUCTIONATOR_SCAN_MINLEVEL) then
 
 				if (gAtr_ScanDB[name] == nil) then
@@ -343,31 +343,31 @@ function Atr_FullScanUpdateDB()
 
 	Atr_FullScanDone:Enable();
 	Atr_FullScanStatus:SetText ("");
-	
+
 	Atr_FSR_scanned_count:SetText	(gNumScanned);
 	Atr_FSR_added_count:SetText		(gNumAdded);
 	Atr_FSR_updated_count:SetText	(gNumUpdated);
 	Atr_FSR_ignored_count:SetText	(totalItems - (gNumAdded + gNumUpdated));
-	
+
 	Atr_FullScanHTML:Hide();
 	Atr_FullScanResults:Show();
-	
+
 	Atr_FullScanResults:SetBackdropColor (0.3, 0.3, 0.4);
-	
+
 	if (not gDoSlowScan) then
 		AUCTIONATOR_LAST_SCAN_TIME = time();
 	end
-	
+
 	Atr_UpdateFullScanFrame ();
 
 	Atr_Broadcast_DBupdated (totalItems, "fullscan");
-	
+
 	Atr_ClearBrowseListings();
-	
+
 	lowprices = {};
 
 	collectgarbage ("collect");
-	
+
 end
 
 -----------------------------------------
@@ -379,7 +379,7 @@ function Atr_ShowFullScanFrame()
 
 	Atr_FullScanFrame:Show();
 	Atr_FullScanFrame:SetBackdropColor(0,0,0,100);
-	
+
 	Atr_UpdateFullScanFrame();
 	Atr_FullScanStatus:SetText ("");
 
@@ -401,7 +401,7 @@ end
 function Atr_UpdateFullScanFrame()
 
 	Atr_FullScanDBsize:SetText (Atr_GetDBsize());
-	
+
 	if (AUCTIONATOR_LAST_SCAN_TIME) then
 		Atr_FullScanDBwhen:SetText (date ("%A, %B %d at %I:%M %p", AUCTIONATOR_LAST_SCAN_TIME));
 	else
@@ -409,21 +409,21 @@ function Atr_UpdateFullScanFrame()
 	end
 
 	local canQuery
-	
+
 	canQuery, gCanQueryAll = CanSendAuctionQuery();
 
 	if (gCanQueryAll) then
 		Atr_FullScanStatus:SetText ("");
 		Atr_FullScanStartButton:Enable();
 		Atr_FullScanNext:SetText(ZT("Now"));
-	else	
+	else
 		Atr_FullScanStartButton:Disable();
 
 		if (AUCTIONATOR_LAST_SCAN_TIME) then
 			local when = 15*60 - (time() - AUCTIONATOR_LAST_SCAN_TIME);
-		
+
 			when = math.floor (when/60);
-		
+
 			if (when == 0) then
 				Atr_FullScanNext:SetText (ZT("in less than a minute"));
 			elseif (when == 1) then
@@ -460,7 +460,7 @@ function GetIgnoredString (qx)
 	if (qx < AUCTIONATOR_SCAN_MINLEVEL) then
 		return " |cffeeeeee(ignored)|r"
 	end
-	
+
 	return ""
 
 end
@@ -475,19 +475,19 @@ function Atr_FullScanMoreDetails ()
 	zc.msg_anm ("|cff1eff00   "..ZT("Uncommon items")..": |r",	gScanDetails.numEachQual[3]..GetIgnoredString(3));
 	zc.msg_anm ("|cffffffff   "..ZT("Common items")..": |r",	gScanDetails.numEachQual[2]..GetIgnoredString(2));
 	zc.msg_anm ("|cff9d9d9d   "..ZT("Poor items")..": |r",		gScanDetails.numEachQual[1]..GetIgnoredString(1));
-	
+
 	if (gScanDetails.numRemoved[4] > 0) then		zc.msg_anm (ZT("Rare items").." "..ZT("removed from database")..": |cffffffff",		gScanDetails.numRemoved[4]);		end
 	if (gScanDetails.numRemoved[3] > 0) then		zc.msg_anm (ZT("Uncommon items").." "..ZT("removed from database")..": |cffffffff",	gScanDetails.numRemoved[3]);		end
 	if (gScanDetails.numRemoved[2] > 0) then		zc.msg_anm (ZT("Common items").." "..ZT("removed from database")..": |cffffffff",	gScanDetails.numRemoved[2]);		end
 	if (gScanDetails.numRemoved[1] > 0) then		zc.msg_anm (ZT("Poor items").." "..ZT("removed from database")..": |cffffffff",		gScanDetails.numRemoved[1]);		end
-	
+
 	zc.msg_anm (ZT("Items added to database")..": |cffffffff", gScanDetails.gNumAdded);
 	zc.msg_anm (ZT("Items updated in database")..": |cffffffff", gScanDetails.gNumUpdated);
 
 	if (gFSNumNullItemNames > 0) then
 		zc.msg_anm (string.format ("|cffff3333%d auctions returned empty results (out of %d)|r", gFSNumNullItemNames, gScanDetails.numBatchAuctions));
 	end
-		
+
 	if (gFSNumNullItemLinks > 0) then
 		zc.msg_anm (string.format ("|cffff3333%d auctions returned null itemLinks (out of %d)|r", gFSNumNullItemLinks, gScanDetails.numBatchAuctions));
 	end
@@ -497,7 +497,7 @@ function Atr_FullScanMoreDetails ()
 		zc.msg_anm ("|cffff3333Warning:|r Blizzard server failed to return all items: ", gGetAllTotalAuctions, gGetAllNumBatchAuctions);
 		zc.msg_anm ("You might want to try slow scanning.");
 	end
-		
+
 	zc.msg (" ");
 end
 
