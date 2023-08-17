@@ -20,6 +20,7 @@
  - [Hermes](https://www.curseforge.com/wow/addons/hermes/download/533015)
  - [InspectFix](https://www.curseforge.com/wow/addons/inspectfix/download/593021)
  - [LittleWigs](https://www.curseforge.com/wow/addons/little-wigs/download/536377)
+ - [Omen](https://www.curseforge.com/wow/addons/omen-threat-meter/download/567931)
  - [Parrot](https://www.curseforge.com/wow/addons/parrot/download/613128)
  - [Postal](https://www.curseforge.com/wow/addons/postal/download/562045)
  - [Quest Completist](https://www.curseforge.com/wow/addons/quest_completist/download/589777)

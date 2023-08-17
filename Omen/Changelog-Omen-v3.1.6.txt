@@ -1,0 +1,13 @@
+tag v3.1.6
+07f3ec23380fe3953a038091a571108623e7f3db
+Xinhuan <xinhuan@pacific.net.sg>
+2012-01-16 01:10:23 +0800
+
+Tag release v3.1.6
+
+
+--------------------
+
+Xinhuan:
+	- Update version to 3.1.6.
+	- Multiply the threat values reported by the WoW Servers in Dragon Soul instance by 10 because they are scaled by 10%. This fixes MI/Fade/Tricks oddities and reported TPS values.
