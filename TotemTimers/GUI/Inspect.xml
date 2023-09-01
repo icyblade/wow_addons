@@ -1,0 +1,24 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ../UI.xsd">
+
+
+  <Frame name="TotemTimers_GUI_Inspect" hidden="true">
+	<Scripts>
+		<OnLoad>
+			self.name = TT_GUI_TAB_INSPECTS
+			self.parent = "TotemTimers "..tostring(GetAddOnMetadata("TotemTimers", "Version"))
+			InterfaceOptions_AddCategory(self)
+			selfs:RegisterEvent("PLAYER_REGEN_DISABLED")
+		</OnLoad>
+		<OnShow>
+			TotemTimers_LastGUIPane = this
+            TotemTimers_GUI_UpdateInspects()
+		</OnShow>
+		<OnEvent>
+			InterfaceOptionsFrame:Hide()
+		</OnEvent>
+	</Scripts>			
+  </Frame>
+ 
+</Ui>
+
+

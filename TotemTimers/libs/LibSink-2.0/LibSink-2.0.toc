@@ -1,0 +1,19 @@
+﻿## Interface: 40300
+## LoadOnDemand: 1
+## Title: Lib: Sink-2.0
+## Notes: Library that handles chat output.
+## Notes-zhCN: 处理聊天输出的库文件。
+## Notes-zhTW: 處理頻道輸出的函數庫。
+## Author: Rabbit, Antiarc
+## X-eMail: rabbit.magtheridon@mail.com, cheald@gmail.com
+## X-Category: Library
+## OptionalDeps: LibStub
+## X-License: GPLv2 or later
+## X-Curse-Packaged-Version: r80
+## X-Curse-Project-Name: LibSink-2.0
+## X-Curse-Project-ID: libsink-2-0
+## X-Curse-Repository-ID: wow/libsink-2-0/mainline
+
+embeds.xml
+LibSink-2.0\lib.xml
+

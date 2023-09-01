@@ -1,0 +1,63 @@
+## Interface: 40300
+## Title: TotemTimers
+## Author:  Xianghar
+## Version: 10.4.10
+## SavedVariablesPerCharacter: TotemTimers_Settings, TotemTimers_SpecSettings
+## OptionalDeps: cyCircled, Masque, !ClassColors, rActionButtonStyler, LibTalentQuery-1.0
+## LoadManagers: AddonLoader
+## X-LoadOn-Class: Shaman
+## X-Curse-Packaged-Version: 10.4.10
+## X-Curse-Project-Name: TotemTimers
+## X-Curse-Project-ID: totemtimers
+## X-Curse-Repository-ID: wow/totemtimers/mainline
+
+embeds.xml
+
+TotemData.lua
+localization\localization.lua
+localization\localization.ge.lua
+localization\localization.fr.lua
+localization\localization.es.lua
+localization\localization.ru.lua
+localization\localization.cn.lua
+localization\localization.tw.lua
+localization\localization.ko.lua
+Animation.lua
+Bindings.lua
+XiTimers.lua
+XiTimers.xml
+ToolTips.lua
+TotemSets.xml
+TotemSets.lua
+TTActionBars.lua
+DefaultSettings.lua
+Settings.lua
+Spells.lua
+SetupTimers.lua
+SetupTrackers.lua
+MultiSpell.lua
+TotemTimers.lua
+TotemTimers.xml
+EnhanceCDs.lua
+ButtonFacade.lua
+Buffs.lua
+Warnings.lua
+Auras.lua
+CrowdControl.lua
+GUI\localization.lua
+GUI\localization.ge.lua
+GUI\localization.ru.lua
+GUI\localization.tw.lua
+GUI\localization.cn.lua
+GUI\localization.ko.lua
+GUI\localization.fr.lua
+GUI\localization.es.lua
+GUI\General.lua
+GUI\Timers.lua
+GUI\Trackers.lua
+GUI\MultiSpell.lua
+GUI\Messages.lua
+GUI\EnhanceCDs.lua
+GUI\Totems.lua
+GUI\CrowdControl.lua
+

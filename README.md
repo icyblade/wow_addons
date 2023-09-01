@@ -1,6 +1,7 @@
 # AddOns for World of Warcraft Cataclysm (4.3.4)
 
 ## Credits
+ - [ACP](https://www.curseforge.com/wow/addons/acp/download/554976)
  - [AdiBags](https://www.curseforge.com/wow/addons/adibags/download/567246)
  - [Archy](https://www.curseforge.com/wow/addons/archy/download/588737)
  - [AtlasLoot Enhanced](https://www.curseforge.com/wow/addons/atlasloot-enhanced/download/578124)
@@ -31,6 +32,7 @@
  - [TidyPlates: ThreatPlates](https://www.curseforge.com/wow/addons/tidy-plates-threat-plates/download/595210)
  - [TidyPlates](https://www.curseforge.com/wow/addons/tidy-plates/download/598203)
  - [TomTom](https://www.curseforge.com/wow/addons/tomtom/download/602965)
+ - [TotemTimer](https://www.curseforge.com/wow/addons/totemtimers/download/582046)
  - [VuhDo](https://www.curseforge.com/wow/addons/vuhdo/download/589950)
  - [WeakAuras2](https://github.com/skyler-code/WeakAuras-Cata)
  - [WowLua](https://www.curseforge.com/wow/addons/wowlua/download/556770)

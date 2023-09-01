@@ -1,0 +1,8 @@
+
+-- Copyright © 2008, 2009 Xianghar <xian@zron.de>
+-- All Rights Reserved.
+-- This code is not to be modified or distributed without written
+permission by the author.
+-- Current distribution permissions only include curse.com,
+wowui.worldofwar.net, wowinterface.com and their respective addon
+updaters
