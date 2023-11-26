@@ -1,0 +1,14 @@
+## Interface: 40300
+## Title: Angry Assignments
+## Author: Ermad
+## Version: v1.6.1
+## SavedVariables: AngryAssign_Pages,AngryAssign_State,AngryAssign_Config
+## OptionalDeps: Ace3, AceGUI-3.0-SharedMediaWidgets, LibCompress, LibWindow-1.1
+## X-Curse-Packaged-Version: v1.6.1
+## X-Curse-Project-Name: Angry Assignments
+## X-Curse-Project-ID: angry-assignments
+## X-Curse-Repository-ID: wow/angry-assignments/mainline
+
+embeds.xml
+
+Core.lua

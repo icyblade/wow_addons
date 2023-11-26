@@ -1,0 +1,14 @@
+<Bindings>
+	<Binding name="AngryAssign_DISPLAY" header="AngryAssign">
+		AngryAssign_ToggleDisplay()
+	</Binding>
+	<Binding name="AngryAssign_LOCK" header="AngryAssign">
+		AngryAssign_ToggleLock()
+	</Binding>
+	<Binding name="AngryAssign_WINDOW" header="AngryAssign">
+		AngryAssign_ToggleWindow()
+	</Binding>
+	<Binding name="AngryAssign_OUTPUT" header="AngryAssign">
+		AngryAssign_OutputDisplayed()
+	</Binding>
+</Bindings>

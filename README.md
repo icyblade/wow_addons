@@ -3,6 +3,7 @@
 ## Credits
  - [ACP](https://www.curseforge.com/wow/addons/acp/download/554976)
  - [AdiBags](https://www.curseforge.com/wow/addons/adibags/download/567246)
+ - [AngryAssignments](https://github.com/Lanrutcon/Backport-AngryAssignments/)
  - [Archy](https://www.curseforge.com/wow/addons/archy/download/588737)
  - [AtlasLoot Enhanced](https://www.curseforge.com/wow/addons/atlasloot-enhanced/download/578124)
  - [Auctionator](https://www.curseforge.com/wow/addons/auctionator/download/627337)
